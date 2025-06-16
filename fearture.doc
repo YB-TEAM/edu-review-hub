@@ -1,0 +1,568 @@
+Yêu cầu Chức năng - Dự án Review & Gợi ý Đại học
+3.1 Hệ thống Quản lý Người dùng
+FR-001: Đăng ký và xác thực người dùng
+FR-002: Xác minh email và kích hoạt tài khoản
+FR-003: Quản lý hồ sơ người dùng
+FR-004: Đặt lại và khôi phục mật khẩu
+FR-005: Vô hiệu hóa/Xóa tài khoản
+3.2 Hệ thống Đánh giá Trường Đại học
+FR-006: Gửi đánh giá trường đại học
+FR-007: Chấm điểm trường đại học (1–5 sao theo nhiều tiêu chí)
+FR-008: Chỉnh sửa/Xóa đánh giá của bản thân
+FR-009: Xem và duyệt các đánh giá
+FR-010: Lọc đánh giá theo danh mục, điểm, ngày
+FR-011: Báo cáo đánh giá không phù hợp
+FR-012: Xác minh tình trạng sinh viên để đảm bảo tính xác thực
+3.3 Nền tảng Blog & Tâm sự
+FR-013: Tạo bài viết blog chia sẻ trải nghiệm đại học
+FR-014: Đăng tâm sự ẩn danh
+FR-015: Bình luận vào bài viết và tâm sự
+FR-016: Thích/Phản ứng với bài viết và bình luận
+FR-017: Chia sẻ bài viết lên mạng xã hội
+FR-018: Tìm kiếm bài viết bằng từ khóa/thẻ
+FR-019: Phân loại bài viết (Học tập, Xã hội, Đời sống,...)
+3.4 Hệ thống Đánh giá Tính cách
+FR-020: Bài trắc nghiệm tính cách
+FR-021: Đánh giá phong cách học tập
+FR-022: Đánh giá sở thích nghề nghiệp
+FR-023: Phân tích xu hướng xã hội
+FR-024: Tạo báo cáo hồ sơ tính cách
+FR-025: Cho phép làm lại bài đánh giá
+3.5 Công cụ Gợi ý Trường Đại học
+FR-026: Tạo đề xuất trường đại học cá nhân hóa
+FR-027: Ghép nối tính cách với văn hóa trường
+FR-028: Xếp hạng đề xuất theo mức độ phù hợp
+FR-029: Giải thích lý do đề xuất
+FR-030: Lưu trường được gợi ý vào danh sách yêu thích
+FR-031: So sánh các trường được đề xuất
+3.6 Tìm kiếm & Khám phá
+FR-032: Tìm trường theo tên, vị trí, ngành học
+FR-033: Bộ lọc nâng cao (quy mô, loại hình, xếp hạng,...)
+FR-034: Duyệt trường theo danh mục
+FR-035: Xem chi tiết thông tin trường
+FR-036: Công cụ so sánh trường
+FR-037: Trường và đánh giá đang thịnh hành
+3.7 Tính năng Cộng đồng
+FR-038: Theo dõi người dùng khác
+FR-039: Nhắn tin trực tiếp giữa người dùng
+FR-040: Hỏi đáp theo trường
+FR-041: Diễn đàn theo trường/ngành
+FR-042: Hệ thống uy tín người dùng
+FR-043: Thông báo về các hoạt động
+3.8 Kiểm duyệt Nội dung
+FR-044: Lọc nội dung tự động
+FR-045: Hàng đợi kiểm duyệt thủ công
+FR-046: Chặn và báo cáo người dùng
+FR-047: Quy trình phê duyệt nội dung
+FR-048: Phát hiện và ngăn chặn spam
+3.9 Chức năng Quản trị
+FR-049: Bảng điều khiển và phân tích cho quản trị viên
+FR-050: Quản lý người dùng (cấm, tạm dừng, xác minh)
+FR-051: Quản lý và kiểm duyệt nội dung
+FR-052: Quản lý cơ sở dữ liệu trường đại học
+FR-053: Cấu hình và thiết lập hệ thống
+FR-054: Tạo báo cáo và thống kê
+3.10 Tính năng cho Di động & Giao diện đáp ứng
+FR-055: Giao diện web đáp ứng trên di động
+FR-056: Thông báo đẩy
+FR-057: Chế độ đọc offline
+FR-058: Giao diện làm bài đánh giá tối ưu cho di động
+3.11 Chức năng Quản trị
+FR-049: Bảng điều khiển và phân tích cho quản trị viên
+FR-050: Quản lý người dùng (cấm, tạm dừng, xác minh)
+FR-051: Quản lý và kiểm duyệt nội dung
+FR-052: Quản lý cơ sở dữ liệu trường đại học
+FR-053: Cấu hình và thiết lập hệ thống
+FR-054: Tạo báo cáo và thống kê
+
+3.11 Quản lý Dữ liệu & Phân tích
+FR-059: Xuất dữ liệu cá nhân (tuân thủ GDPR)
+
+
+FR-060: Sao lưu và khôi phục dữ liệu
+
+
+FR-061: Theo dõi hoạt động người dùng và phân tích
+
+
+FR-062: Phân tích cảm xúc trong đánh giá
+
+
+FR-063: Thuật toán xếp hạng trường dựa trên đánh giá
+
+
+FR-064: Phát hiện chủ đề và từ khóa thịnh hành
+
+
+3.12 Tích hợp & Tính năng API
+FR-065: Đăng nhập xã hội (Google, Facebook, Apple)
+
+
+FR-066: Chia sẻ nội dung lên nền tảng bên ngoài
+
+
+FR-067: Tích hợp dữ liệu chính thức từ trường đại học
+
+
+FR-068: Tích hợp cơ sở dữ liệu giáo dục bên thứ ba
+
+
+FR-069: Hệ thống thông báo qua email
+
+
+FR-070: Xác minh số điện thoại qua SMS để bảo mật tài khoản
+
+
+3.13 Cá nhân hóa & Tùy chọn
+FR-071: Tùy chỉnh bố cục dashboard
+
+
+FR-072: Thiết lập tùy chọn thông báo
+
+
+FR-073: Lưu trường và đánh giá yêu thích
+
+
+FR-074: Đánh dấu (bookmark) blog và tâm sự
+
+
+FR-075: Nạp nội dung cá nhân hóa vào feed
+
+
+FR-076: Thiết lập ngôn ngữ ưu tiên
+
+
+3.14 Bảo mật & Quyền riêng tư
+FR-077: Xác thực hai yếu tố (2FA)
+
+
+FR-078: Quản lý thiết lập quyền riêng tư
+
+
+FR-079: Chế độ duyệt ẩn danh
+
+
+FR-080: Mã hóa dữ liệu nhạy cảm
+
+
+FR-081: Quản lý phiên và ngắt kết nối sau thời gian không hoạt động
+
+
+FR-082: Hồ sơ ghi lại hành động của quản trị viên
+
+
+3.15 Gamification & Tăng tương tác
+FR-083: Hệ thống điểm và huy hiệu người dùng
+
+
+FR-084: Mở khóa thành tựu khi người dùng hoạt động tích cực
+
+
+FR-085: Bảng xếp hạng những đóng góp hàng đầu
+
+
+FR-086: Thử thách hàng ngày/hàng tuần
+
+
+FR-087: Hệ thống phần thưởng cho đánh giá chất lượng
+
+
+3.16 Tính năng Nâng cao
+FR-088: Tóm tắt đánh giá bằng AI
+
+
+FR-089: Chatbot hỗ trợ hỏi đáp cơ bản
+
+
+FR-090: Nhập nội dung đánh giá bằng giọng nói
+
+
+FR-091: Cho phép tải hình ảnh về trường
+
+
+FR-092: Hỗ trợ đánh giá bằng video
+
+
+FR-093: Hỗ trợ trò chuyện trực tiếp
+
+
+FR-094: Hỗ trợ đa ngôn ngữ
+
+
+FR-095: Chế độ giao diện tối/sáng
+
+
+3.17 Hệ thống Thông báo & Giao tiếp
+FR-096: Thông báo trong ứng dụng theo thời gian thực
+
+
+FR-097: Email tổng hợp (hàng ngày/hàng tuần)
+
+
+FR-098: Thông báo đẩy cho di động
+
+
+FR-099: Lịch sử và quản lý thông báo
+
+
+FR-100: Phân loại thông báo theo nhóm
+
+
+FR-101: Hệ thống đề cập (@username)
+
+
+FR-102: Thông báo khi ai đó trả lời bình luận
+
+
+3.18 Tổ chức & Quản lý Nội dung
+FR-103: Hệ thống thẻ tag cho bài viết và đánh giá
+
+
+FR-104: Phân loại và lọc nội dung
+
+
+FR-105: Bộ sưu tập/Danh sách bài đã lưu
+
+
+FR-106: Hệ thống lưu trữ nội dung cũ
+
+
+FR-107: Phát hiện nội dung trùng lặp
+
+
+FR-108: Lịch sử phiên bản nội dung
+
+
+FR-109: Thao tác nội dung hàng loạt
+
+
+3.19 Tính năng Đối tác Đại học
+FR-110: Tài khoản đại diện trường đại học
+
+
+FR-111: Trường trả lời chính thức các đánh giá
+
+
+FR-112: Đăng sự kiện từ trường
+
+
+FR-113: Cập nhật và thông báo về tuyển sinh
+
+
+FR-114: Huy hiệu xác minh trường chính thức
+
+
+FR-115: Dashboard hợp tác cho trường đại học
+
+
+3.20 Tìm kiếm & Lọc Nâng cao
+FR-116: Tìm kiếm ngữ nghĩa bằng AI
+
+
+FR-117: Tìm kiếm bằng giọng nói
+
+
+FR-118: Lịch sử tìm kiếm và đề xuất
+
+
+FR-119: Lưu lịch sử truy vấn tìm kiếm
+
+
+FR-120: Tìm kiếm nâng cao theo cú pháp Boolean
+
+
+FR-121: Tìm kiếm theo địa lý với bản đồ
+
+
+FR-122: Thuật toán xếp hạng kết quả tìm kiếm
+
+
+3.21 Hỗ trợ & Tính toàn diện
+FR-123: Tương thích với trình đọc màn hình
+
+
+FR-124: Hỗ trợ điều hướng bằng bàn phím
+
+
+FR-125: Chế độ độ tương phản cao
+
+
+FR-126: Điều chỉnh kích thước phông chữ
+
+
+FR-127: Mô tả thay thế cho hình ảnh
+
+
+FR-128: Hỗ trợ đa ngôn ngữ cho nội dung
+
+
+FR-129: Bộ lọc nhạy cảm về văn hóa
+
+
+3.22 Hiệu suất & Tối ưu hóa
+FR-130: Tải nội dung dần (lazy loading)
+
+
+FR-131: Hệ thống đệm (caching) để tải nhanh hơn
+
+
+FR-132: Nén và tối ưu hóa hình ảnh
+
+
+FR-133: Tính năng Progressive Web App (PWA)
+
+
+FR-134: Đồng bộ nội dung ngoại tuyến
+
+
+FR-135: Tối ưu băng thông cho thiết bị di động
+
+
+3.23 Tính năng Di động đặc biệt
+FR-136: Ứng dụng di động (iOS/Android)
+
+
+FR-137: Cử chỉ cảm ứng (vuốt, phóng to/thả lỏng)
+
+
+FR-138: Vuốt kéo để làm mới nội dung
+
+
+FR-139: Cuộn vô tận cho feed
+
+
+FR-140: Tích hợp camera khi đánh giá ảnh
+
+
+FR-141: Quét mã QR để truy cập trường nhanh
+
+
+FR-142: Dịch vụ GPS tìm trường gần đó
+
+
+FR-143: Xác thực sinh trắc học (vân tay/khuôn mặt)
+
+
+3.24 Điều hướng & UX trên Di động
+FR-144: Thanh điều hướng dưới màn hình
+
+
+FR-145: Nút hành động nổi (FAB) cho thao tác nhanh
+
+
+FR-146: Vuốt để chuyển trang giữa các màn hình
+
+
+FR-147: Flow hướng dẫn dùng ứng dụng cho lần đầu
+
+
+FR-148: Menu hành động nhanh (nhấn giữ)
+
+
+FR-149: Tìm kiếm tự động gợi ý
+
+
+FR-150: Phản hồi xúc giác (haptic feedback) khi tương tác
+
+
+FR-151: Hoạt ảnh tải cho di động
+
+
+3.25 Tạo Nội dung trên Di động
+FR-152: Trình soạn thảo văn bản phong phú trên di động
+
+
+FR-153: Ghi âm giọng nói cho đánh giá
+
+
+FR-154: Tích hợp thư viện ảnh trên thiết bị di động
+
+
+FR-155: Công cụ chỉnh sửa ảnh trong app
+
+
+FR-156: Ghi hình và tải video trên di động
+
+
+FR-157: Tạo nội dung theo dạng story (24h)
+
+
+FR-158: Công cụ vẽ/chú thích trên di động
+
+
+FR-159: Mẫu đánh giá nhanh cho di động
+
+
+3.26 Tính năng Xã hội trên Di động
+FR-160: Trò chuyện trực tiếp với trạng thái đang nhập
+
+
+FR-161: Nhóm chat đại diện cho sinh viên theo trường
+
+
+FR-162: Gọi video để hỏi đáp
+
+
+FR-163: Chia sẻ màn hình để giới thiệu trường
+
+
+FR-164: Đồng bộ danh bạ để tìm bạn bè
+
+
+FR-165: Tích hợp story mạng xã hội trên di động
+
+
+FR-166: Gợi ý bạn bè
+
+
+FR-167: Check‑in sự kiện tại trường
+
+
+3.27 Thông báo & Cảnh báo trên Di động
+FR-168: Thông báo theo vị trí (gần trường)
+
+
+FR-169: Gộp thông báo thông minh
+
+
+FR-170: Hành động nhanh trên thông báo (trả lời, thích)
+
+
+FR-171: Thông báo ưu tiên cho hạn nộp hồ sơ
+
+
+FR-172: Widget di động để cập nhật nhanh
+
+
+FR-173: Thông báo khóa màn hình có xem trước
+
+
+FR-174: Tích hợp chế độ “Không làm phiền”
+
+
+FR-175: Chọn âm thanh thông báo theo loại
+
+
+3.28 Khả năng Ngoại tuyến trên Di động
+FR-176: Viết đánh giá ngoại tuyến và đồng bộ khi có mạng
+
+
+FR-177: Bộ nhớ đệm dữ liệu trường khi ngoại tuyến
+
+
+FR-178: Lưu ảnh ngoại tuyến và tải lên khi online
+
+
+FR-179: Chế độ đọc ngoại tuyến cho nội dung đã lưu
+
+
+FR-180: Đồng bộ nền khi có lại kết nối
+
+
+FR-181: Tìm kiếm trong nội dung đã lưu
+
+
+FR-182: Làm lại bài đánh giá ngoại tuyến
+
+
+FR-183: Theo dõi và kiểm soát dữ liệu khi ngoại tuyến
+
+
+3.29 Hiệu suất trên Di động
+FR-184: Quản lý làm mới nền ứng dụng
+
+
+FR-185: Tối ưu hóa dùng pin
+
+
+FR-186: Chế độ tiết kiệm dữ liệu di động
+
+
+FR-187: Tự động điều chỉnh chất lượng ảnh theo mạng
+
+
+FR-188: Shortcut ứng dụng (3D Touch/nhấn dài)
+
+
+FR-189: Hỗ trợ liên kết sâu nội bộ trong app
+
+
+FR-190: Phục hồi trạng thái ứng dụng khi mở lại
+
+
+FR-191: Quản lý bộ nhớ di động
+
+
+3.30 Tùy biến & Truy cập trên Di động
+FR-192: Điều khiển bằng giọng nói trên di động
+
+
+FR-193: Chuyển văn bản thành giọng nói cho đánh giá
+
+
+FR-194: Thay đổi font động theo người dùng
+
+
+FR-195: Chế độ một tay
+
+
+FR-196: Cử chỉ tùy chỉnh
+
+
+FR-197: Hỗ trợ người mù màu
+
+
+FR-198: Rung điện thoại để thực hiện hành động
+
+
+FR-199: Bỏ chế độ tự xoay khi cần
+
+
+3.31 Tích hợp Trên Di động
+FR-200: Đồng bộ lịch với sự kiện trường
+
+
+FR-201: Đồng bộ danh bạ để chia sẻ nội dung
+
+
+FR-202: Tích hợp bản đồ trường
+
+
+FR-203: Liên kết với trợ lý Siri/Google
+
+
+FR-204: Ứng dụng đồng hành trên Apple Watch/Wear OS
+
+
+FR-205: Hỗ trợ CarPlay/Android Auto
+
+
+FR-206: Chia sẻ thông tin trường qua NFC
+
+
+FR-207: Phát hiện beacon Bluetooth trong trường
+
+
+3.32 Bảo mật & Quyền riêng tư trên Di động
+FR-208: Khóa ứng dụng bằng PIN/mẫu
+
+
+FR-209: Lưu trữ dữ liệu nhạy cảm an toàn
+
+
+FR-210: Phát hiện jailbreak/root
+
+
+FR-211: Ngăn chặn chụp màn hình nội dung nhạy cảm
+
+
+FR-212: Hỗ trợ xoá từ xa (remote wipe)
+
+
+FR-213: Chứng thực chứng chỉ người dùng
+
+
+FR-214: Mã hóa cơ sở dữ liệu cục bộ trên thiết bị
+
+
+
