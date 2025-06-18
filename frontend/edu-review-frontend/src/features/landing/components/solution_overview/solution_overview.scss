@@ -1,0 +1,185 @@
+// Navbar animations and special effects
+.navbar {
+  // Glassmorphism effect
+  &--glass {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.85);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  // Smooth scroll reveal animation
+  &--hidden {
+    transform: translateY(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  &--visible {
+    transform: translateY(0);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  // Logo animation
+  &__logo {
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    &--pulse {
+      animation: logoPulse 2s infinite;
+    }
+  }
+
+  // Mobile menu animations
+  &__mobile-menu {
+    &--enter {
+      opacity: 0;
+      transform: scale(0.95);
+      transition: all 0.2s ease-out;
+    }
+
+    &--enter-active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    &--exit {
+      opacity: 1;
+      transform: scale(1);
+      transition: all 0.15s ease-in;
+    }
+
+    &--exit-active {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+  }
+
+  // Navigation links hover effects
+  &__nav-link {
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #2563eb, #f59e0b);
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    &:hover::before,
+    &--active::before {
+      width: 100%;
+    }
+
+    // Ripple effect on click
+    &--ripple {
+      position: relative;
+      overflow: hidden;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(37, 99, 235, 0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+      }
+
+      &:active::after {
+        width: 300px;
+        height: 300px;
+      }
+    }
+  }
+
+  // CTA Button special effects
+  &__cta-button {
+    position: relative;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    overflow: hidden;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+      );
+      transition: left 0.5s;
+    }
+
+    &:hover::before {
+      left: 100%;
+    }
+
+    // Glow effect
+    &--glow {
+      box-shadow: 0 0 20px rgba(37, 99, 235, 0.3);
+      transition: box-shadow 0.3s ease;
+
+      &:hover {
+        box-shadow: 0 0 30px rgba(37, 99, 235, 0.5);
+      }
+    }
+  }
+
+  // Hamburger menu animation
+  &__hamburger {
+    .line {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-origin: center;
+    }
+
+    &--open {
+      .line:nth-child(1) {
+        transform: rotate(45deg) translate(6px, 6px);
+      }
+
+      .line:nth-child(2) {
+        opacity: 0;
+        transform: scale(0);
+      }
+
+      .line:nth-child(3) {
+        transform: rotate(-45deg) translate(6px, -6px);
+      }
+    }
+  }
+}
+
+// Keyframes
+@keyframes logoPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+// Responsive breakpoints for custom animations
+@media (max-width: 768px) {
+  .navbar__mobile-menu {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+}

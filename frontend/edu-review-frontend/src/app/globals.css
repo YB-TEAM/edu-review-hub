@@ -1,6 +1,26 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply text-gray-900 antialiased;
+  }
+}
+
+@layer components {
+  .section-heading {
+    @apply text-3xl font-bold tracking-tight sm:text-4xl;
+  }
+
+  .section-description {
+    @apply mt-4 text-lg text-gray-600;
+  }
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
