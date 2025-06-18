@@ -1,0 +1,306 @@
+.navbar {
+  // Ensure navbar is always above everything and always visible
+  z-index: 100 !important;
+  // Remove any transform or opacity that could hide the navbar
+  transform: translateY(0) !important;
+  opacity: 1 !important;
+
+  // Base navbar styles
+  &--glass {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  // Add styles for transparent state
+  &--transparent {
+    // Add text shadow for better readability on dark backgrounds
+    .navbar__nav-link {
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  &--scrolled {
+    // Remove text shadow when scrolled (white background)
+    .navbar__nav-link {
+      text-shadow: none;
+    }
+  }
+
+  // Logo styles
+  &__logo {
+    &--pulse {
+      animation: logoPulse 2s ease-in-out infinite;
+    }
+  }
+
+  // Navigation link styles
+  &__nav-link {
+    position: relative;
+
+    &--ripple {
+      overflow: hidden;
+
+      &::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(59, 130, 246, 0.2);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.3s ease, height 0.3s ease;
+      }
+
+      &:hover::before {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    &--active {
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, #3b82f6, #f97316);
+        border-radius: 1px;
+      }
+    }
+  }
+
+  // Enhanced Login Button Styles
+  &__login-btn {
+    position: relative;
+    border-radius: 8px;
+    padding: 8px 16px;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 8px;
+      padding: 1px;
+      background: linear-gradient(
+        135deg,
+        transparent,
+        rgba(59, 130, 246, 0.3),
+        rgba(249, 115, 22, 0.3)
+      );
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: xor;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    &:hover::before {
+      opacity: 1;
+    }
+
+    // Ripple effect on click
+    &::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: radial-gradient(
+        circle,
+        rgba(59, 130, 246, 0.3) 0%,
+        transparent 70%
+      );
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.4s ease, height 0.4s ease;
+      pointer-events: none;
+    }
+
+    &:active::after {
+      width: 200px;
+      height: 200px;
+    }
+  }
+
+  // Enhanced CTA button styles
+  // Enhanced CTA button styles
+  &__cta-button {
+    position: relative;
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    // Gradient border effect
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 8px;
+      padding: 2px;
+      background: linear-gradient(135deg, #3b82f6, #f97316, #3b82f6);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: xor;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    &:hover::before {
+      opacity: 1;
+    }
+
+    // Shimmer effect
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.4),
+        transparent
+      );
+      transition: left 0.5s ease;
+      border-radius: 8px;
+    }
+
+    &:hover::after {
+      left: 100%;
+    }
+
+    // Different styles based on navbar state
+    .navbar--scrolled & {
+      background: linear-gradient(135deg, #3b82f6 0%, #f97316 100%);
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3),
+        0 2px 8px rgba(249, 115, 22, 0.2);
+
+      &:hover {
+        background: linear-gradient(135deg, #2563eb 0%, #ea580c 100%);
+        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4),
+          0 4px 12px rgba(249, 115, 22, 0.3);
+        transform: translateY(-2px) scale(1.05);
+      }
+
+      &:active {
+        transform: translateY(0) scale(1.02);
+      }
+    }
+
+    .navbar--transparent & {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05);
+
+      &:hover {
+        background: rgba(255, 255, 255, 1);
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15),
+          0 4px 12px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px) scale(1.05);
+      }
+
+      &:active {
+        transform: translateY(0) scale(1.02);
+      }
+    }
+
+    // Pulse animation for extra attention
+    animation: ctaPulse 3s ease-in-out infinite;
+  }
+
+  // Hamburger menu styles
+  &__hamburger {
+    .line {
+      transition: all 0.3s ease;
+      transform-origin: center;
+    }
+
+    &--open {
+      .line {
+        &:nth-child(1) {
+          transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        &:nth-child(2) {
+          opacity: 0;
+        }
+
+        &:nth-child(3) {
+          transform: rotate(-45deg) translate(7px, -6px);
+        }
+      }
+    }
+  }
+
+  // Mobile menu styles
+  &__mobile-menu {
+    transform: translateY(-100%);
+    opacity: 0;
+    transition: all 0.3s ease;
+
+    &--enter-active {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+}
+
+// Keyframe animations
+@keyframes logoPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes ctaPulse {
+  0%,
+  100% {
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3),
+      0 2px 8px rgba(249, 115, 22, 0.2);
+  }
+  50% {
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4),
+      0 4px 12px rgba(249, 115, 22, 0.3);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 1024px) {
+  .navbar {
+    &__nav-link {
+      &--ripple::before {
+        display: none; // Disable ripple on smaller screens for performance
+      }
+    }
+
+    &__cta-button {
+      // Reduce animations on mobile for better performance
+      &::after {
+        display: none;
+      }
+
+      animation: none;
+    }
+  }
+}
+
+// Additional utility classes for better text visibility
+.drop-shadow-lg {
+  filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04))
+    drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
+}
+
+.drop-shadow-md {
+  filter: drop-shadow(0 4px 3px rgb(0 0 0 / 0.07))
+    drop-shadow(0 2px 2px rgb(0 0 0 / 0.06));
+}

@@ -14,16 +14,52 @@
     transform: translate(-50%, -50%);
 
     // Smooth transitions
-    transition: filter 0.5s ease;
+    transition: filter 0.5s ease, opacity 0.3s ease;
 
-    // Reverse effect styling
-    &--reversing {
-      filter: hue-rotate(15deg) brightness(0.9) contrast(1.1);
+    // Finished state styling
+    &--finished {
+      filter: brightness(0.95) contrast(1.1);
     }
 
     @media (max-width: 768px) {
       // Mobile optimization
       object-position: center center;
+    }
+  }
+
+  // Scroll-based overlay that darkens EVERYTHING (video + content)
+  &__scroll-overlay {
+    background: rgba(0, 0, 0, calc(var(--scroll-progress) * 0.8));
+    transition: background 0.1s ease-out;
+    pointer-events: none;
+    z-index: 20; // Above content but below debug/buttons
+  }
+
+  // Alternative gradient overlay for more dramatic effect
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, calc(var(--scroll-progress) * 0.3)) 0%,
+      rgba(0, 0, 0, calc(var(--scroll-progress) * 0.6)) 100%
+    );
+    transition: all 0.2s ease-out;
+    pointer-events: none;
+    z-index: 15; // Above video, below content
+  }
+
+  // Apply scroll-based filter to video for additional darkening
+  &[style*="--scroll-progress"] {
+    .video-background__video {
+      filter: brightness(calc(1 - var(--scroll-progress) * 0.4))
+        contrast(calc(1 + var(--scroll-progress) * 0.1))
+        saturate(calc(1 - var(--scroll-progress) * 0.2));
+      transition: filter 0.2s ease-out;
     }
   }
 
@@ -63,13 +99,28 @@
 @media (prefers-reduced-motion: reduce) {
   .video-background {
     &__video {
-      &--reversing {
+      &--finished {
         filter: none;
       }
     }
 
     &__loader::before {
       animation: none;
+    }
+
+    // Disable scroll effects for users who prefer reduced motion
+    &__scroll-overlay {
+      background: transparent !important;
+    }
+
+    &::before {
+      background: transparent !important;
+    }
+
+    &[style*="--scroll-progress"] {
+      .video-background__video {
+        filter: none !important;
+      }
     }
   }
 }

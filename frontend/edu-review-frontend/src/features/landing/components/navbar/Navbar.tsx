@@ -8,7 +8,7 @@ import { NAV_ITEMS } from "@/features/landing/types/navbar.type";
 import { Button } from "@/components/ui/button";
 
 export function Navbar() {
-  const { isScrolled, isVisible } = useNavbar();
+  const { isScrolled } = useNavbar(); // Remove isVisible since we don't want it to hide
   const { isMobileMenuOpen, toggleMobileMenu, closeMobileMenu } =
     useMobileMenu();
 
@@ -28,33 +28,38 @@ export function Navbar() {
     <>
       <nav
         className={cn(
-          // Base styles
+          // Base styles - Always sticky and always visible
           "navbar fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-          // Conditional styles
+          // Conditional styles - Only add background when scrolled
           {
-            "navbar--glass": isScrolled,
-            "navbar--visible": isVisible,
-            "navbar--hidden": !isVisible,
-            "bg-white/95 shadow-sm": isScrolled,
-            "bg-transparent": !isScrolled,
+            "navbar--glass bg-white/95 shadow-sm navbar--scrolled": isScrolled,
+            // Always visible - remove visibility conditions
+            // "navbar--visible": isVisible,
+            // "navbar--hidden": !isVisible,
+            // No background when at top
+            "bg-transparent navbar--transparent": !isScrolled,
           }
         )}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
-            <NavbarLogo />
+            <NavbarLogo isScrolled={isScrolled} />
 
             {/* Desktop Navigation */}
-            <DesktopNavigation onNavClick={handleNavClick} />
+            <DesktopNavigation
+              onNavClick={handleNavClick}
+              isScrolled={isScrolled}
+            />
 
             {/* Desktop CTA Buttons */}
-            <DesktopCTAButtons />
+            <DesktopCTAButtons isScrolled={isScrolled} />
 
             {/* Mobile Hamburger Button */}
             <HamburgerButton
               isOpen={isMobileMenuOpen}
               onClick={toggleMobileMenu}
+              isScrolled={isScrolled}
             />
           </div>
         </div>
@@ -62,15 +67,12 @@ export function Navbar() {
         {/* Mobile Menu */}
         <MobileMenu isOpen={isMobileMenuOpen} onNavClick={handleNavClick} />
       </nav>
-
-      {/* Spacer */}
-      <div className="h-16 lg:h-20"></div>
     </>
   );
 }
 
 // Sub-components for better organization
-function NavbarLogo() {
+function NavbarLogo({ isScrolled }: { isScrolled: boolean }) {
   return (
     <Link
       href="/"
@@ -79,7 +81,18 @@ function NavbarLogo() {
       <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-br from-blue-600 to-orange-500 rounded-lg flex items-center justify-center">
         <span className="text-white font-bold text-lg lg:text-xl">E</span>
       </div>
-      <span className="font-bold text-xl lg:text-2xl bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-transparent">
+      <span
+        className={cn(
+          "font-bold text-xl lg:text-2xl bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-transparent transition-all duration-300",
+          {
+            // When scrolled, keep gradient text
+            "bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-transparent":
+              isScrolled,
+            // When transparent, use white text with shadow for better visibility
+            "text-white drop-shadow-lg": !isScrolled,
+          }
+        )}
+      >
         EduReview
       </span>
     </Link>
@@ -88,8 +101,10 @@ function NavbarLogo() {
 
 function DesktopNavigation({
   onNavClick,
+  isScrolled,
 }: {
   onNavClick: (href: string) => void;
+  isScrolled: boolean;
 }) {
   return (
     <div className="hidden lg:flex items-center space-x-8">
@@ -99,10 +114,17 @@ function DesktopNavigation({
           href={item.href}
           onClick={() => onNavClick(item.href)}
           className={cn(
-            "navbar__nav-link navbar__nav-link--ripple px-3 py-2 text-sm font-medium transition-colors duration-200",
+            "navbar__nav-link navbar__nav-link--ripple px-3 py-2 text-sm font-medium transition-all duration-300",
             {
-              "navbar__nav-link--active text-blue-600": item.isActive,
-              "text-gray-700 hover:text-blue-600": !item.isActive,
+              // Active state colors based on scroll state
+              "navbar__nav-link--active text-blue-600":
+                item.isActive && isScrolled,
+              "navbar__nav-link--active text-white drop-shadow-md":
+                item.isActive && !isScrolled,
+              // Normal state colors based on scroll state
+              "text-gray-700 hover:text-blue-600": !item.isActive && isScrolled,
+              "text-white/90 hover:text-white drop-shadow-md":
+                !item.isActive && !isScrolled,
             }
           )}
         >
@@ -113,14 +135,62 @@ function DesktopNavigation({
   );
 }
 
-function DesktopCTAButtons() {
+function DesktopCTAButtons({ isScrolled }: { isScrolled: boolean }) {
   return (
-    <div className="hidden lg:flex items-center space-x-4">
-      <Button variant="ghost" size="sm">
-        Đăng nhập
+    <div className="hidden lg:flex items-center space-x-3">
+      <Button
+        variant="ghost"
+        size="sm"
+        className={cn(
+          "navbar__login-btn relative overflow-hidden font-medium transition-all duration-300 hover:scale-105",
+          {
+            // When scrolled (white background)
+            "text-gray-700 hover:text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200":
+              isScrolled,
+            // When transparent (dark background)
+            "text-white hover:text-white border border-white/30 hover:border-white hover:bg-white/10 backdrop-blur-sm":
+              !isScrolled,
+          }
+        )}
+      >
+        <span className="relative z-10">Đăng nhập</span>
       </Button>
-      <Button size="sm" className="navbar__cta-button navbar__cta-button--glow">
-        Bắt đầu ngay
+
+      <Button
+        size="sm"
+        className={cn(
+          "navbar__cta-button relative overflow-hidden font-semibold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl",
+          {
+            // When scrolled - gradient background
+            "bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600 text-white":
+              isScrolled,
+            // When transparent - white background with gradient text
+            "bg-white hover:bg-gray-50 text-transparent bg-clip-text":
+              !isScrolled,
+          }
+        )}
+      >
+        <span
+          className={cn("relative z-10 transition-all duration-300", {
+            "text-white": isScrolled,
+            "bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-transparent font-bold":
+              !isScrolled,
+          })}
+        >
+          Bắt đầu ngay
+        </span>
+        {/* Animated background effect */}
+        <div
+          className={cn(
+            "absolute inset-0 opacity-0 transition-opacity duration-300",
+            {
+              "bg-gradient-to-r from-blue-700 to-orange-600 group-hover:opacity-100":
+                isScrolled,
+              "bg-gradient-to-r from-blue-50 to-orange-50 hover:opacity-100":
+                !isScrolled,
+            }
+          )}
+        />
       </Button>
     </div>
   );
@@ -129,17 +199,23 @@ function DesktopCTAButtons() {
 function HamburgerButton({
   isOpen,
   onClick,
+  isScrolled,
 }: {
   isOpen: boolean;
   onClick: () => void;
+  isScrolled: boolean;
 }) {
   return (
     <button
       onClick={onClick}
       className={cn(
-        "navbar__hamburger lg:hidden p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 transition-colors duration-200",
+        "navbar__hamburger lg:hidden p-2 rounded-md transition-all duration-300",
         {
           "navbar__hamburger--open": isOpen,
+          // Colors based on scroll state
+          "text-gray-700 hover:text-blue-600 hover:bg-gray-100": isScrolled,
+          "text-white hover:text-white hover:bg-white/10 drop-shadow-md":
+            !isScrolled,
         }
       )}
       aria-label="Toggle mobile menu"
@@ -193,14 +269,19 @@ function MobileMenu({
 
           {/* Mobile CTA Buttons */}
           <div className="pt-4 space-y-3 border-t border-gray-200">
-            <Button variant="outline" className="w-full justify-center">
-              Đăng nhập
+            <Button
+              variant="outline"
+              className="w-full justify-center relative overflow-hidden border-2 border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-300 hover:scale-105"
+            >
+              <span className="relative z-10 font-medium">Đăng nhập</span>
             </Button>
             <Button
               variant="default"
-              className="w-full justify-center navbar__cta-button"
+              className="w-full justify-center relative overflow-hidden bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-semibold"
             >
-              Bắt đầu ngay
+              <span className="relative z-10">Bắt đầu ngay</span>
+              {/* Shimmer effect for mobile too */}
+              <div className="absolute top-0 left-[-100%] w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-all duration-500 hover:left-[100%]" />
             </Button>
           </div>
 
@@ -210,7 +291,7 @@ function MobileMenu({
               Cần hỗ trợ?
               <Link
                 href="#contact"
-                className="text-blue-600 hover:underline ml-1"
+                className="text-blue-600 hover:underline ml-1 font-medium"
               >
                 Liên hệ với chúng tôi
               </Link>
