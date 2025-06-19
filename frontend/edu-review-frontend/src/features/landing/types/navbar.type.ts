@@ -9,9 +9,19 @@ export interface NavItem {
 export const NAV_ITEMS: NavItem[] = [
   {
     label: "Trang chủ",
-    href: "/",
+    href: "#home",
     isActive: true,
     icon: "home",
+  },
+  {
+    label: "Vấn đề",
+    href: "#problem",
+    icon: "problem",
+  },
+  {
+    label: "Giải pháp",
+    href: "#solution",
+    icon: "solution",
   },
   {
     label: "Tính năng",
@@ -19,20 +29,10 @@ export const NAV_ITEMS: NavItem[] = [
     icon: "features",
   },
   {
-    label: "Cách hoạt động",
-    href: "#how-it-works",
-    icon: "workflow",
-  },
-  {
     label: "Đánh giá",
     href: "#reviews",
     badge: "Mới",
     icon: "star",
-  },
-  {
-    label: "Blog",
-    href: "/blog",
-    icon: "blog",
   },
   {
     label: "Liên hệ",

@@ -1,0 +1,358 @@
+.reviews-section {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #312e81 100%);
+
+  // Enhanced background pattern
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(
+        circle at 20% 80%,
+        rgba(249, 115, 22, 0.1) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 80% 20%,
+        rgba(239, 68, 68, 0.1) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 40% 40%,
+        rgba(59, 130, 246, 0.08) 0%,
+        transparent 50%
+      );
+    pointer-events: none;
+  }
+
+  // Animated background shapes
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: linear-gradient(
+      45deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.02) 50%,
+      transparent 70%
+    );
+    animation: shimmer 8s ease-in-out infinite;
+    pointer-events: none;
+  }
+}
+
+.reviews-carousel {
+  position: relative;
+
+  // Enhanced navigation dots container
+  .flex.justify-center {
+    button {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+      &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+    }
+  }
+}
+
+.review-card {
+  transform: translateY(30px);
+  opacity: 0;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  &--visible {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  &:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(255, 255, 255, 0.3), 0 0 30px rgba(59, 130, 246, 0.2);
+    background: rgba(255, 255, 255, 0.98);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
+  // Staggered animation
+  @for $i from 1 through 3 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 100}ms;
+    }
+  }
+
+  // Line clamp utility
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+// Stats cards enhancement
+.reviews-section .grid > div {
+  transform: translateY(20px);
+  opacity: 0;
+  animation: slideInUp 0.6s ease-out forwards;
+  position: relative;
+
+  // Glow effect
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(
+      45deg,
+      rgba(59, 130, 246, 0.3),
+      rgba(249, 115, 22, 0.3)
+    );
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+
+  @for $i from 1 through 4 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 100}ms;
+    }
+  }
+}
+
+// CTA section enhancement
+.reviews-section .bg-gradient-to-r {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+    transition: left 0.8s ease;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
+
+  button {
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+      );
+      transition: left 0.5s ease;
+    }
+
+    &:hover::after {
+      left: 100%;
+    }
+  }
+}
+
+// Keyframe animations
+@keyframes slideInUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0%,
+  100% {
+    transform: translateX(-100%) rotate(45deg);
+  }
+  50% {
+    transform: translateX(100%) rotate(45deg);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+// Floating background elements
+.reviews-section .absolute.inset-0 > div {
+  animation: float 6s ease-in-out infinite;
+
+  &:nth-child(1) {
+    animation-delay: 0s;
+  }
+
+  &:nth-child(2) {
+    animation-delay: 2s;
+  }
+
+  &:nth-child(3) {
+    animation-delay: 4s;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 1024px) {
+  .reviews-carousel {
+    .carousel-nav {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .reviews-section {
+    padding: 3rem 0;
+
+    // Simplify background on mobile
+    &::after {
+      display: none;
+    }
+  }
+
+  .review-card {
+    &:hover {
+      transform: translateY(-4px) scale(1.01);
+    }
+
+    // Better mobile background
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+  }
+
+  // Floating elements - reduce on mobile for performance
+  .reviews-section .absolute.inset-0 > div {
+    &:nth-child(n + 2) {
+      display: none;
+    }
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .review-card {
+    transform: none;
+    opacity: 1;
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
+
+    &--visible {
+      transform: none;
+    }
+
+    &:hover {
+      transform: none;
+    }
+  }
+
+  .reviews-section {
+    &::after {
+      animation: none;
+    }
+
+    .grid > div {
+      transform: none;
+      opacity: 1;
+      animation: none;
+    }
+  }
+
+  .reviews-section .absolute.inset-0 > div {
+    animation: none;
+  }
+}
+
+// High contrast mode
+@media (prefers-contrast: high) {
+  .reviews-section {
+    background: #000;
+
+    &::before,
+    &::after {
+      display: none;
+    }
+  }
+
+  .review-card {
+    background: #fff;
+    border: 2px solid #000;
+
+    &:hover {
+      border-color: #0066cc;
+      background: #f8f9fa;
+    }
+  }
+}
+
+// Dark mode enhancements
+@media (prefers-color-scheme: dark) {
+  .reviews-section {
+    background: linear-gradient(135deg, #000000 0%, #1a1a2e 50%, #16213e 100%);
+  }
+}
+
+// Print styles
+@media print {
+  .reviews-section {
+    background: white !important;
+    color: black !important;
+
+    &::before,
+    &::after {
+      display: none !important;
+    }
+
+    .absolute {
+      display: none !important;
+    }
+  }
+
+  .review-card {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+}

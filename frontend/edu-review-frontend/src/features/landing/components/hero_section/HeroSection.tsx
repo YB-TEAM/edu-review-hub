@@ -7,12 +7,77 @@ import "./hero_section.scss";
 
 export function HeroSection() {
   const [isVisible, setIsVisible] = useState(false);
+  const [showScrollIndicator, setShowScrollIndicator] = useState(true);
 
   useEffect(() => {
     // Trigger animation after component mounts
     const timer = setTimeout(() => setIsVisible(true), 500);
     return () => clearTimeout(timer);
   }, []);
+
+  // Hide scroll indicator when user scrolls past hero section
+  useEffect(() => {
+    const handleScroll = () => {
+      const heroSection = document.getElementById("home");
+      if (heroSection) {
+        const heroRect = heroSection.getBoundingClientRect();
+        const heroBottom = heroRect.bottom;
+
+        // Hide scroll indicator when hero section is mostly out of view
+        if (heroBottom <= window.innerHeight * 0.3) {
+          setShowScrollIndicator(false);
+        } else {
+          setShowScrollIndicator(true);
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll(); // Initial call
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleScrollToNext = () => {
+    const problemSection = document.getElementById("problem");
+    if (problemSection) {
+      const navbarHeight = 80;
+      const elementPosition = problemSection.offsetTop - navbarHeight;
+
+      window.scrollTo({
+        top: elementPosition,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const handleStartTest = () => {
+    // Navigate to solution section or test page
+    const solutionSection = document.getElementById("solution");
+    if (solutionSection) {
+      const navbarHeight = 80;
+      const elementPosition = solutionSection.offsetTop - navbarHeight;
+
+      window.scrollTo({
+        top: elementPosition,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const handleExploreSchools = () => {
+    // Navigate to features section or schools page
+    const featuresSection = document.getElementById("features");
+    if (featuresSection) {
+      const navbarHeight = 80;
+      const elementPosition = featuresSection.offsetTop - navbarHeight;
+
+      window.scrollTo({
+        top: elementPosition,
+        behavior: "smooth",
+      });
+    }
+  };
 
   return (
     <div className="flex items-center justify-center h-full px-4 sm:px-6 lg:px-8">
@@ -45,10 +110,12 @@ export function HeroSection() {
         >
           Đánh giá thật từ sinh viên thật - Gợi ý thông minh dựa trên tính cách
           <br />
-          <span className="text-blue-300">Hoàn toàn miễn phí</span>
+          <span className="text-blue-300 font-semibold">
+            Hoàn toàn miễn phí
+          </span>
         </p>
 
-        {/* CTA Buttons */}
+        {/* Enhanced CTA Buttons */}
         <div
           className={cn(
             "flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 transition-all duration-1000 delay-500 transform",
@@ -61,21 +128,25 @@ export function HeroSection() {
           <Button
             size="lg"
             variant="default"
-            className="hero-cta-primary w-full sm:w-auto px-8 py-4 text-lg font-semibold"
+            onClick={handleStartTest}
+            className="hero-cta-primary w-full sm:w-auto px-8 py-4 text-lg font-semibold text-white border-0"
           >
-            🎯 Làm bài test ngay
+            <span className="hero-cta-icon">🎯</span>
+            Làm bài test ngay
           </Button>
 
           <Button
             size="lg"
             variant="outline"
-            className="hero-cta-secondary w-full sm:w-auto px-8 py-4 text-lg font-semibold bg-white/10 border-white/30 text-white hover:bg-white/20 backdrop-blur-sm"
+            onClick={handleExploreSchools}
+            className="hero-cta-secondary w-full sm:w-auto px-8 py-4 text-lg font-semibold text-white border-0"
           >
-            📚 Khám phá trường
+            <span className="hero-cta-icon">📚</span>
+            Khám phá trường
           </Button>
         </div>
 
-        {/* Stats */}
+        {/* Enhanced Stats */}
         <div
           className={cn(
             "mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 transition-all duration-1000 delay-700 transform",
@@ -85,43 +156,49 @@ export function HeroSection() {
             }
           )}
         >
-          <div className="text-center">
-            <div className="text-2xl sm:text-3xl font-bold text-white mb-2">
+          <div className="text-center group">
+            <div className="text-2xl sm:text-3xl font-bold text-white mb-2 group-hover:scale-110 transition-transform duration-300">
               10K+
             </div>
-            <div className="text-gray-300">Sinh viên tin tưởng</div>
+            <div className="text-gray-300 group-hover:text-white transition-colors duration-300">
+              Sinh viên tin tưởng
+            </div>
           </div>
-          <div className="text-center">
-            <div className="text-2xl sm:text-3xl font-bold text-white mb-2">
+          <div className="text-center group">
+            <div className="text-2xl sm:text-3xl font-bold text-white mb-2 group-hover:scale-110 transition-transform duration-300">
               500+
             </div>
-            <div className="text-gray-300">Trường đại học</div>
+            <div className="text-gray-300 group-hover:text-white transition-colors duration-300">
+              Trường đại học
+            </div>
           </div>
-          <div className="text-center">
-            <div className="text-2xl sm:text-3xl font-bold text-white mb-2">
+          <div className="text-center group">
+            <div className="text-2xl sm:text-3xl font-bold text-white mb-2 group-hover:scale-110 transition-transform duration-300">
               95%
             </div>
-            <div className="text-gray-300">Độ chính xác gợi ý</div>
+            <div className="text-gray-300 group-hover:text-white transition-colors duration-300">
+              Độ chính xác gợi ý
+            </div>
           </div>
         </div>
 
-        {/* Scroll Indicator */}
-        <div
-          className={cn(
-            "absolute bottom-8 left-1/2 transform -translate-x-1/2 transition-all duration-1000 delay-1000",
-            {
+        {/* Enhanced Scroll Indicator - Only show when in hero section */}
+        {showScrollIndicator && (
+          <div
+            className={cn("hero-scroll-indicator transition-all duration-500", {
               "translate-y-0 opacity-100": isVisible,
               "translate-y-10 opacity-0": !isVisible,
-            }
-          )}
-        >
-          <div className="hero-scroll-indicator flex flex-col items-center text-white/70 hover:text-white transition-colors cursor-pointer">
-            <span className="text-sm mb-2">Cuộn xuống</span>
-            <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
-              <div className="w-1 h-3 bg-white/50 rounded-full mt-2 animate-bounce"></div>
+            })}
+            onClick={handleScrollToNext}
+          >
+            <div className="flex flex-col items-center text-white/70 hover:text-white transition-colors cursor-pointer">
+              <span className="scroll-text hidden sm:block">
+                Cuộn xuống để khám phá
+              </span>
+              <div className="scroll-mouse"></div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
