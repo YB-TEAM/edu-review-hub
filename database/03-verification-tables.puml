@@ -1,0 +1,58 @@
+@startuml Password & Email Verification
+
+!theme plain
+skinparam linetype ortho
+skinparam backgroundColor #FFFFFF
+skinparam classBackgroundColor #F8F9FA
+skinparam classBorderColor #DEE2E6
+
+entity "users" as users {
+  * **id** : BIGINT <<PK>>
+  --
+  * email : VARCHAR(255)
+}
+
+entity "email_verifications" as email_verify {
+  * **id** : BIGINT <<PK>>
+  --
+  * user_id : BIGINT <<FK>>
+  * email : VARCHAR(255)
+  * token : VARCHAR(255) <<UK>>
+  type : ENUM('registration','email_change') DEFAULT 'registration'
+  * expires_at : TIMESTAMP
+  verified_at : TIMESTAMP
+  attempts : INT DEFAULT 0
+  * created_at : TIMESTAMP
+}
+
+entity "password_resets" as pwd_reset {
+  * **id** : BIGINT <<PK>>
+  --
+  * email : VARCHAR(255)
+  * token : VARCHAR(255) <<UK>>
+  * expires_at : TIMESTAMP
+  used_at : TIMESTAMP
+  ip_address : VARCHAR(45)
+  user_agent : TEXT
+  * created_at : TIMESTAMP
+}
+
+entity "user_verification" as user_verify {
+  * **id** : BIGINT <<PK>>
+  --
+  * user_id : BIGINT <<FK>>
+  * verification_type : ENUM('student_id','university_email','document')
+  * verification_data : JSON
+  status : ENUM('pending','approved','rejected','expired') DEFAULT 'pending'
+  * submitted_at : TIMESTAMP
+  reviewed_at : TIMESTAMP
+  reviewed_by : BIGINT
+  rejection_reason : TEXT
+  expires_at : TIMESTAMP
+}
+
+users ||--o{ email_verify : "verifies email"
+users ||--o{ user_verify : "student verification"
+users ||--o{ pwd_reset : "resets password"
+
+@enduml
