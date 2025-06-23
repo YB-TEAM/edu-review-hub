@@ -1,0 +1,76 @@
+@startuml Core User Management Tables
+
+!theme plain
+skinparam linetype ortho
+skinparam backgroundColor #FFFFFF
+skinparam classBackgroundColor #F8F9FA
+skinparam classBorderColor #DEE2E6
+
+entity "users" as users {
+  * **id** : BIGINT <<PK>>
+  --
+  * username : VARCHAR(50) <<UK>>
+  * email : VARCHAR(255) <<UK>>
+  * email_verified_at : TIMESTAMP
+  * password_hash : VARCHAR(255)
+  phone : VARCHAR(20)
+  phone_verified_at : TIMESTAMP
+  * status : ENUM('active','inactive','suspended','banned','deleted')
+  * account_type : ENUM('student','university_rep','admin','moderator')
+  is_verified : BOOLEAN DEFAULT FALSE
+  last_login_at : TIMESTAMP
+  last_activity_at : TIMESTAMP
+  failed_login_attempts : INT DEFAULT 0
+  locked_until : TIMESTAMP
+  * created_at : TIMESTAMP
+  * updated_at : TIMESTAMP
+  deleted_at : TIMESTAMP
+}
+
+entity "user_profiles" as profiles {
+  * **id** : BIGINT <<PK>>
+  --
+  * user_id : BIGINT <<FK>>
+  first_name : VARCHAR(100)
+  last_name : VARCHAR(100)
+  display_name : VARCHAR(150)
+  avatar_url : VARCHAR(500)
+  cover_image_url : VARCHAR(500)
+  bio : TEXT
+  date_of_birth : DATE
+  gender : ENUM('male','female','other','prefer_not_to_say')
+  country : VARCHAR(100)
+  city : VARCHAR(100)
+  address : TEXT
+  timezone : VARCHAR(50) DEFAULT 'UTC'
+  language : VARCHAR(10) DEFAULT 'vi'
+  university_name : VARCHAR(255)
+  major : VARCHAR(255)
+  graduation_year : YEAR
+  student_id : VARCHAR(50)
+  is_student_verified : BOOLEAN DEFAULT FALSE
+  privacy_settings : JSON
+  notification_settings : JSON
+  * created_at : TIMESTAMP
+  * updated_at : TIMESTAMP
+}
+
+entity "user_security" as security {
+  * **id** : BIGINT <<PK>>
+  --
+  * user_id : BIGINT <<FK>>
+  password_changed_at : TIMESTAMP
+  require_password_change : BOOLEAN DEFAULT FALSE
+  login_notifications : BOOLEAN DEFAULT TRUE
+  suspicious_activity_alerts : BOOLEAN DEFAULT TRUE
+  allowed_ip_addresses : JSON
+  blocked_ip_addresses : JSON
+  security_questions : JSON
+  * created_at : TIMESTAMP
+  * updated_at : TIMESTAMP
+}
+
+users ||--|| profiles : "has profile"
+users ||--|| security : "has security settings"
+
+@enduml

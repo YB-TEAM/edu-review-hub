@@ -1,0 +1,262 @@
+.features-section {
+  position: relative;
+  overflow: hidden;
+
+  // Background pattern - lighter
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(
+        circle at 25% 25%,
+        rgba(59, 130, 246, 0.03) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 75% 75%,
+        rgba(249, 115, 22, 0.03) 0%,
+        transparent 50%
+      );
+    pointer-events: none;
+  }
+}
+
+.feature-card {
+  transform: translateY(50px);
+  opacity: 0;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // Better default state
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+
+  &--visible {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  &--active {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15),
+      0 0 0 1px rgba(59, 130, 246, 0.1);
+  }
+
+  // Enhanced hover state
+  &:hover {
+    // Subtle background change instead of gradient overlay
+    background: rgba(255, 255, 255, 1);
+
+    // Better shadow
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1),
+      0 0 0 1px rgba(59, 130, 246, 0.1);
+
+    // Slight lift
+    transform: translateY(-6px) scale(1.01);
+  }
+
+  &__icon {
+    position: relative;
+
+    // Glow effect for icon
+    &::before {
+      content: "";
+      position: absolute;
+      inset: -4px;
+      background: inherit;
+      border-radius: inherit;
+      opacity: 0;
+      filter: blur(8px);
+      transition: all 0.3s ease;
+      z-index: -1;
+    }
+
+    &:hover::before {
+      opacity: 0.3;
+      filter: blur(12px);
+    }
+  }
+
+  // Better text contrast
+  h3 {
+    color: #1f2937;
+    font-weight: 700;
+
+    &:hover {
+      color: #111827;
+    }
+  }
+
+  p {
+    color: #4b5563;
+
+    &:hover {
+      color: #374151;
+    }
+  }
+
+  li {
+    color: #6b7280;
+
+    &:hover {
+      color: #4b5563;
+    }
+  }
+
+  // Staggered animation
+  @for $i from 1 through 6 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 100}ms;
+    }
+  }
+}
+
+// Enhanced CTA section
+.features-section .bg-gradient-to-r {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+    transition: left 0.6s ease;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
+
+  button {
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+      );
+      transition: left 0.5s ease;
+    }
+
+    &:hover::after {
+      left: 100%;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .features-section {
+    padding: 4rem 0;
+  }
+
+  .feature-card {
+    &--active,
+    &:hover {
+      transform: translateY(-4px) scale(1.01);
+    }
+
+    // Ensure good contrast on mobile
+    background: rgba(255, 255, 255, 0.98);
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .feature-card {
+    transform: none;
+    opacity: 1;
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
+
+    &--visible {
+      transform: none;
+    }
+
+    &--active,
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
+// High contrast mode
+@media (prefers-contrast: high) {
+  .feature-card {
+    background: #fff;
+    border: 2px solid #000;
+
+    &:hover {
+      border-color: #0066cc;
+      background: #f8f9fa;
+    }
+
+    h3 {
+      color: #000;
+    }
+
+    p {
+      color: #333;
+    }
+
+    li {
+      color: #555;
+    }
+  }
+}
+
+// Dark mode support (if needed)
+@media (prefers-color-scheme: dark) {
+  .feature-card {
+    background: rgba(31, 41, 55, 0.95);
+    border-color: rgba(75, 85, 99, 0.3);
+
+    &:hover {
+      background: rgba(31, 41, 55, 1);
+      border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    h3 {
+      color: #f9fafb;
+
+      &:hover {
+        color: #ffffff;
+      }
+    }
+
+    p {
+      color: #d1d5db;
+
+      &:hover {
+        color: #e5e7eb;
+      }
+    }
+
+    li {
+      color: #9ca3af;
+
+      &:hover {
+        color: #d1d5db;
+      }
+    }
+  }
+}

@@ -1,0 +1,73 @@
+@startuml Role Based Access Control System
+
+!theme plain
+skinparam linetype ortho
+skinparam backgroundColor #FFFFFF
+skinparam classBackgroundColor #F8F9FA
+skinparam classBorderColor #DEE2E6
+
+entity "users" as users {
+  * **id** : BIGINT <<PK>>
+  --
+  * username : VARCHAR(50)
+  * email : VARCHAR(255)
+}
+
+entity "roles" as roles {
+  * **id** : BIGINT <<PK>>
+  --
+  * name : VARCHAR(50) <<UK>>
+  * display_name : VARCHAR(100)
+  description : TEXT
+  is_system_role : BOOLEAN DEFAULT FALSE
+  is_active : BOOLEAN DEFAULT TRUE
+  priority : INT DEFAULT 0
+  * created_at : TIMESTAMP
+  * updated_at : TIMESTAMP
+}
+
+entity "permissions" as permissions {
+  * **id** : BIGINT <<PK>>
+  --
+  * name : VARCHAR(100) <<UK>>
+  * display_name : VARCHAR(150)
+  description : TEXT
+  * resource : VARCHAR(100)
+  * action : VARCHAR(50)
+  * http_method : ENUM('GET','POST','PUT','PATCH','DELETE','ALL')
+  * endpoint_pattern : VARCHAR(255)
+  category : VARCHAR(50)
+  is_system_permission : BOOLEAN DEFAULT FALSE
+  is_active : BOOLEAN DEFAULT TRUE
+  * created_at : TIMESTAMP
+  * updated_at : TIMESTAMP
+}
+
+entity "user_roles" as user_roles {
+  * **id** : BIGINT <<PK>>
+  --
+  * user_id : BIGINT <<FK>>
+  * role_id : BIGINT <<FK>>
+  assigned_by : BIGINT
+  * assigned_at : TIMESTAMP
+  expires_at : TIMESTAMP
+  is_active : BOOLEAN DEFAULT TRUE
+}
+
+entity "role_permissions" as role_perms {
+  * **id** : BIGINT <<PK>>
+  --
+  * role_id : BIGINT <<FK>>
+  * permission_id : BIGINT <<FK>>
+  granted_by : BIGINT
+  * granted_at : TIMESTAMP
+  expires_at : TIMESTAMP
+  is_active : BOOLEAN DEFAULT TRUE
+}
+
+users ||--o{ user_roles
+roles ||--o{ user_roles
+roles ||--o{ role_perms
+permissions ||--o{ role_perms
+
+@enduml

@@ -1,0 +1,272 @@
+@startuml User Management Database Schema
+
+!define TABLE(name,desc) class name as "desc" << (T,#FFAAAA) >>
+!define PRIMARY_KEY(x) <u>x</u>
+!define FOREIGN_KEY(x) <i>x</i>
+
+' User Management Tables
+TABLE(users, "users\n(Bảng người dùng chính)")
+TABLE(user_profiles, "user_profiles\n(Hồ sơ người dùng)")
+TABLE(user_sessions, "user_sessions\n(Phiên đăng nhập)")
+TABLE(user_devices, "user_devices\n(Thiết bị người dùng)")
+TABLE(user_verification, "user_verification\n(Xác thực người dùng)")
+TABLE(user_security, "user_security\n(Bảo mật người dùng)")
+
+' Role & Permission Tables
+TABLE(roles, "roles\n(Vai trò)")
+TABLE(permissions, "permissions\n(Quyền hạn)")
+TABLE(role_permissions, "role_permissions\n(Quyền của vai trò)")
+TABLE(user_roles, "user_roles\n(Vai trò của người dùng)")
+
+' Authentication Tables
+TABLE(password_resets, "password_resets\n(Đặt lại mật khẩu)")
+TABLE(email_verifications, "email_verifications\n(Xác minh email)")
+TABLE(two_factor_auth, "two_factor_auth\n(Xác thực 2 yếu tố)")
+TABLE(social_logins, "social_logins\n(Đăng nhập xã hội)")
+
+' Audit & Security Tables
+TABLE(user_activities, "user_activities\n(Hoạt động người dùng)")
+TABLE(login_attempts, "login_attempts\n(Lịch sử đăng nhập)")
+TABLE(security_logs, "security_logs\n(Nhật ký bảo mật)")
+
+' Users table - Core user information
+users : PRIMARY_KEY(id) : BIGINT
+users : username : VARCHAR(50) UNIQUE NOT NULL
+users : email : VARCHAR(255) UNIQUE NOT NULL
+users : email_verified_at : TIMESTAMP NULL
+users : password_hash : VARCHAR(255) NOT NULL
+users : phone : VARCHAR(20) NULL
+users : phone_verified_at : TIMESTAMP NULL
+users : status : ENUM('active', 'inactive', 'suspended', 'banned', 'deleted')
+users : account_type : ENUM('student', 'university_rep', 'admin', 'moderator')
+users : is_verified : BOOLEAN DEFAULT FALSE
+users : last_login_at : TIMESTAMP NULL
+users : last_activity_at : TIMESTAMP NULL
+users : failed_login_attempts : INT DEFAULT 0
+users : locked_until : TIMESTAMP NULL
+users : created_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+users : updated_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+users : deleted_at : TIMESTAMP NULL
+
+' User profiles - Extended user information
+user_profiles : PRIMARY_KEY(id) : BIGINT
+user_profiles : FOREIGN_KEY(user_id) : BIGINT NOT NULL
+user_profiles : first_name : VARCHAR(100) NULL
+user_profiles : last_name : VARCHAR(100) NULL
+user_profiles : display_name : VARCHAR(150) NULL
+user_profiles : avatar_url : VARCHAR(500) NULL
+user_profiles : cover_image_url : VARCHAR(500) NULL
+user_profiles : bio : TEXT NULL
+user_profiles : date_of_birth : DATE NULL
+user_profiles : gender : ENUM('male', 'female', 'other', 'prefer_not_to_say') NULL
+user_profiles : country : VARCHAR(100) NULL
+user_profiles : city : VARCHAR(100) NULL
+user_profiles : address : TEXT NULL
+user_profiles : timezone : VARCHAR(50) DEFAULT 'UTC'
+user_profiles : language : VARCHAR(10) DEFAULT 'vi'
+user_profiles : university_name : VARCHAR(255) NULL
+user_profiles : major : VARCHAR(255) NULL
+user_profiles : graduation_year : YEAR NULL
+user_profiles : student_id : VARCHAR(50) NULL
+user_profiles : is_student_verified : BOOLEAN DEFAULT FALSE
+user_profiles : privacy_settings : JSON NULL
+user_profiles : notification_settings : JSON NULL
+user_profiles : created_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+user_profiles : updated_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+
+' Roles table
+roles : PRIMARY_KEY(id) : BIGINT
+roles : name : VARCHAR(50) UNIQUE NOT NULL
+roles : display_name : VARCHAR(100) NOT NULL
+roles : description : TEXT NULL
+roles : is_system_role : BOOLEAN DEFAULT FALSE
+roles : is_active : BOOLEAN DEFAULT TRUE
+roles : priority : INT DEFAULT 0
+roles : created_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+roles : updated_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+
+' Permissions table
+permissions : PRIMARY_KEY(id) : BIGINT
+permissions : name : VARCHAR(100) UNIQUE NOT NULL
+permissions : display_name : VARCHAR(150) NOT NULL
+permissions : description : TEXT NULL
+permissions : resource : VARCHAR(100) NOT NULL
+permissions : action : VARCHAR(50) NOT NULL
+permissions : http_method : ENUM('GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'ALL')
+permissions : endpoint_pattern : VARCHAR(255) NOT NULL
+permissions : category : VARCHAR(50) NULL
+permissions : is_system_permission : BOOLEAN DEFAULT FALSE
+permissions : is_active : BOOLEAN DEFAULT TRUE
+permissions : created_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+permissions : updated_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+
+' Role permissions junction table
+role_permissions : PRIMARY_KEY(id) : BIGINT
+role_permissions : FOREIGN_KEY(role_id) : BIGINT NOT NULL
+role_permissions : FOREIGN_KEY(permission_id) : BIGINT NOT NULL
+role_permissions : granted_by : BIGINT NULL
+role_permissions : granted_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+role_permissions : expires_at : TIMESTAMP NULL
+role_permissions : is_active : BOOLEAN DEFAULT TRUE
+
+' User roles junction table
+user_roles : PRIMARY_KEY(id) : BIGINT
+user_roles : FOREIGN_KEY(user_id) : BIGINT NOT NULL
+user_roles : FOREIGN_KEY(role_id) : BIGINT NOT NULL
+user_roles : assigned_by : BIGINT NULL
+user_roles : assigned_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+user_roles : expires_at : TIMESTAMP NULL
+user_roles : is_active : BOOLEAN DEFAULT TRUE
+
+' User sessions
+user_sessions : PRIMARY_KEY(id) : BIGINT
+user_sessions : FOREIGN_KEY(user_id) : BIGINT NOT NULL
+user_sessions : session_token : VARCHAR(255) UNIQUE NOT NULL
+user_sessions : refresh_token : VARCHAR(255) UNIQUE NULL
+user_sessions : device_id : VARCHAR(255) NULL
+user_sessions : ip_address : VARCHAR(45) NULL
+user_sessions : user_agent : TEXT NULL
+user_sessions : location : VARCHAR(255) NULL
+user_sessions : is_active : BOOLEAN DEFAULT TRUE
+user_sessions : last_activity_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+user_sessions : expires_at : TIMESTAMP NOT NULL
+user_sessions : created_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+' User devices
+user_devices : PRIMARY_KEY(id) : BIGINT
+user_devices : FOREIGN_KEY(user_id) : BIGINT NOT NULL
+user_devices : device_id : VARCHAR(255) UNIQUE NOT NULL
+user_devices : device_name : VARCHAR(255) NULL
+user_devices : device_type : ENUM('web', 'mobile', 'tablet', 'desktop') NOT NULL
+user_devices : platform : VARCHAR(50) NULL
+user_devices : browser : VARCHAR(100) NULL
+user_devices : is_trusted : BOOLEAN DEFAULT FALSE
+user_devices : push_token : VARCHAR(500) NULL
+user_devices : last_used_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+user_devices : created_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+user_devices : updated_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+
+' Email verifications
+email_verifications : PRIMARY_KEY(id) : BIGINT
+email_verifications : FOREIGN_KEY(user_id) : BIGINT NOT NULL
+email_verifications : email : VARCHAR(255) NOT NULL
+email_verifications : token : VARCHAR(255) UNIQUE NOT NULL
+email_verifications : type : ENUM('registration', 'email_change') DEFAULT 'registration'
+email_verifications : expires_at : TIMESTAMP NOT NULL
+email_verifications : verified_at : TIMESTAMP NULL
+email_verifications : attempts : INT DEFAULT 0
+email_verifications : created_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+' Password resets
+password_resets : PRIMARY_KEY(id) : BIGINT
+password_resets : email : VARCHAR(255) NOT NULL
+password_resets : token : VARCHAR(255) UNIQUE NOT NULL
+password_resets : expires_at : TIMESTAMP NOT NULL
+password_resets : used_at : TIMESTAMP NULL
+password_resets : ip_address : VARCHAR(45) NULL
+password_resets : user_agent : TEXT NULL
+password_resets : created_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+' Two factor authentication
+two_factor_auth : PRIMARY_KEY(id) : BIGINT
+two_factor_auth : FOREIGN_KEY(user_id) : BIGINT NOT NULL
+two_factor_auth : method : ENUM('totp', 'sms', 'email') NOT NULL
+two_factor_auth : secret_key : VARCHAR(255) NULL
+two_factor_auth : backup_codes : JSON NULL
+two_factor_auth : phone_number : VARCHAR(20) NULL
+two_factor_auth : is_enabled : BOOLEAN DEFAULT FALSE
+two_factor_auth : verified_at : TIMESTAMP NULL
+two_factor_auth : created_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+two_factor_auth : updated_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+
+' Social logins
+social_logins : PRIMARY_KEY(id) : BIGINT
+social_logins : FOREIGN_KEY(user_id) : BIGINT NOT NULL
+social_logins : provider : ENUM('google', 'facebook', 'apple', 'github') NOT NULL
+social_logins : provider_id : VARCHAR(255) NOT NULL
+social_logins : provider_email : VARCHAR(255) NULL
+social_logins : provider_name : VARCHAR(255) NULL
+social_logins : provider_avatar : VARCHAR(500) NULL
+social_logins : access_token : TEXT NULL
+social_logins : refresh_token : TEXT NULL
+social_logins : expires_at : TIMESTAMP NULL
+social_logins : is_active : BOOLEAN DEFAULT TRUE
+social_logins : created_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+social_logins : updated_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+
+' User verification (student verification)
+user_verification : PRIMARY_KEY(id) : BIGINT
+user_verification : FOREIGN_KEY(user_id) : BIGINT NOT NULL
+user_verification : verification_type : ENUM('student_id', 'university_email', 'document') NOT NULL
+user_verification : verification_data : JSON NOT NULL
+user_verification : status : ENUM('pending', 'approved', 'rejected', 'expired') DEFAULT 'pending'
+user_verification : submitted_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+user_verification : reviewed_at : TIMESTAMP NULL
+user_verification : reviewed_by : BIGINT NULL
+user_verification : rejection_reason : TEXT NULL
+user_verification : expires_at : TIMESTAMP NULL
+
+' User security settings
+user_security : PRIMARY_KEY(id) : BIGINT
+user_security : FOREIGN_KEY(user_id) : BIGINT NOT NULL
+user_security : password_changed_at : TIMESTAMP NULL
+user_security : require_password_change : BOOLEAN DEFAULT FALSE
+user_security : login_notifications : BOOLEAN DEFAULT TRUE
+user_security : suspicious_activity_alerts : BOOLEAN DEFAULT TRUE
+user_security : allowed_ip_addresses : JSON NULL
+user_security : blocked_ip_addresses : JSON NULL
+user_security : security_questions : JSON NULL
+user_security : created_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+user_security : updated_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+
+' User activities log
+user_activities : PRIMARY_KEY(id) : BIGINT
+user_activities : FOREIGN_KEY(user_id) : BIGINT NULL
+user_activities : activity_type : VARCHAR(50) NOT NULL
+user_activities : description : TEXT NOT NULL
+user_activities : metadata : JSON NULL
+user_activities : ip_address : VARCHAR(45) NULL
+user_activities : user_agent : TEXT NULL
+user_activities : created_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+' Login attempts
+login_attempts : PRIMARY_KEY(id) : BIGINT
+login_attempts : email : VARCHAR(255) NOT NULL
+login_attempts : ip_address : VARCHAR(45) NOT NULL
+login_attempts : user_agent : TEXT NULL
+login_attempts : success : BOOLEAN NOT NULL
+login_attempts : failure_reason : VARCHAR(255) NULL
+login_attempts : attempted_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+' Security logs
+security_logs : PRIMARY_KEY(id) : BIGINT
+security_logs : FOREIGN_KEY(user_id) : BIGINT NULL
+security_logs : event_type : VARCHAR(50) NOT NULL
+security_logs : severity : ENUM('low', 'medium', 'high', 'critical') DEFAULT 'medium'
+security_logs : description : TEXT NOT NULL
+security_logs : metadata : JSON NULL
+security_logs : ip_address : VARCHAR(45) NULL
+security_logs : user_agent : TEXT NULL
+security_logs : created_at : TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+' Relationships
+users ||--|| user_profiles : "has profile"
+users ||--o{ user_sessions : "has sessions"
+users ||--o{ user_devices : "has devices"
+users ||--o{ user_verification : "has verifications"
+users ||--|| user_security : "has security settings"
+users ||--o{ two_factor_auth : "has 2FA"
+users ||--o{ social_logins : "has social logins"
+users ||--o{ user_activities : "has activities"
+users ||--o{ security_logs : "has security logs"
+users ||--o{ user_roles : "has roles"
+
+roles ||--o{ role_permissions : "has permissions"
+roles ||--o{ user_roles : "assigned to users"
+
+permissions ||--o{ role_permissions : "assigned to roles"
+
+email_verifications }o--|| users : "verifies"
+password_resets }o--|| users : "resets password for"
+
+@enduml
