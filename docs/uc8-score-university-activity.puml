@@ -1,0 +1,19 @@
+@startuml
+start
+:(1) Người dùng truy cập trang gửi/chỉnh sửa đánh giá trường;
+:(2) Nhập/chỉnh sửa điểm số cho từng tiêu chí (1-5 sao);
+:(3) Nhập/chỉnh sửa nội dung đánh giá (nếu có);
+:(4) Nhấn nút "Lưu" hoặc "Gửi";
+:(5) Kiểm tra hợp lệ điểm số và nội dung;
+if (6) Thông tin hợp lệ? then (Có)
+  :(7) Lưu điểm số từng tiêu chí vào hệ thống (bảng university_review_scores);
+  :(8) Tính toán lại điểm tổng thể (overall_score);
+  :(9) Cập nhật đánh giá (bảng university_reviews);
+  :(10) Ghi log hoạt động chấm điểm;
+  :(11) Hiển thị thông báo thành công;
+  stop
+else (Không)
+  :(12) Hiển thị lỗi nhập liệu;
+  stop
+endif
+@enduml
