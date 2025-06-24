@@ -1,0 +1,23 @@
+@startuml
+start
+:(1) Người dùng truy cập trang trường đại học;
+:(2) Nhấn nút "Gửi đánh giá";
+:(3) Nhập nội dung đánh giá, chọn điểm số theo tiêu chí;
+:(4) Nhấn nút "Gửi";
+:(5) Kiểm tra hợp lệ thông tin đầu vào;
+if (6) Thông tin hợp lệ? then (Có)
+  :(7) Kiểm tra quyền gửi đánh giá (đã xác thực sinh viên, chưa gửi trùng);
+  if (8) Đủ điều kiện gửi? then (Có)
+    :(9) Lưu đánh giá vào hệ thống (trạng thái chờ duyệt nếu cần);
+    :(10) Ghi log gửi đánh giá;
+    :(11) Hiển thị thông báo gửi thành công;
+    stop
+  else (Không)
+    :(12) Hiển thị lỗi "Không đủ điều kiện gửi đánh giá";
+    stop
+  endif
+else (Không)
+  :(13) Hiển thị lỗi nhập liệu;
+  stop
+endif
+@enduml

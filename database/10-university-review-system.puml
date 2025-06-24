@@ -1,0 +1,124 @@
+@startuml University Review System
+
+!theme plain
+skinparam linetype ortho
+skinparam backgroundColor #FFFFFF
+skinparam classBackgroundColor #F8F9FA
+skinparam classBorderColor #DEE2E6
+
+entity "universities" as universities {
+  * **id** : BIGINT <<PK>>
+  --
+  * name : VARCHAR(255)
+  code : VARCHAR(50) <<UK>>
+  address : VARCHAR(255)
+  city : VARCHAR(100)
+  country : VARCHAR(100)
+  website : VARCHAR(255)
+  logo_url : VARCHAR(500)
+  description : TEXT
+  is_active : BOOLEAN DEFAULT TRUE
+  * created_at : TIMESTAMP
+  * updated_at : TIMESTAMP
+}
+
+entity "university_reviews" as reviews {
+  * **id** : BIGINT <<PK>>
+  --
+  * university_id : BIGINT <<FK>>
+  * user_id : BIGINT <<FK>>
+  title : VARCHAR(255)
+  content : TEXT
+  overall_score : TINYINT
+  status : ENUM('pending','approved','rejected','deleted') DEFAULT 'pending'
+  is_anonymous : BOOLEAN DEFAULT FALSE
+  is_student_verified : BOOLEAN DEFAULT FALSE
+  likes_count : INT DEFAULT 0
+  comments_count : INT DEFAULT 0
+  reports_count : INT DEFAULT 0
+  * created_at : TIMESTAMP
+  * updated_at : TIMESTAMP
+  deleted_at : TIMESTAMP
+}
+
+entity "university_review_scores" as scores {
+  * **id** : BIGINT <<PK>>
+  --
+  * review_id : BIGINT <<FK>>
+  criterion : VARCHAR(100)
+  score : TINYINT
+}
+
+entity "university_review_comments" as comments {
+  * **id** : BIGINT <<PK>>
+  --
+  * review_id : BIGINT <<FK>>
+  * user_id : BIGINT <<FK>>
+  content : TEXT
+  parent_comment_id : BIGINT <<FK>>
+  status : ENUM('pending','approved','rejected','deleted') DEFAULT 'approved'
+  likes_count : INT DEFAULT 0
+  * created_at : TIMESTAMP
+  * updated_at : TIMESTAMP
+  deleted_at : TIMESTAMP
+}
+
+entity "university_review_reports" as reports {
+  * **id** : BIGINT <<PK>>
+  --
+  * review_id : BIGINT <<FK>>
+  * reporter_id : BIGINT <<FK>>
+  reason : VARCHAR(255)
+  description : TEXT
+  status : ENUM('pending','reviewed','rejected') DEFAULT 'pending'
+  * created_at : TIMESTAMP
+  reviewed_at : TIMESTAMP
+  reviewed_by : BIGINT <<FK>>
+}
+
+entity "university_review_verifications" as verifications {
+  * **id** : BIGINT <<PK>>
+  --
+  * review_id : BIGINT <<FK>>
+  * user_id : BIGINT <<FK>>
+  verification_type : ENUM('student_id','university_email','document')
+  verification_data : JSON
+  status : ENUM('pending','approved','rejected','expired') DEFAULT 'pending'
+  submitted_at : TIMESTAMP
+  reviewed_at : TIMESTAMP
+  reviewed_by : BIGINT <<FK>>
+  rejection_reason : TEXT
+  expires_at : TIMESTAMP
+}
+
+entity "university_review_likes" as likes {
+  * **id** : BIGINT <<PK>>
+  --
+  * review_id : BIGINT <<FK>>
+  * user_id : BIGINT <<FK>>
+  * created_at : TIMESTAMP
+}
+
+entity "users" as users {
+  * **id** : BIGINT <<PK>>
+  --
+  username : VARCHAR(50)
+  email : VARCHAR(255)
+}
+
+universities ||--o{ reviews : "has reviews"
+reviews ||--o{ scores : "has scores"
+reviews ||--o{ comments : "has comments"
+reviews ||--o{ reports : "has reports"
+reviews ||--o{ verifications : "has verifications"
+reviews ||--o{ likes : "has likes"
+users ||--o{ reviews : "writes reviews"
+users ||--o{ comments : "writes comments"
+users ||--o{ reports : "reports reviews"
+users ||--o{ verifications : "verifies review"
+users ||--o{ likes : "likes reviews"
+comments ||--o{ comments : "reply to comment" 
+reports ||-- users : "reviewed by"
+verifications ||-- users : "reviewed by"
+
+@enduml

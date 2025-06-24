@@ -1,0 +1,23 @@
+@startuml
+start
+:(1) Người dùng truy cập trang đăng ký;
+:(2) Nhập thông tin đăng ký (tên đăng nhập, email, mật khẩu);
+:(3) Nhấn nút "Đăng ký";
+:(4) Kiểm tra hợp lệ thông tin đầu vào;
+if (5) Thông tin hợp lệ? then (Có)
+  :(6) Kiểm tra trùng lặp email/tên đăng nhập;
+  if (7) Không trùng lặp? then (Có)
+    :(8) Tạo tài khoản mới ở trạng thái "inactive";
+    :(9) Tạo token xác minh email;
+    :(10) Gửi email xác minh cho người dùng;
+    :(11) Hiển thị thông báo "Vui lòng kiểm tra email để xác minh tài khoản";
+    stop
+  else (Không)
+    :(12) Hiển thị lỗi "Email hoặc tên đăng nhập đã tồn tại";
+    stop
+  endif
+else (Không)
+  :(13) Hiển thị lỗi nhập liệu;
+  stop
+endif
+@enduml
