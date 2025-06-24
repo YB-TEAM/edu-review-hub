@@ -1,0 +1,22 @@
+@startuml
+start
+:(1) Người dùng nhấn vào liên kết xác minh trong email;
+:(2) Hệ thống nhận token xác minh từ liên kết;
+:(3) Kiểm tra token có tồn tại và hợp lệ không;
+if (4) Token hợp lệ? then (Có)
+  :(5) Kiểm tra token đã hết hạn chưa;
+  if (6) Token còn hạn? then (Có)
+    :(7) Đánh dấu email đã xác minh;
+    :(8) Cập nhật trạng thái tài khoản thành "active";
+    :(9) Ghi log xác minh email thành công;
+    :(10) Hiển thị thông báo xác minh thành công, hướng dẫn đăng nhập;
+    stop
+  else (Không)
+    :(11) Hiển thị lỗi "Token xác minh đã hết hạn";
+    stop
+  endif
+else (Không)
+  :(12) Hiển thị lỗi "Token không hợp lệ hoặc đã được sử dụng";
+  stop
+endif
+@enduml
