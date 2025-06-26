@@ -1,0 +1,41 @@
+@startuml
+start
+:(1) Người dùng truy cập trang đăng nhập;
+:(2) Nhập tên đăng nhập/email và mật khẩu;
+:(3) Nhấn nút "Đăng nhập";
+:(4) Kiểm tra hợp lệ thông tin đầu vào;
+if (5) Thông tin hợp lệ? then (Có)
+  :(6) Tìm kiếm tài khoản theo tên đăng nhập/email;
+  if (7) Tài khoản tồn tại? then (Có)
+    :(8) Kiểm tra trạng thái tài khoản (active, chưa bị khóa/xóa);
+    if (9) Tài khoản hợp lệ? then (Có)
+      :(10) Kiểm tra mật khẩu;
+      if (11) Mật khẩu đúng? then (Có)
+        :(12) Kiểm tra có bật xác thực hai yếu tố (2FA) không;
+        if (13) Có bật 2FA? then (Có)
+          :(14) Chuyển sang bước xác thực 2FA;
+          stop
+        else (Không)
+          :(15) Tạo phiên đăng nhập mới;
+          :(16) Ghi log đăng nhập thành công;
+          :(17) Chuyển vào trang chính hệ thống;
+          stop
+        endif
+      else (Không)
+        :(18) Tăng số lần đăng nhập sai, kiểm tra khóa tài khoản nếu vượt giới hạn;
+        :(19) Hiển thị lỗi "Sai mật khẩu";
+        stop
+      endif
+    else (Không)
+      :(20) Hiển thị lỗi "Tài khoản bị khóa/vô hiệu hóa/xóa";
+      stop
+    endif
+  else (Không)
+    :(21) Hiển thị lỗi "Tài khoản không tồn tại";
+    stop
+  endif
+else (Không)
+  :(22) Hiển thị lỗi nhập liệu;
+  stop
+endif
+@enduml

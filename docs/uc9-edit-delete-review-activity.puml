@@ -1,0 +1,27 @@
+@startuml
+start
+:(1) Người dùng truy cập danh sách đánh giá của mình;
+:(2) Chọn đánh giá muốn chỉnh sửa hoặc xóa;
+if (3) Chọn "Chỉnh sửa"? then (Có)
+  :(4) Nhập nội dung/chấm điểm mới;
+  :(5) Nhấn "Lưu thay đổi";
+  :(6) Kiểm tra hợp lệ thông tin;
+  if (7) Thông tin hợp lệ? then (Có)
+    :(8) Cập nhật đánh giá trong hệ thống;
+    :(9) Ghi log chỉnh sửa đánh giá;
+    :(10) Hiển thị thông báo thành công;
+    stop
+  else (Không)
+    :(11) Hiển thị lỗi nhập liệu;
+    stop
+  endif
+else (Không)
+  :(12) Nhấn "Xóa đánh giá";
+  :(13) Hiển thị cảnh báo xác nhận xóa;
+  :(14) Người dùng xác nhận xóa;
+  :(15) Cập nhật trạng thái đánh giá thành 'deleted';
+  :(16) Ghi log xóa đánh giá;
+  :(17) Hiển thị thông báo xóa thành công;
+  stop
+endif
+@enduml
