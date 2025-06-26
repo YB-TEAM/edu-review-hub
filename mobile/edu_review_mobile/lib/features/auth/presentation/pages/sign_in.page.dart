@@ -16,13 +16,35 @@ class _SignInPageState extends State<SignInPage> {
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter the email';
+    }
+    return null;
+  }
+
+  void _handleSignIn() {
+    if (_formKey.currentState!.validate()) {
+    }
+  }
+
+  void _handleSignUp() {
+    Navigator.pushNamed(context, RouteConstant.signUp);
+  }
+
+  void _handleForgotPassword() {
+
+  }
+
+  void _handleTapOutside() {
+    FocusScope.of(context).unfocus();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
+        onTap: _handleTapOutside,
         child: SingleChildScrollView(
           padding: EdgeInsets.fromLTRB(30, 140, 30, 0),
           child: Column(
@@ -48,12 +70,7 @@ class _SignInPageState extends State<SignInPage> {
                     CustomTextField(
                       placeholder: 'Email',
                       controller: _emailController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter the email';
-                        }
-                        return null;
-                      },
+                      validator: _validateEmail,
                     ),
                     SizedBox(height: 16),
                     CustomPasswordField(
@@ -62,20 +79,14 @@ class _SignInPageState extends State<SignInPage> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: CustomTextButton(
-                        onPressed: () {
-                          
-                        },
+                        onPressed: _handleForgotPassword,
                         title: "Forgot Password?",
                       ),
                     ),
                     SizedBox(height: 30),
                     PrimaryButton(
                       title: "Sign In",
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          
-                        }
-                      }
+                      onPressed: _handleSignIn,
                     ),
                     SizedBox(height: 40),
                     Row(
@@ -88,9 +99,7 @@ class _SignInPageState extends State<SignInPage> {
                           ),
                         ),
                         CustomTextButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, RouteConstant.signUp);
-                          },
+                          onPressed: _handleSignUp,
                           title: "Sign up",
                         ),
                       ],
