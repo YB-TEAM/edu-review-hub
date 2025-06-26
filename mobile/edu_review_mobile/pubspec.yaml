@@ -1,0 +1,114 @@
+name: edu_review_mobile
+description: "A new Flutter project."
+publish_to: 'none' 
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.0-246.0.dev
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  dio: ^5.8.0+1
+  flutter_screenutil: ^5.9.3
+  dartz: ^0.10.1
+  logger: ^2.6.0
+
+  #state management
+  flutter_bloc: ^9.1.1
+
+  #comparing dart objects
+  equatable: ^2.0.7
+
+  #service locator
+  get_it: ^8.0.3
+
+  #dateFormat
+  intl: ^0.20.2
+
+  #Database
+  shared_preferences: ^2.5.3
+  floor: ^1.5.0
+
+  #make request to api 
+  retrofit: ^4.4.2
+
+  #create random ID
+  uuid: ^4.5.1
+  
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  retrofit_generator: '>=8.0.0 <10.0.0'
+  floor_generator: ^1.4.2
+  build_runner: ^2.3.3
+
+
+  flutter_lints: ^5.0.0
+
+
+flutter:
+  uses-material-design: true
+
+  assets:
+  - assets/images/
+  
+  fonts:
+    - family: Roboto-Thin
+      fonts:
+        - asset: assets/fonts/Roboto/Roboto-Thin.ttf
+    - family: Roboto-ThinItalic
+      fonts:
+        - asset: assets/fonts/Roboto/Roboto-ThinItalic.ttf
+    - family: Roboto-ExtraLight
+      fonts:
+        - asset: assets/fonts/Roboto/Roboto-ExtraLight.ttf
+    - family: Roboto-ExtraLightItalic
+      fonts:
+        - asset: assets/fonts/Roboto/Roboto-ExtraLightItalic.ttf
+    - family: Roboto-Light
+      fonts:
+        - asset: assets/fonts/Roboto/Roboto-Light.ttf
+    - family: Roboto-LightItalic
+      fonts:
+        - asset: assets/fonts/Roboto/Roboto-LightItalic.ttf
+    - family: Roboto-Regular
+      fonts:
+        - asset: assets/fonts/Roboto/Roboto-Regular.ttf
+    - family: Roboto-Italic
+      fonts:
+        - asset: assets/fonts/Roboto/Roboto-Italic.ttf
+    - family: Roboto-Medium
+      fonts:
+        - asset: assets/fonts/Roboto/Roboto-Medium.ttf
+    - family: Roboto-MediumItalic
+      fonts:
+        - asset: assets/fonts/Roboto/Roboto-MediumItalic.ttf
+    - family: Roboto-SemiBold
+      fonts:
+        - asset: assets/fonts/Roboto/Roboto-SemiBold.ttf
+    - family: Roboto-SemiBoldItalic
+      fonts:
+        - asset: assets/fonts/Roboto/Roboto-SemiBoldItalic.ttf
+    - family: Roboto-Bold
+      fonts:
+        - asset: assets/fonts/Roboto/Roboto-Bold.ttf
+    - family: Roboto-BoldItalic
+      fonts:
+        - asset: assets/fonts/Roboto/Roboto-BoldItalic.ttf
+    - family: Roboto-ExtraBold
+      fonts:
+        - asset: assets/fonts/Roboto/Roboto-ExtraBold.ttf
+    - family: Roboto-ExtraBoldItalic
+      fonts:
+        - asset: assets/fonts/Roboto/Roboto-ExtraBoldItalic.ttf
+    - family: Roboto-Black
+      fonts:
+        - asset: assets/fonts/Roboto/Roboto-Black.ttf
+    - family: Roboto-BlackItalic
+      fonts:
+        - asset: assets/fonts/Roboto/Roboto-BlackItalic.ttf
