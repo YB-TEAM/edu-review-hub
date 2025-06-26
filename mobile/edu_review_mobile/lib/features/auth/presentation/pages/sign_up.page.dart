@@ -3,6 +3,9 @@ import 'package:edu_review_mobile/common/widgets/button/primary_button.dart';
 import 'package:edu_review_mobile/common/widgets/text_field/custom_password_field.dart';
 import 'package:edu_review_mobile/common/widgets/text_field/custom_text_field.dart';
 import 'package:edu_review_mobile/common_libs.dart';
+import 'package:edu_review_mobile/features/auth/data/models/user.dart';
+import 'package:edu_review_mobile/features/auth/domain/usecases/sign_up.dart';
+import 'package:edu_review_mobile/service_locator.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -15,15 +18,47 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmedpasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  String? _validateUsername(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter the username';
+    }
+    return null;
+  }
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter the email';
+    }
+    return null;
+  }
+
+  void _handleSignUp() {
+    if (_formKey.currentState!.validate()) {
+      sl<SignUpUseCase>().call(
+        UserModel(
+          email: _emailController.text, 
+          password: _passwordController.text, 
+          userName: _usernameController.text,
+        ),
+      );
+    }
+  }
+
+  void _handleSignIn() {
+    Navigator.pushNamed(context, RouteConstant.signIn);
+  }
+
+  void _handleTapOutside() {
+    FocusScope.of(context).unfocus();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
+        onTap: _handleTapOutside,
         child: SingleChildScrollView(
           padding: EdgeInsets.fromLTRB(30, 100, 30, 0),
           child: Column(
@@ -49,23 +84,13 @@ class _SignUpPageState extends State<SignUpPage> {
                     CustomTextField(
                       placeholder: 'Username',
                       controller: _usernameController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter the username';
-                        }
-                        return null;
-                      },
+                      validator: _validateUsername,
                     ),
                     SizedBox(height: 16),
                     CustomTextField(
                       placeholder: 'Email',
                       controller: _emailController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter the email';
-                        }
-                        return null;
-                      },
+                      validator: _validateEmail,
                     ),
                     SizedBox(height: 16),
                     CustomPasswordField(
@@ -83,16 +108,12 @@ class _SignUpPageState extends State<SignUpPage> {
                     SizedBox(height: 16),
                     CustomPasswordField(
                       placeholder: "Confirmed Password",
-                      controller: _passwordController,
+                      controller: _confirmedpasswordController,
                     ),
                     SizedBox(height: 30),
                     PrimaryButton(
                       title: "Sign Up",
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          
-                        }
-                      }
+                      onPressed: _handleSignUp,
                     ),
                     SizedBox(height: 40),
                     Row(
@@ -105,9 +126,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                         ),
                         CustomTextButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, RouteConstant.signIn);
-                          },
+                          onPressed: _handleSignIn,
                           title: "Sign in",
                         ),
                       ],

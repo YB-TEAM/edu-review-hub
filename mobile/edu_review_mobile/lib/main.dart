@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:edu_review_mobile/service_locator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:edu_review_mobile/common_libs.dart';
 
@@ -22,6 +23,8 @@ void main() {
       Zone.current.handleUncaughtError(
           details.exception, details.stack ?? StackTrace.empty);
     };
+
+    setUpServiceLocator();
 
     runApp(MyApp(
       initialRoute: initialRoute
