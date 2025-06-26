@@ -1,0 +1,20 @@
+@startuml
+start
+:(1) Người dùng truy cập trang cài đặt tài khoản;
+:(2) Chọn chức năng "Vô hiệu hóa" hoặc "Xóa tài khoản";
+:(3) Nhập lại mật khẩu xác nhận;
+:(4) Nhấn nút xác nhận thao tác;
+:(5) Kiểm tra hợp lệ mật khẩu xác nhận;
+if (6) Mật khẩu đúng? then (Có)
+  :(7) Hiển thị cảnh báo và yêu cầu xác nhận cuối cùng;
+  :(8) Người dùng xác nhận đồng ý;
+  :(9) Thực hiện cập nhật trạng thái tài khoản ("inactive" hoặc "deleted");
+  :(10) Hủy tất cả phiên đăng nhập của tài khoản;
+  :(11) Ghi log hoạt động vô hiệu hóa/xóa tài khoản;
+  :(12) Hiển thị thông báo thành công và chuyển về trang chủ;
+  stop
+else (Không)
+  :(13) Hiển thị lỗi "Mật khẩu xác nhận không đúng";
+  stop
+endif
+@enduml
