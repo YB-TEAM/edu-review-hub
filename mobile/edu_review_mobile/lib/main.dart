@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:edu_review_mobile/common/bloc/auth/auth_state.dart';
 import 'package:edu_review_mobile/common/bloc/auth/auth_state_cubit.dart';
 import 'package:edu_review_mobile/features/auth/presentation/pages/sign_up.page.dart';
-import 'package:edu_review_mobile/features/dashboard/presentation/pages/home.page.dart';
+import 'package:edu_review_mobile/features/user_profile/presentation/pages/profile.page.dart';
 import 'package:edu_review_mobile/service_locator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:edu_review_mobile/common_libs.dart';
@@ -84,7 +84,7 @@ class MyApp extends StatelessWidget {
         home: BlocBuilder<AuthStateCubit, AuthState>(
           builder: (context, state) {
             if(state is Authenticated) {
-              return  HomePage();
+              return  ProfilePage();
             }
             if(state is UnAuthenticated) {
               return SignUpPage();

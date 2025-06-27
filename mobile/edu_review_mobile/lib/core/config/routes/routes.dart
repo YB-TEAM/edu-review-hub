@@ -1,4 +1,4 @@
-import 'package:edu_review_mobile/features/dashboard/presentation/pages/home.page.dart';
+import 'package:edu_review_mobile/features/user_profile/presentation/pages/profile.page.dart';
 import 'package:flutter/services.dart';
 import 'package:edu_review_mobile/common_libs.dart';
 import 'package:edu_review_mobile/features/auth/presentation/pages/sign_up.page.dart';
@@ -40,7 +40,7 @@ class AppRouter {
               if (!didPop) return;
               SystemNavigator.pop();
             },
-            child: const HomePage()),
+            child: const ProfilePage()),
           );
 
       default:
