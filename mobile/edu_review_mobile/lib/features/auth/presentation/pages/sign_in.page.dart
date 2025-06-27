@@ -112,93 +112,113 @@ class _SignInPageState extends State<SignInPage> {
               );
             }
           },
-          child: GestureDetector(
-            onTap: _handleTapOutside,
-            child: SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(30, 80, 30, 0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/images/logo_edureview.png',
-                    width: 140,
-                    height: 140,
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    'Welcome back!',
-                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textBlack,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    'Sign in to continue using the app',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyMedium?.copyWith(color: AppColors.textGrey),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 40),
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CustomTextField(
-                          label: 'Email',
-                          placeholder: 'Enter your email',
-                          prefixIconData: Icons.email_outlined,
-                          controller: _emailController,
-                          validator: _validateEmail,
+          child: Stack(
+            children: [
+              GestureDetector(
+                onTap: _handleTapOutside,
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.fromLTRB(30, 80, 30, 0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/images/logo_edureview.png',
+                        width: 140,
+                        height: 140,
+                      ),
+                      const SizedBox(height: 24),
+                      Text(
+                        'Welcome back!',
+                        style: Theme.of(
+                          context,
+                        ).textTheme.headlineLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textBlack,
                         ),
-                        SizedBox(height: 16),
-                        CustomPasswordField(
-                          label: 'Password',
-                          placeholder: 'Enter your password',
-                          prefixIcon: Icon(Icons.lock_outline),
-                          controller: _passwordController,
-                          validator: _validatePassword,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Sign in to continue using the app',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppColors.textGrey,
                         ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: CustomTextButton(
-                            onPressed: _handleForgotPassword,
-                            title: "Forgot Password?",
-                          ),
-                        ),
-                        SizedBox(height: 16),
-                        Builder(
-                          builder: (context) {
-                            return PrimaryButton(
-                              title: "Sign In",
-                              onPressed: () => _handleSignIn(context),
-                            );
-                          },
-                        ),
-                        SizedBox(height: 40),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 40),
+                      Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              "Don't have an account?",
-                              style: Theme.of(context).textTheme.bodyMedium
-                                  ?.copyWith(color: AppColors.textGrey),
+                            CustomTextField(
+                              label: 'Email',
+                              placeholder: 'Enter your email',
+                              prefixIconData: Icons.email_outlined,
+                              controller: _emailController,
+                              validator: _validateEmail,
                             ),
-                            CustomTextButton(
-                              onPressed: _handleSignUp,
-                              title: "Sign up",
+                            SizedBox(height: 16),
+                            CustomPasswordField(
+                              label: 'Password',
+                              placeholder: 'Enter your password',
+                              prefixIcon: Icon(Icons.lock_outline),
+                              controller: _passwordController,
+                              validator: _validatePassword,
+                            ),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: CustomTextButton(
+                                onPressed: _handleForgotPassword,
+                                title: "Forgot Password?",
+                              ),
+                            ),
+                            SizedBox(height: 16),
+                            Builder(
+                              builder: (context) {
+                                return PrimaryButton(
+                                  title: "Sign In",
+                                  onPressed: () => _handleSignIn(context),
+                                );
+                              },
+                            ),
+                            SizedBox(height: 40),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Don't have an account?",
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(color: AppColors.textGrey),
+                                ),
+                                CustomTextButton(
+                                  onPressed: _handleSignUp,
+                                  title: "Sign up",
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+              BlocBuilder<ButtonStateCubit, ButtonState>(
+                builder: (context, state) {
+                  if (state is ButtonLoadingState) {
+                    return AbsorbPointer(
+                      absorbing: true,
+                      child: Container(
+                        color: Colors.black.withOpacity(0.8),
+                        child: Container(),
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+            ],
           ),
         ),
       ),

@@ -134,83 +134,101 @@ class _SignUpPageState extends State<SignUpPage> {
               );
             }
           },
-          child: GestureDetector(
-            onTap: _handleTapOutside,
-            child: SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(30, 100, 30, 0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Sign up now',
-                    style: Theme.of(context).textTheme.headlineLarge,
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    'Please fill the details and create account',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyMedium?.copyWith(color: AppColors.textGrey),
-                  ),
-                  SizedBox(height: 40),
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CustomTextField(
-                          label: 'Email',
-                          placeholder: 'Enter your email',
-                          controller: _emailController,
-                          validator: _validateEmail,
-                          prefixIconData: Icons.email_outlined,
+          child: Stack(
+            children: [
+              GestureDetector(
+                onTap: _handleTapOutside,
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.fromLTRB(30, 100, 30, 0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Sign up now',
+                        style: Theme.of(context).textTheme.headlineLarge,
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'Please fill the details and create account',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppColors.textGrey,
                         ),
-                        SizedBox(height: 16),
-                        CustomPasswordField(
-                          label: 'Password',
-                          placeholder: 'Enter your password',
-                          controller: _passwordController,
-                          validator: _validatePassword,
-                          prefixIconData: Icons.lock_outline,
-                        ),
-                        SizedBox(height: 16),
-                        CustomPasswordField(
-                          label: 'Confirm Password',
-                          placeholder: 'Re-enter your password',
-                          controller: _confirmedpasswordController,
-                          validator: _validateConfirmedPassword,
-                          prefixIconData: Icons.lock_outline,
-                        ),
-                        SizedBox(height: 30),
-                        Builder(
-                          builder: (context) {
-                            return PrimaryButton(
-                              title: "Sign Up",
-                              onPressed: () => _handleSignUp(context),
-                            );
-                          },
-                        ),
-                        SizedBox(height: 40),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                      ),
+                      SizedBox(height: 40),
+                      Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              "Already have an account?",
-                              style: Theme.of(context).textTheme.bodyMedium
-                                  ?.copyWith(color: AppColors.textGrey),
+                            CustomTextField(
+                              label: 'Email',
+                              placeholder: 'Enter your email',
+                              controller: _emailController,
+                              validator: _validateEmail,
+                              prefixIconData: Icons.email_outlined,
                             ),
-                            CustomTextButton(
-                              onPressed: _handleSignIn,
-                              title: "Sign in",
+                            SizedBox(height: 16),
+                            CustomPasswordField(
+                              label: 'Password',
+                              placeholder: 'Enter your password',
+                              controller: _passwordController,
+                              validator: _validatePassword,
+                              prefixIconData: Icons.lock_outline,
+                            ),
+                            SizedBox(height: 16),
+                            CustomPasswordField(
+                              label: 'Confirm Password',
+                              placeholder: 'Re-enter your password',
+                              controller: _confirmedpasswordController,
+                              validator: _validateConfirmedPassword,
+                              prefixIconData: Icons.lock_outline,
+                            ),
+                            SizedBox(height: 30),
+                            Builder(
+                              builder: (context) {
+                                return PrimaryButton(
+                                  title: "Sign Up",
+                                  onPressed: () => _handleSignUp(context),
+                                );
+                              },
+                            ),
+                            SizedBox(height: 40),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Already have an account?",
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(color: AppColors.textGrey),
+                                ),
+                                CustomTextButton(
+                                  onPressed: _handleSignIn,
+                                  title: "Sign in",
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+              BlocBuilder<ButtonStateCubit, ButtonState>(
+                builder: (context, state) {
+                  if (state is ButtonLoadingState) {
+                    return AbsorbPointer(
+                      absorbing: true,
+                      child: Container(
+                        color: Colors.black.withOpacity(0.8),
+                        child: Container(),
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+            ],
           ),
         ),
       ),
