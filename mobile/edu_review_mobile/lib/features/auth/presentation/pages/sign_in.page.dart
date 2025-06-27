@@ -22,7 +22,7 @@ class _SignInPageState extends State<SignInPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  
+
   // Track if form has been submitted to show validation errors
   bool _isFormSubmitted = false;
 
@@ -32,7 +32,9 @@ class _SignInPageState extends State<SignInPage> {
       return 'Please enter email';
     }
     // Kiểm tra định dạng email
-    final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+    final emailRegex = RegExp(
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+    );
     if (!emailRegex.hasMatch(value)) {
       return 'Please enter a valid email address';
     }
@@ -54,23 +56,22 @@ class _SignInPageState extends State<SignInPage> {
     setState(() {
       _isFormSubmitted = true;
     });
-    
+
     // Force validation to show errors
     _formKey.currentState!.validate();
-    
+
     // Check if form is valid before proceeding
     if (_emailController.text.isNotEmpty &&
         _passwordController.text.isNotEmpty &&
         _validateEmail(_emailController.text) == null &&
         _validatePassword(_passwordController.text) == null) {
-      
       context.read<ButtonStateCubit>().execute(
         usecase: sl<SignInUseCase>(),
         params: SignInParams(
-          email: _emailController.text, 
-          password: _passwordController.text, 
+          email: _emailController.text,
+          password: _passwordController.text,
           token: "token",
-        )
+        ),
       );
     }
   }
@@ -79,9 +80,7 @@ class _SignInPageState extends State<SignInPage> {
     Navigator.pushNamed(context, RouteConstant.signUp);
   }
 
-  void _handleForgotPassword() {
-
-  }
+  void _handleForgotPassword() {}
 
   void _handleTapOutside() {
     FocusScope.of(context).unfocus();
@@ -94,10 +93,10 @@ class _SignInPageState extends State<SignInPage> {
         create: (context) => ButtonStateCubit(),
         child: BlocListener<ButtonStateCubit, ButtonState>(
           listener: (context, state) {
-            if(state is ButtonSuccessState) {
+            if (state is ButtonSuccessState) {
               Navigator.pushReplacementNamed(context, RouteConstant.profile);
             }
-            if(state is ButtonFailureState) {
+            if (state is ButtonFailureState) {
               showAppDialog(
                 context: context,
                 title: 'Error',
@@ -116,34 +115,50 @@ class _SignInPageState extends State<SignInPage> {
           child: GestureDetector(
             onTap: _handleTapOutside,
             child: SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(30, 140, 30, 0),
+              padding: EdgeInsets.fromLTRB(30, 80, 30, 0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children:[
-                  Text(
-                    'Sign in now',
-                    style: Theme.of(context).textTheme.headlineLarge,
+                children: [
+                  Image.asset(
+                    'assets/images/logo_edureview.png',
+                    width: 140,
+                    height: 140,
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 24),
                   Text(
-                    'Please sign in to continue using our app',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textGrey,
+                    'Welcome back!',
+                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textBlack,
                     ),
+                    textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 40),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Sign in to continue using the app',
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(color: AppColors.textGrey),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 40),
                   Form(
                     key: _formKey,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         CustomTextField(
-                          placeholder: 'Email',
+                          label: 'Email',
+                          placeholder: 'Enter your email',
+                          prefixIconData: Icons.email_outlined,
                           controller: _emailController,
                           validator: _validateEmail,
                         ),
                         SizedBox(height: 16),
                         CustomPasswordField(
+                          label: 'Password',
+                          placeholder: 'Enter your password',
+                          prefixIcon: Icon(Icons.lock_outline),
                           controller: _passwordController,
                           validator: _validatePassword,
                         ),
@@ -154,14 +169,14 @@ class _SignInPageState extends State<SignInPage> {
                             title: "Forgot Password?",
                           ),
                         ),
-                        SizedBox(height: 30),
+                        SizedBox(height: 16),
                         Builder(
                           builder: (context) {
                             return PrimaryButton(
                               title: "Sign In",
                               onPressed: () => _handleSignIn(context),
                             );
-                          }
+                          },
                         ),
                         SizedBox(height: 40),
                         Row(
@@ -169,9 +184,8 @@ class _SignInPageState extends State<SignInPage> {
                           children: [
                             Text(
                               "Don't have an account?",
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: AppColors.textGrey,
-                              ),
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(color: AppColors.textGrey),
                             ),
                             CustomTextButton(
                               onPressed: _handleSignUp,
