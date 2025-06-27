@@ -1,8 +1,13 @@
 import 'dart:async';
 
+import 'package:edu_review_mobile/common/bloc/auth/auth_state.dart';
+import 'package:edu_review_mobile/common/bloc/auth/auth_state_cubit.dart';
+import 'package:edu_review_mobile/features/auth/presentation/pages/sign_up.page.dart';
+import 'package:edu_review_mobile/features/dashboard/presentation/pages/home.page.dart';
 import 'package:edu_review_mobile/service_locator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:edu_review_mobile/common_libs.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
   runZonedGuarded(() async {
@@ -70,11 +75,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: AppTheme.lightTheme,
-      initialRoute: RouteConstant.signIn,
-      onGenerateRoute: AppRouter.generateRoute,
-      debugShowCheckedModeBanner: false,
+    return BlocProvider(
+      create: (context) => AuthStateCubit()..appStarted(),
+      child: MaterialApp(
+        theme: AppTheme.lightTheme,
+        onGenerateRoute: AppRouter.generateRoute,
+        debugShowCheckedModeBanner: false,
+        home: BlocBuilder<AuthStateCubit, AuthState>(
+          builder: (context, state) {
+            if(state is Authenticated) {
+              return  HomePage();
+            }
+            if(state is UnAuthenticated) {
+              return SignUpPage();
+            }
+            return Container();
+          }
+        ),
+      ),
     );
   }
 }
