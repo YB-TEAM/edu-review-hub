@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:edu_review_mobile/common/bloc/auth/auth_state.dart';
 import 'package:edu_review_mobile/common/bloc/auth/auth_state_cubit.dart';
-import 'package:edu_review_mobile/features/auth/presentation/pages/sign_up.page.dart';
-import 'package:edu_review_mobile/features/user_profile/presentation/pages/profile.page.dart';
 import 'package:edu_review_mobile/service_locator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:edu_review_mobile/common_libs.dart';
@@ -81,16 +79,15 @@ class MyApp extends StatelessWidget {
         theme: AppTheme.lightTheme,
         onGenerateRoute: AppRouter.generateRoute,
         debugShowCheckedModeBanner: false,
-        home: BlocBuilder<AuthStateCubit, AuthState>(
-          builder: (context, state) {
-            if(state is Authenticated) {
-              return  ProfilePage();
+        home: BlocListener<AuthStateCubit, AuthState>(
+          listener: (context, state) {
+            if (state is Authenticated) {
+              Navigator.of(context).pushReplacementNamed(RouteConstant.profile);
+            } else if (state is UnAuthenticated) {
+              Navigator.of(context).pushReplacementNamed(RouteConstant.signIn);
             }
-            if(state is UnAuthenticated) {
-              return SignUpPage();
-            }
-            return Container();
-          }
+          },
+          child: Container(),
         ),
       ),
     );

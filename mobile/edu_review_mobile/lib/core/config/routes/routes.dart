@@ -31,7 +31,7 @@ class AppRouter {
             child: const SignUpPage()),
           );
 
-      case RouteConstant.dashBoard:
+      case RouteConstant.profile:
         return MaterialPageRoute(
           settings: settings,
           builder: (_) => PopScope(
