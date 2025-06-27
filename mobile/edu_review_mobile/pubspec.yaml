@@ -16,6 +16,7 @@ dependencies:
   flutter_screenutil: ^5.9.3
   dartz: ^0.10.1
   logger: ^2.6.0
+  http: ^1.4.0
 
   #state management
   flutter_bloc: ^9.1.1

@@ -1,21 +1,28 @@
+import 'package:edu_review_mobile/features/auth/domain/entities/user.dart';
+
 class UserModel {
   final String email;
-  final String password;
   final String userName;
 
   UserModel({
     required this.email, 
-    required this.password, 
     required this.userName
   });
 
-  // Chuyển đổi object thành JSON
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'email': email,
-      'password': password,
-      'userName': userName,
-    };
+  factory UserModel.fromMap(Map<String, dynamic> map) {
+    return UserModel(
+      email: map['email'] as String, 
+      userName: map['username'] as String,
+    );
   }
-
 }
+
+extension UserXModel on UserModel {
+  UserEntity toEntity() {
+    return UserEntity(
+      email: email,
+      userName: userName,
+    );
+  }
+}
+
