@@ -19,32 +19,14 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmedpasswordController = TextEditingController();
+  final TextEditingController _confirmedpasswordController =
+      TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  
+
   // Track if form has been submitted to show validation errors
   bool _isFormSubmitted = false;
-
-  String? _validateUsername(String? value) {
-    if (!_isFormSubmitted) return null;
-    if (value == null || value.isEmpty) {
-      return 'Please enter username';
-    }
-    if (value.length < 3) {
-      return 'Username must be at least 3 characters';
-    }
-    if (value.length > 20) {
-      return 'Username cannot exceed 20 characters';
-    }
-    // Kiểm tra ký tự đặc biệt
-    if (!RegExp(r'^[a-zA-Z0-9_]+$').hasMatch(value)) {
-      return 'Username can only contain letters, numbers and underscore';
-    }
-    return null;
-  }
 
   String? _validateEmail(String? value) {
     if (!_isFormSubmitted) return null;
@@ -52,7 +34,9 @@ class _SignUpPageState extends State<SignUpPage> {
       return 'Please enter email';
     }
     // Kiểm tra định dạng email
-    final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+    final emailRegex = RegExp(
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+    );
     if (!emailRegex.hasMatch(value)) {
       return 'Please enter a valid email address';
     }
@@ -92,27 +76,25 @@ class _SignUpPageState extends State<SignUpPage> {
     setState(() {
       _isFormSubmitted = true;
     });
-    
+
     // Force validation to show errors
     _formKey.currentState!.validate();
-    
+
     // Check if form is valid before proceeding
-    if (_usernameController.text.isNotEmpty &&
-        _emailController.text.isNotEmpty &&
+    if (_emailController.text.isNotEmpty &&
         _passwordController.text.isNotEmpty &&
         _confirmedpasswordController.text.isNotEmpty &&
-        _validateUsername(_usernameController.text) == null &&
         _validateEmail(_emailController.text) == null &&
         _validatePassword(_passwordController.text) == null &&
         _validateConfirmedPassword(_confirmedpasswordController.text) == null) {
-      
       context.read<ButtonStateCubit>().execute(
         usecase: sl<SignUpUseCase>(),
         params: SignUpParams(
-          email: _emailController.text, 
-          password: _passwordController.text, 
-          userName: _usernameController.text,
-          token: "oTsU8cUUxGVwPJPGQPZb1MHjmZXjOxKA3ghkSMsGs6eXf3PIvzCxabRESjmbeKyS"
+          email: _emailController.text,
+          password: _passwordController.text,
+          userName: "HT",
+          token:
+              "oTsU8cUUxGVwPJPGQPZb1MHjmZXjOxKA3ghkSMsGs6eXf3PIvzCxabRESjmbeKyS",
         ),
       );
     }
@@ -133,10 +115,10 @@ class _SignUpPageState extends State<SignUpPage> {
         create: (context) => ButtonStateCubit(),
         child: BlocListener<ButtonStateCubit, ButtonState>(
           listener: (context, state) {
-            if(state is ButtonSuccessState) {
+            if (state is ButtonSuccessState) {
               Navigator.pushReplacementNamed(context, RouteConstant.profile);
             }
-            if(state is ButtonFailureState) {
+            if (state is ButtonFailureState) {
               showAppDialog(
                 context: context,
                 title: 'Error',
@@ -158,17 +140,17 @@ class _SignUpPageState extends State<SignUpPage> {
               padding: EdgeInsets.fromLTRB(30, 100, 30, 0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children:[
+                children: [
                   Text(
                     'Sign up now',
                     style: Theme.of(context).textTheme.headlineLarge,
                   ),
-                  SizedBox(height: 16),
+                  SizedBox(height: 10),
                   Text(
                     'Please fill the details and create account',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textGrey,
-                    ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(color: AppColors.textGrey),
                   ),
                   SizedBox(height: 40),
                   Form(
@@ -177,26 +159,27 @@ class _SignUpPageState extends State<SignUpPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         CustomTextField(
-                          placeholder: 'Username',
-                          controller: _usernameController,
-                          validator: _validateUsername,
-                        ),
-                        SizedBox(height: 16),
-                        CustomTextField(
-                          placeholder: 'Email',
+                          label: 'Email',
+                          placeholder: 'Enter your email',
                           controller: _emailController,
                           validator: _validateEmail,
+                          prefixIconData: Icons.email_outlined,
                         ),
                         SizedBox(height: 16),
                         CustomPasswordField(
+                          label: 'Password',
+                          placeholder: 'Enter your password',
                           controller: _passwordController,
                           validator: _validatePassword,
+                          prefixIconData: Icons.lock_outline,
                         ),
                         SizedBox(height: 16),
                         CustomPasswordField(
-                          placeholder: "Confirm Password",
+                          label: 'Confirm Password',
+                          placeholder: 'Re-enter your password',
                           controller: _confirmedpasswordController,
                           validator: _validateConfirmedPassword,
+                          prefixIconData: Icons.lock_outline,
                         ),
                         SizedBox(height: 30),
                         Builder(
@@ -205,7 +188,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               title: "Sign Up",
                               onPressed: () => _handleSignUp(context),
                             );
-                          }
+                          },
                         ),
                         SizedBox(height: 40),
                         Row(
@@ -213,9 +196,8 @@ class _SignUpPageState extends State<SignUpPage> {
                           children: [
                             Text(
                               "Already have an account?",
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: AppColors.textGrey,
-                              ),
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(color: AppColors.textGrey),
                             ),
                             CustomTextButton(
                               onPressed: _handleSignIn,
@@ -237,7 +219,6 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   void dispose() {
-    _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
