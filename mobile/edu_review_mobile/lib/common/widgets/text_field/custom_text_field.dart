@@ -28,17 +28,27 @@ class CustomTextField extends StatelessWidget {
       keyboardType: keyboardType,
       onChanged: onChanged,
       validator: validator,
+      style: Theme.of(context).textTheme.bodyMedium,
       decoration: InputDecoration(
         hintText: placeholder,
-        labelStyle: TextStyle(),
+        hintStyle: Theme.of(
+          context,
+        ).textTheme.bodyMedium?.copyWith(color: AppColors.textGrey),
         filled: true,
-        fillColor: AppColors.secondaryGrey,
-        border: OutlineInputBorder(
-          borderSide: BorderSide.none,
+        fillColor: AppColors.primaryWhite,
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 10,
+          horizontal: 12,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: AppColors.secondaryGrey, width: 1.0),
           borderRadius: BorderRadius.circular(8.0),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: AppColors.primaryBlack, width: 2.0),
+          borderSide: const BorderSide(
+            color: AppColors.primaryBlue,
+            width: 2.0,
+          ),
           borderRadius: BorderRadius.circular(8.0),
         ),
         errorBorder: OutlineInputBorder(
@@ -46,12 +56,12 @@ class CustomTextField extends StatelessWidget {
           borderRadius: BorderRadius.circular(8.0),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: AppColors.primaryBlack, width: 2.0),
+          borderSide: const BorderSide(color: AppColors.primaryRed, width: 2.0),
           borderRadius: BorderRadius.circular(8.0),
         ),
         suffixIcon: suffixIcon,
       ),
-      autovalidateMode: AutovalidateMode.disabled,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
     );
   }
 }
