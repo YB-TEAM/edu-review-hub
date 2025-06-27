@@ -2,15 +2,15 @@ import 'package:edu_review_mobile/common/bloc/button/button_state.dart';
 import 'package:edu_review_mobile/common/bloc/button/button_state_cubit.dart';
 import 'package:edu_review_mobile/common/constants/route.constant.dart';
 import 'package:edu_review_mobile/common/widgets/button/primary_button.dart';
-import 'package:edu_review_mobile/features/auth/domain/usecases/logout.dart';
-import 'package:edu_review_mobile/features/dashboard/presentation/bloc/user_display_cubit.dart';
-import 'package:edu_review_mobile/features/dashboard/presentation/bloc/user_display_state.dart';
+import 'package:edu_review_mobile/features/user_profile/domain/usecases/logout.dart';
+import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user_display_cubit.dart';
+import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user_display_state.dart';
 import 'package:edu_review_mobile/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -41,19 +41,22 @@ class HomePage extends StatelessWidget {
                 if(state is UserLoaded) {
                   return SingleChildScrollView(
                     child: Center(
-                      child: Column(
-                        children: [
-                          Text(state.userEntity.userName),
-                          Text(state.userEntity.email),
-                          Builder(
-                            builder: (context) {
-                              return PrimaryButton(
-                                onPressed: () => _logOut(context),
-                                title: "Sign Out",
-                              );
-                            }
-                          )
-                        ],
+                      child: Padding(
+                        padding: EdgeInsetsGeometry.symmetric(horizontal: 20),
+                        child: Column(
+                          children: [
+                            Text(state.userEntity.userName),
+                            Text(state.userEntity.email),
+                            Builder(
+                              builder: (context) {
+                                return PrimaryButton(
+                                  onPressed: () => _logOut(context),
+                                  title: "Sign Out",
+                                );
+                              }
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   );

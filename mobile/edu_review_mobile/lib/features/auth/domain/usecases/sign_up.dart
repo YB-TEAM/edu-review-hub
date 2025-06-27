@@ -6,8 +6,8 @@ import 'package:edu_review_mobile/service_locator.dart';
 
 class SignUpUseCase implements UseCase<Either, SignUpParams> {
   @override
-  Future<Either> call(SignUpParams ? signupParams) async{
-   return sl<AuthRepository>().signUp(signupParams!);
+  Future<Either> call(SignUpParams ? param) async{
+   return sl<AuthRepository>().signUp(param!);
   }
 
 }

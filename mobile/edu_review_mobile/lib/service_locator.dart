@@ -3,10 +3,15 @@ import 'package:edu_review_mobile/features/auth/data/data_sources/local/auth_loc
 import 'package:edu_review_mobile/features/auth/data/data_sources/remote/auth_api_service.dart';
 import 'package:edu_review_mobile/features/auth/data/repository/auth_repository_imp.dart';
 import 'package:edu_review_mobile/features/auth/domain/repository/auth_repository.dart';
-import 'package:edu_review_mobile/features/auth/domain/usecases/get_user.dart';
+import 'package:edu_review_mobile/features/auth/domain/usecases/sign_in.dart';
+import 'package:edu_review_mobile/features/user_profile/data/repository/profile_repository_impl.dart';
+import 'package:edu_review_mobile/features/user_profile/domain/repository/profile_repository.dart';
+import 'package:edu_review_mobile/features/user_profile/domain/usecases/get_user.dart';
 import 'package:edu_review_mobile/features/auth/domain/usecases/is_logged_in.dart';
-import 'package:edu_review_mobile/features/auth/domain/usecases/logout.dart';
+import 'package:edu_review_mobile/features/user_profile/domain/usecases/logout.dart';
 import 'package:edu_review_mobile/features/auth/domain/usecases/sign_up.dart';
+import 'package:edu_review_mobile/features/user_profile/data/data_souces/local/profile_local_service.dart';
+import 'package:edu_review_mobile/features/user_profile/data/data_souces/remote/profile_api_service.dart';
 import 'package:get_it/get_it.dart';
 
 final sl = GetIt.instance;
@@ -23,9 +28,20 @@ void setUpServiceLocator() {
     AuthLocalServiceImpl()
   );
 
+  sl.registerSingleton<ProfileApiService>(
+    ProfileApiServiceImpl()
+  );
+
+  sl.registerSingleton<ProfileLocalService>(
+    ProfileLocalServiceImpl()
+  );
+
   // Repositories
   sl.registerSingleton<AuthRepository>(
     AuthRepositoryImpl()
+  );
+  sl.registerSingleton<ProfileRepository>(
+    ProfileRepositoryImpl()
   );
 
   // Usecases
@@ -40,5 +56,8 @@ void setUpServiceLocator() {
   );
   sl.registerSingleton<LogOutUseCase>(
     LogOutUseCase()
+  );
+  sl.registerSingleton<SignInUseCase>(
+    SignInUseCase()
   );
 }

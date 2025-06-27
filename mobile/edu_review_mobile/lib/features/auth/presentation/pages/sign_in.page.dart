@@ -1,8 +1,15 @@
+import 'package:edu_review_mobile/common/bloc/button/button_state.dart';
+import 'package:edu_review_mobile/common/bloc/button/button_state_cubit.dart';
 import 'package:edu_review_mobile/common/widgets/button/custom_text_button.dart';
 import 'package:edu_review_mobile/common/widgets/button/primary_button.dart';
+import 'package:edu_review_mobile/common/widgets/dialog/custom_dialog.dart';
 import 'package:edu_review_mobile/common/widgets/text_field/custom_password_field.dart';
 import 'package:edu_review_mobile/common/widgets/text_field/custom_text_field.dart';
 import 'package:edu_review_mobile/common_libs.dart';
+import 'package:edu_review_mobile/features/auth/data/models/signin_params.dart';
+import 'package:edu_review_mobile/features/auth/domain/usecases/sign_in.dart';
+import 'package:edu_review_mobile/service_locator.dart' show sl;
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -23,8 +30,16 @@ class _SignInPageState extends State<SignInPage> {
     return null;
   }
 
-  void _handleSignIn() {
+  void _handleSignIn(BuildContext context) {
     if (_formKey.currentState!.validate()) {
+      context.read<ButtonStateCubit>().execute(
+        usecase: sl<SignInUseCase>(),
+        params: SignInParams(
+          email: _emailController.text, 
+          password: _passwordController.text, 
+          token: "token",
+        )
+      );
     }
   }
 
@@ -43,71 +58,100 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GestureDetector(
-        onTap: _handleTapOutside,
-        child: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(30, 140, 30, 0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children:[
-              Text(
-                'Sign in now',
-                style: Theme.of(context).textTheme.headlineLarge,
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Please sign in to continue using our app',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.textGrey,
-                ),
-              ),
-              SizedBox(height: 40),
-              Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CustomTextField(
-                      placeholder: 'Email',
-                      controller: _emailController,
-                      validator: _validateEmail,
+      body: BlocProvider(
+        create: (context) => ButtonStateCubit(),
+        child: BlocListener<ButtonStateCubit, ButtonState>(
+          listener: (context, state) {
+            if(state is ButtonSuccessState) {
+              Navigator.pushReplacementNamed(context, RouteConstant.dashBoard);
+            }
+            if(state is ButtonFailureState) {
+              showAppDialog(
+                context: context,
+                title: 'Error',
+                content: state.errorMessage,
+                icon: Icons.error_outline,
+                iconColor: Colors.red,
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('Đóng'),
+                  ),
+                ],
+              );
+            }
+          },
+          child: GestureDetector(
+            onTap: _handleTapOutside,
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(30, 140, 30, 0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children:[
+                  Text(
+                    'Sign in now',
+                    style: Theme.of(context).textTheme.headlineLarge,
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Please sign in to continue using our app',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppColors.textGrey,
                     ),
-                    SizedBox(height: 16),
-                    CustomPasswordField(
-                      controller: _passwordController,
-                    ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: CustomTextButton(
-                        onPressed: _handleForgotPassword,
-                        title: "Forgot Password?",
-                      ),
-                    ),
-                    SizedBox(height: 30),
-                    PrimaryButton(
-                      title: "Sign In",
-                      onPressed: _handleSignIn,
-                    ),
-                    SizedBox(height: 40),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                  ),
+                  SizedBox(height: 40),
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          "Don't have an account?",
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppColors.textGrey,
+                        CustomTextField(
+                          placeholder: 'Email',
+                          controller: _emailController,
+                          validator: _validateEmail,
+                        ),
+                        SizedBox(height: 16),
+                        CustomPasswordField(
+                          controller: _passwordController,
+                        ),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: CustomTextButton(
+                            onPressed: _handleForgotPassword,
+                            title: "Forgot Password?",
                           ),
                         ),
-                        CustomTextButton(
-                          onPressed: _handleSignUp,
-                          title: "Sign up",
+                        SizedBox(height: 30),
+                        Builder(
+                          builder: (context) {
+                            return PrimaryButton(
+                              title: "Sign In",
+                              onPressed: () => _handleSignIn(context),
+                            );
+                          }
+                        ),
+                        SizedBox(height: 40),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Don't have an account?",
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: AppColors.textGrey,
+                              ),
+                            ),
+                            CustomTextButton(
+                              onPressed: _handleSignUp,
+                              title: "Sign up",
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

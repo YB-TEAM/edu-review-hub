@@ -1,4 +1,4 @@
-import 'package:edu_review_mobile/features/auth/domain/entities/user.dart';
+import 'package:edu_review_mobile/features/user_profile/domain/entities/user.dart';
 
 class UserModel {
   final String email;
