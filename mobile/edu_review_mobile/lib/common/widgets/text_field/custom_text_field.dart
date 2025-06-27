@@ -27,6 +27,7 @@ class CustomTextField extends StatelessWidget {
       obscureText: obscureText,
       keyboardType: keyboardType,
       onChanged: onChanged,
+      validator: validator,
       decoration: InputDecoration(
         hintText: placeholder,
         labelStyle: TextStyle(),
@@ -50,7 +51,7 @@ class CustomTextField extends StatelessWidget {
         ),
         suffixIcon: suffixIcon,
       ),
-      autovalidateMode: AutovalidateMode.onUserInteraction,
+      autovalidateMode: AutovalidateMode.disabled,
     );
   }
 }

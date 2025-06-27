@@ -26,6 +26,7 @@ class _CustomPasswordFieldState extends State<CustomPasswordField> {
     return TextFormField(
       controller: widget.controller,
       obscureText: _obscureText,
+      validator: widget.validator,
       decoration: InputDecoration(
         hintText: widget.placeholder ?? 'Password',
         filled: true,
@@ -58,6 +59,7 @@ class _CustomPasswordFieldState extends State<CustomPasswordField> {
           },
         ),
       ),
+      autovalidateMode: AutovalidateMode.disabled,
     );
   }
 }
