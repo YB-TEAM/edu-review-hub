@@ -24,22 +24,88 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmedpasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  
+  // Track if form has been submitted to show validation errors
+  bool _isFormSubmitted = false;
 
   String? _validateUsername(String? value) {
+    if (!_isFormSubmitted) return null;
     if (value == null || value.isEmpty) {
-      return 'Please enter the username';
+      return 'Please enter username';
+    }
+    if (value.length < 3) {
+      return 'Username must be at least 3 characters';
+    }
+    if (value.length > 20) {
+      return 'Username cannot exceed 20 characters';
+    }
+    // Kiểm tra ký tự đặc biệt
+    if (!RegExp(r'^[a-zA-Z0-9_]+$').hasMatch(value)) {
+      return 'Username can only contain letters, numbers and underscore';
     }
     return null;
   }
+
   String? _validateEmail(String? value) {
+    if (!_isFormSubmitted) return null;
     if (value == null || value.isEmpty) {
-      return 'Please enter the email';
+      return 'Please enter email';
+    }
+    // Kiểm tra định dạng email
+    final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+    if (!emailRegex.hasMatch(value)) {
+      return 'Please enter a valid email address';
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    if (!_isFormSubmitted) return null;
+    if (value == null || value.isEmpty) {
+      return 'Please enter password';
+    }
+    if (value.length < 8) {
+      return 'Password must be at least 8 characters';
+    }
+    if (value.length > 50) {
+      return 'Password cannot exceed 50 characters';
+    }
+    // Kiểm tra có ít nhất 1 chữ hoa, 1 chữ thường, 1 số
+    if (!RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)').hasMatch(value)) {
+      return 'Password must contain at least 1 uppercase, 1 lowercase and 1 number';
+    }
+    return null;
+  }
+
+  String? _validateConfirmedPassword(String? value) {
+    if (!_isFormSubmitted) return null;
+    if (value == null || value.isEmpty) {
+      return 'Please confirm your password';
+    }
+    if (value != _passwordController.text) {
+      return 'Passwords do not match';
     }
     return null;
   }
 
   void _handleSignUp(BuildContext context) {
-    if (_formKey.currentState!.validate()) {
+    setState(() {
+      _isFormSubmitted = true;
+    });
+    
+    // Force validation to show errors
+    _formKey.currentState!.validate();
+    
+    // Check if form is valid before proceeding
+    if (_usernameController.text.isNotEmpty &&
+        _emailController.text.isNotEmpty &&
+        _passwordController.text.isNotEmpty &&
+        _confirmedpasswordController.text.isNotEmpty &&
+        _validateUsername(_usernameController.text) == null &&
+        _validateEmail(_emailController.text) == null &&
+        _validatePassword(_passwordController.text) == null &&
+        _validateConfirmedPassword(_confirmedpasswordController.text) == null) {
+      
       context.read<ButtonStateCubit>().execute(
         usecase: sl<SignUpUseCase>(),
         params: SignUpParams(
@@ -80,7 +146,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Đóng'),
+                    child: const Text('Close'),
                   ),
                 ],
               );
@@ -124,20 +190,13 @@ class _SignUpPageState extends State<SignUpPage> {
                         SizedBox(height: 16),
                         CustomPasswordField(
                           controller: _passwordController,
-                        ),
-                        SizedBox(height: 8),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text("Password must be 8 character",
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: AppColors.textGrey,
-                            ),
-                          )
+                          validator: _validatePassword,
                         ),
                         SizedBox(height: 16),
                         CustomPasswordField(
-                          placeholder: "Confirmed Password",
+                          placeholder: "Confirm Password",
                           controller: _confirmedpasswordController,
+                          validator: _validateConfirmedPassword,
                         ),
                         SizedBox(height: 30),
                         Builder(

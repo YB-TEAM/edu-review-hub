@@ -22,16 +22,48 @@ class _SignInPageState extends State<SignInPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  
+  // Track if form has been submitted to show validation errors
+  bool _isFormSubmitted = false;
 
   String? _validateEmail(String? value) {
+    if (!_isFormSubmitted) return null;
     if (value == null || value.isEmpty) {
-      return 'Please enter the email';
+      return 'Please enter email';
+    }
+    // Kiểm tra định dạng email
+    final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+    if (!emailRegex.hasMatch(value)) {
+      return 'Please enter a valid email address';
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    if (!_isFormSubmitted) return null;
+    if (value == null || value.isEmpty) {
+      return 'Please enter password';
+    }
+    if (value.length < 8) {
+      return 'Password must be at least 8 characters';
     }
     return null;
   }
 
   void _handleSignIn(BuildContext context) {
-    if (_formKey.currentState!.validate()) {
+    setState(() {
+      _isFormSubmitted = true;
+    });
+    
+    // Force validation to show errors
+    _formKey.currentState!.validate();
+    
+    // Check if form is valid before proceeding
+    if (_emailController.text.isNotEmpty &&
+        _passwordController.text.isNotEmpty &&
+        _validateEmail(_emailController.text) == null &&
+        _validatePassword(_passwordController.text) == null) {
+      
       context.read<ButtonStateCubit>().execute(
         usecase: sl<SignInUseCase>(),
         params: SignInParams(
@@ -75,7 +107,7 @@ class _SignInPageState extends State<SignInPage> {
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Đóng'),
+                    child: const Text('Close'),
                   ),
                 ],
               );
@@ -113,6 +145,7 @@ class _SignInPageState extends State<SignInPage> {
                         SizedBox(height: 16),
                         CustomPasswordField(
                           controller: _passwordController,
+                          validator: _validatePassword,
                         ),
                         Align(
                           alignment: Alignment.centerRight,
