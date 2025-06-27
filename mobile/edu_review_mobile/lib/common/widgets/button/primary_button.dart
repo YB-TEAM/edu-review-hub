@@ -6,7 +6,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class PrimaryButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String title;
-  const PrimaryButton({super.key, required this.onPressed, required this.title});
+  const PrimaryButton({
+    super.key,
+    required this.onPressed,
+    required this.title,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,13 +29,11 @@ class PrimaryButton extends StatelessWidget {
       onPressed: null,
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.primaryBlue,
+        maximumSize: Size(double.infinity, 50),
         minimumSize: Size(double.infinity, 50),
-        padding: EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
-      child: CircularProgressIndicator(color: AppColors.primaryBlue)
+      child: CircularProgressIndicator(color: AppColors.primaryBlue),
     );
   }
 
@@ -40,11 +42,9 @@ class PrimaryButton extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.primaryBlue,
+        maximumSize: Size(double.infinity, 50),
         minimumSize: Size(double.infinity, 50),
-        padding: EdgeInsets.symmetric(vertical: 22),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       child: Text(
         title,

@@ -8,7 +8,7 @@ class CustomPasswordField extends StatefulWidget {
   final String? Function(String?)? validator;
 
   const CustomPasswordField({
-    super.key, 
+    super.key,
     this.placeholder,
     required this.controller,
     this.validator,
@@ -27,16 +27,27 @@ class _CustomPasswordFieldState extends State<CustomPasswordField> {
       controller: widget.controller,
       obscureText: _obscureText,
       validator: widget.validator,
+      style: Theme.of(context).textTheme.bodyMedium,
       decoration: InputDecoration(
         hintText: widget.placeholder ?? 'Password',
+        hintStyle: Theme.of(
+          context,
+        ).textTheme.bodyMedium?.copyWith(color: AppColors.textGrey),
         filled: true,
-        fillColor: const Color(0xFFF7F7F9),
-        border: OutlineInputBorder(
-          borderSide: BorderSide.none,
+        fillColor: AppColors.primaryWhite,
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 10,
+          horizontal: 12,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: AppColors.secondaryGrey, width: 1.0),
           borderRadius: BorderRadius.circular(8.0),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: AppColors.primaryBlack, width: 2.0),
+          borderSide: const BorderSide(
+            color: AppColors.primaryBlue,
+            width: 2.0,
+          ),
           borderRadius: BorderRadius.circular(8.0),
         ),
         errorBorder: OutlineInputBorder(
@@ -44,14 +55,16 @@ class _CustomPasswordFieldState extends State<CustomPasswordField> {
           borderRadius: BorderRadius.circular(8.0),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: AppColors.primaryBlack, width: 2.0),
+          borderSide: const BorderSide(color: AppColors.primaryRed, width: 2.0),
           borderRadius: BorderRadius.circular(8.0),
         ),
         suffixIcon: IconButton(
-          icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility),
-          style: ButtonStyle(
-            splashFactory: NoSplash.splashFactory, 
+          icon: Icon(
+            _obscureText ? Icons.visibility_off : Icons.visibility,
+            color: AppColors.primaryGrey,
+            size: 20,
           ),
+          style: ButtonStyle(splashFactory: NoSplash.splashFactory),
           onPressed: () {
             setState(() {
               _obscureText = !_obscureText;
@@ -59,7 +72,7 @@ class _CustomPasswordFieldState extends State<CustomPasswordField> {
           },
         ),
       ),
-      autovalidateMode: AutovalidateMode.disabled,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
     );
   }
 }
