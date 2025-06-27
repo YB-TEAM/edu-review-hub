@@ -15,30 +15,30 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     void _logOut(BuildContext context) {
-      context.read<ButtonStateCubit>().execute(
-        usecase: sl<LogOutUseCase>()
-      );
+      context.read<ButtonStateCubit>().execute(usecase: sl<LogOutUseCase>());
     }
 
     return Scaffold(
       body: Center(
         child: MultiBlocProvider(
           providers: [
-            BlocProvider(create: (context) => UserDisplayCubit()..displayUser()),
+            BlocProvider(
+              create: (context) => UserDisplayCubit()..displayUser(),
+            ),
             BlocProvider(create: (context) => ButtonStateCubit()),
           ],
           child: BlocListener<ButtonStateCubit, ButtonState>(
             listener: (context, state) {
-              if(state is ButtonSuccessState) {
-                Navigator.pushReplacementNamed(context, RouteConstant.signUp);
+              if (state is ButtonSuccessState) {
+                Navigator.pushReplacementNamed(context, RouteConstant.signIn);
               }
             },
-            child: BlocBuilder<UserDisplayCubit,UserDisplayState>(
+            child: BlocBuilder<UserDisplayCubit, UserDisplayState>(
               builder: (context, state) {
-                if(state is UserLoading) {
+                if (state is UserLoading) {
                   return CircularProgressIndicator();
                 }
-                if(state is UserLoaded) {
+                if (state is UserLoaded) {
                   return SingleChildScrollView(
                     child: Center(
                       child: Padding(
@@ -53,19 +53,19 @@ class ProfilePage extends StatelessWidget {
                                   onPressed: () => _logOut(context),
                                   title: "Sign Out",
                                 );
-                              }
-                            )
+                              },
+                            ),
                           ],
                         ),
                       ),
                     ),
                   );
                 }
-                if(state is LoadUserFailure) {
+                if (state is LoadUserFailure) {
                   return Text(state.errorMessage);
                 }
                 return Container();
-              }
+              },
             ),
           ),
         ),
