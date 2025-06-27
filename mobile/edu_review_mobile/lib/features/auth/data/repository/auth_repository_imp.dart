@@ -53,4 +53,9 @@ class AuthRepositoryImpl extends AuthRepository{
       }
     );
   }
+  
+  @override
+  Future logOut() async {
+    await  sl<AuthLocalService>().logOut();
+  }
 }

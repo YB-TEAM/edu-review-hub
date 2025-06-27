@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 abstract class AuthApiService {
   Future<Either> signUp(SignUpParams signupParams);
   Future<Either> getUser();
+  
 }
 
 class AuthApiServiceImpl extends AuthApiService {
@@ -45,6 +46,4 @@ class AuthApiServiceImpl extends AuthApiService {
       return Left(e.response!.data['message']);
     }
   }
-
-
 }

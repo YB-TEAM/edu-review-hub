@@ -5,6 +5,7 @@ import 'package:edu_review_mobile/features/auth/data/repository/auth_repository_
 import 'package:edu_review_mobile/features/auth/domain/repository/auth_repository.dart';
 import 'package:edu_review_mobile/features/auth/domain/usecases/get_user.dart';
 import 'package:edu_review_mobile/features/auth/domain/usecases/is_logged_in.dart';
+import 'package:edu_review_mobile/features/auth/domain/usecases/logout.dart';
 import 'package:edu_review_mobile/features/auth/domain/usecases/sign_up.dart';
 import 'package:get_it/get_it.dart';
 
@@ -36,5 +37,8 @@ void setUpServiceLocator() {
   );
   sl.registerSingleton<GetUserUseCase>(
     GetUserUseCase()
+  );
+  sl.registerSingleton<LogOutUseCase>(
+    LogOutUseCase()
   );
 }
