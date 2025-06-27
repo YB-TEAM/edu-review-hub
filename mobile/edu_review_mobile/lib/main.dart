@@ -6,44 +6,48 @@ import 'package:edu_review_mobile/service_locator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:edu_review_mobile/common_libs.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:edu_review_mobile/main_screen.dart';
 
 void main() {
-  runZonedGuarded(() async {
-    WidgetsFlutterBinding.ensureInitialized();
+  runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
 
-    String initialRoute = RouteConstant.signIn;
-    
-    FlutterError.onError = (FlutterErrorDetails details) {
-      // Filter out Navigator and MouseTracker assertion errors in debug mode
-      if (kDebugMode &&
-          (details.exception.toString().contains('mouse_tracker.dart') ||
-              details.exception.toString().contains('!_debugLocked'))) {
-        debugPrint('Framework assertion filtered: ${details.exception}');
-        return;
-      }
+      String initialRoute = RouteConstant.signIn;
 
-      FlutterError.presentError(details);
-      Zone.current.handleUncaughtError(
-          details.exception, details.stack ?? StackTrace.empty);
-    };
+      FlutterError.onError = (FlutterErrorDetails details) {
+        // Filter out Navigator and MouseTracker assertion errors in debug mode
+        if (kDebugMode &&
+            (details.exception.toString().contains('mouse_tracker.dart') ||
+                details.exception.toString().contains('!_debugLocked'))) {
+          debugPrint('Framework assertion filtered: ${details.exception}');
+          return;
+        }
 
-    setUpServiceLocator();
+        FlutterError.presentError(details);
+        Zone.current.handleUncaughtError(
+          details.exception,
+          details.stack ?? StackTrace.empty,
+        );
+      };
 
-    runApp(MyApp(
-      initialRoute: initialRoute
-    ));
-  }, (error, stackTrace) {
-    // // Avoid navigation in error handler to prevent loops
-    // logError(error, stackTrace);
+      setUpServiceLocator();
 
-    // // Don't show dialog immediately, schedule it for next frame
-    // if (!error.toString().contains('!_debugLocked') &&
-    //     !error.toString().contains('mouse_tracker.dart')) {
-    //   WidgetsBinding.instance.addPostFrameCallback((_) {
-    //     _showErrorDialogSafely(error);
-    //   });
-    // }
-  });
+      runApp(MyApp(initialRoute: initialRoute));
+    },
+    (error, stackTrace) {
+      // // Avoid navigation in error handler to prevent loops
+      // logError(error, stackTrace);
+
+      // // Don't show dialog immediately, schedule it for next frame
+      // if (!error.toString().contains('!_debugLocked') &&
+      //     !error.toString().contains('mouse_tracker.dart')) {
+      //   WidgetsBinding.instance.addPostFrameCallback((_) {
+      //     _showErrorDialogSafely(error);
+      //   });
+      // }
+    },
+  );
 }
 
 // void _showErrorDialogSafely(dynamic error) {
@@ -65,7 +69,6 @@ void main() {
 //   debugPrint('ERROR: $error');
 //   debugPrint('STACKTRACE: $stackTrace');
 // }
-
 class MyApp extends StatelessWidget {
   final String initialRoute;
 
@@ -82,7 +85,9 @@ class MyApp extends StatelessWidget {
         home: BlocListener<AuthStateCubit, AuthState>(
           listener: (context, state) {
             if (state is Authenticated) {
-              Navigator.of(context).pushReplacementNamed(RouteConstant.profile);
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (_) => const MainScreen()),
+              );
             } else if (state is UnAuthenticated) {
               Navigator.of(context).pushReplacementNamed(RouteConstant.signIn);
             }
@@ -93,4 +98,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

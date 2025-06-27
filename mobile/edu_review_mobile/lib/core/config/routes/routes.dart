@@ -1,4 +1,5 @@
 import 'package:edu_review_mobile/features/user_profile/presentation/pages/profile.page.dart';
+import 'package:edu_review_mobile/main_screen.dart';
 import 'package:flutter/services.dart';
 import 'package:edu_review_mobile/common_libs.dart';
 import 'package:edu_review_mobile/features/auth/presentation/pages/sign_up.page.dart';
@@ -10,49 +11,71 @@ class AppRouter {
       case RouteConstant.signIn:
         return MaterialPageRoute(
           settings: settings,
-          builder: (_) => PopScope(
-            canPop: false,
-            onPopInvokedWithResult: (didPop, result) async {
-              if (!didPop) return;
-              SystemNavigator.pop();
-            },
-            child: const SignInPage()),
-          );
+          builder:
+              (_) => PopScope(
+                canPop: false,
+                onPopInvokedWithResult: (didPop, result) async {
+                  if (!didPop) return;
+                  SystemNavigator.pop();
+                },
+                child: const SignInPage(),
+              ),
+        );
 
       case RouteConstant.signUp:
         return MaterialPageRoute(
           settings: settings,
-          builder: (_) => PopScope(
-            canPop: false,
-            onPopInvokedWithResult: (didPop, result) async {
-              if (!didPop) return;
-              SystemNavigator.pop();
-            },
-            child: const SignUpPage()),
-          );
+          builder:
+              (_) => PopScope(
+                canPop: false,
+                onPopInvokedWithResult: (didPop, result) async {
+                  if (!didPop) return;
+                  SystemNavigator.pop();
+                },
+                child: const SignUpPage(),
+              ),
+        );
+
+      case RouteConstant.mainScreen:
+        return MaterialPageRoute(
+          settings: settings,
+          builder:
+              (_) => PopScope(
+                canPop: false,
+                onPopInvokedWithResult: (didPop, result) async {
+                  if (!didPop) return;
+                  SystemNavigator.pop();
+                },
+                child: const MainScreen(),
+              ),
+        );
 
       case RouteConstant.profile:
         return MaterialPageRoute(
           settings: settings,
-          builder: (_) => PopScope(
-            canPop: false,
-            onPopInvokedWithResult: (didPop, result) async {
-              if (!didPop) return;
-              SystemNavigator.pop();
-            },
-            child: const ProfilePage()),
-          );
+          builder:
+              (_) => PopScope(
+                canPop: false,
+                onPopInvokedWithResult: (didPop, result) async {
+                  if (!didPop) return;
+                  SystemNavigator.pop();
+                },
+                child: const ProfilePage(),
+              ),
+        );
 
       default:
         return MaterialPageRoute(
           settings: settings,
-          builder: (_) => PopScope(
-            canPop: false,
-            child: Scaffold(
-              body:
-                Center(child: Text('No route defined for ${settings.name}')),
-            ),
-          ),
+          builder:
+              (_) => PopScope(
+                canPop: false,
+                child: Scaffold(
+                  body: Center(
+                    child: Text('No route defined for ${settings.name}'),
+                  ),
+                ),
+              ),
         );
     }
   }
