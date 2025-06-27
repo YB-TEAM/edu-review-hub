@@ -21,12 +21,7 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: MultiBlocProvider(
-          providers: [
-            BlocProvider(
-              create: (context) => UserDisplayCubit()..displayUser(),
-            ),
-            BlocProvider(create: (context) => ButtonStateCubit()),
-          ],
+          providers: [BlocProvider(create: (context) => ButtonStateCubit())],
           child: BlocListener<ButtonStateCubit, ButtonState>(
             listener: (context, state) {
               if (state is ButtonSuccessState) {
