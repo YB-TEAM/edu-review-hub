@@ -36,20 +36,7 @@ entity "login_attempts" as login_attempts {
   * attempted_at : TIMESTAMP
 }
 
-entity "security_logs" as security_logs {
-  * **id** : BIGINT <<PK>>
-  --
-  user_id : BIGINT <<FK>>
-  * event_type : VARCHAR(50)
-  severity : ENUM('low','medium','high','critical') DEFAULT 'medium'
-  * description : TEXT
-  metadata : JSON
-  ip_address : VARCHAR(45)
-  user_agent : TEXT
-  * created_at : TIMESTAMP
-}
 
 users ||--o{ activities : "has activities"
-users ||--o{ security_logs : "has security events"
 
 @enduml

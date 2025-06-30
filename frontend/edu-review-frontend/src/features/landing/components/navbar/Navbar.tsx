@@ -6,6 +6,7 @@ import "./navbar.scss";
 import { NAV_ITEMS } from "@/features/landing/types/navbar.type";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export function Navbar() {
   const { isScrolled } = useNavbar();
@@ -259,7 +260,9 @@ function DesktopCTAButtons({
           }
         )}
       >
-        <span className="relative z-10">Đăng nhập</span>
+        <Link href="/auth/login">
+          <span className="relative z-10">Đăng nhập</span>
+        </Link>
       </Button>
 
       <Button
@@ -374,7 +377,9 @@ function MobileMenu({
               variant="outline"
               className="w-full justify-center relative overflow-hidden border-2 border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-300 hover:scale-105"
             >
-              <span className="relative z-10 font-medium">Đăng nhập</span>
+              <Link href="/auth/login">
+                <span className="relative z-10 font-medium">Đăng nhập</span>
+              </Link>
             </Button>
             <Button
               variant="default"

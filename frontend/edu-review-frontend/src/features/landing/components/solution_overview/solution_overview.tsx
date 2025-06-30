@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import "./solution_overview.scss";
@@ -8,8 +8,11 @@ import "./solution_overview.scss";
 export function SolutionOverview() {
   const [isVisible, setIsVisible] = useState(false);
   const [activeFeature, setActiveFeature] = useState(0);
+  const [isHovering, setIsHovering] = useState<number | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
+  const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Intersection Observer
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -27,16 +30,56 @@ export function SolutionOverview() {
     return () => observer.disconnect();
   }, []);
 
-  // Auto-rotate features
+  // Auto-rotate features with better control
   useEffect(() => {
     if (!isVisible) return;
 
-    const interval = setInterval(() => {
-      setActiveFeature((prev) => (prev + 1) % 4);
-    }, 4000);
+    const startAutoRotate = () => {
+      autoRotateRef.current = setInterval(() => {
+        setActiveFeature((prev) => (prev + 1) % 4);
+      }, 5000); // Increased to 5 seconds for better UX
+    };
 
-    return () => clearInterval(interval);
-  }, [isVisible]);
+    const stopAutoRotate = () => {
+      if (autoRotateRef.current) {
+        clearInterval(autoRotateRef.current);
+        autoRotateRef.current = null;
+      }
+    };
+
+    // Start auto-rotate
+    startAutoRotate();
+
+    // Stop auto-rotate when user is hovering
+    if (isHovering !== null) {
+      stopAutoRotate();
+    }
+
+    return () => stopAutoRotate();
+  }, [isVisible, isHovering]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (autoRotateRef.current) {
+        clearInterval(autoRotateRef.current);
+      }
+    };
+  }, []);
+
+  // Memoized handlers for better performance
+  const handleFeatureClick = useCallback((index: number) => {
+    setActiveFeature(index);
+  }, []);
+
+  const handleFeatureMouseEnter = useCallback((index: number) => {
+    setIsHovering(index);
+    setActiveFeature(index);
+  }, []);
+
+  const handleFeatureMouseLeave = useCallback(() => {
+    setIsHovering(null);
+  }, []);
 
   const features = [
     {
@@ -153,20 +196,38 @@ export function SolutionOverview() {
             <div
               key={index}
               className={cn(
-                "solution-overview__feature group cursor-pointer transition-all duration-1000 transform",
+                "solution-overview__feature group cursor-pointer transition-all duration-700 transform",
                 {
                   "translate-y-0 opacity-100": isVisible,
                   "translate-y-10 opacity-0": !isVisible,
                   "solution-overview__feature--active": activeFeature === index,
                 }
               )}
-              style={{ transitionDelay: `${600 + index * 200}ms` }}
-              onClick={() => setActiveFeature(index)}
-              onMouseEnter={() => setActiveFeature(index)}
+              style={{ transitionDelay: `${400 + index * 150}ms` }}
+              onClick={() => handleFeatureClick(index)}
+              onMouseEnter={() => handleFeatureMouseEnter(index)}
+              onMouseLeave={handleFeatureMouseLeave}
             >
-              <div className="solution-overview__feature-card relative p-8 lg:p-10 rounded-3xl backdrop-blur-lg border h-full">
+              <div
+                className={cn(
+                  "solution-overview__feature-card relative p-8 lg:p-10 rounded-3xl backdrop-blur-lg border h-full transition-all duration-500",
+                  {
+                    "ring-2 ring-opacity-50": activeFeature === index,
+                  }
+                )}
+                style={{
+                  borderColor:
+                    activeFeature === index
+                      ? "rgba(59, 130, 246, 0.3)"
+                      : "rgba(255, 255, 255, 0.3)",
+                  boxShadow:
+                    activeFeature === index
+                      ? "0 20px 60px rgba(59, 130, 246, 0.15)"
+                      : "0 8px 32px rgba(0, 0, 0, 0.1)",
+                }}
+              >
                 {/* Icon */}
-                <div className="solution-overview__feature-icon text-6xl mb-6 transform group-hover:scale-110 transition-transform duration-300">
+                <div className="solution-overview__feature-icon text-6xl mb-6 transform transition-transform duration-300">
                   {feature.icon}
                 </div>
 
@@ -187,10 +248,10 @@ export function SolutionOverview() {
                         "flex items-center text-gray-700 transition-all duration-300",
                         {
                           "translate-x-0 opacity-100": activeFeature === index,
-                          "translate-x-4 opacity-70": activeFeature !== index,
+                          "translate-x-2 opacity-70": activeFeature !== index,
                         }
                       )}
-                      style={{ transitionDelay: `${detailIndex * 100}ms` }}
+                      style={{ transitionDelay: `${detailIndex * 80}ms` }}
                     >
                       <div
                         className={cn(
@@ -202,16 +263,6 @@ export function SolutionOverview() {
                     </li>
                   ))}
                 </ul>
-
-                {/* Gradient Border */}
-                <div
-                  className={cn(
-                    "solution-overview__feature-border absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none bg-gradient-to-r p-[2px]",
-                    feature.color
-                  )}
-                >
-                  <div className="w-full h-full bg-white rounded-3xl" />
-                </div>
 
                 {/* Active Indicator */}
                 <div
@@ -232,7 +283,7 @@ export function SolutionOverview() {
         {/* Progress Indicators */}
         <div
           className={cn(
-            "flex justify-center space-x-3 mb-12 transition-all duration-1000 delay-1000 transform",
+            "flex justify-center space-x-3 mb-12 transition-all duration-1000 delay-800 transform",
             {
               "translate-y-0 opacity-100": isVisible,
               "translate-y-10 opacity-0": !isVisible,
@@ -242,7 +293,7 @@ export function SolutionOverview() {
           {features.map((feature, index) => (
             <button
               key={index}
-              onClick={() => setActiveFeature(index)}
+              onClick={() => handleFeatureClick(index)}
               className={cn(
                 "solution-overview__progress-dot w-3 h-3 rounded-full transition-all duration-300 bg-gradient-to-r",
                 feature.color,
@@ -260,7 +311,7 @@ export function SolutionOverview() {
         {/* Call to Action */}
         <div
           className={cn(
-            "text-center transition-all duration-1000 delay-1200 transform",
+            "text-center transition-all duration-1000 delay-1000 transform",
             {
               "translate-y-0 opacity-100": isVisible,
               "translate-y-10 opacity-0": !isVisible,

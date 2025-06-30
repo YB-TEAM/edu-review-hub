@@ -174,7 +174,7 @@ function FooterLogo() {
       href="/"
       className="footer__logo inline-flex items-center space-x-3 mb-6"
     >
-      <div className="footer__logo-icon w-12 h-12 bg-gradient-to-br from-blue-500 to-orange-500 rounded-xl flex items-center justify-center">
+      <div className="footer__logo-icon w-12 h-12 bg-gradient-to-br from-primary-600 to-secondary-600 rounded-xl flex items-center justify-center">
         <span className="text-white font-bold text-xl">E</span>
       </div>
       <span className="footer__logo-text text-2xl font-bold text-white">

@@ -19,6 +19,7 @@ export function VideoBackground({ className, children }: VideoBackgroundProps) {
   const [hasFinished, setHasFinished] = useState(false);
   const [loadAttempts, setLoadAttempts] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [fadeOutProgress, setFadeOutProgress] = useState(0);
 
   // Scroll effect
   useEffect(() => {
@@ -82,18 +83,37 @@ export function VideoBackground({ className, children }: VideoBackgroundProps) {
       cleanup(); // Clear any existing timers
       video.currentTime = 0; // Start from beginning
       setIsPlaying(true);
+      setFadeOutProgress(0); // Reset fade out
 
       const playPromise = video.play();
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
             console.log("Video playing for 5 seconds");
-            // After 5 seconds, pause at current frame
+            // After 5 seconds, start smooth fade out
             stopTimer = setTimeout(() => {
-              video.pause();
+              console.log("Starting smooth fade out");
               setIsPlaying(false);
-              setHasFinished(true);
-              console.log("Video stopped at frame:", video.currentTime);
+
+              // Smooth fade out over 1 second
+              const fadeDuration = 1000; // 1 second
+              const fadeSteps = 60; // 60 steps for smooth animation
+              const fadeInterval = fadeDuration / fadeSteps;
+              let currentStep = 0;
+
+              const fadeTimer = setInterval(() => {
+                currentStep++;
+                const progress = currentStep / fadeSteps;
+                setFadeOutProgress(progress);
+
+                if (currentStep >= fadeSteps) {
+                  clearInterval(fadeTimer);
+                  video.pause();
+                  setHasFinished(true);
+                  setFadeOutProgress(1);
+                  console.log("Video fade out completed");
+                }
+              }, fadeInterval);
             }, 5000);
           })
           .catch((error) => {
@@ -104,9 +124,28 @@ export function VideoBackground({ className, children }: VideoBackgroundProps) {
               .play()
               .then(() => {
                 stopTimer = setTimeout(() => {
-                  video.pause();
+                  console.log("Starting smooth fade out (muted)");
                   setIsPlaying(false);
-                  setHasFinished(true);
+
+                  // Smooth fade out over 1 second
+                  const fadeDuration = 1000; // 1 second
+                  const fadeSteps = 60; // 60 steps for smooth animation
+                  const fadeInterval = fadeDuration / fadeSteps;
+                  let currentStep = 0;
+
+                  const fadeTimer = setInterval(() => {
+                    currentStep++;
+                    const progress = currentStep / fadeSteps;
+                    setFadeOutProgress(progress);
+
+                    if (currentStep >= fadeSteps) {
+                      clearInterval(fadeTimer);
+                      video.pause();
+                      setHasFinished(true);
+                      setFadeOutProgress(1);
+                      console.log("Video fade out completed (muted)");
+                    }
+                  }, fadeInterval);
                 }, 5000);
               })
               .catch(() => {
@@ -185,6 +224,7 @@ export function VideoBackground({ className, children }: VideoBackgroundProps) {
   const handleRestart = useCallback(() => {
     setHasFinished(false);
     setIsPlaying(false);
+    setFadeOutProgress(0); // Reset fade out progress
     const video = videoRef.current;
     if (video) {
       video.currentTime = 0;
@@ -212,11 +252,15 @@ export function VideoBackground({ className, children }: VideoBackgroundProps) {
           className={cn(
             "video-background__video absolute inset-0 w-full h-full object-cover transition-opacity duration-1000",
             {
-              "opacity-100": isLoaded,
+              "opacity-100": isLoaded && fadeOutProgress === 0,
               "opacity-0": !isLoaded,
               "video-background__video--finished": hasFinished,
+              "video-background__video--fading": fadeOutProgress > 0,
             }
           )}
+          style={{
+            opacity: isLoaded ? Math.max(0, 1 - fadeOutProgress) : 0,
+          }}
           muted
           playsInline
           preload="auto"

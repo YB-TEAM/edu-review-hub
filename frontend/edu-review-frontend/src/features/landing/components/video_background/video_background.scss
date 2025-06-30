@@ -21,6 +21,11 @@
       filter: brightness(0.95) contrast(1.1);
     }
 
+    // Fade out animation
+    &--fading {
+      transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
     @media (max-width: 768px) {
       // Mobile optimization
       object-position: center center;

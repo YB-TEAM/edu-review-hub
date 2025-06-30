@@ -1,0 +1,592 @@
+// Auth Background Animation
+.auth-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.floating-shapes {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.shape {
+  position: absolute;
+  border-radius: 50%;
+  background: linear-gradient(135deg, hsl(217 91% 60%), hsl(33 100% 66%));
+  opacity: 0.1;
+  animation: float 6s ease-in-out infinite;
+}
+
+.shape-1 {
+  width: 80px;
+  height: 80px;
+  top: 10%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.shape-2 {
+  width: 120px;
+  height: 120px;
+  top: 20%;
+  right: 15%;
+  animation-delay: 2s;
+}
+
+.shape-3 {
+  width: 60px;
+  height: 60px;
+  bottom: 30%;
+  left: 20%;
+  animation-delay: 4s;
+}
+
+.shape-4 {
+  width: 100px;
+  height: 100px;
+  bottom: 20%;
+  right: 10%;
+  animation-delay: 1s;
+}
+
+.shape-5 {
+  width: 40px;
+  height: 40px;
+  top: 50%;
+  left: 50%;
+  animation-delay: 3s;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-20px) rotate(120deg);
+  }
+  66% {
+    transform: translateY(10px) rotate(240deg);
+  }
+}
+
+// Auth Logo
+.auth-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo-icon {
+  font-size: 4rem;
+  animation: logoBounce 2s ease-in-out infinite;
+  filter: drop-shadow(0 4px 8px rgba(37, 99, 235, 0.3));
+}
+
+@keyframes logoBounce {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-10px) scale(1.05);
+  }
+}
+
+// Success Icon Animation
+.success-icon {
+  animation: successPulse 1s ease-in-out infinite;
+  filter: drop-shadow(0 4px 8px rgba(34, 197, 94, 0.3));
+}
+
+@keyframes successPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+// Success Animation
+.success-animation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.checkmark {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 2rem;
+  font-weight: bold;
+  animation: checkmarkAppear 0.6s ease-out;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+}
+
+@keyframes checkmarkAppear {
+  0% {
+    transform: scale(0) rotate(-180deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+// Progress Bar
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: hsl(213 97% 87%);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, hsl(217 91% 60%), hsl(33 100% 66%));
+  border-radius: 3px;
+  transition: width 0.5s ease;
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
+    animation: shimmer 2s infinite;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+// Auth Card
+.auth-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(37, 99, 235, 0.1),
+      transparent
+    );
+    transition: left 0.6s ease;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
+}
+
+// Form Groups
+.form-group {
+  position: relative;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  color: hsl(224 64% 33%);
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  transition: color 0.3s ease;
+}
+
+.form-group:focus-within .form-label {
+  color: hsl(217 91% 60%);
+}
+
+// Input Wrapper
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 3rem;
+  border: 2px solid hsl(213 97% 87%);
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+
+  &:focus {
+    outline: none;
+    border-color: hsl(217 91% 60%);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1),
+      0 4px 12px rgba(37, 99, 235, 0.1);
+    transform: translateY(-2px);
+  }
+
+  &::placeholder {
+    color: hsl(75 85 99);
+  }
+}
+
+.input-icon {
+  position: absolute;
+  left: 1rem;
+  font-size: 1.2rem;
+  color: hsl(75 85 99);
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.form-group:focus-within .input-icon {
+  color: hsl(217 91% 60%);
+  transform: scale(1.1);
+}
+
+// Password Toggle
+.password-toggle {
+  position: absolute;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: hsl(75 85 99);
+  transition: all 0.3s ease;
+  z-index: 1;
+
+  &:hover {
+    color: hsl(217 91% 60%);
+    transform: scale(1.1);
+  }
+}
+
+// Password Strength
+.password-strength {
+  .strength-bar {
+    width: 100%;
+    height: 4px;
+    background: hsl(213 97% 87%);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .strength-fill {
+    height: 100%;
+    transition: all 0.3s ease;
+    border-radius: 2px;
+  }
+}
+
+// Form Checkbox
+.form-checkbox {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid hsl(213 97% 87%);
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:checked {
+    background: hsl(217 91% 60%);
+    border-color: hsl(217 91% 60%);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+}
+
+// Auth Submit Button
+.auth-submit-btn {
+  position: relative;
+  background: linear-gradient(135deg, hsl(217 91% 60%), hsl(221 83% 53%));
+  border: none;
+  border-radius: 12px;
+  padding: 0.875rem 1.5rem;
+  font-weight: 600;
+  font-size: 1rem;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      transparent
+    );
+    transition: left 0.6s ease;
+  }
+
+  &:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.2);
+
+    &::before {
+      left: 100%;
+    }
+  }
+
+  &:active {
+    transform: translateY(-1px) scale(1.01);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-icon {
+    display: inline-block;
+    margin-right: 0.5rem;
+    font-size: 1.1em;
+    animation: iconPulse 2s ease-in-out infinite;
+  }
+}
+
+@keyframes iconPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+// Loading Spinner
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  .spinner {
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// Divider
+.divider {
+  position: relative;
+  text-align: center;
+  margin: 1.5rem 0;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: hsl(213 97% 87%);
+  }
+
+  span {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 0 1rem;
+    color: hsl(75 85 99);
+    font-size: 0.875rem;
+    position: relative;
+    z-index: 1;
+  }
+}
+
+// Social Login
+.social-login {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.social-btn {
+  position: relative;
+  background: rgba(255, 255, 255, 0.8);
+  border: 2px solid hsl(213 97% 87%);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-weight: 500;
+  color: hsl(224 64% 33%);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(37, 99, 235, 0.1),
+      transparent
+    );
+    transition: left 0.6s ease;
+  }
+
+  &:hover {
+    border-color: hsl(217 91% 60%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+
+    &::before {
+      left: 100%;
+    }
+  }
+
+  .social-icon {
+    display: inline-block;
+    margin-right: 0.5rem;
+    font-size: 1.1em;
+  }
+
+  &.google-btn:hover {
+    border-color: #ea4335;
+    box-shadow: 0 4px 12px rgba(234, 67, 53, 0.1);
+  }
+
+  &.facebook-btn:hover {
+    border-color: #1877f2;
+    box-shadow: 0 4px 12px rgba(24, 119, 242, 0.1);
+  }
+}
+
+// Responsive Design
+@media (max-width: 640px) {
+  .auth-card {
+    padding: 1.5rem;
+    margin: 0 1rem;
+  }
+
+  .logo-icon {
+    font-size: 3rem;
+  }
+
+  .social-login {
+    gap: 0.5rem;
+  }
+
+  .social-btn {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+  }
+
+  .checkmark {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  .auth-card {
+    background: rgba(17, 24, 39, 0.95);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .form-input {
+    background: rgba(17, 24, 39, 0.8);
+    border-color: hsl(75 85 99);
+    color: white;
+
+    &::placeholder {
+      color: hsl(75 85 99);
+    }
+  }
+
+  .form-label {
+    color: hsl(213 100% 96%);
+  }
+
+  .social-btn {
+    background: rgba(17, 24, 39, 0.8);
+    border-color: hsl(75 85 99);
+    color: hsl(213 100% 96%);
+  }
+
+  .divider span {
+    background: rgba(17, 24, 39, 0.95);
+  }
+}
