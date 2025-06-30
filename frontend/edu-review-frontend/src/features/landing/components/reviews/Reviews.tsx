@@ -303,7 +303,6 @@ function ReviewCard({
   index: number;
   isVisible: boolean;
 }) {
-  const [isExpanded, setIsExpanded] = useState(false);
   const [isHelpful, setIsHelpful] = useState(false);
 
   const renderStars = (rating: number) => {
@@ -322,6 +321,11 @@ function ReviewCard({
 
   const handleHelpful = () => {
     setIsHelpful(!isHelpful);
+  };
+
+  const handleViewDetail = () => {
+    // Navigate to review detail page
+    window.location.href = `/reviews/${review.id}`;
   };
 
   return (
@@ -369,26 +373,34 @@ function ReviewCard({
       </div>
 
       {/* Content */}
-      <div className="mb-4">
-        <h5 className="font-semibold text-gray-900 mb-2">{review.title}</h5>
-        <p
-          className={cn(
-            "text-gray-700 leading-relaxed transition-all duration-300",
-            {
-              "line-clamp-3": !isExpanded,
-            }
-          )}
-        >
-          {review.content}
-        </p>
-        {review.content.length > 150 && (
+      <div className="mb-4 flex-1 flex flex-col min-h-0">
+        <h5 className="font-semibold text-gray-900 mb-2 flex-shrink-0">
+          {review.title}
+        </h5>
+        <div className="flex-1 flex flex-col min-h-0">
+          <p className="text-gray-700 leading-relaxed line-clamp-3 overflow-hidden flex-1">
+            {review.content}
+          </p>
           <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="text-blue-600 hover:text-blue-700 text-sm font-medium mt-2 transition-colors duration-200 hover:underline"
+            onClick={handleViewDetail}
+            className="text-blue-600 hover:text-blue-700 text-sm font-medium mt-3 transition-colors duration-200 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded flex-shrink-0 w-fit flex items-center gap-1"
           >
-            {isExpanded ? "Thu gọn" : "Xem thêm"}
+            Xem chi tiết
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
           </button>
-        )}
+        </div>
       </div>
 
       {/* Tags */}

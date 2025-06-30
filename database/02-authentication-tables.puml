@@ -45,40 +45,10 @@ entity "user_devices" as devices {
   * updated_at : TIMESTAMP
 }
 
-entity "two_factor_auth" as tfa {
-  * **id** : BIGINT <<PK>>
-  --
-  * user_id : BIGINT <<FK>>
-  * method : ENUM('totp','sms','email')
-  secret_key : VARCHAR(255)
-  backup_codes : JSON
-  phone_number : VARCHAR(20)
-  is_enabled : BOOLEAN DEFAULT FALSE
-  verified_at : TIMESTAMP
-  * created_at : TIMESTAMP
-  * updated_at : TIMESTAMP
-}
 
-entity "social_logins" as social {
-  * **id** : BIGINT <<PK>>
-  --
-  * user_id : BIGINT <<FK>>
-  * provider : ENUM('google','facebook','apple','github')
-  * provider_id : VARCHAR(255)
-  provider_email : VARCHAR(255)
-  provider_name : VARCHAR(255)
-  provider_avatar : VARCHAR(500)
-  access_token : TEXT
-  refresh_token : TEXT
-  expires_at : TIMESTAMP
-  is_active : BOOLEAN DEFAULT TRUE
-  * created_at : TIMESTAMP
-  * updated_at : TIMESTAMP
-}
 
 users ||--o{ sessions : "has sessions"
 users ||--o{ devices : "has devices"
-users ||--o{ tfa : "has 2FA"
-users ||--o{ social : "has social logins"
+
 
 @enduml

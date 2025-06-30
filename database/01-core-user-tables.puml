@@ -55,22 +55,8 @@ entity "user_profiles" as profiles {
   * updated_at : TIMESTAMP
 }
 
-entity "user_security" as security {
-  * **id** : BIGINT <<PK>>
-  --
-  * user_id : BIGINT <<FK>>
-  password_changed_at : TIMESTAMP
-  require_password_change : BOOLEAN DEFAULT FALSE
-  login_notifications : BOOLEAN DEFAULT TRUE
-  suspicious_activity_alerts : BOOLEAN DEFAULT TRUE
-  allowed_ip_addresses : JSON
-  blocked_ip_addresses : JSON
-  security_questions : JSON
-  * created_at : TIMESTAMP
-  * updated_at : TIMESTAMP
-}
+
 
 users ||--|| profiles : "has profile"
-users ||--|| security : "has security settings"
 
 @enduml
