@@ -3,7 +3,7 @@
 import 'package:edu_review_mobile/common_libs.dart';
 import 'package:flutter/material.dart';
 
-class NavigationButton extends StatelessWidget {
+class NavigationButton extends StatefulWidget {
   final IconData leadingIcon;
   final String title;
   final IconData? trailingIcon;
@@ -20,19 +20,49 @@ class NavigationButton extends StatelessWidget {
   });
 
   @override
+  State<NavigationButton> createState() => _NavigationButtonState();
+}
+
+class _NavigationButtonState extends State<NavigationButton> {
+  bool _isPressed = false;
+
+  void _handleTapDown(TapDownDetails details) {
+    setState(() {
+      _isPressed = true;
+    });
+  }
+
+  void _handleTapUp(TapUpDetails details) {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
+  void _handleTapCancel() {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+      onTap: widget.onTap,
+      onTapDown: _handleTapDown,
+      onTapUp: _handleTapUp,
+      onTapCancel: _handleTapCancel,
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 120),
+        curve: Curves.easeInOut,
+        padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          color: _isPressed ? Colors.grey[200] : AppColors.primaryWhite,
+          borderRadius: BorderRadius.circular(8),
           boxShadow: [
             BoxShadow(
               color: AppColors.primaryBlack.withOpacity(0.1),
               spreadRadius: 0.5,
-              blurRadius: 2, // Sử dụng ScreenUtil
+              blurRadius: 2,
               offset: const Offset(0, 2),
             ),
           ],
@@ -42,27 +72,19 @@ class NavigationButton extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(
-                  leadingIcon,
-                  color: AppColors.textGrey,
-                  size: 24,
-                ), // Sử dụng ScreenUtil
-                SizedBox(width: 12), // Sử dụng ScreenUtil
+                Icon(widget.leadingIcon, color: AppColors.textBlack, size: 24),
+                SizedBox(width: 12),
                 Text(
-                  title,
+                  widget.title,
                   style: TextStyle(
-                    fontSize: 14, // Sử dụng ScreenUtil
+                    fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.textGrey,
+                    color: AppColors.textBlack,
                   ),
                 ),
               ],
             ),
-            Icon(
-              trailingIcon,
-              color: AppColors.textGrey,
-              size: 24,
-            ), // Sử dụng ScreenUtil
+            Icon(widget.trailingIcon, color: AppColors.textBlack, size: 20),
           ],
         ),
       ),
