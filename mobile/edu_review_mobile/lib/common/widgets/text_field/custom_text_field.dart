@@ -56,7 +56,7 @@ class CustomTextField extends StatelessWidget {
           Text(
             label!,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w600,
+              fontFamily: 'Roboto-Bold',
               color: AppColors.textBlack,
             ),
           ),
@@ -89,7 +89,7 @@ class CustomTextField extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderSide: const BorderSide(
-                color: AppColors.primaryBlue,
+                color: AppColors.primaryBlack,
                 width: 2.0,
               ),
               borderRadius: BorderRadius.circular(8.0),

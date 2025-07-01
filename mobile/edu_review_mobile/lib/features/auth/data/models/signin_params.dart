@@ -4,8 +4,8 @@ class SignInParams {
   final String token;
 
   SignInParams({
-    required this.email, 
-    required this.password, 
+    required this.email,
+    required this.password,
     required this.token,
   });
 
@@ -16,5 +16,4 @@ class SignInParams {
       'token': token,
     };
   }
-
 }
