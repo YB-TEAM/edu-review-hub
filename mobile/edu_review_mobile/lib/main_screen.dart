@@ -24,11 +24,20 @@ class NewsPage extends StatelessWidget {
   }
 }
 
+class ExplorePage extends StatelessWidget {
+  const ExplorePage({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text('Explore Page'));
+  }
+}
+
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
   final List<Widget> _pages = [
     const DashboardPage(),
     const NewsPage(),
+    const ExplorePage(),
     const ProfilePage(),
     const SettingsPage(),
   ];
@@ -69,8 +78,8 @@ class _MainScreenState extends State<MainScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       _buildNavItem(
-                        icon: Icons.dashboard,
-                        label: 'Dashboard',
+                        icon: Icons.home_filled,
+                        label: 'Home',
                         index: 0,
                       ),
                       _buildNavItem(
@@ -79,14 +88,19 @@ class _MainScreenState extends State<MainScreen> {
                         index: 1,
                       ),
                       _buildNavItem(
+                        icon: Icons.explore,
+                        label: 'Explore',
+                        index: 2,
+                      ),
+                      _buildNavItem(
                         icon: Icons.person,
                         label: 'Profile',
-                        index: 2,
+                        index: 3,
                       ),
                       _buildNavItem(
                         icon: Icons.settings,
                         label: 'Settings',
-                        index: 3,
+                        index: 4,
                       ),
                     ],
                   ),
@@ -106,7 +120,7 @@ class _MainScreenState extends State<MainScreen> {
   }) {
     final bool isSelected = _selectedIndex == index;
     return SizedBox(
-      width: 75,
+      width: 60,
       child: GestureDetector(
         onTap: () => _onItemTapped(index),
         behavior: HitTestBehavior.opaque,
