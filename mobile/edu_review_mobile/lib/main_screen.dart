@@ -1,3 +1,4 @@
+import 'package:edu_review_mobile/features/settings/presentation/pages/settings.page.dart';
 import 'package:flutter/material.dart';
 import 'package:edu_review_mobile/features/dashboard/presentation/pages/dashboard.page.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/pages/profile.page.dart';
@@ -21,21 +22,13 @@ class NewsPage extends StatelessWidget {
   }
 }
 
-class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text('Settings Page'));
-  }
-}
-
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
   final List<Widget> _pages = [
     const DashboardPage(),
     const NewsPage(),
-    const SettingsPage(),
     const ProfilePage(),
+    const SettingsPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -84,13 +77,13 @@ class _MainScreenState extends State<MainScreen> {
                         index: 1,
                       ),
                       _buildNavItem(
-                        icon: Icons.settings,
-                        label: 'Settings',
+                        icon: Icons.person,
+                        label: 'Profile',
                         index: 2,
                       ),
                       _buildNavItem(
-                        icon: Icons.person,
-                        label: 'Profile',
+                        icon: Icons.settings,
+                        label: 'Settings',
                         index: 3,
                       ),
                     ],

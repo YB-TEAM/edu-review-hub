@@ -75,7 +75,7 @@ class _BadgesTabWidgetState extends State<BadgesTabWidget> {
     return Column(
       children: [
         SizedBox(
-          height: 340,
+          height: 360,
           child: PageView.builder(
             controller: _pageController,
             itemCount: pages.length,
@@ -197,13 +197,13 @@ class _BadgesTabWidgetState extends State<BadgesTabWidget> {
                       : Theme.of(
                         context,
                       ).colorScheme.onSurface.withOpacity(0.3),
-              size: 24,
+              size: 32,
             ),
           ),
           const SizedBox(height: 12),
           Text(
             badge['name'] as String,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               fontWeight: FontWeight.w600,
               color:
                   isUnlocked
@@ -226,7 +226,7 @@ class _BadgesTabWidgetState extends State<BadgesTabWidget> {
                       : Theme.of(
                         context,
                       ).colorScheme.onSurface.withOpacity(0.3),
-              fontSize: 10,
+              fontSize: 12,
             ),
             textAlign: TextAlign.center,
             maxLines: 2,
