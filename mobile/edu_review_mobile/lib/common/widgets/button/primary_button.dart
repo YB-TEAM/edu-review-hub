@@ -33,7 +33,7 @@ class PrimaryButton extends StatelessWidget {
         minimumSize: Size(double.infinity, 50),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
-      child: CircularProgressIndicator(color: AppColors.primaryBlue),
+      child: CircularProgressIndicator(color: AppColors.primaryBlack),
     );
   }
 
