@@ -1,4 +1,3 @@
-import 'package:edu_review_mobile/features/settings/presentation/pages/settings.page.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/pages/profile.page.dart';
 import 'package:edu_review_mobile/main_screen.dart';
 import 'package:flutter/services.dart';

@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:edu_review_mobile/features/settings/presentation/pages/settings.page.dart';
 import 'package:flutter/material.dart';
 import 'package:edu_review_mobile/features/dashboard/presentation/pages/dashboard.page.dart';
@@ -117,15 +119,14 @@ class _MainScreenState extends State<MainScreen> {
               width: 28,
               margin: const EdgeInsets.only(bottom: 2),
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.primaryBlack : Colors.transparent,
+                color: isSelected ? AppColors.primaryBlue : Colors.transparent,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
             Icon(
               icon,
               size: isSelected ? 26 : 22,
-              color:
-                  isSelected ? AppColors.primaryBlack : AppColors.primaryGrey,
+              color: isSelected ? AppColors.primaryBlue : AppColors.primaryGrey,
             ),
             const SizedBox(height: 2),
             Text(
@@ -135,7 +136,7 @@ class _MainScreenState extends State<MainScreen> {
                 fontSize: 12,
                 color:
                     isSelected
-                        ? AppColors.primaryBlack
+                        ? AppColors.primaryBlue
                         : AppColors.primaryGrey.withOpacity(0.7),
               ),
             ),

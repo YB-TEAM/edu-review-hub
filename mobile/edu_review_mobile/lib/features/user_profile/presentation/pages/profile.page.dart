@@ -56,7 +56,7 @@ class ProfilePage extends StatelessWidget {
                         ),
                         const SizedBox(height: 80),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Column(
                             children: [
                               Center(
@@ -72,6 +72,10 @@ class ProfilePage extends StatelessWidget {
                               PrimaryButton(
                                 onPressed: () => navigateToEditProfile(context),
                                 title: "Edit Profile",
+                                icon: Icon(
+                                  Icons.edit,
+                                  color: AppColors.primaryWhite,
+                                ),
                               ),
                               const SizedBox(height: 16),
                               AchievementsWidget(

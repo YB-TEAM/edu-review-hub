@@ -144,9 +144,7 @@ class _SignInPageState extends State<SignInPage> {
                   width: 250,
                   height: 250,
                   decoration: BoxDecoration(
-                    color: Color(
-                      0xFFD1C4E9,
-                    ).withOpacity(0.55), // tím lavender nhạt
+                    color: Color(0xFFD1C4E9).withOpacity(0.55),
                     borderRadius: BorderRadius.only(
                       topRight: Radius.circular(250),
                       bottomLeft: Radius.circular(250),
@@ -162,9 +160,7 @@ class _SignInPageState extends State<SignInPage> {
                   width: 250,
                   height: 250,
                   decoration: BoxDecoration(
-                    color: Color(
-                      0xFFB3E5FC,
-                    ).withOpacity(0.45), // xanh blue pastel
+                    color: Color(0xFFB3E5FC).withOpacity(0.45),
                     borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(250),
                       topRight: Radius.circular(250),
@@ -256,12 +252,8 @@ class _SignInPageState extends State<SignInPage> {
                                 CustomTextButton(
                                   onPressed: _handleSignUp,
                                   title: "Sign up",
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.bodyMedium?.copyWith(
-                                    color: AppColors.textBlack,
-                                    fontWeight: FontWeight.w700,
-                                  ),
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(fontWeight: FontWeight.w700),
                                 ),
                               ],
                             ),
