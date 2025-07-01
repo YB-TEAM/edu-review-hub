@@ -3,10 +3,8 @@ import 'package:edu_review_mobile/common/bloc/button/button_state_cubit.dart';
 import 'package:edu_review_mobile/common/constants/route.constant.dart';
 import 'package:edu_review_mobile/common/widgets/button/primary_button.dart';
 import 'package:edu_review_mobile/common_libs.dart';
-import 'package:edu_review_mobile/features/user_profile/domain/usecases/logout.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user_display_cubit.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user_display_state.dart';
-import 'package:edu_review_mobile/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/widgets/cover_photo_widget.dart';
@@ -18,20 +16,18 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void _logOut(BuildContext context) {
-      context.read<ButtonStateCubit>().execute(usecase: sl<LogOutUseCase>());
+    void navigateToEditProfile(BuildContext context) {
+      Navigator.pushNamed(context, RouteConstant.editProfile);
     }
 
-    return Scaffold(
-      body: Center(
-        child: MultiBlocProvider(
-          providers: [BlocProvider(create: (context) => ButtonStateCubit())],
-          child: BlocListener<ButtonStateCubit, ButtonState>(
-            listener: (context, state) {
-              if (state is ButtonSuccessState) {
-                Navigator.pushReplacementNamed(context, RouteConstant.signIn);
-              }
-            },
+    return MultiBlocProvider(
+      providers: [BlocProvider(create: (context) => ButtonStateCubit())],
+      child: BlocListener<ButtonStateCubit, ButtonState>(
+        listener: (context, state) {
+          // Nếu cần xử lý trạng thái động cho nút Edit Profile, thêm logic ở đây
+        },
+        child: Scaffold(
+          body: Center(
             child: BlocBuilder<UserDisplayCubit, UserDisplayState>(
               builder: (context, state) {
                 if (state is UserLoading) {
@@ -41,7 +37,7 @@ class ProfilePage extends StatelessWidget {
                   final coverImageUrl =
                       'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?cs=srgb&dl=pexels-souvenirpixels-417074.jpg&fm=jpg';
                   final avatarImageUrl =
-                      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7zEEISvcs1XuhHOPNI0aUElsa46Fmv5NLDg&s';
+                      'https://media.baoquangninh.vn/upload/image/202405/medium/2218989_0f59e5d0a690afc333d094905d8a3d5c.jpg';
                   return SingleChildScrollView(
                     child: Column(
                       children: [
@@ -52,7 +48,7 @@ class ProfilePage extends StatelessWidget {
                           },
                           child: EditAvatarButton(
                             imageUrl: avatarImageUrl,
-                            size: 128,
+                            size: 160,
                             onPressed: () {
                               print('Nhấn đổi avatar');
                             },
@@ -60,19 +56,22 @@ class ProfilePage extends StatelessWidget {
                         ),
                         const SizedBox(height: 80),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: Column(
                             children: [
-                              Align(
-                                alignment: Alignment.centerLeft,
+                              Center(
                                 child: Text(
                                   state.userEntity.userName,
-                                  textAlign: TextAlign.center,
                                   style: Theme.of(context)
                                       .textTheme
                                       .headlineSmall
                                       ?.copyWith(fontWeight: FontWeight.w700),
                                 ),
+                              ),
+                              const SizedBox(height: 16),
+                              PrimaryButton(
+                                onPressed: () => navigateToEditProfile(context),
+                                title: "Edit Profile",
                               ),
                               const SizedBox(height: 16),
                               AchievementsWidget(
@@ -83,14 +82,6 @@ class ProfilePage extends StatelessWidget {
                                 totalPoints: 1000,
                               ),
                               const SizedBox(height: 24),
-                              Builder(
-                                builder: (context) {
-                                  return PrimaryButton(
-                                    onPressed: () => _logOut(context),
-                                    title: "Sign Out",
-                                  );
-                                },
-                              ),
                             ],
                           ),
                         ),

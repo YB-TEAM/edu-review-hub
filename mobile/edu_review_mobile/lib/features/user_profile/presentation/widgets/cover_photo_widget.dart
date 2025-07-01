@@ -31,33 +31,30 @@ class CoverPhotoWidget extends StatelessWidget {
           ),
         ),
         Positioned(
-          right: 16,
+          right: 10,
           bottom: 12,
-          child: ElevatedButton.icon(
+          child: ElevatedButton(
             style: ElevatedButton.styleFrom(
+              shape: const CircleBorder(),
+              padding: const EdgeInsets.all(4),
               backgroundColor: Colors.white,
               elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(6),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 8),
             ),
             onPressed: onChangeCover,
-            icon: const Icon(
-              Icons.camera_alt,
-              color: AppColors.primaryBlack,
+            child: const Icon(
+              Icons.image,
               size: 20,
-            ),
-            label: Text(
-              'Change cover photo',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: AppColors.primaryBlack,
-                fontFamily: "Roboto-Medium",
-              ),
+              color: AppColors.primaryBlack,
             ),
           ),
         ),
-        if (child != null) Positioned(bottom: -64, left: 24, child: child!),
+        if (child != null)
+          Positioned(
+            bottom: -64,
+            left: 0,
+            right: 0,
+            child: Center(child: child!),
+          ),
       ],
     );
   }

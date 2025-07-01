@@ -79,7 +79,7 @@ class _AchievementsWidgetState extends State<AchievementsWidget>
         child: Container(
           decoration: BoxDecoration(
             color: AppColors.primaryWhite,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(8),
             boxShadow: [
               BoxShadow(
                 color: AppColors.primaryBlack.withOpacity(0.25),
@@ -100,8 +100,6 @@ class _AchievementsWidgetState extends State<AchievementsWidget>
                 ),
                 child: Column(
                   children: [
-                    _buildHeader(context),
-                    const SizedBox(height: 20),
                     _buildTabBar(context),
                     const SizedBox(height: 20),
                     _buildTabContent(context),
@@ -112,40 +110,6 @@ class _AchievementsWidgetState extends State<AchievementsWidget>
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Theme.of(context).colorScheme.primary,
-                Theme.of(context).colorScheme.primary.withOpacity(0.8),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Icon(
-            Icons.emoji_events_rounded,
-            color: Colors.white,
-            size: 20,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            'Gamification',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w700,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
-        ),
-      ],
     );
   }
 
@@ -161,7 +125,7 @@ class _AchievementsWidgetState extends State<AchievementsWidget>
       padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
