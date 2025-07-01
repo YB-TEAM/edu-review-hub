@@ -34,8 +34,8 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _pages = [
     const DashboardPage(),
     const NewsPage(),
-    const ProfilePage(),
     const SettingsPage(),
+    const ProfilePage(),
   ];
 
   void _onItemTapped(int index) {
@@ -51,7 +51,6 @@ class _MainScreenState extends State<MainScreen> {
       child: Scaffold(
         body: _pages[_selectedIndex],
         bottomNavigationBar: Container(
-          margin: const EdgeInsets.only(left: 12, right: 12, bottom: 12),
           decoration: BoxDecoration(
             color: Colors.transparent,
             borderRadius: const BorderRadius.all(Radius.circular(12)),
@@ -68,9 +67,9 @@ class _MainScreenState extends State<MainScreen> {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
               child: Container(
-                color: Colors.white.withOpacity(0.85),
+                color: Colors.white.withOpacity(0.92),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -85,13 +84,13 @@ class _MainScreenState extends State<MainScreen> {
                         index: 1,
                       ),
                       _buildNavItem(
-                        icon: Icons.person,
-                        label: 'Profile',
+                        icon: Icons.settings,
+                        label: 'Settings',
                         index: 2,
                       ),
                       _buildNavItem(
-                        icon: Icons.settings,
-                        label: 'Settings',
+                        icon: Icons.person,
+                        label: 'Profile',
                         index: 3,
                       ),
                     ],
@@ -116,46 +115,38 @@ class _MainScreenState extends State<MainScreen> {
       child: GestureDetector(
         onTap: () => _onItemTapped(index),
         behavior: HitTestBehavior.opaque,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          curve: Curves.easeOutCubic,
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          decoration: BoxDecoration(
-            color:
-                isSelected
-                    ? AppColors.primaryBlue.withOpacity(0.10)
-                    : Colors.transparent,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 180),
-                curve: Curves.easeOutCubic,
-                child: Icon(
-                  icon,
-                  size: isSelected ? 24 : 20,
-                  color:
-                      isSelected
-                          ? AppColors.primaryBlue
-                          : AppColors.primaryGrey,
-                ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              height: 4,
+              width: 28,
+              margin: const EdgeInsets.only(bottom: 2),
+              decoration: BoxDecoration(
+                color: isSelected ? AppColors.primaryBlack : Colors.transparent,
+                borderRadius: BorderRadius.circular(2),
               ),
-              const SizedBox(height: 4),
-              Text(
-                label,
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 12,
-                  color:
-                      isSelected
-                          ? AppColors.primaryBlue
-                          : AppColors.primaryGrey.withOpacity(0.7),
-                ),
+            ),
+            Icon(
+              icon,
+              size: isSelected ? 26 : 22,
+              color:
+                  isSelected ? AppColors.primaryBlack : AppColors.primaryGrey,
+            ),
+            const SizedBox(height: 2),
+            Text(
+              label,
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 12,
+                color:
+                    isSelected
+                        ? AppColors.primaryBlack
+                        : AppColors.primaryGrey.withOpacity(0.7),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
