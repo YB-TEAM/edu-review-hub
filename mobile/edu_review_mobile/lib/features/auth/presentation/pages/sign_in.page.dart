@@ -10,6 +10,8 @@ import 'package:edu_review_mobile/features/auth/data/models/signin_params.dart';
 import 'package:edu_review_mobile/features/auth/domain/usecases/sign_in.dart';
 import 'package:edu_review_mobile/service_locator.dart' show sl;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:edu_review_mobile/features/auth/presentation/pages/sign_up.page.dart';
+import 'package:flutter/animation.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -77,7 +79,25 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   void _handleSignUp() {
-    Navigator.pushNamed(context, RouteConstant.signUp);
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder:
+            (context, animation, secondaryAnimation) => const SignUpPage(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0); // Slide từ phải sang
+          const end = Offset.zero;
+          final tween = Tween(
+            begin: begin,
+            end: end,
+          ).chain(CurveTween(curve: Curves.ease));
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 400),
+      ),
+    );
   }
 
   void _handleForgotPassword() {}
@@ -114,36 +134,77 @@ class _SignInPageState extends State<SignInPage> {
           },
           child: Stack(
             children: [
+              // Nền trắng
+              Container(color: Colors.white),
+              // Vệt tím nhạt góc trên phải
+              Positioned(
+                top: -100,
+                right: -100,
+                child: Container(
+                  width: 250,
+                  height: 250,
+                  decoration: BoxDecoration(
+                    color: Color(
+                      0xFFD1C4E9,
+                    ).withOpacity(0.55), // tím lavender nhạt
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(250),
+                      bottomLeft: Radius.circular(250),
+                    ),
+                  ),
+                ),
+              ),
+              // Vệt xanh nhạt góc dưới trái
+              Positioned(
+                bottom: -100,
+                left: -100,
+                child: Container(
+                  width: 250,
+                  height: 250,
+                  decoration: BoxDecoration(
+                    color: Color(
+                      0xFFB3E5FC,
+                    ).withOpacity(0.45), // xanh blue pastel
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(250),
+                      topRight: Radius.circular(250),
+                    ),
+                  ),
+                ),
+              ),
               GestureDetector(
                 onTap: _handleTapOutside,
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.fromLTRB(30, 80, 30, 0),
+                  padding: EdgeInsets.fromLTRB(30, 150, 30, 0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset(
-                        'assets/images/logo_edureview.png',
-                        width: 140,
-                        height: 140,
-                      ),
-                      const SizedBox(height: 24),
-                      Text(
-                        'Welcome back!',
-                        style: Theme.of(
-                          context,
-                        ).textTheme.headlineLarge?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textBlack,
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Sign In',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.headlineLarge?.copyWith(
+                            fontFamily: 'Roboto-Bold',
+                            color: AppColors.textBlack,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 10),
-                      Text(
-                        'Sign in to continue using the app',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppColors.textGrey,
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Welcome back you've been missed!",
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyMedium?.copyWith(
+                            color: AppColors.textBlack,
+                            fontFamily: 'Roboto-Medium',
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 40),
                       Form(
@@ -166,6 +227,7 @@ class _SignInPageState extends State<SignInPage> {
                               controller: _passwordController,
                               validator: _validatePassword,
                             ),
+                            SizedBox(height: 4),
                             Align(
                               alignment: Alignment.centerRight,
                               child: CustomTextButton(
@@ -173,7 +235,7 @@ class _SignInPageState extends State<SignInPage> {
                                 title: "Forgot Password?",
                               ),
                             ),
-                            SizedBox(height: 16),
+                            SizedBox(height: 30),
                             Builder(
                               builder: (context) {
                                 return PrimaryButton(
@@ -194,6 +256,12 @@ class _SignInPageState extends State<SignInPage> {
                                 CustomTextButton(
                                   onPressed: _handleSignUp,
                                   title: "Sign up",
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.bodyMedium?.copyWith(
+                                    color: AppColors.textBlack,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
                               ],
                             ),

@@ -25,9 +25,9 @@ class CustomTextButton extends StatelessWidget {
         title,
         style:
             style ??
-            Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: color ?? AppColors.primaryOrange,
-              fontWeight: fontWeight ?? FontWeight.w900,
+            Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: color ?? AppColors.textBlack,
+              fontWeight: fontWeight ?? FontWeight.w700,
             ),
       ),
     );

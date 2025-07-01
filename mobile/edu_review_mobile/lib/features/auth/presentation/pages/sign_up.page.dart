@@ -10,6 +10,8 @@ import 'package:edu_review_mobile/features/auth/data/models/signup_params.dart';
 import 'package:edu_review_mobile/features/auth/domain/usecases/sign_up.dart';
 import 'package:edu_review_mobile/service_locator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dart:ui';
+import 'package:edu_review_mobile/features/auth/presentation/pages/sign_in.page.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -101,7 +103,25 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   void _handleSignIn() {
-    Navigator.pushNamed(context, RouteConstant.signIn);
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder:
+            (context, animation, secondaryAnimation) => const SignInPage(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(-1.0, 0.0); // Slide từ trái sang
+          const end = Offset.zero;
+          final tween = Tween(
+            begin: begin,
+            end: end,
+          ).chain(CurveTween(curve: Curves.ease));
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 400),
+      ),
+    );
   }
 
   void _handleTapOutside() {
@@ -136,6 +156,40 @@ class _SignUpPageState extends State<SignUpPage> {
           },
           child: Stack(
             children: [
+              // Nền trắng
+              Container(color: Colors.white),
+              // Vệt tím nhạt góc trên phải
+              Positioned(
+                top: -100,
+                right: -100,
+                child: Container(
+                  width: 250,
+                  height: 250,
+                  decoration: BoxDecoration(
+                    color: Color(0xFFD1C4E9).withOpacity(0.55),
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(250),
+                      bottomLeft: Radius.circular(250),
+                    ),
+                  ),
+                ),
+              ),
+              // Vệt xanh nhạt góc dưới trái
+              Positioned(
+                bottom: -100,
+                left: -100,
+                child: Container(
+                  width: 250,
+                  height: 250,
+                  decoration: BoxDecoration(
+                    color: Color(0xFFB3E5FC).withOpacity(0.45),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(250),
+                      topRight: Radius.circular(250),
+                    ),
+                  ),
+                ),
+              ),
               GestureDetector(
                 onTap: _handleTapOutside,
                 child: SingleChildScrollView(
@@ -143,15 +197,31 @@ class _SignUpPageState extends State<SignUpPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        'Sign up now',
-                        style: Theme.of(context).textTheme.headlineLarge,
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Sign Up',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.headlineLarge?.copyWith(
+                            fontFamily: 'Roboto-Bold',
+                            color: AppColors.textBlack,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
-                      SizedBox(height: 10),
-                      Text(
-                        'Please fill the details and create account',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppColors.textGrey,
+                      const SizedBox(height: 10),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Just a few quick things to get started",
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyMedium?.copyWith(
+                            color: AppColors.textBlack,
+                            fontFamily: 'Roboto-Medium',
+                          ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
                       SizedBox(height: 40),
@@ -183,7 +253,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               validator: _validateConfirmedPassword,
                               prefixIconData: Icons.lock_outline,
                             ),
-                            SizedBox(height: 30),
+                            SizedBox(height: 46),
                             Builder(
                               builder: (context) {
                                 return PrimaryButton(
@@ -204,6 +274,12 @@ class _SignUpPageState extends State<SignUpPage> {
                                 CustomTextButton(
                                   onPressed: _handleSignIn,
                                   title: "Sign in",
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.bodyMedium?.copyWith(
+                                    color: AppColors.textBlack,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
                               ],
                             ),
