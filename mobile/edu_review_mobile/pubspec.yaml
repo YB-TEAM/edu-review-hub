@@ -17,6 +17,7 @@ dependencies:
   dartz: ^0.10.1
   logger: ^2.6.0
   http: ^1.4.0
+  flutter_svg: ^2.2.0
 
   #state management
   flutter_bloc: ^9.1.1
@@ -59,6 +60,16 @@ flutter:
 
   assets:
   - assets/images/
+  - assets/icons/ic_home_active.svg
+  - assets/icons/ic_home_inactive.svg
+  - assets/icons/ic_notifications_active.svg
+  - assets/icons/ic_notifications_inactive.svg
+  - assets/icons/ic_chat_active.svg
+  - assets/icons/ic_chat_inactive.svg
+  - assets/icons/ic_user_active.svg
+  - assets/icons/ic_user_inactive.svg
+  - assets/icons/ic_bar_active.svg
+  - assets/icons/ic_bar_inactive.svg
   
   fonts:
     - family: Roboto-Thin
