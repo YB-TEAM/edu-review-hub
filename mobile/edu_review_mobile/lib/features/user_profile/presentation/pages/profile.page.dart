@@ -10,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/widgets/cover_photo_widget.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/widgets/edit_avatar_button.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/widgets/achievements_widget.dart';
+import 'package:edu_review_mobile/features/user_profile/presentation/widgets/account_info_widget.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -61,7 +62,7 @@ class ProfilePage extends StatelessWidget {
                             children: [
                               Center(
                                 child: Text(
-                                  state.userEntity.userName,
+                                  state.profileEntity.userName,
                                   style: Theme.of(context)
                                       .textTheme
                                       .headlineSmall
@@ -78,6 +79,13 @@ class ProfilePage extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 16),
+                              AccountInfoWidget(
+                                email: state.profileEntity.email,
+                                phoneNumber: state.profileEntity.phoneNumber,
+                                birthday: state.profileEntity.birthday,
+                                gender: state.profileEntity.gender,
+                              ),
+                              const SizedBox(height: 8),
                               AchievementsWidget(
                                 posts: 25,
                                 likes: 150,

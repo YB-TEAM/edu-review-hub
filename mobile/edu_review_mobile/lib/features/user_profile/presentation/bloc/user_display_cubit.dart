@@ -5,7 +5,7 @@ import 'package:edu_review_mobile/service_locator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UserDisplayCubit extends Cubit<UserDisplayState> {
-  UserDisplayCubit() : super (UserLoading());
+  UserDisplayCubit() : super(UserLoading());
 
   Future<void> displayUser() async {
     var result = await sl<GetUserUseCase>().call(NoParams());
@@ -14,8 +14,8 @@ class UserDisplayCubit extends Cubit<UserDisplayState> {
         emit(LoadUserFailure(errorMessage: error));
       },
       (data) {
-        emit(UserLoaded(userEntity: data));
-      }
+        emit(UserLoaded(profileEntity: data));
+      },
     );
-  } 
+  }
 }
