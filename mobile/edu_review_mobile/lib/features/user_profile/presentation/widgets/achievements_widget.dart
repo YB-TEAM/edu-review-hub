@@ -131,60 +131,66 @@ class _AchievementsWidgetState extends State<AchievementsWidget>
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: List.generate(tabs.length, (index) {
           final isSelected = _currentTabIndex == index;
-          return GestureDetector(
-            onTap: () {
-              setState(() {
-                _currentTabIndex = index;
-              });
-            },
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-              margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
-              decoration: BoxDecoration(
-                gradient:
-                    isSelected
-                        ? LinearGradient(
-                          colors: [
-                            Theme.of(context).colorScheme.primary,
-                            Theme.of(
-                              context,
-                            ).colorScheme.primary.withOpacity(0.8),
-                          ],
-                        )
-                        : null,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    icons[index],
-                    size: 16,
-                    color:
-                        isSelected
-                            ? Colors.white
-                            : Theme.of(
-                              context,
-                            ).colorScheme.onSurface.withOpacity(0.6),
-                  ),
-                  const SizedBox(width: 6),
-                  Flexible(
-                    child: Text(
-                      tabs[index],
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color:
-                            isSelected
-                                ? Colors.white
-                                : Theme.of(
-                                  context,
-                                ).colorScheme.onSurface.withOpacity(0.6),
-                      ),
-                      overflow: TextOverflow.ellipsis,
+          return Expanded(
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _currentTabIndex = index;
+                });
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 12,
+                ),
+                margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+                decoration: BoxDecoration(
+                  gradient:
+                      isSelected
+                          ? LinearGradient(
+                            colors: [
+                              Theme.of(context).colorScheme.primary,
+                              Theme.of(
+                                context,
+                              ).colorScheme.primary.withOpacity(0.8),
+                            ],
+                          )
+                          : null,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      icons[index],
+                      size: 18,
+                      color:
+                          isSelected
+                              ? Colors.white
+                              : Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withOpacity(0.6),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 6),
+                    Flexible(
+                      child: Text(
+                        tabs[index],
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color:
+                              isSelected
+                                  ? Colors.white
+                                  : Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface.withOpacity(0.6),
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );
