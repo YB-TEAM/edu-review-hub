@@ -1,5 +1,5 @@
 import 'package:edu_review_mobile/features/user_profile/presentation/pages/profile.page.dart';
-import 'package:edu_review_mobile/main_screen.dart';
+import 'package:edu_review_mobile/features/main_screen.dart';
 import 'package:flutter/services.dart';
 import 'package:edu_review_mobile/common_libs.dart';
 import 'package:edu_review_mobile/features/auth/presentation/pages/sign_up.page.dart';

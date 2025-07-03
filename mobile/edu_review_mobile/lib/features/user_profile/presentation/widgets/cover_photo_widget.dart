@@ -1,7 +1,7 @@
 import 'package:edu_review_mobile/core/config/theme/color.dart';
 import 'package:flutter/material.dart';
 
-class CoverPhotoWidget extends StatelessWidget {
+class CoverPhotoWidget extends StatefulWidget {
   final String imageUrl;
   final VoidCallback onChangeCover;
   final double height;
@@ -16,18 +16,68 @@ class CoverPhotoWidget extends StatelessWidget {
   });
 
   @override
+  State<CoverPhotoWidget> createState() => _CoverPhotoWidgetState();
+}
+
+class _CoverPhotoWidgetState extends State<CoverPhotoWidget> {
+  bool isPressed = false;
+
+  void _showFullImage() {
+    showDialog(
+      context: context,
+      builder:
+          (_) => Dialog(
+            backgroundColor: Colors.transparent,
+            child: GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: InteractiveViewer(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.network(widget.imageUrl),
+                ),
+              ),
+            ),
+          ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        Container(
-          width: double.infinity,
-          height: height,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(imageUrl),
-              fit: BoxFit.cover,
-            ),
+        GestureDetector(
+          onTapDown: (_) {
+            setState(() => isPressed = true);
+          },
+          onTapUp: (_) {
+            setState(() => isPressed = false);
+            _showFullImage();
+          },
+          onTapCancel: () {
+            setState(() => isPressed = false);
+          },
+          child: Stack(
+            children: [
+              Container(
+                width: double.infinity,
+                height: widget.height,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage(widget.imageUrl),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              if (isPressed)
+                Positioned.fill(
+                  child: Container(
+                    width: double.infinity,
+                    height: widget.height,
+                    color: Colors.black.withOpacity(0.3),
+                  ),
+                ),
+            ],
           ),
         ),
         Positioned(
@@ -40,7 +90,7 @@ class CoverPhotoWidget extends StatelessWidget {
               backgroundColor: Colors.white,
               elevation: 2,
             ),
-            onPressed: onChangeCover,
+            onPressed: widget.onChangeCover,
             child: const Icon(
               Icons.image,
               size: 20,
@@ -48,12 +98,12 @@ class CoverPhotoWidget extends StatelessWidget {
             ),
           ),
         ),
-        if (child != null)
+        if (widget.child != null)
           Positioned(
             bottom: -64,
             left: 0,
             right: 0,
-            child: Center(child: child!),
+            child: Center(child: widget.child!),
           ),
       ],
     );

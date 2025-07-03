@@ -1,7 +1,7 @@
 import 'package:edu_review_mobile/common_libs.dart';
 import 'package:flutter/material.dart';
 
-class EditAvatarButton extends StatelessWidget {
+class EditAvatarButton extends StatefulWidget {
   final String imageUrl;
   final VoidCallback onPressed;
   final double size;
@@ -14,19 +14,70 @@ class EditAvatarButton extends StatelessWidget {
   });
 
   @override
+  State<EditAvatarButton> createState() => _EditAvatarButtonState();
+}
+
+class _EditAvatarButtonState extends State<EditAvatarButton> {
+  bool isPressed = false;
+
+  void _showFullImage() {
+    showDialog(
+      context: context,
+      builder:
+          (_) => Dialog(
+            backgroundColor: Colors.transparent,
+            child: GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: InteractiveViewer(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.network(widget.imageUrl),
+                ),
+              ),
+            ),
+          ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: size,
-      height: size,
+      width: widget.size,
+      height: widget.size,
       child: Stack(
         alignment: Alignment.bottomRight,
         children: [
-          CircleAvatar(
-            radius: size / 2,
-            backgroundColor: Colors.white,
-            child: CircleAvatar(
-              radius: size / 2 - 4,
-              backgroundImage: NetworkImage(imageUrl),
+          GestureDetector(
+            onTapDown: (_) {
+              setState(() => isPressed = true);
+            },
+            onTapUp: (_) {
+              setState(() => isPressed = false);
+              _showFullImage();
+            },
+            onTapCancel: () {
+              setState(() => isPressed = false);
+            },
+            child: Stack(
+              children: [
+                CircleAvatar(
+                  radius: widget.size / 2,
+                  backgroundColor: Colors.white,
+                  child: CircleAvatar(
+                    radius: widget.size / 2 - 4,
+                    backgroundImage: NetworkImage(widget.imageUrl),
+                  ),
+                ),
+                if (isPressed)
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.3),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
           Positioned(
@@ -38,7 +89,7 @@ class EditAvatarButton extends StatelessWidget {
                 backgroundColor: Colors.white,
                 elevation: 2,
               ),
-              onPressed: onPressed,
+              onPressed: widget.onPressed,
               child: const Icon(
                 Icons.camera_alt,
                 size: 20,
