@@ -35,20 +35,16 @@ class ProfilePage extends StatelessWidget {
                   return CircularProgressIndicator();
                 }
                 if (state is UserLoaded) {
-                  final coverImageUrl =
-                      'https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?cs=srgb&dl=pexels-souvenirpixels-417074.jpg&fm=jpg';
-                  final avatarImageUrl =
-                      'https://media.baoquangninh.vn/upload/image/202405/medium/2218989_0f59e5d0a690afc333d094905d8a3d5c.jpg';
                   return SingleChildScrollView(
                     child: Column(
                       children: [
                         CoverPhotoWidget(
-                          imageUrl: coverImageUrl,
+                          imageUrl: state.profileEntity.coverImageUrl ?? '',
                           onChangeCover: () {
                             print('Nhấn đổi ảnh bìa');
                           },
                           child: EditAvatarButton(
-                            imageUrl: avatarImageUrl,
+                            imageUrl: state.profileEntity.avatarUrl ?? '',
                             size: 160,
                             onPressed: () {
                               print('Nhấn đổi avatar');
@@ -65,10 +61,33 @@ class ProfilePage extends StatelessWidget {
                                   state.profileEntity.displayName ?? '',
                                   style: Theme.of(context)
                                       .textTheme
-                                      .headlineSmall
+                                      .headlineLarge
                                       ?.copyWith(fontWeight: FontWeight.w700),
                                 ),
                               ),
+                              if (state.profileEntity.bio != null &&
+                                  state.profileEntity.bio!.isNotEmpty) ...[
+                                Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 32,
+                                    ),
+                                    child: Text(
+                                      state.profileEntity.bio!,
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyLarge?.copyWith(
+                                        fontSize: 14,
+                                        color: AppColors.primaryBlack
+                                            .withOpacity(0.8),
+                                        fontStyle: FontStyle.italic,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              ],
                               const SizedBox(height: 16),
                               PrimaryButton(
                                 onPressed: () => navigateToEditProfile(context),
@@ -80,21 +99,19 @@ class ProfilePage extends StatelessWidget {
                               ),
                               const SizedBox(height: 16),
                               AccountInfoWidget(
-                                birthday: state.profileEntity.birthday,
-                                gender: state.profileEntity.gender,
-                                bio: state.profileEntity.bio,
-                                address: state.profileEntity.address,
-                                country: state.profileEntity.country,
                                 city: state.profileEntity.city,
                                 universityName:
                                     state.profileEntity.universityName,
                                 major: state.profileEntity.major,
-                                studentId: state.profileEntity.studentId,
                                 graduationYear:
                                     state.profileEntity.graduationYear,
-                                isStudent: state.profileEntity.isStudent,
-                                timeZone: state.profileEntity.timeZone,
-                                language: state.profileEntity.language,
+                                onSeeMorePressed: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    RouteConstant.detailProfile,
+                                    arguments: state.profileEntity,
+                                  );
+                                },
                               ),
                               const SizedBox(height: 8),
                               AchievementsWidget(
