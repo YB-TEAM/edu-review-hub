@@ -51,23 +51,13 @@ class AccountInfoWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.person_outline,
-                  color: AppColors.primaryBlue,
-                  size: 24,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Personal Information',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.primaryBlue,
-                    fontSize: 20,
-                  ),
-                ),
-              ],
+            Text(
+              'Personal Information',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: AppColors.textBlack,
+                fontSize: 20,
+              ),
             ),
             const SizedBox(height: 16),
             if (city != null && city!.isNotEmpty)
@@ -104,12 +94,12 @@ class AccountInfoWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: AppColors.primaryBlue.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(icon, size: 22, color: AppColors.primaryBlue),
+            child: Icon(icon, size: 24, color: AppColors.primaryBlue),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -124,7 +114,7 @@ class AccountInfoWidget extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
                   value,
                   style: TextStyle(

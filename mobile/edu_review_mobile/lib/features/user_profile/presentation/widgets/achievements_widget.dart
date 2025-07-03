@@ -166,10 +166,8 @@ class _AchievementsWidgetState extends State<AchievementsWidget>
                       size: 18,
                       color:
                           isSelected
-                              ? Colors.white
-                              : Theme.of(
-                                context,
-                              ).colorScheme.onSurface.withOpacity(0.6),
+                              ? AppColors.primaryWhite
+                              : AppColors.textBlack,
                     ),
                     const SizedBox(width: 6),
                     Flexible(
@@ -179,10 +177,8 @@ class _AchievementsWidgetState extends State<AchievementsWidget>
                           fontWeight: FontWeight.w600,
                           color:
                               isSelected
-                                  ? Colors.white
-                                  : Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface.withOpacity(0.6),
+                                  ? AppColors.textWhite
+                                  : AppColors.textBlack,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),

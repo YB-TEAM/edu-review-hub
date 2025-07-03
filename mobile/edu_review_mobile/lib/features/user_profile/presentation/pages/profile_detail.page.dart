@@ -10,85 +10,153 @@ class ProfileDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile Details'),
-        leading: BackButton(),
+        backgroundColor: AppColors.primaryWhite,
+        scrolledUnderElevation: 0,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.chevron_left,
+            size: 32,
+            color: AppColors.primaryBlack,
+          ),
+          onPressed: () => Navigator.of(context).maybePop(),
+          splashRadius: 24,
+        ),
+        title: const Text(
+          'Profile Details',
+          style: TextStyle(color: AppColors.textBlack),
+        ),
+        centerTitle: true,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: AppColors.secondaryGrey),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child: Text(
-                profileEntity.displayName ?? '',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
+            // Personal Info
+            Text(
+              'Personal Information',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: AppColors.textBlack,
+                fontSize: 20,
               ),
             ),
-            if (profileEntity.bio != null && profileEntity.bio!.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
-                  child: Text(
-                    profileEntity.bio!,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontSize: 18,
-                      color: AppColors.primaryBlack.withOpacity(0.8),
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-            ],
-            const SizedBox(height: 24),
-            _buildDetailRow(
+            const SizedBox(height: 12),
+            _buildDetailInfoRow(
+              Icons.cake_outlined,
               'Birthday',
               profileEntity.birthday != null
                   ? '${profileEntity.birthday.day}/${profileEntity.birthday.month}/${profileEntity.birthday.year}'
                   : null,
             ),
-            _buildDetailRow('Gender', profileEntity.gender),
-            _buildDetailRow('Address', profileEntity.address),
-            _buildDetailRow('Country', profileEntity.country),
-            _buildDetailRow('City', profileEntity.city),
-            _buildDetailRow('University', profileEntity.universityName),
-            _buildDetailRow('Major', profileEntity.major),
-            _buildDetailRow('Student ID', profileEntity.studentId),
-            _buildDetailRow(
+            _buildDetailInfoRow(
+              Icons.wc_outlined,
+              'Gender',
+              profileEntity.gender,
+            ),
+            _buildDetailInfoRow(
+              Icons.location_on_outlined,
+              'Address',
+              profileEntity.address,
+            ),
+            _buildDetailInfoRow(
+              Icons.flag_outlined,
+              'Country',
+              profileEntity.country,
+            ),
+            _buildDetailInfoRow(
+              Icons.location_city_outlined,
+              'City',
+              profileEntity.city,
+            ),
+            const SizedBox(height: 12),
+            PreferredSize(
+              preferredSize: const Size.fromHeight(1),
+              child: Container(height: 1, color: AppColors.secondaryGrey),
+            ),
+            const SizedBox(height: 12),
+            // Education
+            Text(
+              'Education',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: AppColors.textBlack,
+                fontSize: 20,
+              ),
+            ),
+            const SizedBox(height: 12),
+            _buildDetailInfoRow(
+              Icons.school_outlined,
+              'University',
+              profileEntity.universityName,
+            ),
+            _buildDetailInfoRow(
+              Icons.book_outlined,
+              'Major',
+              profileEntity.major,
+            ),
+            _buildDetailInfoRow(
+              Icons.badge_outlined,
+              'Student ID',
+              profileEntity.studentId,
+            ),
+            _buildDetailInfoRow(
+              Icons.calendar_today_outlined,
               'Graduation Year',
               profileEntity.graduationYear?.toString(),
             ),
-            _buildDetailRow(
-              'Is Student',
-              profileEntity.isStudent != null
-                  ? (profileEntity.isStudent ? 'Yes' : 'No')
-                  : null,
-            ),
-            _buildDetailRow('Time Zone', profileEntity.timeZone),
-            _buildDetailRow('Language', profileEntity.language),
+            // Nếu cần, có thể thêm các trường khác ở đây
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDetailRow(String label, String? value) {
+  Widget _buildDetailInfoRow(IconData icon, String label, String? value) {
     if (value == null || value.isEmpty) return SizedBox.shrink();
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '$label:',
-            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.primaryBlue.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, size: 24, color: AppColors.primaryBlue),
           ),
-          const SizedBox(width: 12),
-          Expanded(child: Text(value, style: const TextStyle(fontSize: 16))),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: AppColors.primaryBlack.withOpacity(0.7),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: AppColors.primaryBlack,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
