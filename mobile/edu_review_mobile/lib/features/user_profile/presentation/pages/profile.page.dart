@@ -1,6 +1,7 @@
 import 'package:edu_review_mobile/common/bloc/button/button_state.dart';
 import 'package:edu_review_mobile/common/bloc/button/button_state_cubit.dart';
 import 'package:edu_review_mobile/common/widgets/button/primary_button.dart';
+import 'package:edu_review_mobile/common/widgets/loading/custom_loading_indicator.dart';
 import 'package:edu_review_mobile/common_libs.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user_display_cubit.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user_display_state.dart';
@@ -51,7 +52,7 @@ class _ProfilePageState extends State<ProfilePage> {
               BlocBuilder<UserDisplayCubit, UserDisplayState>(
                 builder: (context, state) {
                   if (state is UserLoading) {
-                    return Center(child: CircularProgressIndicator());
+                    return Center(child: CustomLoadingIndicator());
                   }
                   if (state is UserLoaded) {
                     return SmartRefresher(
@@ -114,7 +115,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 PrimaryButton(
                                   onPressed:
                                       () => navigateToEditProfile(context),
-                                  title: "Edit Profile",
+                                  title: "Edit Public Details",
                                   icon: Icon(
                                     Icons.edit,
                                     color: AppColors.primaryWhite,
