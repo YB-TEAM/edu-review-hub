@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user_display_cubit.dart';
 import 'package:edu_review_mobile/core/config/theme/color.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -90,7 +91,7 @@ class _MainScreenState extends State<MainScreen> {
         navBarBuilder: (navBarConfig) {
           final selectedIndex = navBarConfig.selectedIndex;
           return Container(
-            height: 50,
+            height: 56,
             decoration: BoxDecoration(
               color: AppColors.primaryWhite,
               border: Border(
@@ -100,8 +101,32 @@ class _MainScreenState extends State<MainScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: List.generate(navBarConfig.items.length, (index) {
-                final item = navBarConfig.items[index];
                 final isSelected = index == selectedIndex;
+                String svgName;
+                switch (index) {
+                  case 0:
+                    svgName = 'ic_home';
+                    break;
+                  case 1:
+                    svgName = 'ic_notifications';
+                    break;
+                  case 2:
+                    svgName = 'ic_chat';
+                    break;
+                  case 3:
+                    svgName = 'ic_user';
+                    break;
+                  case 4:
+                    svgName = 'ic_bar';
+                    break;
+                  default:
+                    svgName = 'ic_home';
+                }
+                final svgPath =
+                    isSelected
+                        ? 'assets/icons/${svgName}_active.svg'
+                        : 'assets/icons/${svgName}_inactive.svg';
+                final svgColor = isSelected ? AppColors.primaryBlue : null;
                 return Expanded(
                   child: GestureDetector(
                     onTap: () => navBarConfig.onItemSelected(index),
@@ -123,15 +148,11 @@ class _MainScreenState extends State<MainScreen> {
                           ),
                         ),
                         const SizedBox(height: 10),
-                        IconTheme(
-                          data: IconThemeData(
-                            size: 28,
-                            color:
-                                isSelected
-                                    ? AppColors.primaryBlue
-                                    : Colors.grey,
-                          ),
-                          child: item.icon,
+                        SvgPicture.asset(
+                          svgPath,
+                          width: 28,
+                          height: 28,
+                          color: svgColor,
                         ),
                       ],
                     ),
