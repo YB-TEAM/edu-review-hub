@@ -6,7 +6,7 @@ import 'package:edu_review_mobile/service_locator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:edu_review_mobile/common_libs.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:edu_review_mobile/main_screen.dart';
+import 'package:edu_review_mobile/features/main_screen.dart';
 
 void main() {
   runZonedGuarded(

@@ -54,7 +54,7 @@ class _NavigationButtonState extends State<NavigationButton> {
       child: AnimatedContainer(
         duration: Duration(milliseconds: 120),
         curve: Curves.easeInOut,
-        padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
           color: _isPressed ? Colors.grey[200] : AppColors.primaryWhite,
           borderRadius: BorderRadius.circular(8),
