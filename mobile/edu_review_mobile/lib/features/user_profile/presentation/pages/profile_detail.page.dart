@@ -29,88 +29,99 @@ class ProfileDetailPage extends StatelessWidget {
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: AppColors.secondaryGrey),
+          child: Container(height: 0.4, color: AppColors.secondaryGrey),
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+          children: <Widget>[
             // Personal Info
-            Text(
-              'Personal Information',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: AppColors.textBlack,
-                fontSize: 20,
+            Padding(
+              padding: EdgeInsetsGeometry.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Personal Information',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textBlack,
+                      fontSize: 20,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  _buildDetailInfoRow(
+                    Icons.cake_outlined,
+                    'Birthday',
+                    profileEntity.birthday != null
+                        ? '${profileEntity.birthday.day}/${profileEntity.birthday.month}/${profileEntity.birthday.year}'
+                        : null,
+                  ),
+                  _buildDetailInfoRow(
+                    Icons.wc_outlined,
+                    'Gender',
+                    profileEntity.gender,
+                  ),
+                  _buildDetailInfoRow(
+                    Icons.location_on_outlined,
+                    'Address',
+                    profileEntity.address,
+                  ),
+                  _buildDetailInfoRow(
+                    Icons.flag_outlined,
+                    'Country',
+                    profileEntity.country,
+                  ),
+                  _buildDetailInfoRow(
+                    Icons.location_city_outlined,
+                    'City',
+                    profileEntity.city,
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 12),
-            _buildDetailInfoRow(
-              Icons.cake_outlined,
-              'Birthday',
-              profileEntity.birthday != null
-                  ? '${profileEntity.birthday.day}/${profileEntity.birthday.month}/${profileEntity.birthday.year}'
-                  : null,
-            ),
-            _buildDetailInfoRow(
-              Icons.wc_outlined,
-              'Gender',
-              profileEntity.gender,
-            ),
-            _buildDetailInfoRow(
-              Icons.location_on_outlined,
-              'Address',
-              profileEntity.address,
-            ),
-            _buildDetailInfoRow(
-              Icons.flag_outlined,
-              'Country',
-              profileEntity.country,
-            ),
-            _buildDetailInfoRow(
-              Icons.location_city_outlined,
-              'City',
-              profileEntity.city,
-            ),
-            const SizedBox(height: 12),
             PreferredSize(
               preferredSize: const Size.fromHeight(1),
-              child: Container(height: 1, color: AppColors.secondaryGrey),
+              child: Container(height: 0.4, color: AppColors.secondaryGrey),
             ),
-            const SizedBox(height: 12),
             // Education
-            Text(
-              'Education',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: AppColors.textBlack,
-                fontSize: 20,
+            Padding(
+              padding: EdgeInsetsGeometry.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Education',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textBlack,
+                      fontSize: 20,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  _buildDetailInfoRow(
+                    Icons.school_outlined,
+                    'University',
+                    profileEntity.universityName,
+                  ),
+                  _buildDetailInfoRow(
+                    Icons.book_outlined,
+                    'Major',
+                    profileEntity.major,
+                  ),
+                  _buildDetailInfoRow(
+                    Icons.badge_outlined,
+                    'Student ID',
+                    profileEntity.studentId,
+                  ),
+                  _buildDetailInfoRow(
+                    Icons.calendar_today_outlined,
+                    'Graduation Year',
+                    profileEntity.graduationYear?.toString(),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 12),
-            _buildDetailInfoRow(
-              Icons.school_outlined,
-              'University',
-              profileEntity.universityName,
-            ),
-            _buildDetailInfoRow(
-              Icons.book_outlined,
-              'Major',
-              profileEntity.major,
-            ),
-            _buildDetailInfoRow(
-              Icons.badge_outlined,
-              'Student ID',
-              profileEntity.studentId,
-            ),
-            _buildDetailInfoRow(
-              Icons.calendar_today_outlined,
-              'Graduation Year',
-              profileEntity.graduationYear?.toString(),
-            ),
-            // Nếu cần, có thể thêm các trường khác ở đây
           ],
         ),
       ),
