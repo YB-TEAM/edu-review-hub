@@ -2,17 +2,35 @@ import 'package:edu_review_mobile/common_libs.dart';
 import 'package:flutter/material.dart';
 
 class AccountInfoWidget extends StatelessWidget {
-  final String email;
-  final String? phoneNumber;
-  final String? birthday;
+  final DateTime? birthday;
   final String? gender;
+  final String? bio;
+  final String? address;
+  final String? country;
+  final String? city;
+  final String? universityName;
+  final String? major;
+  final String? studentId;
+  final int? graduationYear;
+  final bool isStudent;
+  final String timeZone;
+  final String language;
 
   const AccountInfoWidget({
     Key? key,
-    required this.email,
-    this.phoneNumber,
     this.birthday,
     this.gender,
+    this.bio,
+    this.address,
+    this.country,
+    this.city,
+    this.universityName,
+    this.major,
+    this.studentId,
+    this.graduationYear,
+    required this.isStudent,
+    required this.timeZone,
+    required this.language,
   }) : super(key: key);
 
   @override
@@ -37,13 +55,42 @@ class AccountInfoWidget extends StatelessWidget {
           children: [
             Text('Details', style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 12),
-            _buildInfoRow(Icons.email, 'Email', email),
-            if (phoneNumber != null && phoneNumber!.isNotEmpty)
-              _buildInfoRow(Icons.phone, 'Phone Number', phoneNumber!),
-            if (birthday != null && birthday!.isNotEmpty)
-              _buildInfoRow(Icons.cake, 'Birthday', birthday!),
+
+            if (birthday != null)
+              _buildInfoRow(
+                Icons.cake,
+                'Birthday',
+                '${birthday!.day}/${birthday!.month}/${birthday!.year}',
+              ),
             if (gender != null && gender!.isNotEmpty)
               _buildInfoRow(Icons.person, 'Gender', gender!),
+            if (bio != null && bio!.isNotEmpty)
+              _buildInfoRow(Icons.info, 'Bio', bio!),
+            if (address != null && address!.isNotEmpty)
+              _buildInfoRow(Icons.location_on, 'Address', address!),
+            if (country != null && country!.isNotEmpty)
+              _buildInfoRow(Icons.public, 'Country', country!),
+            if (city != null && city!.isNotEmpty)
+              _buildInfoRow(Icons.location_city, 'City', city!),
+            if (universityName != null && universityName!.isNotEmpty)
+              _buildInfoRow(Icons.school, 'University', universityName!),
+            if (major != null && major!.isNotEmpty)
+              _buildInfoRow(Icons.book, 'Major', major!),
+            if (studentId != null && studentId!.isNotEmpty)
+              _buildInfoRow(Icons.badge, 'Student ID', studentId!),
+            if (graduationYear != null)
+              _buildInfoRow(
+                Icons.school,
+                'Graduation Year',
+                graduationYear.toString(),
+              ),
+            _buildInfoRow(
+              Icons.person_outline,
+              'Student Status',
+              isStudent ? 'Yes' : 'No',
+            ),
+            _buildInfoRow(Icons.access_time, 'Time Zone', timeZone),
+            _buildInfoRow(Icons.language, 'Language', language),
           ],
         ),
       ),

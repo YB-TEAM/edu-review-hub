@@ -62,7 +62,7 @@ class ProfilePage extends StatelessWidget {
                             children: [
                               Center(
                                 child: Text(
-                                  state.profileEntity.userName,
+                                  state.profileEntity.displayName ?? '',
                                   style: Theme.of(context)
                                       .textTheme
                                       .headlineSmall
@@ -80,10 +80,21 @@ class ProfilePage extends StatelessWidget {
                               ),
                               const SizedBox(height: 16),
                               AccountInfoWidget(
-                                email: state.profileEntity.email,
-                                phoneNumber: state.profileEntity.phoneNumber,
                                 birthday: state.profileEntity.birthday,
                                 gender: state.profileEntity.gender,
+                                bio: state.profileEntity.bio,
+                                address: state.profileEntity.address,
+                                country: state.profileEntity.country,
+                                city: state.profileEntity.city,
+                                universityName:
+                                    state.profileEntity.universityName,
+                                major: state.profileEntity.major,
+                                studentId: state.profileEntity.studentId,
+                                graduationYear:
+                                    state.profileEntity.graduationYear,
+                                isStudent: state.profileEntity.isStudent,
+                                timeZone: state.profileEntity.timeZone,
+                                language: state.profileEntity.language,
                               ),
                               const SizedBox(height: 8),
                               AchievementsWidget(
