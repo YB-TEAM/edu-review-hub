@@ -18,4 +18,9 @@ class UserDisplayCubit extends Cubit<UserDisplayState> {
       },
     );
   }
+
+  Future<void> reloadUser() async {
+    emit(UserLoading());
+    await displayUser();
+  }
 }
