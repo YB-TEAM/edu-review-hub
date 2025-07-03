@@ -7,7 +7,7 @@ import 'package:edu_review_mobile/features/user_profile/presentation/pages/profi
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user_display_cubit.dart';
 import 'package:edu_review_mobile/core/config/theme/color.dart';
-import 'dart:ui';
+import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -33,129 +33,114 @@ class ExplorePage extends StatelessWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 0;
-  final List<Widget> _pages = [
-    const DashboardPage(),
-    const NewsPage(),
-    const ExplorePage(),
-    const ProfilePage(),
-    const SettingsPage(),
+  final List<PersistentTabConfig> _tabs = [
+    PersistentTabConfig(
+      screen: const DashboardPage(),
+      item: ItemConfig(
+        icon: const Icon(Icons.home_filled),
+        title: '',
+        activeForegroundColor: AppColors.primaryBlue,
+        inactiveForegroundColor: Colors.grey,
+      ),
+    ),
+    PersistentTabConfig(
+      screen: const NewsPage(),
+      item: ItemConfig(
+        icon: const Icon(Icons.newspaper),
+        title: '',
+        activeForegroundColor: AppColors.primaryBlue,
+        inactiveForegroundColor: AppColors.primaryGrey,
+      ),
+    ),
+    PersistentTabConfig(
+      screen: const ExplorePage(),
+      item: ItemConfig(
+        icon: const Icon(Icons.explore),
+        title: '',
+        activeForegroundColor: AppColors.primaryBlue,
+        inactiveForegroundColor: AppColors.primaryGrey,
+      ),
+    ),
+    PersistentTabConfig(
+      screen: const ProfilePage(),
+      item: ItemConfig(
+        icon: const Icon(Icons.person),
+        title: '',
+        activeForegroundColor: AppColors.primaryBlue,
+        inactiveForegroundColor: AppColors.primaryGrey,
+      ),
+    ),
+    PersistentTabConfig(
+      screen: const SettingsPage(),
+      item: ItemConfig(
+        icon: const Icon(Icons.settings),
+        title: '',
+        activeForegroundColor: AppColors.primaryBlue,
+        inactiveForegroundColor: AppColors.primaryGrey,
+      ),
+    ),
   ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => UserDisplayCubit()..displayUser(),
-      child: Scaffold(
-        body: _pages[_selectedIndex],
-        bottomNavigationBar: Container(
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-            borderRadius: const BorderRadius.all(Radius.circular(12)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.12),
-                blurRadius: 24,
-                offset: const Offset(0, 8),
+      child: PersistentTabView(
+        tabs: _tabs,
+        navBarBuilder: (navBarConfig) {
+          final selectedIndex = navBarConfig.selectedIndex;
+          return Container(
+            height: 50,
+            decoration: BoxDecoration(
+              color: AppColors.primaryWhite,
+              border: Border(
+                top: BorderSide(color: AppColors.secondaryGrey, width: 0.4),
               ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: const BorderRadius.all(Radius.circular(12)),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: Container(
-                color: Colors.white.withOpacity(0.92),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildNavItem(
-                        icon: Icons.home_filled,
-                        label: 'Home',
-                        index: 0,
-                      ),
-                      _buildNavItem(
-                        icon: Icons.newspaper,
-                        label: 'News',
-                        index: 1,
-                      ),
-                      _buildNavItem(
-                        icon: Icons.explore,
-                        label: 'Explore',
-                        index: 2,
-                      ),
-                      _buildNavItem(
-                        icon: Icons.person,
-                        label: 'Profile',
-                        index: 3,
-                      ),
-                      _buildNavItem(
-                        icon: Icons.settings,
-                        label: 'Settings',
-                        index: 4,
-                      ),
-                    ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: List.generate(navBarConfig.items.length, (index) {
+                final item = navBarConfig.items[index];
+                final isSelected = index == selectedIndex;
+                return Expanded(
+                  child: GestureDetector(
+                    onTap: () => navBarConfig.onItemSelected(index),
+                    behavior: HitTestBehavior.opaque,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          height: 3,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color:
+                                isSelected
+                                    ? AppColors.primaryBlue
+                                    : Colors.transparent,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        IconTheme(
+                          data: IconThemeData(
+                            size: 28,
+                            color:
+                                isSelected
+                                    ? AppColors.primaryBlue
+                                    : Colors.grey,
+                          ),
+                          child: item.icon,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ),
+                );
+              }),
             ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavItem({
-    required IconData icon,
-    required String label,
-    required int index,
-  }) {
-    final bool isSelected = _selectedIndex == index;
-    return SizedBox(
-      width: 60,
-      child: GestureDetector(
-        onTap: () => _onItemTapped(index),
-        behavior: HitTestBehavior.opaque,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 180),
-              height: 4,
-              width: 28,
-              margin: const EdgeInsets.only(bottom: 2),
-              decoration: BoxDecoration(
-                color: isSelected ? AppColors.primaryBlue : Colors.transparent,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            Icon(
-              icon,
-              size: isSelected ? 26 : 22,
-              color: isSelected ? AppColors.primaryBlue : AppColors.primaryGrey,
-            ),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 12,
-                color:
-                    isSelected
-                        ? AppColors.primaryBlue
-                        : AppColors.primaryGrey.withOpacity(0.7),
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
