@@ -150,10 +150,8 @@ class _AchievementsWidgetState extends State<AchievementsWidget>
                       isSelected
                           ? LinearGradient(
                             colors: [
-                              Theme.of(context).colorScheme.primary,
-                              Theme.of(
-                                context,
-                              ).colorScheme.primary.withOpacity(0.8),
+                              AppColors.primaryBlue,
+                              AppColors.primaryBlue.withOpacity(0.8),
                             ],
                           )
                           : null,

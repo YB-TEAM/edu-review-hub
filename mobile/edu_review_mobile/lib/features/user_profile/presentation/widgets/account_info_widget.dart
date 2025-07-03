@@ -1,37 +1,35 @@
+import 'package:edu_review_mobile/common/widgets/button/custom_text_button.dart';
 import 'package:edu_review_mobile/common_libs.dart';
 import 'package:flutter/material.dart';
 
 class AccountInfoWidget extends StatelessWidget {
-  final DateTime? birthday;
-  final String? gender;
-  final String? bio;
-  final String? address;
-  final String? country;
   final String? city;
   final String? universityName;
   final String? major;
-  final String? studentId;
   final int? graduationYear;
-  final bool isStudent;
-  final String timeZone;
-  final String language;
+  final VoidCallback? onSeeMorePressed;
 
   const AccountInfoWidget({
     Key? key,
-    this.birthday,
-    this.gender,
-    this.bio,
-    this.address,
-    this.country,
     this.city,
     this.universityName,
     this.major,
-    this.studentId,
     this.graduationYear,
-    required this.isStudent,
-    required this.timeZone,
-    required this.language,
+    this.onSeeMorePressed,
   }) : super(key: key);
+
+  String _getGraduationStatus() {
+    if (graduationYear == null) return 'Studying at';
+
+    final currentYear = DateTime.now().year;
+    if (graduationYear! < currentYear) {
+      return 'Graduated from';
+    } else if (graduationYear! == currentYear) {
+      return 'Currently studying at';
+    } else {
+      return 'Studying at';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,48 +47,50 @@ class AccountInfoWidget extends StatelessWidget {
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Details', style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 12),
-
-            if (birthday != null)
-              _buildInfoRow(
-                Icons.cake,
-                'Birthday',
-                '${birthday!.day}/${birthday!.month}/${birthday!.year}',
-              ),
-            if (gender != null && gender!.isNotEmpty)
-              _buildInfoRow(Icons.person, 'Gender', gender!),
-            if (bio != null && bio!.isNotEmpty)
-              _buildInfoRow(Icons.info, 'Bio', bio!),
-            if (address != null && address!.isNotEmpty)
-              _buildInfoRow(Icons.location_on, 'Address', address!),
-            if (country != null && country!.isNotEmpty)
-              _buildInfoRow(Icons.public, 'Country', country!),
-            if (city != null && city!.isNotEmpty)
-              _buildInfoRow(Icons.location_city, 'City', city!),
-            if (universityName != null && universityName!.isNotEmpty)
-              _buildInfoRow(Icons.school, 'University', universityName!),
-            if (major != null && major!.isNotEmpty)
-              _buildInfoRow(Icons.book, 'Major', major!),
-            if (studentId != null && studentId!.isNotEmpty)
-              _buildInfoRow(Icons.badge, 'Student ID', studentId!),
-            if (graduationYear != null)
-              _buildInfoRow(
-                Icons.school,
-                'Graduation Year',
-                graduationYear.toString(),
-              ),
-            _buildInfoRow(
-              Icons.person_outline,
-              'Student Status',
-              isStudent ? 'Yes' : 'No',
+            Row(
+              children: [
+                Icon(
+                  Icons.person_outline,
+                  color: AppColors.primaryBlue,
+                  size: 24,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Personal Information',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primaryBlue,
+                    fontSize: 20,
+                  ),
+                ),
+              ],
             ),
-            _buildInfoRow(Icons.access_time, 'Time Zone', timeZone),
-            _buildInfoRow(Icons.language, 'Language', language),
+            const SizedBox(height: 16),
+            if (city != null && city!.isNotEmpty)
+              _buildInfoRow(Icons.location_city_outlined, 'Lives in', city!),
+            if (universityName != null && universityName!.isNotEmpty)
+              _buildInfoRow(
+                Icons.school_outlined,
+                _getGraduationStatus(),
+                universityName!,
+              ),
+            if (major != null && major!.isNotEmpty)
+              _buildInfoRow(Icons.book_outlined, 'Majoring in', major!),
+            SizedBox(
+              width: double.infinity,
+              child: CustomTextButton(
+                onPressed: onSeeMorePressed,
+                title: "See more",
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: AppColors.textGrey,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -99,14 +99,43 @@ class AccountInfoWidget extends StatelessWidget {
 
   Widget _buildInfoRow(IconData icon, String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 20),
-          const SizedBox(width: 8),
-          Text('$label:', style: const TextStyle(fontWeight: FontWeight.w600)),
-          const SizedBox(width: 8),
-          Expanded(child: Text(value)),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.primaryBlue.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, size: 22, color: AppColors.primaryBlue),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: AppColors.primaryBlack.withOpacity(0.7),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: AppColors.primaryBlack,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
