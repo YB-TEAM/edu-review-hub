@@ -11,7 +11,7 @@ class CoverPhotoWidget extends StatefulWidget {
     super.key,
     required this.imageUrl,
     required this.onChangeCover,
-    this.height = 200,
+    this.height = 180,
     this.child,
   });
 
@@ -100,7 +100,7 @@ class _CoverPhotoWidgetState extends State<CoverPhotoWidget> {
         ),
         if (widget.child != null)
           Positioned(
-            bottom: -64,
+            bottom: -56,
             left: 0,
             right: 0,
             child: Center(child: widget.child!),

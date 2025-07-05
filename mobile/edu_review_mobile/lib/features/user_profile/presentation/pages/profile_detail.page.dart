@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:edu_review_mobile/common_libs.dart';
+import 'package:edu_review_mobile/common/widgets/appbar/custom_appbar.dart';
 
 class ProfileDetailPage extends StatelessWidget {
   final dynamic profileEntity;
@@ -9,28 +10,9 @@ class ProfileDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.primaryWhite,
-        scrolledUnderElevation: 0,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.chevron_left,
-            size: 32,
-            color: AppColors.primaryBlack,
-          ),
-          onPressed: () => Navigator.of(context).maybePop(),
-          splashRadius: 24,
-        ),
-        title: const Text(
-          'Profile Details',
-          style: TextStyle(color: AppColors.textBlack),
-        ),
-        centerTitle: true,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(height: 0.4, color: AppColors.secondaryGrey),
-        ),
+      appBar: CustomAppBar(
+        title: 'Profile Details',
+        onBackPressed: () => Navigator.of(context).maybePop(),
       ),
       body: SingleChildScrollView(
         child: Column(

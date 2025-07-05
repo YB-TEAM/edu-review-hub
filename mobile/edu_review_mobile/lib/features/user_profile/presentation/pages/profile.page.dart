@@ -68,13 +68,13 @@ class _ProfilePageState extends State<ProfilePage> {
                             },
                             child: EditAvatarButton(
                               imageUrl: state.profileEntity.avatarUrl ?? '',
-                              size: 160,
+                              size: 128,
                               onPressed: () {
                                 print('Nhấn đổi avatar');
                               },
                             ),
                           ),
-                          const SizedBox(height: 80),
+                          const SizedBox(height: 64),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: Column(
@@ -84,7 +84,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     state.profileEntity.displayName ?? '',
                                     style: Theme.of(context)
                                         .textTheme
-                                        .headlineLarge
+                                        .headlineSmall
                                         ?.copyWith(fontWeight: FontWeight.w700),
                                   ),
                                 ),
@@ -111,7 +111,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ),
                                   ),
                                 ],
-                                const SizedBox(height: 16),
+                                const SizedBox(height: 8),
                                 PrimaryButton(
                                   onPressed:
                                       () => navigateToEditProfile(context),
