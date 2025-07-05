@@ -38,8 +38,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    void navigateToEditProfile(BuildContext context) {
-      Navigator.pushNamed(context, RouteConstant.editProfile);
+    void navigateToEditProfile(BuildContext context) async {
+      await Navigator.pushNamed(context, RouteConstant.editProfile);
+      // Reload user data after returning from edit profile
+      if (mounted) {
+        context.read<UserDisplayCubit>().reloadUser();
+      }
     }
 
     return MultiBlocProvider(

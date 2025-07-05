@@ -5,7 +5,7 @@ import 'package:edu_review_mobile/service_locator.dart';
 
 class GetUserUseCase implements UseCase<Either, dynamic> {
   @override
-  Future<Either> call(dynamic param) async{
-   return sl<ProfileRepository>().getUser();
+  Future<Either> call(dynamic param) async {
+    return sl<ProfileRepository>().getUser();
   }
 }

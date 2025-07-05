@@ -1,6 +1,10 @@
 import 'package:dartz/dartz.dart';
+import 'package:edu_review_mobile/features/user_profile/domain/entities/profile.dart';
 
 abstract class ProfileRepository {
   Future<Either> getUser();
   Future logOut();
+  Future<Either<String, ProfileEntity>> editProfile(
+    Map<String, dynamic> profileData,
+  );
 }

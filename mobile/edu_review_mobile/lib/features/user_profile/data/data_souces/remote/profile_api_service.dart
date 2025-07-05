@@ -7,26 +7,47 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class ProfileApiService {
   Future<Either> getUser();
+  Future<Either> editProfile(Map<String, dynamic> profileData);
 }
 
 class ProfileApiServiceImpl extends ProfileApiService {
-
   @override
   Future<Either> getUser() async {
     try {
-      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
       var token = sharedPreferences.getString('token');
       var response = await sl<DioClient>().get(
         ApiUrls.userProfile,
-        options: Options(
-          headers: {
-            'Authorization' : 'Bearer $token'
-          } 
-        )
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
       return Right(response);
-    } on DioException catch(e) {
+    } on DioException catch (e) {
       return Left(e.response!.data['message']);
+    }
+  }
+
+  @override
+  Future<Either> editProfile(Map<String, dynamic> profileData) async {
+    try {
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      var token = sharedPreferences.getString('token');
+      var response = await sl<DioClient>().put(
+        ApiUrls.userProfile,
+        data: profileData,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      return Right(response);
+    } on DioException catch (e) {
+      return Left(
+        e.response?.data['message'] ?? 'Some errors occur when edit profile',
+      );
     }
   }
 }

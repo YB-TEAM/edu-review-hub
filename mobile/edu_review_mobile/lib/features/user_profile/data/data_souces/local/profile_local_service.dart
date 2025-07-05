@@ -5,7 +5,6 @@ abstract class ProfileLocalService {
 }
 
 class ProfileLocalServiceImpl extends ProfileLocalService {
-
   @override
   Future logOut() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
