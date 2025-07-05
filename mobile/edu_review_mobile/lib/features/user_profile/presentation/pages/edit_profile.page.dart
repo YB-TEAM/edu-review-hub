@@ -1,13 +1,10 @@
 import 'package:edu_review_mobile/common/widgets/appbar/custom_appbar.dart';
-import 'package:edu_review_mobile/common/widgets/button/primary_button.dart';
 import 'package:edu_review_mobile/common/widgets/loading/custom_loading_indicator.dart';
 import 'package:edu_review_mobile/common/widgets/text_field/custom_text_field.dart';
 import 'package:edu_review_mobile/common_libs.dart';
 import 'package:edu_review_mobile/features/user_profile/domain/entities/profile.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/edit_profile_cubit.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/edit_profile_state.dart';
-import 'package:edu_review_mobile/features/user_profile/presentation/widgets/cover_photo_widget.dart';
-import 'package:edu_review_mobile/features/user_profile/presentation/widgets/edit_avatar_button.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/widgets/image_picker_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -101,6 +98,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             title: 'Edit Profile',
             onBackPressed: () => Navigator.of(context).maybePop(),
           ),
+          bottomNavigationBar: null,
           body: BlocBuilder<EditProfileCubit, EditProfileState>(
             builder: (context, state) {
               if (state is EditProfileLoading) {
@@ -113,21 +111,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 return SingleChildScrollView(
                   child: Column(
                     children: [
-                      // Cover Photo and Avatar
-                      CoverPhotoWidget(
-                        imageUrl:
-                            state.profileEntity.coverImageUrl ??
-                            'https://via.placeholder.com/400x200/cccccc/666666?text=Cover+Photo',
-                        onChangeCover: _onCoverPressed,
-                        child: EditAvatarButton(
-                          imageUrl:
-                              state.profileEntity.avatarUrl ??
-                              'https://via.placeholder.com/128x128/cccccc/666666?text=Avatar',
-                          size: 128,
-                          onPressed: _onAvatarPressed,
-                        ),
-                      ),
-
                       const SizedBox(height: 32),
 
                       // Edit Form
@@ -136,6 +119,122 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            // Avatar Image
+                            const Text(
+                              'Avatar',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Center(
+                              child: Container(
+                                width: 120,
+                                height: 120,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                    width: 2,
+                                  ),
+                                ),
+                                child: Stack(
+                                  children: [
+                                    ClipOval(
+                                      child: Image.network(
+                                        state
+                                                    .profileEntity
+                                                    .avatarUrl
+                                                    ?.isNotEmpty ==
+                                                true
+                                            ? state.profileEntity.avatarUrl!
+                                            : 'https://via.placeholder.com/120x120/cccccc/666666?text=Avatar',
+                                        width: 120,
+                                        height: 120,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    Positioned(
+                                      bottom: 0,
+                                      right: 0,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          shape: const CircleBorder(),
+                                          padding: const EdgeInsets.all(8),
+                                          backgroundColor: Colors.white,
+                                          elevation: 2,
+                                        ),
+                                        onPressed: _onAvatarPressed,
+                                        child: const Icon(
+                                          Icons.camera_alt,
+                                          size: 20,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+
+                            // Cover Image
+                            const Text(
+                              'Cover Image',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Container(
+                              width: double.infinity,
+                              height: 120,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.grey.shade300),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Stack(
+                                  children: [
+                                    Image.network(
+                                      state
+                                                  .profileEntity
+                                                  .coverImageUrl
+                                                  ?.isNotEmpty ==
+                                              true
+                                          ? state.profileEntity.coverImageUrl!
+                                          : 'https://via.placeholder.com/400x120/cccccc/666666?text=Cover+Image',
+                                      width: double.infinity,
+                                      height: 120,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    Positioned(
+                                      top: 8,
+                                      right: 8,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          shape: const CircleBorder(),
+                                          padding: const EdgeInsets.all(8),
+                                          backgroundColor: Colors.white,
+                                          elevation: 2,
+                                        ),
+                                        onPressed: _onCoverPressed,
+                                        child: const Icon(
+                                          Icons.image,
+                                          size: 20,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+
                             // Display Name
                             const Text(
                               'Display Name',
