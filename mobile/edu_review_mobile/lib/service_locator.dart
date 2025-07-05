@@ -6,6 +6,7 @@ import 'package:edu_review_mobile/features/auth/domain/repository/auth_repositor
 import 'package:edu_review_mobile/features/auth/domain/usecases/sign_in.dart';
 import 'package:edu_review_mobile/features/user_profile/data/repository/profile_repository_impl.dart';
 import 'package:edu_review_mobile/features/user_profile/domain/repository/profile_repository.dart';
+import 'package:edu_review_mobile/features/user_profile/domain/usecases/edit_profile.dart';
 import 'package:edu_review_mobile/features/user_profile/domain/usecases/get_user.dart';
 import 'package:edu_review_mobile/features/auth/domain/usecases/is_logged_in.dart';
 import 'package:edu_review_mobile/features/user_profile/domain/usecases/logout.dart';
@@ -20,44 +21,23 @@ void setUpServiceLocator() {
   sl.registerSingleton<DioClient>(DioClient());
 
   // Service
-  sl.registerSingleton<AuthApiService>(
-    AuthApiServiceImpl()
-  );
+  sl.registerSingleton<AuthApiService>(AuthApiServiceImpl());
 
-  sl.registerSingleton<AuthLocalService>(
-    AuthLocalServiceImpl()
-  );
+  sl.registerSingleton<AuthLocalService>(AuthLocalServiceImpl());
 
-  sl.registerSingleton<ProfileApiService>(
-    ProfileApiServiceImpl()
-  );
+  sl.registerSingleton<ProfileApiService>(ProfileApiServiceImpl());
 
-  sl.registerSingleton<ProfileLocalService>(
-    ProfileLocalServiceImpl()
-  );
+  sl.registerSingleton<ProfileLocalService>(ProfileLocalServiceImpl());
 
   // Repositories
-  sl.registerSingleton<AuthRepository>(
-    AuthRepositoryImpl()
-  );
-  sl.registerSingleton<ProfileRepository>(
-    ProfileRepositoryImpl()
-  );
+  sl.registerSingleton<AuthRepository>(AuthRepositoryImpl());
+  sl.registerSingleton<ProfileRepository>(ProfileRepositoryImpl());
 
   // Usecases
-  sl.registerSingleton<SignUpUseCase>(
-    SignUpUseCase()
-  );
-  sl.registerSingleton<IsLoggedInUseCase>(
-    IsLoggedInUseCase()
-  );
-  sl.registerSingleton<GetUserUseCase>(
-    GetUserUseCase()
-  );
-  sl.registerSingleton<LogOutUseCase>(
-    LogOutUseCase()
-  );
-  sl.registerSingleton<SignInUseCase>(
-    SignInUseCase()
-  );
+  sl.registerSingleton<SignUpUseCase>(SignUpUseCase());
+  sl.registerSingleton<IsLoggedInUseCase>(IsLoggedInUseCase());
+  sl.registerSingleton<GetUserUseCase>(GetUserUseCase());
+  sl.registerSingleton<EditProfileUseCase>(EditProfileUseCase());
+  sl.registerSingleton<LogOutUseCase>(LogOutUseCase());
+  sl.registerSingleton<SignInUseCase>(SignInUseCase());
 }
