@@ -1,3 +1,4 @@
+import 'package:edu_review_mobile/common/widgets/appbar/custom_appbar.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -7,12 +8,9 @@ class EditProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Chỉnh sửa hồ sơ'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+      appBar: CustomAppBar(
+        title: 'Edit Public Details',
+        onBackPressed: () => Navigator.of(context).maybePop(),
       ),
       body: Center(
         child: Column(
