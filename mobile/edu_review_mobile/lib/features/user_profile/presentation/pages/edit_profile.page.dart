@@ -157,7 +157,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                     ),
                                     Positioned(
                                       bottom: 0,
-                                      right: 0,
+                                      right: -8,
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           shape: const CircleBorder(),
