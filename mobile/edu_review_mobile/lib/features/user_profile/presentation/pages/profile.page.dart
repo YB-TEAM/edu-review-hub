@@ -39,7 +39,10 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     void navigateToEditProfile(BuildContext context) async {
-      await Navigator.pushNamed(context, RouteConstant.editProfile);
+      await Navigator.of(
+        context,
+        rootNavigator: true,
+      ).pushNamed(RouteConstant.editProfile);
       // Reload user data after returning from edit profile
       if (mounted) {
         context.read<UserDisplayCubit>().reloadUser();
@@ -141,7 +144,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     );
                                   },
                                 ),
-                                const SizedBox(height: 8),
+                                const SizedBox(height: 16),
                                 AchievementsWidget(
                                   posts: 25,
                                   likes: 150,
