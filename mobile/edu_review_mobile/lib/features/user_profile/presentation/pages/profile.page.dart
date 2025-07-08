@@ -43,7 +43,6 @@ class _ProfilePageState extends State<ProfilePage> {
         context,
         rootNavigator: true,
       ).pushNamed(RouteConstant.editProfile);
-      // Reload user data after returning from edit profile
       if (mounted) {
         context.read<UserDisplayCubit>().reloadUser();
       }
