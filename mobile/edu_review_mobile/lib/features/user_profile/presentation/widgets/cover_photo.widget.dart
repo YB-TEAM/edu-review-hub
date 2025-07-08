@@ -1,5 +1,4 @@
-import 'package:edu_review_mobile/core/config/theme/color.dart';
-import 'package:flutter/material.dart';
+import 'package:edu_review_mobile/common_libs.dart';
 
 class CoverPhotoWidget extends StatefulWidget {
   final String imageUrl;

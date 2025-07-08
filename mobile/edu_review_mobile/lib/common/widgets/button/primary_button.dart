@@ -2,7 +2,6 @@ import 'package:edu_review_mobile/common/bloc/button/button_state.dart';
 import 'package:edu_review_mobile/common/bloc/button/button_state_cubit.dart';
 import 'package:edu_review_mobile/common_libs.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter/gestures.dart';
 
 class PrimaryButton extends StatefulWidget {
   final VoidCallback onPressed;
