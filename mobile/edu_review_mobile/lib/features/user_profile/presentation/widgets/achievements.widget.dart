@@ -3,9 +3,9 @@
 import 'package:edu_review_mobile/core/config/theme/color.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
-import 'points_tab_widget.dart';
-import 'achievements_tab_widget.dart';
-import 'badges_tab_widget.dart';
+import 'points_tab.widget.dart';
+import 'achievements_tab.widget.dart';
+import 'badges_tab.widget.dart';
 
 class AchievementsWidget extends StatefulWidget {
   final int posts;

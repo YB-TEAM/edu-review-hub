@@ -7,10 +7,10 @@ import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user_d
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user_display_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:edu_review_mobile/features/user_profile/presentation/widgets/cover_photo_widget.dart';
-import 'package:edu_review_mobile/features/user_profile/presentation/widgets/edit_avatar_button.dart';
-import 'package:edu_review_mobile/features/user_profile/presentation/widgets/achievements_widget.dart';
-import 'package:edu_review_mobile/features/user_profile/presentation/widgets/account_info_widget.dart';
+import 'package:edu_review_mobile/features/user_profile/presentation/widgets/cover_photo.widget.dart';
+import 'package:edu_review_mobile/features/user_profile/presentation/widgets/edit_avatar.button.dart';
+import 'package:edu_review_mobile/features/user_profile/presentation/widgets/achievements.widget.dart';
+import 'package:edu_review_mobile/features/user_profile/presentation/widgets/account_info.widget.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
