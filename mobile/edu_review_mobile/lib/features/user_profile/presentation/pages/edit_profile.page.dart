@@ -99,326 +99,338 @@ class _EditProfilePageState extends State<EditProfilePage> {
             onBackPressed: () => Navigator.of(context).maybePop(),
           ),
           bottomNavigationBar: null,
-          body: BlocBuilder<EditProfileCubit, EditProfileState>(
-            builder: (context, state) {
-              if (state is EditProfileLoading) {
-                return const Center(child: CustomLoadingIndicator());
-              }
+          body: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            child: BlocBuilder<EditProfileCubit, EditProfileState>(
+              builder: (context, state) {
+                if (state is EditProfileLoading) {
+                  return const Center(child: CustomLoadingIndicator());
+                }
 
-              if (state is EditProfileLoaded) {
-                _initializeControllers(state.profileEntity);
+                if (state is EditProfileLoaded) {
+                  _initializeControllers(state.profileEntity);
 
-                return SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 32),
+                  return SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 32),
 
-                      // Edit Form
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Avatar Image
-                            const Text(
-                              'Avatar',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                        // Edit Form
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Avatar Image
+                              const Text(
+                                'Avatar',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            Center(
-                              child: Container(
-                                width: 120,
-                                height: 120,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Colors.grey.shade300,
-                                    width: 2,
+                              const SizedBox(height: 8),
+                              Center(
+                                child: Container(
+                                  width: 120,
+                                  height: 120,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: Colors.grey.shade300,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      ClipOval(
+                                        child: Image.network(
+                                          state
+                                                      .profileEntity
+                                                      .avatarUrl
+                                                      ?.isNotEmpty ==
+                                                  true
+                                              ? state.profileEntity.avatarUrl!
+                                              : 'https://via.placeholder.com/120x120/cccccc/666666?text=Avatar',
+                                          width: 120,
+                                          height: 120,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                      Positioned(
+                                        bottom: 0,
+                                        right: -8,
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            shape: const CircleBorder(),
+                                            padding: const EdgeInsets.all(8),
+                                            backgroundColor: Colors.white,
+                                            elevation: 2,
+                                          ),
+                                          onPressed: _onAvatarPressed,
+                                          child: const Icon(
+                                            Icons.camera_alt,
+                                            size: 20,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                child: Stack(
-                                  children: [
-                                    ClipOval(
-                                      child: Image.network(
+                              ),
+                              const SizedBox(height: 16),
+
+                              // Cover Image
+                              const Text(
+                                'Cover Image',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Container(
+                                width: double.infinity,
+                                height: 120,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                  ),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Stack(
+                                    children: [
+                                      Image.network(
                                         state
                                                     .profileEntity
-                                                    .avatarUrl
+                                                    .coverImageUrl
                                                     ?.isNotEmpty ==
                                                 true
-                                            ? state.profileEntity.avatarUrl!
-                                            : 'https://via.placeholder.com/120x120/cccccc/666666?text=Avatar',
-                                        width: 120,
+                                            ? state.profileEntity.coverImageUrl!
+                                            : 'https://via.placeholder.com/400x120/cccccc/666666?text=Cover+Image',
+                                        width: double.infinity,
                                         height: 120,
                                         fit: BoxFit.cover,
                                       ),
-                                    ),
-                                    Positioned(
-                                      bottom: 0,
-                                      right: -8,
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          shape: const CircleBorder(),
-                                          padding: const EdgeInsets.all(8),
-                                          backgroundColor: Colors.white,
-                                          elevation: 2,
-                                        ),
-                                        onPressed: _onAvatarPressed,
-                                        child: const Icon(
-                                          Icons.camera_alt,
-                                          size: 20,
-                                          color: Colors.black,
+                                      Positioned(
+                                        top: 8,
+                                        right: 8,
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            shape: const CircleBorder(),
+                                            padding: const EdgeInsets.all(8),
+                                            backgroundColor: Colors.white,
+                                            elevation: 2,
+                                          ),
+                                          onPressed: _onCoverPressed,
+                                          child: const Icon(
+                                            Icons.image,
+                                            size: 20,
+                                            color: Colors.black,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 16),
+                              const SizedBox(height: 24),
 
-                            // Cover Image
-                            const Text(
-                              'Cover Image',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Container(
-                              width: double.infinity,
-                              height: 120,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.grey.shade300),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: Stack(
-                                  children: [
-                                    Image.network(
-                                      state
-                                                  .profileEntity
-                                                  .coverImageUrl
-                                                  ?.isNotEmpty ==
-                                              true
-                                          ? state.profileEntity.coverImageUrl!
-                                          : 'https://via.placeholder.com/400x120/cccccc/666666?text=Cover+Image',
-                                      width: double.infinity,
-                                      height: 120,
-                                      fit: BoxFit.cover,
-                                    ),
-                                    Positioned(
-                                      top: 8,
-                                      right: 8,
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          shape: const CircleBorder(),
-                                          padding: const EdgeInsets.all(8),
-                                          backgroundColor: Colors.white,
-                                          elevation: 2,
-                                        ),
-                                        onPressed: _onCoverPressed,
-                                        child: const Icon(
-                                          Icons.image,
-                                          size: 20,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                              // Display Name
+                              const Text(
+                                'Display Name',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 24),
-
-                            // Display Name
-                            const Text(
-                              'Display Name',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                              const SizedBox(height: 8),
+                              CustomTextField(
+                                controller: _displayNameController,
+                                placeholder: 'Enter display name',
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            CustomTextField(
-                              controller: _displayNameController,
-                              placeholder: 'Enter display name',
-                            ),
-                            const SizedBox(height: 16),
+                              const SizedBox(height: 16),
 
-                            // Bio
-                            const Text(
-                              'Bio',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                              // Bio
+                              const Text(
+                                'Bio',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            CustomTextField(
-                              controller: _bioController,
-                              placeholder: 'Enter your bio',
-                            ),
-                            const SizedBox(height: 16),
-
-                            // City
-                            const Text(
-                              'City',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                              const SizedBox(height: 8),
+                              CustomTextField(
+                                controller: _bioController,
+                                placeholder: 'Enter your bio',
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            CustomTextField(
-                              controller: _cityController,
-                              placeholder: 'Enter city',
-                            ),
-                            const SizedBox(height: 16),
+                              const SizedBox(height: 16),
 
-                            // University
-                            const Text(
-                              'University',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                              // City
+                              const Text(
+                                'City',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            CustomTextField(
-                              controller: _universityController,
-                              placeholder: 'Enter university name',
-                            ),
-                            const SizedBox(height: 16),
-
-                            // Major
-                            const Text(
-                              'Major',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                              const SizedBox(height: 8),
+                              CustomTextField(
+                                controller: _cityController,
+                                placeholder: 'Enter city',
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            CustomTextField(
-                              controller: _majorController,
-                              placeholder: 'Enter major',
-                            ),
-                            const SizedBox(height: 32),
+                              const SizedBox(height: 16),
 
-                            // Save Button
-                            SizedBox(
-                              width: double.infinity,
-                              child: BlocBuilder<
-                                EditProfileCubit,
-                                EditProfileState
-                              >(
-                                builder: (context, saveState) {
-                                  final isLoading =
-                                      saveState is EditProfileSaving;
-                                  return ElevatedButton(
-                                    onPressed:
-                                        isLoading
-                                            ? null
-                                            : () => _saveProfile(
-                                              context.read<EditProfileCubit>(),
-                                              state.profileEntity,
-                                            ),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.primaryBlue,
-                                      minimumSize: const Size(
-                                        double.infinity,
-                                        48,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                    ),
-                                    child:
-                                        isLoading
-                                            ? const SizedBox(
-                                              width: 20,
-                                              height: 20,
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 2,
-                                                valueColor:
-                                                    AlwaysStoppedAnimation<
-                                                      Color
-                                                    >(Colors.white),
+                              // University
+                              const Text(
+                                'University',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              CustomTextField(
+                                controller: _universityController,
+                                placeholder: 'Enter university name',
+                              ),
+                              const SizedBox(height: 16),
+
+                              // Major
+                              const Text(
+                                'Major',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              CustomTextField(
+                                controller: _majorController,
+                                placeholder: 'Enter major',
+                              ),
+                              const SizedBox(height: 32),
+
+                              // Save Button
+                              SizedBox(
+                                width: double.infinity,
+                                child: BlocBuilder<
+                                  EditProfileCubit,
+                                  EditProfileState
+                                >(
+                                  builder: (context, saveState) {
+                                    final isLoading =
+                                        saveState is EditProfileSaving;
+                                    return ElevatedButton(
+                                      onPressed:
+                                          isLoading
+                                              ? null
+                                              : () => _saveProfile(
+                                                context
+                                                    .read<EditProfileCubit>(),
+                                                state.profileEntity,
                                               ),
-                                            )
-                                            : Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                const Icon(
-                                                  Icons.save,
-                                                  color: AppColors.primaryWhite,
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.primaryBlue,
+                                        minimumSize: const Size(
+                                          double.infinity,
+                                          48,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                      ),
+                                      child:
+                                          isLoading
+                                              ? const SizedBox(
+                                                width: 20,
+                                                height: 20,
+                                                child: CircularProgressIndicator(
+                                                  strokeWidth: 2,
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation<
+                                                        Color
+                                                      >(Colors.white),
                                                 ),
-                                                const SizedBox(width: 8),
-                                                Text(
-                                                  'Save Changes',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyLarge
-                                                      ?.copyWith(
-                                                        color:
-                                                            AppColors
-                                                                .primaryWhite,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                      ),
-                                                ),
-                                              ],
-                                            ),
-                                  );
-                                },
+                                              )
+                                              : Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  const Icon(
+                                                    Icons.save,
+                                                    color:
+                                                        AppColors.primaryWhite,
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  Text(
+                                                    'Save Changes',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyLarge
+                                                        ?.copyWith(
+                                                          color:
+                                                              AppColors
+                                                                  .primaryWhite,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                  ),
+                                                ],
+                                              ),
+                                    );
+                                  },
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 32),
-                          ],
+                              const SizedBox(height: 32),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              }
+                      ],
+                    ),
+                  );
+                }
 
-              if (state is EditProfileFailure) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.error_outline,
-                        size: 64,
-                        color: Colors.red,
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Error: ${state.errorMessage}',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () {
-                          context.read<EditProfileCubit>().loadProfile();
-                        },
-                        child: const Text('Try Again'),
-                      ),
-                    ],
-                  ),
-                );
-              }
+                if (state is EditProfileFailure) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.error_outline,
+                          size: 64,
+                          color: Colors.red,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Error: ${state.errorMessage}',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            context.read<EditProfileCubit>().loadProfile();
+                          },
+                          child: const Text('Try Again'),
+                        ),
+                      ],
+                    ),
+                  );
+                }
 
-              return const Center(child: CustomLoadingIndicator());
-            },
+                return const Center(child: CustomLoadingIndicator());
+              },
+            ),
           ),
         ),
       ),
