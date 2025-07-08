@@ -9,6 +9,7 @@ import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user_d
 import 'package:edu_review_mobile/core/config/theme/color.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter/services.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -36,7 +37,14 @@ class ExplorePage extends StatelessWidget {
 class _MainScreenState extends State<MainScreen> {
   final List<PersistentTabConfig> _tabs = [
     PersistentTabConfig(
-      screen: const DashboardPage(),
+      screen: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.light.copyWith(
+          statusBarColor: AppColors.primaryBlue,
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.light,
+        ),
+        child: const DashboardPage(),
+      ),
       item: ItemConfig(
         icon: const Icon(Icons.home_filled),
         title: '',
@@ -45,7 +53,14 @@ class _MainScreenState extends State<MainScreen> {
       ),
     ),
     PersistentTabConfig(
-      screen: const NewsPage(),
+      screen: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.dark.copyWith(
+          statusBarColor: Colors.white,
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.light,
+        ),
+        child: const NewsPage(),
+      ),
       item: ItemConfig(
         icon: const Icon(Icons.newspaper),
         title: '',
@@ -54,7 +69,14 @@ class _MainScreenState extends State<MainScreen> {
       ),
     ),
     PersistentTabConfig(
-      screen: const ExplorePage(),
+      screen: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.dark.copyWith(
+          statusBarColor: Colors.white,
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.light,
+        ),
+        child: const ExplorePage(),
+      ),
       item: ItemConfig(
         icon: const Icon(Icons.explore),
         title: '',
@@ -63,7 +85,14 @@ class _MainScreenState extends State<MainScreen> {
       ),
     ),
     PersistentTabConfig(
-      screen: const ProfilePage(),
+      screen: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.dark.copyWith(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.light,
+        ),
+        child: const ProfilePage(),
+      ),
       item: ItemConfig(
         icon: const Icon(Icons.person),
         title: '',
@@ -72,7 +101,14 @@ class _MainScreenState extends State<MainScreen> {
       ),
     ),
     PersistentTabConfig(
-      screen: const SettingsPage(),
+      screen: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.dark.copyWith(
+          statusBarColor: Colors.white,
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.light,
+        ),
+        child: const SettingsPage(),
+      ),
       item: ItemConfig(
         icon: const Icon(Icons.settings),
         title: '',

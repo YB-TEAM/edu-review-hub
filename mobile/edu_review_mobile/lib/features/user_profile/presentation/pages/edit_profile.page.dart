@@ -5,7 +5,7 @@ import 'package:edu_review_mobile/common_libs.dart';
 import 'package:edu_review_mobile/features/user_profile/domain/entities/profile.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/edit_profile_cubit.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/edit_profile_state.dart';
-import 'package:edu_review_mobile/features/user_profile/presentation/widgets/image_picker_widget.dart';
+import 'package:edu_review_mobile/features/user_profile/presentation/widgets/image_picker.widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class EditProfilePage extends StatefulWidget {
