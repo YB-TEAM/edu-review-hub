@@ -1,5 +1,4 @@
 import 'package:edu_review_mobile/common_libs.dart';
-import 'package:flutter/material.dart';
 import 'search_input.widget.dart';
 
 class HeaderWidget extends StatelessWidget {
@@ -13,7 +12,7 @@ class HeaderWidget extends StatelessWidget {
       width: double.infinity,
       color: AppColors.primaryBlue,
       padding: EdgeInsets.only(
-        top: statusBarHeight + 8,
+        top: statusBarHeight + 4,
         left: 0,
         right: 0,
         bottom: 4,
@@ -22,10 +21,8 @@ class HeaderWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(width: 12),
-          // Search input
           Expanded(child: SearchInputWidget(onTap: onTap)),
           const SizedBox(width: 12),
-          // Notification icon
           IconButton(
             icon: const Icon(
               Icons.notifications_none_rounded,
@@ -35,7 +32,6 @@ class HeaderWidget extends StatelessWidget {
             onPressed: () {},
             splashRadius: 22,
           ),
-          // Chat icon
           IconButton(
             icon: const Icon(
               Icons.chat_bubble_outline_rounded,

@@ -1,5 +1,4 @@
 import 'package:edu_review_mobile/common_libs.dart';
-import 'package:flutter/material.dart';
 
 class EditAvatarButton extends StatefulWidget {
   final String imageUrl;

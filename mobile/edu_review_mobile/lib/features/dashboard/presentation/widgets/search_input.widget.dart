@@ -1,5 +1,7 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:edu_review_mobile/common_libs.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class SearchInputWidget extends StatelessWidget {
   final VoidCallback? onTap;
@@ -28,7 +30,12 @@ class SearchInputWidget extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Icon(Icons.search, color: AppColors.primaryBlue, size: 20),
+              SvgPicture.asset(
+                'assets/icons/ic_search.svg',
+                height: 20,
+                width: 20,
+                color: AppColors.primaryBlue,
+              ),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(

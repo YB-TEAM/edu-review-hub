@@ -11,7 +11,6 @@ import 'package:edu_review_mobile/features/auth/domain/usecases/sign_in.dart';
 import 'package:edu_review_mobile/service_locator.dart' show sl;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:edu_review_mobile/features/auth/presentation/pages/sign_up.page.dart';
-import 'package:flutter/animation.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});

@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:edu_review_mobile/common_libs.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {

@@ -60,6 +60,8 @@ flutter:
 
   assets:
   - assets/images/
+
+  # icon
   - assets/icons/ic_home_active.svg
   - assets/icons/ic_home_inactive.svg
   - assets/icons/ic_notifications_active.svg
@@ -70,6 +72,7 @@ flutter:
   - assets/icons/ic_user_inactive.svg
   - assets/icons/ic_bar_active.svg
   - assets/icons/ic_bar_inactive.svg
+  - assets/icons/ic_search.svg
   
   fonts:
     - family: Roboto-Thin

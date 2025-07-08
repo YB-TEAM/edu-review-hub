@@ -1,6 +1,5 @@
 import 'package:edu_review_mobile/common/widgets/button/custom_text_button.dart';
 import 'package:edu_review_mobile/common_libs.dart';
-import 'package:flutter/material.dart';
 
 class AccountInfoWidget extends StatelessWidget {
   final String? city;

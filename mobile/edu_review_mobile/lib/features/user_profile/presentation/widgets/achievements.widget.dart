@@ -1,8 +1,8 @@
 // ignore_for_file: deprecated_member_use
 
-import 'package:edu_review_mobile/core/config/theme/color.dart';
-import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'package:edu_review_mobile/common_libs.dart';
+
 import 'points_tab.widget.dart';
 import 'achievements_tab.widget.dart';
 import 'badges_tab.widget.dart';

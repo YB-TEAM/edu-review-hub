@@ -1,7 +1,5 @@
 // ignore_for_file: deprecated_member_use
-
-import 'package:flutter/material.dart';
-import 'package:edu_review_mobile/core/config/theme/color.dart';
+import 'package:edu_review_mobile/common_libs.dart';
 
 class BadgesTabWidget extends StatefulWidget {
   BadgesTabWidget({super.key});
