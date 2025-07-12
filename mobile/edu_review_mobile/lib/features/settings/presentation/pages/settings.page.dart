@@ -21,7 +21,10 @@ class SettingsPage extends StatelessWidget {
       child: BlocListener<ButtonStateCubit, ButtonState>(
         listener: (context, state) {
           if (state is ButtonSuccessState) {
-            Navigator.pushReplacementNamed(context, RouteConstant.signIn);
+            Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil(
+              RouteConstant.signIn,
+              (route) => false,
+            );
           }
         },
         child: Scaffold(
