@@ -1,27 +1,36 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { IEmailService } from "@/application/services/email.service.interface";
+import * as nodemailer from "nodemailer";
 
 @Injectable()
 export class EmailService implements IEmailService {
   private readonly logger = new Logger(EmailService.name);
+  private transporter: nodemailer.Transporter;
 
-  constructor(private readonly configService: ConfigService) {}
+  constructor(private readonly configService: ConfigService) {
+    this.transporter = nodemailer.createTransport({
+      host: this.configService.get("SMTP_HOST"),
+      port: Number(this.configService.get("SMTP_PORT")),
+      secure: false, // true nếu dùng port 465, false cho 587
+      auth: {
+        user: this.configService.get("SMTP_USER"),
+        pass: this.configService.get("SMTP_PASS"),
+      },
+    });
+  }
 
   async sendEmailVerification(
     email: string,
     token: string,
     username: string
   ): Promise<void> {
-    const verificationUrl = `${this.configService.get(
-      "FRONTEND_URL"
-    )}/verify-email?token=${token}`;
+    const domain =
+      this.configService.get("APP_DOMAIN") ||
+      this.configService.get("FRONTEND_URL");
+    this.logger.log(`Using domain for email verification: ${domain}`);
+    const verificationUrl = `${domain}/verify-email?token=${token}`;
 
-    // TODO: Implement actual email sending logic
-    this.logger.log(`Email verification sent to ${email} for user ${username}`);
-    this.logger.log(`Verification URL: ${verificationUrl}`);
-
-    // For development, just log the email content
     const emailContent = `
       <h2>Xác thực Email</h2>
       <p>Xin chào ${username},</p>
@@ -32,6 +41,16 @@ export class EmailService implements IEmailService {
       <p>Trân trọng,<br>Edu Review Hub Team</p>
     `;
 
+    // Gửi email thật
+    await this.transporter.sendMail({
+      from: `"Edu Review Hub" <${this.configService.get("SMTP_USER")}>`,
+      to: email,
+      subject: "Xác thực Email - Edu Review Hub",
+      html: emailContent,
+    });
+
+    this.logger.log(`Email verification sent to ${email} for user ${username}`);
+    this.logger.log(`Verification URL: ${verificationUrl}`);
     this.logger.log(`Email content: ${emailContent}`);
   }
 

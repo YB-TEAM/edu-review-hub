@@ -94,8 +94,7 @@ export class User {
   deletedAt: Date;
 
   // Relations
-  @OneToOne(() => UserProfile, (profile) => profile.user, { cascade: true })
-  @JoinColumn({ name: "id" })
+  @OneToOne(() => UserProfile, (profile) => profile.user)
   profile: UserProfile;
 
   @OneToMany(() => UserSession, (session) => session.user)
