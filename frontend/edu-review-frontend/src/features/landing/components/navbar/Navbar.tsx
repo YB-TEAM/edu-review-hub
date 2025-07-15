@@ -7,8 +7,9 @@ import { NAV_ITEMS } from "@/features/landing/types/navbar.type";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ModeToggle } from "@/components/ui/mode-toggle";
 
-export function Navbar() {
+export function Navbar({ rightSlot }: { rightSlot?: React.ReactNode } = {}) {
   const { isScrolled } = useNavbar();
   const { isMobileMenuOpen, toggleMobileMenu, closeMobileMenu } =
     useMobileMenu();
@@ -105,11 +106,14 @@ export function Navbar() {
               isScrolled={isScrolled}
             />
 
-            {/* Desktop CTA Buttons */}
-            <DesktopCTAButtons
-              isScrolled={isScrolled}
-              onStartClick={() => handleNavClick("#solution")}
-            />
+            {/* Desktop CTA Buttons + rightSlot */}
+            <div className="flex items-center gap-2">
+              <DesktopCTAButtons
+                isScrolled={isScrolled}
+                onStartClick={() => handleNavClick("#solution")}
+              />
+              {rightSlot}
+            </div>
 
             {/* Mobile Hamburger Button */}
             <HamburgerButton
@@ -259,35 +263,19 @@ function DesktopCTAButtons({
               !isScrolled,
           }
         )}
+        asChild
       >
-        <Link href="/auth/login">
-          <span className="relative z-10">Đăng nhập</span>
-        </Link>
+        <Link href="/auth/login">Đăng nhập</Link>
       </Button>
-
       <Button
+        variant="default"
         size="sm"
+        className="font-semibold shadow-md hover:shadow-lg transition-all duration-300"
         onClick={onStartClick}
-        className={cn(
-          "navbar__cta-button relative overflow-hidden font-semibold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl",
-          {
-            "bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600 text-white":
-              isScrolled,
-            "bg-white hover:bg-gray-50": !isScrolled,
-          }
-        )}
       >
-        <span
-          className={cn("relative z-10 transition-all duration-300", {
-            "text-white": isScrolled,
-            "bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-transparent font-bold":
-              !isScrolled,
-          })}
-        >
-          Bắt đầu ngay
-        </span>
-        <div className="absolute top-0 left-[-100%] w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-all duration-500 hover:left-[100%]" />
+        Bắt đầu
       </Button>
+      <ModeToggle />
     </div>
   );
 }
@@ -341,68 +329,50 @@ function MobileMenu({
   if (!isOpen) return null;
 
   return (
-    <div className="lg:hidden fixed inset-0 top-16 bg-black/20 backdrop-blur-sm z-40">
-      <div className="navbar__mobile-menu bg-white/95 backdrop-blur-lg border-t border-gray-200 shadow-lg navbar__mobile-menu--enter-active">
-        <div className="px-4 py-6 space-y-4">
-          {/* Mobile Navigation Links */}
+    <div
+      className={cn(
+        "lg:hidden fixed inset-0 z-40 transition-all duration-300",
+        {
+          "pointer-events-auto opacity-100": isOpen,
+          "pointer-events-none opacity-0": !isOpen,
+        }
+      )}
+      aria-hidden={!isOpen}
+    >
+      <div
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        onClick={() => onNavClick("#home")}
+      />
+      <div className="absolute top-0 right-0 w-4/5 max-w-xs h-full bg-white shadow-lg p-6 flex flex-col gap-6">
+        <div className="flex items-center justify-between mb-4">
+          <NavbarLogo
+            isScrolled={true}
+            onLogoClick={() => onNavClick("#home")}
+          />
+          <ModeToggle />
+        </div>
+        <div className="flex flex-col gap-2">
           {navItems.map((item) => (
             <button
               key={item.href}
               onClick={() => onNavClick(item.href)}
               className={cn(
-                "block w-full text-left px-4 py-3 text-base font-medium rounded-lg transition-colors duration-200 relative",
+                "text-left px-4 py-3 rounded-lg font-medium transition-all duration-200",
                 {
-                  "bg-blue-50 text-blue-600 border-l-4 border-blue-600 font-semibold":
-                    item.isActive,
-                  "text-gray-700 hover:bg-gray-50 hover:text-blue-600":
+                  "bg-blue-50 text-blue-700": item.isActive,
+                  "text-gray-700 hover:bg-blue-50 hover:text-blue-700":
                     !item.isActive,
                 }
               )}
             >
-              <div className="flex items-center justify-between">
-                <span>{item.label}</span>
-                {/* Badge for mobile - positioned separately */}
-                {item.badge && (
-                  <span className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
-                    {item.badge}
-                  </span>
-                )}
-              </div>
+              {item.label}
+              {item.badge && (
+                <span className="ml-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs px-2 py-1 rounded-full font-bold animate-pulse">
+                  {item.badge}
+                </span>
+              )}
             </button>
           ))}
-
-          {/* Mobile CTA Buttons */}
-          <div className="pt-4 space-y-3 border-t border-gray-200">
-            <Button
-              variant="outline"
-              className="w-full justify-center relative overflow-hidden border-2 border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-300 hover:scale-105"
-            >
-              <Link href="/auth/login">
-                <span className="relative z-10 font-medium">Đăng nhập</span>
-              </Link>
-            </Button>
-            <Button
-              variant="default"
-              onClick={() => onNavClick("#solution")}
-              className="w-full justify-center relative overflow-hidden bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-semibold"
-            >
-              <span className="relative z-10">Bắt đầu ngay</span>
-              <div className="absolute top-0 left-[-100%] w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-all duration-500 hover:left-[100%]" />
-            </Button>
-          </div>
-
-          {/* Mobile Contact Info */}
-          <div className="pt-4 border-t border-gray-200">
-            <p className="text-sm text-gray-500 text-center">
-              Cần hỗ trợ?
-              <button
-                onClick={() => onNavClick("#contact")}
-                className="text-blue-600 hover:underline ml-1 font-medium"
-              >
-                Liên hệ với chúng tôi
-              </button>
-            </p>
-          </div>
         </div>
       </div>
     </div>
