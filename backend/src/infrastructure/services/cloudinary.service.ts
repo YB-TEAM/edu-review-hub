@@ -27,16 +27,28 @@ export class CloudinaryService {
     });
   }
 
-  async uploadImage(file: Express.Multer.File): Promise<any> {
+  async uploadImage(
+    file: Express.Multer.File,
+    folder = "uploads"
+  ): Promise<any> {
     return new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
-        { folder: "avatars" },
+        { folder },
         (error, result) => {
           if (error) return reject(error);
           resolve(result);
         }
       );
       Readable.from(file.buffer).pipe(uploadStream);
+    });
+  }
+
+  async deleteImage(publicId: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      cloudinary.uploader.destroy(publicId, (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      });
     });
   }
 }

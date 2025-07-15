@@ -94,7 +94,24 @@ export class ProfileController {
     @Request() req,
     @UploadedFile() file: any
   ): Promise<{ avatarUrl: string }> {
-    const result = await this.cloudinaryService.uploadImage(file);
+    // Lấy profile hiện tại để lấy avatar cũ
+    const profile = await this.userProfileService.getProfile(req.user.id);
+    const oldAvatarUrl = profile?.avatarUrl;
+    let oldPublicId: string | undefined;
+    if (oldAvatarUrl) {
+      // Cloudinary url dạng: https://res.cloudinary.com/<cloud_name>/image/upload/v<version>/<folder>/<public_id>.<ext>
+      // Tách public_id từ url
+      const match = oldAvatarUrl.match(/\/upload\/.*?\/(.*)\.[a-zA-Z0-9]+$/);
+      if (match && match[1]) {
+        oldPublicId = match[1];
+      }
+    }
+    // Xóa ảnh cũ nếu có
+    if (oldPublicId) {
+      await this.cloudinaryService.deleteImage(oldPublicId);
+    }
+    // Upload ảnh mới vào folder "avatars"
+    const result = await this.cloudinaryService.uploadImage(file, "avatars");
     await this.userProfileService.updateProfile(req.user.id, {
       avatarUrl: result.secure_url,
     });

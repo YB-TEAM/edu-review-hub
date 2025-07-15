@@ -11,8 +11,8 @@ async function bootstrap() {
 
   // Enable CORS
   app.enableCors({
-    origin: true,
-    credentials: true,
+    origin: "*", // Cho phép tất cả origin
+    credentials: false, // Không gửi cookie hoặc thông tin xác thực
   });
 
   // Global validation pipe

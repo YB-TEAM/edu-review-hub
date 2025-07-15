@@ -25,7 +25,9 @@ export class AuthService implements IAuthService {
     private readonly userRepository: IUserRepository,
     @Inject("IEmailVerificationService")
     private readonly emailVerificationService: IEmailVerificationService,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
+    @Inject("IUserProfileRepository")
+    private readonly userProfileRepository: any // Nên dùng interface IUserProfileRepository nếu có
   ) {}
 
   async register(registerDto: RegisterDto): Promise<AuthResponseDto> {
@@ -48,13 +50,7 @@ export class AuthService implements IAuthService {
     const saltRounds = 12;
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
-    // Create user profile
-    const profile = new UserProfile();
-    profile.firstName = "";
-    profile.lastName = "";
-    profile.displayName = username;
-
-    // Create user
+    // 1. Tạo user trước (chưa có profile)
     const user = await this.userRepository.create({
       username,
       email,
@@ -63,7 +59,14 @@ export class AuthService implements IAuthService {
       accountType,
       status: UserStatus.ACTIVE,
       isVerified: false,
-      profile,
+    });
+
+    // 2. Tạo profile, gán userId
+    await this.userProfileRepository.create({
+      displayName: username,
+      userId: user.id,
+      firstName: "",
+      lastName: "",
     });
 
     // Send email verification
