@@ -5,7 +5,9 @@ FR-002: Xác minh email và kích hoạt tài khoản
 FR-003: Quản lý hồ sơ người dùng
 FR-004: Đặt lại và khôi phục mật khẩu
 FR-005: Vô hiệu hóa/Xóa tài khoản
+
 3.2 Hệ thống Đánh giá Trường Đại học
+
 FR-006: Gửi đánh giá trường đại học
 FR-007: Chấm điểm trường đại học (1–5 sao theo nhiều tiêu chí)
 FR-008: Chỉnh sửa/Xóa đánh giá của bản thân
@@ -13,7 +15,9 @@ FR-009: Xem và duyệt các đánh giá
 FR-010: Lọc đánh giá theo danh mục, điểm, ngày
 FR-011: Báo cáo đánh giá không phù hợp
 FR-012: Xác minh tình trạng sinh viên để đảm bảo tính xác thực
+
 3.3 Nền tảng Blog & Tâm sự
+
 FR-013: Tạo bài viết blog chia sẻ trải nghiệm đại học
 FR-014: Đăng tâm sự ẩn danh
 FR-015: Bình luận vào bài viết và tâm sự
@@ -21,6 +25,7 @@ FR-016: Thích/Phản ứng với bài viết và bình luận
 FR-017: Chia sẻ bài viết lên mạng xã hội
 FR-018: Tìm kiếm bài viết bằng từ khóa/thẻ
 FR-019: Phân loại bài viết (Học tập, Xã hội, Đời sống,...)
+
 3.4 Hệ thống Đánh giá Tính cách
 FR-020: Bài trắc nghiệm tính cách
 FR-021: Đánh giá phong cách học tập
@@ -28,6 +33,7 @@ FR-022: Đánh giá sở thích nghề nghiệp
 FR-023: Phân tích xu hướng xã hội
 FR-024: Tạo báo cáo hồ sơ tính cách
 FR-025: Cho phép làm lại bài đánh giá
+
 3.5 Công cụ Gợi ý Trường Đại học
 FR-026: Tạo đề xuất trường đại học cá nhân hóa
 FR-027: Ghép nối tính cách với văn hóa trường
@@ -35,6 +41,7 @@ FR-028: Xếp hạng đề xuất theo mức độ phù hợp
 FR-029: Giải thích lý do đề xuất
 FR-030: Lưu trường được gợi ý vào danh sách yêu thích
 FR-031: So sánh các trường được đề xuất
+
 3.6 Tìm kiếm & Khám phá
 FR-032: Tìm trường theo tên, vị trí, ngành học
 FR-033: Bộ lọc nâng cao (quy mô, loại hình, xếp hạng,...)
