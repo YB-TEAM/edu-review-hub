@@ -178,16 +178,17 @@ export class EmailVerificationService implements IEmailVerificationService {
     newEmail: string,
     username: string
   ): Promise<void> {
-    // Invalidate any existing change tokens
-    await this.emailVerificationRepository.invalidateByUserId(
-      userId,
-      EmailVerificationType.EMAIL_CHANGE
-    );
+    // Cập nhật luôn email mới vào user
+    await this.userRepository.update(userId, {
+      email: newEmail,
+      // Nếu muốn reset trạng thái xác thực email, có thể thêm:
+      // emailVerifiedAt: null,
+      // isVerified: false,
+    });
 
-    // Generate token
+    // (Có thể bỏ qua phần tạo record xác nhận nếu không cần tracking)
+    // Nếu vẫn muốn gửi email xác nhận, có thể giữ lại phần này:
     const token = this.generateToken();
-
-    // Create verification record
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + 24); // 24 hours
 
@@ -200,7 +201,7 @@ export class EmailVerificationService implements IEmailVerificationService {
       expiresAt,
     });
 
-    // Send email
+    // Gửi email xác nhận tới email mới
     await this.emailService.sendEmailChangeConfirmation(
       newEmail,
       token,
@@ -236,6 +237,7 @@ export class EmailVerificationService implements IEmailVerificationService {
     await this.userRepository.update(verification.userId, {
       email: verification.email,
       emailVerifiedAt: new Date(),
+      isVerified: true,
     });
 
     // Update verification status
