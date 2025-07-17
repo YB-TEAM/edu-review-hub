@@ -20,14 +20,33 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmedpasswordController =
-      TextEditingController();
+  final TextEditingController _confirmedpasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   // Track if form has been submitted to show validation errors
   bool _isFormSubmitted = false;
+
+  String? _validateUsername(String? value) {
+    if (!_isFormSubmitted) return null;
+    if (value == null || value.isEmpty) {
+      return 'Please enter username';
+    }
+    if (value.length < 6) {
+      return 'Username must be at least 6 characters';
+    }
+    if (value.length > 20) {
+      return 'Username cannot exceed 20 characters';
+    }
+    // Chỉ cho phép chữ cái, số, dấu gạch dưới, không có khoảng trắng hoặc ký tự đặc biệt
+    final usernameRegex = RegExp(r'^[a-zA-Z0-9_]+$');
+    if (!usernameRegex.hasMatch(value)) {
+      return 'Username can only contain letters, numbers, and underscores';
+    }
+    return null;
+  }
 
   String? _validateEmail(String? value) {
     if (!_isFormSubmitted) return null;
@@ -82,16 +101,18 @@ class _SignUpPageState extends State<SignUpPage> {
     _formKey.currentState!.validate();
 
     // Check if form is valid before proceeding
-    if (_emailController.text.isNotEmpty &&
-        _passwordController.text.isNotEmpty &&
-        _confirmedpasswordController.text.isNotEmpty &&
-        _validateEmail(_emailController.text) == null &&
-        _validatePassword(_passwordController.text) == null &&
-        _validateConfirmedPassword(_confirmedpasswordController.text) == null) {
+    if (_usernameController.text.isNotEmpty &&
+      _emailController.text.isNotEmpty &&
+      _passwordController.text.isNotEmpty &&
+      _confirmedpasswordController.text.isNotEmpty &&
+      _validateUsername(_usernameController.text) == null &&
+      _validateEmail(_emailController.text) == null &&
+      _validatePassword(_passwordController.text) == null &&
+      _validateConfirmedPassword(_confirmedpasswordController.text) == null) {
       context.read<ButtonStateCubit>().execute(
         usecase: sl<SignUpUseCase>(),
         params: SignUpParams(
-          username: _emailController.text.split('@').first,
+          username: _usernameController.text,
           email: _emailController.text,
           password: _passwordController.text,
         ),
@@ -218,12 +239,20 @@ class _SignUpPageState extends State<SignUpPage> {
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      SizedBox(height: 40),
+                      SizedBox(height: 28),
                       Form(
                         key: _formKey,
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            CustomTextField(
+                              label: 'Username',
+                              placeholder: 'Enter your username',
+                              controller: _usernameController,
+                              validator: _validateUsername,
+                              prefixIconData: Icons.email_outlined,
+                            ),
+                            SizedBox(height: 16),
                             CustomTextField(
                               label: 'Email',
                               placeholder: 'Enter your email',
