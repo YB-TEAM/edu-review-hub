@@ -12,21 +12,21 @@ class FeaturedSchools extends StatelessWidget {
         'location': 'Cambridge, MA',
         'rating': 4.8,
         'reviews': 1247,
-        'image': 'https://via.placeholder.com/60x60/1877F2/FFFFFF?text=M',
+        'image': 'https://download.logo.wine/logo/Massachusetts_Institute_of_Technology/Massachusetts_Institute_of_Technology-Logo.wine.png',
       },
       {
         'name': 'Stanford University',
         'location': 'Stanford, CA',
         'rating': 4.7,
         'reviews': 1156,
-        'image': 'https://via.placeholder.com/60x60/77CC00/FFFFFF?text=S',
+        'image': 'https://identity.stanford.edu/wp-content/uploads/sites/3/2020/07/block-s-right.png',
       },
       {
         'name': 'Harvard University',
         'location': 'Cambridge, MA',
         'rating': 4.9,
         'reviews': 1432,
-        'image': 'https://via.placeholder.com/60x60/FF7029/FFFFFF?text=H',
+        'image': 'https://upload.wikimedia.org/wikipedia/commons/2/25/Harvard_University_shield.png',
       },
     ];
 
@@ -114,22 +114,14 @@ class FeaturedSchools extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                Container(
+                SizedBox(
                   width: 60,
                   height: 60,
-                  decoration: BoxDecoration(
+                  child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    color: AppColors.primaryBlue.withOpacity(0.1),
-                  ),
-                  child: Center(
-                    child: Text(
-                      name[0],
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.primaryBlue,
-                        fontFamily: 'Roboto-Bold',
-                      ),
+                    child: Image.network(
+                      image,
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
