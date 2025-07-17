@@ -1,5 +1,4 @@
 import { EmailVerificationType } from "@/infrastructure/database/entities/email-verification.entity";
-
 export interface IEmailVerificationService {
   sendEmailVerification(
     userId: number,

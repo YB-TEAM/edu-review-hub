@@ -126,6 +126,13 @@ export class EmailService implements IEmailService {
       <p>Trân trọng,<br>Edu Review Hub Team</p>
     `;
 
+    await this.transporter.sendMail({
+      from: `"Edu Review Hub" <${this.configService.get("SMTP_USER")}>`,
+      to: email,
+      subject: "Xác nhận Thay đổi Email - Edu Review Hub",
+      html: emailContent,
+    });
+
     this.logger.log(`Email content: ${emailContent}`);
   }
 
