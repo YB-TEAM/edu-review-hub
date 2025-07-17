@@ -1,6 +1,6 @@
 class ApiUrls {
-  static const baseURL = "https://685cb9bd769de2bf085d97fb.mockapi.io/";
-  static const register = "${baseURL}params";
+  static const baseURL = "http://192.168.99.110:3000/api/v1/";
+  static const register = "${baseURL}auth/register";
   static const login = "${baseURL}params";
-  static const userProfile = "${baseURL}users";
+  static const userProfile = "${baseURL}profile/me";
 }

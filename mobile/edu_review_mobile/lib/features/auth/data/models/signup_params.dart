@@ -1,23 +1,30 @@
 class SignUpParams {
+  final String username;
   final String email;
   final String password;
-  final String userName;
-  final String token;
+  final String? phone;
+  final String? accountType;
 
   SignUpParams({
+    required this.username,
     required this.email, 
     required this.password, 
-    required this.userName,
-    required this.token,
+    this.phone,
+    this.accountType,
   });
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+    final map = <String, dynamic>{
+      'username': username,
       'email': email,
       'password': password,
-      'userName': userName,
-      'token': token,
     };
+    if (phone != null) {
+      map['phone'] = phone;
+    }
+    if (accountType != null) {
+      map['accountType'] = accountType;
+    }
+    return map;
   }
-
 }

@@ -91,11 +91,9 @@ class _SignUpPageState extends State<SignUpPage> {
       context.read<ButtonStateCubit>().execute(
         usecase: sl<SignUpUseCase>(),
         params: SignUpParams(
+          username: _emailController.text.split('@').first,
           email: _emailController.text,
           password: _passwordController.text,
-          userName: "HT",
-          token:
-              "oTsU8cUUxGVwPJPGQPZb1MHjmZXjOxKA3ghkSMsGs6eXf3PIvzCxabRESjmbeKyS",
         ),
       );
     }
@@ -107,7 +105,7 @@ class _SignUpPageState extends State<SignUpPage> {
         pageBuilder:
             (context, animation, secondaryAnimation) => const SignInPage(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(-1.0, 0.0); // Slide từ trái sang
+          const begin = Offset(-1.0, 0.0); 
           const end = Offset.zero;
           final tween = Tween(
             begin: begin,
@@ -155,9 +153,7 @@ class _SignUpPageState extends State<SignUpPage> {
           },
           child: Stack(
             children: [
-              // Nền trắng
               Container(color: Colors.white),
-              // Vệt tím nhạt góc trên phải
               Positioned(
                 top: -100,
                 right: -100,
@@ -173,7 +169,6 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                 ),
               ),
-              // Vệt xanh nhạt góc dưới trái
               Positioned(
                 bottom: -100,
                 left: -100,
