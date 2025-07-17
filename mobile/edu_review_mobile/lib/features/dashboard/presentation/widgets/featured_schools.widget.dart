@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:edu_review_mobile/core/config/theme/color.dart';
+import 'package:flutter_svg/svg.dart';
 
 class FeaturedSchools extends StatelessWidget {
   @override
@@ -145,11 +146,7 @@ class FeaturedSchools extends StatelessWidget {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          Icon(
-                            Icons.star,
-                            size: 16,
-                            color: AppColors.primaryYellow,
-                          ),
+                          SvgPicture.asset('assets/icons/ic_star_active.svg', width: 16, height: 16, color: AppColors.primaryYellow),
                           const SizedBox(width: 4),
                           Text(
                             rating.toString(),

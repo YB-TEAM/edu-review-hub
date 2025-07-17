@@ -44,7 +44,6 @@ dependencies:
   pull_to_refresh: ^2.0.0
   loading_animation_widget: ^1.3.0
   persistent_bottom_nav_bar_v2: ^6.1.0
-  carousel_slider: ^5.1.1
 
 dev_dependencies:
   flutter_test:
@@ -76,6 +75,14 @@ flutter:
   - assets/icons/ic_bar_inactive.svg
   - assets/icons/ic_search.svg
   - assets/icons/ic_university.svg
+  - assets/icons/ic_star_active.svg
+  - assets/icons/ic_star_inactive.svg
+  - assets/icons/ic_community_active.svg
+  - assets/icons/ic_community_inactive.svg
+  - assets/icons/ic_like_active.svg
+  - assets/icons/ic_like_inactive.svg
+  - assets/icons/ic_dislike_active.svg
+  - assets/icons/ic_dislike_inactive.svg
   
   fonts:
     - family: Roboto-Thin

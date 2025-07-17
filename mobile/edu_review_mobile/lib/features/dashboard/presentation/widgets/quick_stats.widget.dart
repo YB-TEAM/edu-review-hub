@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:edu_review_mobile/core/config/theme/color.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class QuickStats extends StatelessWidget {
   @override
@@ -23,7 +24,7 @@ class QuickStats extends StatelessWidget {
               Expanded(
                 child: _buildStatCard(
                   context: context,
-                  icon: Icons.school,
+                  icon: 'assets/icons/ic_university.svg',
                   title: 'Universities',
                   value: '2,847',
                   color: AppColors.primaryBlue,
@@ -34,7 +35,7 @@ class QuickStats extends StatelessWidget {
               Expanded(
                 child: _buildStatCard(
                   context: context,
-                  icon: Icons.people,
+                  icon: 'assets/icons/ic_community_active.svg',
                   title: 'Students',
                   value: '45.2K',
                   color: AppColors.primaryGreen,
@@ -45,7 +46,7 @@ class QuickStats extends StatelessWidget {
               Expanded(
                 child: _buildStatCard(
                   context: context,
-                  icon: Icons.star,
+                  icon: 'assets/icons/ic_star_active.svg',
                   title: 'Reviews',
                   value: '12.8K',
                   color: AppColors.primaryOrange,
@@ -61,7 +62,7 @@ class QuickStats extends StatelessWidget {
 
   Widget _buildStatCard({
     required BuildContext context,
-    required IconData icon,
+    required String icon,
     required String title,
     required String value,
     required Color color,
@@ -108,7 +109,12 @@ class QuickStats extends StatelessWidget {
               color: Colors.white.withOpacity(0.22),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(icon, color: Colors.white, size: 28),
+            child: SvgPicture.asset(
+              icon,
+              colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+              width: 28,
+              height: 28,
+            ),
           ),
           const SizedBox(height: 16),
           Text(

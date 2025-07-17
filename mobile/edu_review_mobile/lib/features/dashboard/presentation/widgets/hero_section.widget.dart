@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:edu_review_mobile/core/config/theme/color.dart';
 import 'dart:async';
 
+import 'package:flutter_svg/svg.dart';
+
 
 class HeroSection extends StatefulWidget {
   final Animation<double> fadeAnimation;
@@ -172,11 +174,7 @@ class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStat
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(
-                              Icons.search,
-                              color: AppColors.primaryWhite,
-                              size: 16,
-                            ),
+                            SvgPicture.asset('assets/icons/ic_search.svg', width: 16, height: 16, color: AppColors.primaryWhite),
                             const SizedBox(width: 8),
                             Text(
                               'Search Universities',
