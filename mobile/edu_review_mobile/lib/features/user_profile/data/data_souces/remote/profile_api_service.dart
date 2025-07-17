@@ -16,7 +16,7 @@ class ProfileApiServiceImpl extends ProfileApiService {
     try {
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
-      var token = sharedPreferences.getString('token');
+      var token = sharedPreferences.getString('accessToken');
       var response = await sl<DioClient>().get(
         ApiUrls.userProfile,
         options: Options(headers: {'Authorization': 'Bearer $token'}),
@@ -32,7 +32,7 @@ class ProfileApiServiceImpl extends ProfileApiService {
     try {
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
-      var token = sharedPreferences.getString('token');
+      var token = sharedPreferences.getString('accessToken');
       var response = await sl<DioClient>().put(
         ApiUrls.userProfile,
         data: profileData,

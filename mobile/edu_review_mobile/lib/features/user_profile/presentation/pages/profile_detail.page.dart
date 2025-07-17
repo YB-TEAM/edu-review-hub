@@ -34,9 +34,7 @@ class ProfileDetailPage extends StatelessWidget {
                   _buildDetailInfoRow(
                     Icons.cake_outlined,
                     'Birthday',
-                    profileEntity.birthday != null
-                        ? '${profileEntity.birthday.day}/${profileEntity.birthday.month}/${profileEntity.birthday.year}'
-                        : null,
+                    profileEntity.dateOfBirth,
                   ),
                   _buildDetailInfoRow(
                     Icons.wc_outlined,

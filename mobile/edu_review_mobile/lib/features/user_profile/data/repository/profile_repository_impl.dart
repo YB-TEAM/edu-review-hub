@@ -19,13 +19,7 @@ class ProfileRepositoryImpl extends ProfileRepository {
       },
       (data) {
         Response response = data;
-
-        //Test API
-        final responseData =
-            response.data is List ? response.data.first : response.data;
-        //
-
-        var profileModel = ProfileModel.fromMap(responseData);
+        var profileModel = ProfileModel.fromMap(response.data);
         var profileEntity = profileModel.toEntity();
         return Right(profileEntity);
       },
@@ -48,13 +42,7 @@ class ProfileRepositoryImpl extends ProfileRepository {
       },
       (data) {
         Response response = data;
-
-        //Test API - lấy phần tử đầu tiên nếu response là list
-        final responseData =
-            response.data is List ? response.data.first : response.data;
-        //
-
-        var profileModel = ProfileModel.fromMap(responseData);
+        var profileModel = ProfileModel.fromMap(response.data);
         var profileEntity = profileModel.toEntity();
         return Right(profileEntity);
       },

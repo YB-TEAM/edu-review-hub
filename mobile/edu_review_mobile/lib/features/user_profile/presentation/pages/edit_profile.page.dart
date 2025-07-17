@@ -61,7 +61,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       'major': _majorController.text.trim(),
       'bio': _bioController.text.trim(),
       'displayName': _displayNameController.text.trim(),
-      // Keep other values unchanged
       'avatarUrl': currentProfile.avatarUrl,
       'coverImageUrl': currentProfile.coverImageUrl,
     };
@@ -154,7 +153,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                                       ?.isNotEmpty ==
                                                   true
                                               ? state.profileEntity.avatarUrl!
-                                              : 'https://via.placeholder.com/120x120/cccccc/666666?text=Avatar',
+                                              : 'https://www.meme-arsenal.com/memes/4408af6c9803cb3f320ecc468b3abbfa.jpg',
                                           width: 120,
                                           height: 120,
                                           fit: BoxFit.cover,
@@ -213,7 +212,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                                     ?.isNotEmpty ==
                                                 true
                                             ? state.profileEntity.coverImageUrl!
-                                            : 'https://via.placeholder.com/400x120/cccccc/666666?text=Cover+Image',
+                                            : 'https://professionals.tarkett.co.uk/media/img/M/THH_25094225_25187225_001.jpg',
                                         width: double.infinity,
                                         height: 120,
                                         fit: BoxFit.cover,
