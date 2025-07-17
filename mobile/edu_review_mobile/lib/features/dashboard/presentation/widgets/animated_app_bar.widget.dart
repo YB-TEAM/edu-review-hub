@@ -113,8 +113,12 @@ class _AnimatedAppBarState extends State<AnimatedAppBar> {
                 gradient: LinearGradient(
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
-                  colors: [AppColors.primaryBlue, AppColors.secondaryBlue],
-                ),
+                  colors: [
+                    AppColors.primaryBlue,
+                    const Color(0xFF2563EB), 
+                    const Color(0xFF1E40AF), 
+                  ],
+                )
               ),
               child: SafeArea(
                 child: Padding(

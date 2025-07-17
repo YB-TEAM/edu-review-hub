@@ -33,14 +33,21 @@ void setUpServiceLocator() {
 
   // Repositories
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl());
+
   sl.registerSingleton<ProfileRepository>(ProfileRepositoryImpl());
+
   sl.registerSingleton<SettingsRepository>(SettingsRepositoryImpl());
 
   // Usecases
   sl.registerSingleton<SignUpUseCase>(SignUpUseCase());
+
   sl.registerSingleton<IsLoggedInUseCase>(IsLoggedInUseCase());
+
   sl.registerSingleton<GetUserUseCase>(GetUserUseCase());
+
   sl.registerSingleton<EditProfileUseCase>(EditProfileUseCase());
+
   sl.registerSingleton<LogOutUseCase>(LogOutUseCase());
+  
   sl.registerSingleton<SignInUseCase>(SignInUseCase());
 }

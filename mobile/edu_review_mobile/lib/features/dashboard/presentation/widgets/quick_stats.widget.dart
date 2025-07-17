@@ -6,7 +6,7 @@ import 'package:edu_review_mobile/core/config/theme/color.dart';
 class QuickStats extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -27,9 +27,10 @@ class QuickStats extends StatelessWidget {
                   title: 'Universities',
                   value: '2,847',
                   color: AppColors.primaryBlue,
+                  highlight: true,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 16),
               Expanded(
                 child: _buildStatCard(
                   context: context,
@@ -37,9 +38,10 @@ class QuickStats extends StatelessWidget {
                   title: 'Students',
                   value: '45.2K',
                   color: AppColors.primaryGreen,
+                  highlight: true,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 16),
               Expanded(
                 child: _buildStatCard(
                   context: context,
@@ -47,6 +49,7 @@ class QuickStats extends StatelessWidget {
                   title: 'Reviews',
                   value: '12.8K',
                   color: AppColors.primaryOrange,
+                  highlight: true,
                 ),
               ),
             ],
@@ -62,40 +65,80 @@ class QuickStats extends StatelessWidget {
     required String title,
     required String value,
     required Color color,
+    required bool highlight,
   }) {
+    Color secondaryColor;
+    if (color == AppColors.primaryBlue) {
+      secondaryColor = const Color(0xFF64B5F6);
+    } else if (color == AppColors.primaryGreen) {
+      secondaryColor = const Color(0xFF81C784);
+    } else if (color == AppColors.primaryOrange) {
+      secondaryColor = const Color(0xFFFFB74D);
+    } else {
+      secondaryColor = AppColors.primaryWhite.withOpacity(0.85);
+    }
+
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
       decoration: BoxDecoration(
-        color: AppColors.primaryWhite,
-        borderRadius: BorderRadius.circular(16),
+        gradient: LinearGradient(
+          colors: [
+            color.withOpacity(0.98),
+            secondaryColor.withOpacity(0.95),
+            color.withOpacity(0.85),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: AppColors.textGrey.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: color.withOpacity(0.13),
+            blurRadius: highlight ? 18 : 10,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
+              color: Colors.white.withOpacity(0.22),
+              borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(icon, color: color, size: 24),
+            child: Icon(icon, color: Colors.white, size: 28),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Text(
             value,
-            style: Theme.of(context).textTheme.titleLarge
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w900,
+              shadows: [
+                Shadow(
+                  color: color.withOpacity(0.35),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 6),
           Text(
             title,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppColors.textGrey,
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.5,
+              shadows: [
+                Shadow(
+                  color: color.withOpacity(0.25),
+                  blurRadius: 6,
+                  offset: const Offset(0, 1),
+                ),
+              ],
             ),
           ),
         ],

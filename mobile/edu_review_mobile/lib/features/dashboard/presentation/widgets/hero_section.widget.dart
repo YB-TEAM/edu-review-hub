@@ -2,8 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:edu_review_mobile/core/config/theme/color.dart';
+import 'dart:async';
 
-class HeroSection extends StatelessWidget {
+
+class HeroSection extends StatefulWidget {
   final Animation<double> fadeAnimation;
   final Animation<Offset> slideAnimation;
 
@@ -14,13 +16,71 @@ class HeroSection extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<HeroSection> createState() => _HeroSectionState();
+}
+
+class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStateMixin {
+  final List<String> titles = [
+    'Shape Your Tomorrow',
+    'Find Your Spark',
+    'Design Your Vision',
+    "Step Into Possibility",
+  ];
+  final List<String> descriptions = [
+    'Let real student stories guide you to the right university fit.',
+    'Let lived journeys illuminate the path meant for you.',
+    'Let unique insights take you to new possibilities.',
+    'Let authentic journeys shape your next decision.',
+  ];
+  int _colorIndex = 0;
+  int _circleIndex = 0;
+  late Timer _timer;
+
+  final List<List<Color>> gradients = [
+    [AppColors.primaryBlue.withOpacity(0.85), AppColors.primaryGrey.withOpacity(0.8)],
+    [AppColors.green600.withOpacity(0.8), AppColors.primaryGrey.withOpacity(0.7)],
+    [AppColors.orange700.withOpacity(0.8), AppColors.orange400.withOpacity(0.7)],
+    [AppColors.purple600.withOpacity(0.8), AppColors.primaryGrey.withOpacity(0.8)],
+  ];
+
+  final List<Offset> circlePositions = [
+    Offset(-20, -20), // topLeft
+    Offset(260, -30), // topRight 
+    Offset(240, 100),  // bottomRight
+    Offset(-20, 100),  // bottomLeft 
+  ];
+  final List<Offset> circlePositions2 = [
+    Offset(260, 110), // bottomRight
+    Offset(-30, 110), // bottomLeft
+    Offset(-30, -30), // topLeft
+    Offset(260, -30), // topRight
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      setState(() {
+        _colorIndex = (_colorIndex + 1) % gradients.length;
+        _circleIndex = (_circleIndex + 1) % 4;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 24),
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 32),
       child: SlideTransition(
-        position: slideAnimation,
+        position: widget.slideAnimation,
         child: FadeTransition(
-          opacity: fadeAnimation,
+          opacity: widget.fadeAnimation,
           child: Container(
             height: 184,
             decoration: BoxDecoration(
@@ -28,11 +88,11 @@ class HeroSection extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [AppColors.primaryBlue, AppColors.purple400],
+                colors: gradients[_colorIndex],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primaryBlue.withOpacity(0.3),
+                  color: gradients[_colorIndex][0].withOpacity(0.3),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
                 ),
@@ -40,9 +100,10 @@ class HeroSection extends StatelessWidget {
             ),
             child: Stack(
               children: [
-                Positioned(
-                  right: -20,
-                  top: -20,
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 800),
+                  left: circlePositions[_circleIndex].dx,
+                  top: circlePositions[_circleIndex].dy,
                   child: Container(
                     width: 100,
                     height: 100,
@@ -52,9 +113,10 @@ class HeroSection extends StatelessWidget {
                     ),
                   ),
                 ),
-                Positioned(
-                  left: -30,
-                  bottom: -30,
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 800),
+                  left: circlePositions2[_circleIndex].dx,
+                  top: circlePositions2[_circleIndex].dy,
                   child: Container(
                     width: 80,
                     height: 80,
@@ -70,17 +132,31 @@ class HeroSection extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        'Shape Your Tomorrow',
-                        style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                          color: AppColors.primaryWhite,
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 400),
+                        transitionBuilder: (Widget child, Animation<double> animation) {
+                          return FadeTransition(opacity: animation, child: child);
+                        },
+                        child: Text(
+                          titles[_colorIndex],
+                          key: ValueKey<String>(titles[_colorIndex]),
+                          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                            color: AppColors.primaryWhite,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Text(
-                        'Let real student stories guide you to the right university fit.',
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 400),
+                        transitionBuilder: (Widget child, Animation<double> animation) {
+                          return FadeTransition(opacity: animation, child: child);
+                        },
+                        child: Text(
+                          descriptions[_colorIndex],
+                          key: ValueKey<String>(descriptions[_colorIndex]),
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppColors.primaryWhite.withOpacity(0.8),
+                            color: AppColors.primaryWhite.withOpacity(0.8),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 20),

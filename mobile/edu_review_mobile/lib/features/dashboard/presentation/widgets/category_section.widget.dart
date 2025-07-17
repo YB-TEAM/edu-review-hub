@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:edu_review_mobile/core/config/theme/color.dart';
 
@@ -40,7 +42,7 @@ class CategorySection extends StatelessWidget {
     ];
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -83,35 +85,39 @@ class CategorySection extends StatelessWidget {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.primaryWhite,
-        borderRadius: BorderRadius.circular(20),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: color.withOpacity(0.55),
+          width: 2,
+        ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.textGrey.withOpacity(0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            color: color.withOpacity(0.10),
+            blurRadius: 14,
+            offset: Offset(0, 6),
           ),
         ],
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           onTap: () {
             // TODO: handle tap
           },
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14,),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(14),
+                    color: color.withOpacity(0.13),
+                    borderRadius: BorderRadius.circular(9),
                   ),
-                  child: Icon(icon, color: color, size: 28),
+                  child: Icon(icon, color: color, size: 32),
                 ),
                 const SizedBox(height: 12),
                 Text(
