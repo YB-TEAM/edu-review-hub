@@ -40,9 +40,13 @@ export class UserProfileService implements IUserProfileService {
     }
 
     if (!profile) {
+      const user = await this.userRepository.findById(userId);
+
+
       profile = await this.userProfileRepository.create({
         ...updateData,
         userId,
+        displayName: updateData.displayName || user.username, 
       });
 
       // Ghi log tạo profile
