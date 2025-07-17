@@ -167,7 +167,7 @@ class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStat
                         ),
                         decoration: BoxDecoration(
                           color: AppColors.primaryWhite.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(8),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,

@@ -96,12 +96,12 @@ class FeaturedSchools extends StatelessWidget {
       width: 280,
       decoration: BoxDecoration(
         color: AppColors.primaryWhite,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: AppColors.textGrey.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: AppColors.primaryBlack.withOpacity(0.2),
+            blurRadius: 8,
+            offset: const Offset(1, 3),
           ),
         ],
       ),
