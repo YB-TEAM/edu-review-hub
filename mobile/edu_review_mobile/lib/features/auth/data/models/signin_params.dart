@@ -1,19 +1,22 @@
 class SignInParams {
-  final String email;
+  final String identifier;
   final String password;
-  final String token;
+  final String? deviceId;
+  final bool? rememberMe;
 
   SignInParams({
-    required this.email,
+    required this.identifier,
     required this.password,
-    required this.token,
+    this.deviceId,
+    this.rememberMe,
   });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'email': email,
+      'identifier': identifier,
       'password': password,
-      'token': token,
+      if (deviceId != null) 'deviceId': deviceId,
+      if (rememberMe != null) 'rememberMe': rememberMe,
     };
   }
 }

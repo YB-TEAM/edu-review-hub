@@ -20,25 +20,33 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _identifierController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   // Track if form has been submitted to show validation errors
   bool _isFormSubmitted = false;
 
-  String? _validateEmail(String? value) {
+  String? _validateIdentifier(String? value) {
     if (!_isFormSubmitted) return null;
+
     if (value == null || value.isEmpty) {
-      return 'Please enter email';
+      return 'Please enter your email or username';
     }
-    // Kiểm tra định dạng email
+
+    // Cho phép email hoặc username
     final emailRegex = RegExp(
       r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
     );
-    if (!emailRegex.hasMatch(value)) {
-      return 'Please enter a valid email address';
+
+    final usernameRegex = RegExp(
+      r'^[a-zA-Z0-9._-]{3,}$', // ví dụ: tối thiểu 3 ký tự, không có khoảng trắng
+    );
+
+    if (!emailRegex.hasMatch(value) && !usernameRegex.hasMatch(value)) {
+      return 'Please enter a valid email or username';
     }
+
     return null;
   }
 
@@ -62,16 +70,17 @@ class _SignInPageState extends State<SignInPage> {
     _formKey.currentState!.validate();
 
     // Check if form is valid before proceeding
-    if (_emailController.text.isNotEmpty &&
+    if (_identifierController.text.isNotEmpty &&
         _passwordController.text.isNotEmpty &&
-        _validateEmail(_emailController.text) == null &&
+        _validateIdentifier(_identifierController.text) == null &&
         _validatePassword(_passwordController.text) == null) {
       context.read<ButtonStateCubit>().execute(
         usecase: sl<SignInUseCase>(),
         params: SignInParams(
-          email: _emailController.text,
+          identifier: _identifierController.text,
           password: _passwordController.text,
-          token: "token",
+          deviceId: null, 
+          rememberMe: null, 
         ),
       );
     }
@@ -83,7 +92,7 @@ class _SignInPageState extends State<SignInPage> {
         pageBuilder:
             (context, animation, secondaryAnimation) => const SignUpPage(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0); // Slide từ phải sang
+          const begin = Offset(1.0, 0.0); 
           const end = Offset.zero;
           final tween = Tween(
             begin: begin,
@@ -133,9 +142,7 @@ class _SignInPageState extends State<SignInPage> {
           },
           child: Stack(
             children: [
-              // Nền trắng
               Container(color: Colors.white),
-              // Vệt tím nhạt góc trên phải
               Positioned(
                 top: -100,
                 right: -100,
@@ -151,7 +158,6 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                 ),
               ),
-              // Vệt xanh nhạt góc dưới trái
               Positioned(
                 bottom: -100,
                 left: -100,
@@ -208,11 +214,11 @@ class _SignInPageState extends State<SignInPage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             CustomTextField(
-                              label: 'Email',
-                              placeholder: 'Enter your email',
-                              prefixIconData: Icons.email_outlined,
-                              controller: _emailController,
-                              validator: _validateEmail,
+                              label: 'Username or Email',
+                              placeholder: 'Enter your email or username',
+                              prefixIconData: Icons.person_outline,
+                              controller: _identifierController,
+                              validator: _validateIdentifier,
                             ),
                             SizedBox(height: 16),
                             CustomPasswordField(
@@ -286,7 +292,7 @@ class _SignInPageState extends State<SignInPage> {
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _identifierController.dispose();
     _passwordController.dispose();
     super.dispose();
   }

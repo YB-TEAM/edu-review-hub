@@ -68,8 +68,8 @@ class _SignUpPageState extends State<SignUpPage> {
     if (value == null || value.isEmpty) {
       return 'Please enter password';
     }
-    if (value.length < 8) {
-      return 'Password must be at least 8 characters';
+    if (value.length < 3) {
+      return 'Password must be at least 3 characters';
     }
     if (value.length > 50) {
       return 'Password cannot exceed 50 characters';
