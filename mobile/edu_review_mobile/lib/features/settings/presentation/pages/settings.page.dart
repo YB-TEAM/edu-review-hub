@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:edu_review_mobile/common/widgets/button/primary_button.dart';
 import 'package:edu_review_mobile/common/bloc/button/button_state.dart';
 import 'package:edu_review_mobile/common/bloc/button/button_state_cubit.dart';
-import 'package:edu_review_mobile/features/user_profile/domain/usecases/logout.dart';
+import 'package:edu_review_mobile/features/settings/domain/usecases/logout.dart';
 import 'package:edu_review_mobile/service_locator.dart';
 import 'package:edu_review_mobile/features/settings/presentation/widgets/navigation_button.widget.dart';
 

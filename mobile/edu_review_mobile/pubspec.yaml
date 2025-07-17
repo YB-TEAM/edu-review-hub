@@ -18,6 +18,7 @@ dependencies:
   logger: ^2.6.0
   http: ^1.4.0
   flutter_svg: ^2.2.0
+  device_info_plus: ^11.5.0
 
   #state management
   flutter_bloc: ^9.1.1

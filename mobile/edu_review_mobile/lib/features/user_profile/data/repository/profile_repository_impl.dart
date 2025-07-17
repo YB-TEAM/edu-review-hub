@@ -2,7 +2,6 @@
 
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:edu_review_mobile/features/user_profile/data/data_souces/local/profile_local_service.dart';
 import 'package:edu_review_mobile/features/user_profile/data/data_souces/remote/profile_api_service.dart';
 import 'package:edu_review_mobile/features/user_profile/data/models/profile.dart';
 import 'package:edu_review_mobile/features/user_profile/domain/entities/profile.dart';
@@ -25,12 +24,6 @@ class ProfileRepositoryImpl extends ProfileRepository {
       },
     );
   }
-
-  @override
-  Future logOut() async {
-    await sl<ProfileLocalService>().logOut();
-  }
-
   @override
   Future<Either<String, ProfileEntity>> editProfile(
     Map<String, dynamic> profileData,
