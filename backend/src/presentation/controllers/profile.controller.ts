@@ -39,7 +39,7 @@ export class ProfileController {
 
   @Get("me")
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  @ApiBearerAuth("JWT-auth")
   @ApiOperation({ summary: "Get current user profile" })
   @ApiResponse({ status: 200, type: ProfileResponseDto })
   async getMe(@Request() req): Promise<ProfileResponseDto> {
@@ -48,7 +48,7 @@ export class ProfileController {
 
   @Put("me")
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  @ApiBearerAuth("JWT-auth")
   @ApiOperation({ summary: "Update current user profile" })
   @ApiBody({ type: UpdateProfileDto })
   @ApiResponse({ status: 200, type: ProfileResponseDto })
@@ -66,7 +66,7 @@ export class ProfileController {
 
   @Delete("me")
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  @ApiBearerAuth("JWT-auth")
   @ApiOperation({ summary: "Delete current user profile" })
   @ApiResponse({ status: 200, description: "Profile deleted" })
   async deleteMe(@Request() req): Promise<{ message: string }> {
@@ -80,7 +80,7 @@ export class ProfileController {
 
   @Post("me/avatar")
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  @ApiBearerAuth("JWT-auth")
   @ApiOperation({ summary: "Upload avatar for current user (Cloudinary)" })
   @ApiConsumes("multipart/form-data")
   @ApiBody({

@@ -118,7 +118,7 @@ export class EmailVerificationController {
 
   @Post("change-email")
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  @ApiBearerAuth("JWT-auth")
   @ApiOperation({ summary: "Request email change" })
   @ApiBody({ type: ForgotPasswordDto })
   @ApiResponse({
