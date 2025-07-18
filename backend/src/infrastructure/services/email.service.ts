@@ -77,7 +77,12 @@ export class EmailService implements IEmailService {
       <p>Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email này.</p>
       <p>Trân trọng,<br>Edu Review Hub Team</p>
     `;
-
+    await this.transporter.sendMail({
+      from: `"Edu Review Hub" <${this.configService.get("SMTP_USER")}>`,
+      to: email,
+      subject: "Đặt lại Mật khẩu - Edu Review Hub",
+      html: emailContent,
+    });
     this.logger.log(`Email content: ${emailContent}`);
   }
 
@@ -98,7 +103,12 @@ export class EmailService implements IEmailService {
       <p>Nếu bạn có bất kỳ câu hỏi nào, đừng ngần ngại liên hệ với chúng tôi.</p>
       <p>Trân trọng,<br>Edu Review Hub Team</p>
     `;
-
+    await this.transporter.sendMail({
+      from: `"Edu Review Hub" <${this.configService.get("SMTP_USER")}>`,
+      to: email,
+      subject: "Chào mừng đến với Edu Review Hub!",
+      html: emailContent,
+    });
     this.logger.log(`Email content: ${emailContent}`);
   }
 
@@ -153,6 +163,12 @@ export class EmailService implements IEmailService {
       <p>Bạn có thể đăng nhập lại để kích hoạt lại tài khoản bất cứ lúc nào.</p>
       <p>Trân trọng,<br>Edu Review Hub Team</p>
     `;
+    await this.transporter.sendMail({
+      from: `"Edu Review Hub" <${this.configService.get("SMTP_USER")}>`,
+      to: email,
+      subject: "Tài khoản bị vô hiệu hóa - Edu Review Hub",
+      html: emailContent,
+    });
     this.logger.log(`Email content: ${emailContent}`);
   }
 
@@ -173,6 +189,12 @@ export class EmailService implements IEmailService {
       <p>Mọi dữ liệu liên quan đến tài khoản sẽ bị xóa vĩnh viễn (nếu bạn đã xác nhận xóa vĩnh viễn).</p>
       <p>Trân trọng,<br>Edu Review Hub Team</p>
     `;
+    await this.transporter.sendMail({
+      from: `"Edu Review Hub" <${this.configService.get("SMTP_USER")}>`,
+      to: email,
+      subject: "Tài khoản đã bị xóa - Edu Review Hub",
+      html: emailContent,
+    });
     this.logger.log(`Email content: ${emailContent}`);
   }
 }
