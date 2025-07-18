@@ -18,4 +18,14 @@ export class LoginDto {
   @ApiPropertyOptional({ description: "Remember me option" })
   @IsOptional()
   rememberMe?: boolean;
+
+  @ApiPropertyOptional({ description: "IP address" })
+  @IsOptional()
+  @IsString()
+  ip?: string;
+
+  @ApiPropertyOptional({ description: "User agent" })
+  @IsOptional()
+  @IsString()
+  userAgent?: string;
 }
