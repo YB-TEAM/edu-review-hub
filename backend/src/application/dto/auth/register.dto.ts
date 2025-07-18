@@ -40,4 +40,19 @@ export class RegisterDto {
   @IsOptional()
   @IsEnum(AccountType)
   accountType?: AccountType = AccountType.STUDENT;
+
+  @ApiPropertyOptional({ description: "Device ID" })
+  @IsOptional()
+  @IsString()
+  deviceId?: string;
+
+  @ApiPropertyOptional({ description: "IP address" })
+  @IsOptional()
+  @IsString()
+  ip?: string;
+
+  @ApiPropertyOptional({ description: "User agent" })
+  @IsOptional()
+  @IsString()
+  userAgent?: string;
 }

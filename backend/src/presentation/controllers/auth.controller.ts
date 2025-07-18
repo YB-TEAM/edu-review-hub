@@ -83,7 +83,7 @@ export class AuthController {
   async refreshToken(
     @Body() refreshTokenDto: RefreshTokenDto
   ): Promise<AuthResponseDto> {
-    return this.authService.refreshToken(refreshTokenDto.refreshToken);
+    return this.authService.refreshToken(refreshTokenDto.refreshToken, refreshTokenDto.deviceId);
   }
 
   @Post("logout")
