@@ -38,6 +38,22 @@ export class RegisterDto {
     default: UserRole.STUDENT,
   })
   @IsOptional()
+
+  @ApiPropertyOptional({ description: "Device ID" })
+  @IsOptional()
+  @IsString()
+  deviceId?: string;
+
+  @ApiPropertyOptional({ description: "IP address" })
+  @IsOptional()
+  @IsString()
+  ip?: string;
+
+  @ApiPropertyOptional({ description: "User agent" })
+  @IsOptional()
+  @IsString()
+  userAgent?: string;
+  
   @IsEnum(UserRole)
   accountType?: UserRole = UserRole.STUDENT;
 }

@@ -33,6 +33,7 @@ import { UserActivity } from "@/infrastructure/database/entities/user-activity.e
 import { UserActivityRepository } from "@/infrastructure/database/repositories/user-activity.repository";
 import { UserActivityService } from "@/application/services/user-activity.service";
 import { UserActivityController } from "@/presentation/controllers/user-activity.controller";
+import { RefreshToken } from "@/infrastructure/database/entities/refresh-token.entity";
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { UserActivityController } from "@/presentation/controllers/user-activity
       EmailVerification,
       AccountDeactivation,
       UserActivity,
+      RefreshToken, // Thêm entity, không thêm repository class
     ]),
     PassportModule,
     JwtModule.registerAsync({

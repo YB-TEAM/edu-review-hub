@@ -17,6 +17,8 @@ import {
   UserStatus,
 } from "@/infrastructure/database/entities/user.entity";
 import { UserProfile } from "@/infrastructure/database/entities/user-profile.entity";
+import { RefreshTokenRepository } from "@/infrastructure/database/repositories/refresh-token.repository";
+import { RefreshToken } from "@/infrastructure/database/entities/refresh-token.entity";
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -27,7 +29,9 @@ export class AuthService implements IAuthService {
     private readonly emailVerificationService: IEmailVerificationService,
     private readonly jwtService: JwtService,
     @Inject("IUserProfileRepository")
-    private readonly userProfileRepository: any // Nên dùng interface IUserProfileRepository nếu có
+    private readonly userProfileRepository: any, // Nên dùng interface IUserProfileRepository nếu có
+    @Inject("RefreshTokenRepository")
+    private readonly refreshTokenRepository: RefreshTokenRepository,
   ) {}
 
   async register(registerDto: RegisterDto): Promise<AuthResponseDto> {
@@ -79,6 +83,17 @@ export class AuthService implements IAuthService {
     // Generate tokens
     const tokens = await this.generateTokens(user);
 
+    // Save refresh token to DB
+    await this.refreshTokenRepository.save({
+      user: user,
+      refresh_token: tokens.refreshToken,
+      device_id: registerDto.deviceId,
+      ip_address: registerDto.ip,
+      user_agent: registerDto.userAgent,
+      is_active: true,
+      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+    });
+
     return {
       ...tokens,
       user: {
@@ -93,7 +108,7 @@ export class AuthService implements IAuthService {
   }
 
   async login(loginDto: LoginDto): Promise<AuthResponseDto> {
-    const { identifier, password, deviceId, rememberMe } = loginDto;
+    const { identifier, password, deviceId, rememberMe, ip, userAgent } = loginDto;
 
     // Validate user
     const user = await this.validateUser(identifier, password);
@@ -116,6 +131,17 @@ export class AuthService implements IAuthService {
     // Generate tokens
     const tokens = await this.generateTokens(user, rememberMe);
 
+    // Save refresh token to DB
+    await this.refreshTokenRepository.save({
+      user: user,
+      refresh_token: tokens.refreshToken,
+      device_id: deviceId,
+      ip_address: ip,
+      user_agent: userAgent,
+      is_active: true,
+      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+    });
+
     return {
       ...tokens,
       user: {
@@ -129,16 +155,46 @@ export class AuthService implements IAuthService {
     };
   }
 
-  async refreshToken(refreshToken: string): Promise<AuthResponseDto> {
+  async refreshToken(refreshToken: string, deviceId?: string): Promise<AuthResponseDto> {
     try {
+      // 1. Verify JWT
       const payload = this.jwtService.verify(refreshToken);
-      const user = await this.userRepository.findById(payload.sub);
 
-      if (!user || user.status !== UserStatus.ACTIVE) {
-        throw new UnauthorizedException("Invalid refresh token");
+      // 2. Tìm token trong DB theo giá trị token
+      const dbToken = await this.refreshTokenRepository.findOne({
+        where: { refresh_token: refreshToken },
+        relations: ['user'],
+      });
+
+      // 3. Kiểm tra các điều kiện
+      if (
+        !dbToken ||
+        !dbToken.is_active ||
+        (dbToken.expires_at && dbToken.expires_at < new Date()) ||
+        (deviceId && dbToken.device_id !== deviceId)
+      ) {
+        throw new UnauthorizedException('Invalid refresh token');
       }
 
+      const user = dbToken.user;
+      if (!user || user.status !== UserStatus.ACTIVE) {
+        throw new UnauthorizedException('Invalid refresh token');
+      }
+
+      // 4. Thu hồi token cũ
+      await this.refreshTokenRepository.update(dbToken.id, { is_active: false });
+
+      // 5. Sinh token mới và lưu vào DB
       const tokens = await this.generateTokens(user);
+      await this.refreshTokenRepository.save({
+        user: user,
+        refresh_token: tokens.refreshToken,
+        device_id: dbToken.device_id,
+        ip_address: dbToken.ip_address,
+        user_agent: dbToken.user_agent,
+        is_active: true,
+        expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      });
 
       return {
         ...tokens,
@@ -152,13 +208,17 @@ export class AuthService implements IAuthService {
         },
       };
     } catch (error) {
-      throw new UnauthorizedException("Invalid refresh token");
+      throw new UnauthorizedException('Invalid refresh token');
     }
   }
 
   async logout(userId: number, deviceId?: string): Promise<void> {
-    // In a real implementation, you would invalidate the refresh token
-    // For now, we'll just update the last activity
+    // Thu hồi refresh token theo deviceId nếu có, hoặc toàn bộ nếu không có
+    if (deviceId) {
+      await this.refreshTokenRepository.deactivateByUserAndDevice(userId, deviceId);
+    } else {
+      await this.refreshTokenRepository.deactivateAllForUser(userId);
+    }
     await this.userRepository.update(userId, {
       lastActivityAt: new Date(),
     });
