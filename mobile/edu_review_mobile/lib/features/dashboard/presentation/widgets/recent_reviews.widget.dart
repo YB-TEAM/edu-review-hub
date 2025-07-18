@@ -17,7 +17,7 @@ class RecentReviews extends StatelessWidget {
         'comment': 'Amazing engineering program with world-class facilities!',
         'time': '2 hours ago',
         'avatar': 'S',
-        'image': 'https://image-static.collegedunia.com/public/college_data/images/studyabroad/appImage/college_1090_29-15:00_o-HARVARD-UNIVERSITY-BUILDING-facebook.jpeg',
+        'image': 'https://blog.e2.com.vn/wp-content/uploads/2022/01/MIT-Hyperloop-3-team.jpg',
       },
       {
         'user': 'John D.',
@@ -26,7 +26,7 @@ class RecentReviews extends StatelessWidget {
         'comment': 'Great campus life and excellent professors.',
         'time': '5 hours ago',
         'avatar': 'J',
-        'image': 'https://image-static.collegedunia.com/public/college_data/images/studyabroad/appImage/college_1090_29-15:00_o-HARVARD-UNIVERSITY-BUILDING-facebook.jpeg',
+        'image': 'https://img2.storyblok.com/fit-in/1200x630/f/64062/1181x709/0a5a1e360a/stanford-br.png',
       },
       {
         'user': 'Emily R.',
