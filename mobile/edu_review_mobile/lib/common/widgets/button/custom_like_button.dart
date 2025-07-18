@@ -32,7 +32,7 @@ class _CustomLikeButtonState extends State<CustomLikeButton> {
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
+    final textStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
           color: AppColors.textGrey,
         );
 
@@ -40,13 +40,13 @@ class _CustomLikeButtonState extends State<CustomLikeButton> {
       mainAxisSize: MainAxisSize.min,
       children: [
         LikeButton(
-          size: 24,
+          size: 20,
           isLiked: _isLiked,
           likeBuilder: (bool isLiked) {
             return Icon(
               isLiked ? Icons.favorite : Icons.favorite_border,
               color: isLiked ? Colors.red : Colors.grey,
-              size: 24,
+              size: 20,
             );
           },
           onTap: (bool isLiked) async {
