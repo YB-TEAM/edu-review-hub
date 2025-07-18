@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import {
-  AccountType,
+  UserRole,
   UserStatus,
 } from "@/infrastructure/database/entities/user.entity";
 
@@ -22,7 +22,7 @@ export class AuthResponseDto {
     id: number;
     username: string;
     email: string;
-    accountType: AccountType;
+    accountType: UserRole;
     status: UserStatus;
     isVerified: boolean;
   };
