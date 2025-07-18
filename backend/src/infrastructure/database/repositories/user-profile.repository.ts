@@ -31,4 +31,8 @@ export class UserProfileRepository implements IUserProfileRepository {
   async delete(id: number): Promise<void> {
     await this.userProfileRepository.delete(id);
   }
+
+  async findAll(): Promise<UserProfile[]> {
+    return this.userProfileRepository.find();
+  }
 }

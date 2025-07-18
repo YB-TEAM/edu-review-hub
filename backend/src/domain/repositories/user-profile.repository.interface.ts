@@ -5,4 +5,5 @@ export interface IUserProfileRepository {
   create(profile: Partial<UserProfile>): Promise<UserProfile>;
   update(id: number, profile: Partial<UserProfile>): Promise<UserProfile>;
   delete(id: number): Promise<void>;
+  findAll(): Promise<UserProfile[]>;
 }

@@ -25,11 +25,12 @@ export enum UserStatus {
   DELETED = "deleted",
 }
 
-export enum AccountType {
+export enum UserRole {
   STUDENT = "student",
   UNIVERSITY_REP = "university_rep",
   ADMIN = "admin",
   MODERATOR = "moderator",
+  SUPER_ADMIN = "super_admin",
 }
 
 @Entity("users")
@@ -64,10 +65,10 @@ export class User {
 
   @Column({
     type: "enum",
-    enum: AccountType,
-    default: AccountType.STUDENT,
+    enum: UserRole,
+    default: UserRole.STUDENT,
   })
-  accountType: AccountType;
+  accountType: UserRole;
 
   @Column({ type: "boolean", default: false })
   isVerified: boolean;

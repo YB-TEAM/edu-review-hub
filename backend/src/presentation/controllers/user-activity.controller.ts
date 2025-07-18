@@ -28,7 +28,7 @@ export class UserActivityController {
 
   @Get("me")
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  @ApiBearerAuth("JWT-auth")
   @ApiOperation({ summary: "Get current user activity history" })
   @ApiQuery({
     name: "limit",
@@ -94,7 +94,7 @@ export class UserActivityController {
 
   @Get("me/count")
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  @ApiBearerAuth("JWT-auth")
   @ApiOperation({ summary: "Get current user activity count" })
   @ApiResponse({ status: 200, description: "Activity count", type: Number })
   async getMyActivityCount(@Request() req): Promise<{ count: number }> {

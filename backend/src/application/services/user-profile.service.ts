@@ -1,11 +1,18 @@
-import { Injectable, Inject, NotFoundException } from "@nestjs/common";
+import {
+  Injectable,
+  Inject,
+  NotFoundException,
+  ConflictException,
+} from "@nestjs/common";
 import { IUserProfileRepository } from "@/domain/repositories/user-profile.repository.interface";
 import { IUserRepository } from "@/domain/repositories/user.repository.interface";
 import { IUserActivityService } from "./user-activity.service.interface";
 import { UpdateProfileDto } from "../dto/profile/update-profile.dto";
 import { ProfileResponseDto } from "../dto/profile/profile-response.dto";
+import { AdminUpdateUserDto } from "../dto/profile/admin-update-user.dto";
 import { IUserProfileService } from "./user-profile.service.interface";
 import { ActivityType } from "@/infrastructure/database/entities/user-activity.entity";
+import { UserRole } from "@/infrastructure/database/entities/user.entity";
 
 @Injectable()
 export class UserProfileService implements IUserProfileService {
@@ -17,6 +24,14 @@ export class UserProfileService implements IUserProfileService {
     @Inject("IUserActivityService")
     private readonly userActivityService: IUserActivityService
   ) {}
+
+  // Utility function to check if user has a role
+  private hasRole(user: any, roleName: string): boolean {
+    return (
+      Array.isArray(user.roles) &&
+      user.roles.some((role) => role.name === roleName)
+    );
+  }
 
   async getProfile(userId: number): Promise<ProfileResponseDto> {
     const profile = await this.userProfileRepository.findByUserId(userId);
@@ -42,11 +57,10 @@ export class UserProfileService implements IUserProfileService {
     if (!profile) {
       const user = await this.userRepository.findById(userId);
 
-
       profile = await this.userProfileRepository.create({
         ...updateData,
         userId,
-        displayName: updateData.displayName || user.username, 
+        displayName: updateData.displayName || user.username,
       });
 
       // Ghi log tạo profile
@@ -75,25 +89,101 @@ export class UserProfileService implements IUserProfileService {
     return profile as unknown as ProfileResponseDto;
   }
 
-  async deleteProfile(
-    userId: number,
+  async adminUpdateUser(
+    adminId: number,
+    targetUserId: number,
+    dto: AdminUpdateUserDto,
     ipAddress?: string,
     userAgent?: string
-  ): Promise<void> {
-    const profile = await this.userProfileRepository.findByUserId(userId);
-    if (profile) {
-      const oldData = { ...profile };
-      await this.userProfileRepository.delete(profile.id);
+  ): Promise<ProfileResponseDto> {
+    // Kiểm tra quyền admin
 
-      // Ghi log xóa profile
+    // Kiểm tra người dùng target
+    const targetUser = await this.userRepository.findById(targetUserId);
+    if (!targetUser) {
+      throw new NotFoundException("User not found");
+    }
+
+    // Kiểm tra username unique nếu có thay đổi username (BR27)
+    if (dto.displayName && dto.displayName !== targetUser.username) {
+      const existingUser = await this.userRepository.findByUsername(
+        dto.displayName
+      );
+      if (existingUser) {
+        throw new ConflictException("Username already exists");
+      }
+    }
+
+    // Cập nhật thông tin user
+    const userUpdateData: any = {};
+    if (dto.displayName) userUpdateData.username = dto.displayName;
+    if (Object.keys(userUpdateData).length > 0) {
+      await this.userRepository.update(targetUserId, userUpdateData);
+    }
+
+    // Cập nhật profile nếu có
+    let profile = await this.userProfileRepository.findByUserId(targetUserId);
+    const oldData = profile ? { ...profile } : null;
+
+    const profileUpdateData: any = {};
+    if (dto.firstName) profileUpdateData.firstName = dto.firstName;
+    if (dto.lastName) profileUpdateData.lastName = dto.lastName;
+    if (dto.firstName || dto.lastName) {
+      // Compose displayName from firstName and lastName if provided, else fallback to existing
+      const firstName = dto.firstName || (profile ? profile.firstName : "");
+      const lastName = dto.lastName || (profile ? profile.lastName : "");
+      profileUpdateData.displayName = `${firstName} ${lastName}`.trim();
+    }
+    if (dto.displayName) profileUpdateData.displayName = dto.displayName;
+
+    if (!profile && Object.keys(profileUpdateData).length > 0) {
+      profile = await this.userProfileRepository.create({
+        ...profileUpdateData,
+        userId: targetUserId,
+      });
+
+      // Ghi log tạo profile bởi admin
       await this.userActivityService.logProfileActivity(
-        userId,
-        ActivityType.PROFILE_DELETED,
-        oldData,
+        targetUserId,
+        ActivityType.PROFILE_CREATED,
         null,
+        profile,
+        ipAddress,
+        userAgent
+      );
+    } else if (profile && Object.keys(profileUpdateData).length > 0) {
+      profile = await this.userProfileRepository.update(
+        profile.id,
+        profileUpdateData
+      );
+
+      // Ghi log cập nhật profile bởi admin
+      await this.userActivityService.logProfileActivity(
+        targetUserId,
+        ActivityType.PROFILE_UPDATED,
+        oldData,
+        profile,
         ipAddress,
         userAgent
       );
     }
+
+    // Trả về profile đã cập nhật hoặc tạo profile mới nếu chưa có
+    if (!profile) {
+      profile = await this.userProfileRepository.create({
+        userId: targetUserId,
+        displayName: dto.displayName || "",
+        firstName: dto.firstName || "",
+        lastName: dto.lastName || "",
+      });
+    }
+
+    return profile as unknown as ProfileResponseDto;
+  }
+
+  async getAllUsers(): Promise<ProfileResponseDto[]> {
+    const profiles = await this.userProfileRepository.findAll();
+    // Nếu cần, có thể map sang ProfileResponseDto rõ ràng hơn
+    return profiles as unknown as ProfileResponseDto[];
   }
 }

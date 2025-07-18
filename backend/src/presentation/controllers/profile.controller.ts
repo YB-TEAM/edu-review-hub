@@ -1,15 +1,14 @@
 import {
   Controller,
   Get,
-  Put,
-  Delete,
+  Patch,
   Body,
   UseGuards,
   Request,
   UploadedFile,
   Post,
-  HttpCode,
-  HttpStatus,
+  Param,
+  ParseIntPipe,
   Inject,
   UseInterceptors,
 } from "@nestjs/common";
@@ -20,13 +19,18 @@ import {
   ApiResponse,
   ApiBody,
   ApiConsumes,
+  ApiParam,
 } from "@nestjs/swagger";
 import { JwtAuthGuard } from "@/presentation/guards/jwt-auth.guard";
+import { RolesGuard } from "@/presentation/guards/role.guard";
+import { Roles } from "@/presentation/decorators/roles.decorator";
 import { IUserProfileService } from "@/application/services/user-profile.service.interface";
 import { UpdateProfileDto } from "@/application/dto/profile/update-profile.dto";
 import { ProfileResponseDto } from "@/application/dto/profile/profile-response.dto";
+import { AdminUpdateUserDto } from "@/application/dto/profile/admin-update-user.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { CloudinaryService } from "@/infrastructure/services/cloudinary.service";
+import { UserRole } from "@/infrastructure/database/entities/user.entity";
 
 @ApiTags("User Profile")
 @Controller("profile")
@@ -46,7 +50,7 @@ export class ProfileController {
     return this.userProfileService.getProfile(req.user.id);
   }
 
-  @Put("me")
+  @Patch("me")
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth("JWT-auth")
   @ApiOperation({ summary: "Update current user profile" })
@@ -62,20 +66,6 @@ export class ProfileController {
       req.ip,
       req.headers["user-agent"]
     );
-  }
-
-  @Delete("me")
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth("JWT-auth")
-  @ApiOperation({ summary: "Delete current user profile" })
-  @ApiResponse({ status: 200, description: "Profile deleted" })
-  async deleteMe(@Request() req): Promise<{ message: string }> {
-    await this.userProfileService.deleteProfile(
-      req.user.id,
-      req.ip,
-      req.headers["user-agent"]
-    );
-    return { message: "Profile deleted" };
   }
 
   @Post("me/avatar")
@@ -106,15 +96,65 @@ export class ProfileController {
         oldPublicId = match[1];
       }
     }
+
     // Xóa ảnh cũ nếu có
     if (oldPublicId) {
       await this.cloudinaryService.deleteImage(oldPublicId);
     }
+
     // Upload ảnh mới vào folder "avatars"
     const result = await this.cloudinaryService.uploadImage(file, "avatars");
     await this.userProfileService.updateProfile(req.user.id, {
       avatarUrl: result.secure_url,
     });
+
     return { avatarUrl: result.secure_url };
+  }
+
+  @Patch("admin/user/:userId")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @ApiBearerAuth("JWT-auth")
+  @ApiOperation({ summary: "Admin update user information" })
+  @ApiParam({ name: "userId", description: "Target user ID" })
+  @ApiBody({ type: AdminUpdateUserDto })
+  @ApiResponse({ status: 200, type: ProfileResponseDto })
+  async adminUpdateUser(
+    @Request() req,
+    @Param("userId", ParseIntPipe) userId: number,
+    @Body() dto: AdminUpdateUserDto
+  ): Promise<ProfileResponseDto> {
+    return this.userProfileService.adminUpdateUser(
+      req.user.id,
+      userId,
+      dto,
+      req.ip,
+      req.headers["user-agent"]
+    );
+  }
+
+  @Get("admin/user/:userId")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @ApiBearerAuth("JWT-auth")
+  @ApiOperation({
+    summary: "Admin get user profile by userId (explicit route)",
+  })
+  @ApiParam({ name: "userId", description: "Target user ID" })
+  @ApiResponse({ status: 200, type: ProfileResponseDto })
+  async adminGetUserProfileExplicit(
+    @Param("userId", ParseIntPipe) userId: number
+  ): Promise<ProfileResponseDto> {
+    return this.userProfileService.getProfile(userId);
+  }
+
+  @Get("admin/users")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @ApiBearerAuth("JWT-auth")
+  @ApiOperation({ summary: "Admin get all users" })
+  @ApiResponse({ status: 200, type: [ProfileResponseDto] })
+  async adminGetAllUsers(): Promise<ProfileResponseDto[]> {
+    return this.userProfileService.getAllUsers();
   }
 }

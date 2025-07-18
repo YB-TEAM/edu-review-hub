@@ -1,6 +1,6 @@
 import { UpdateProfileDto } from "../dto/profile/update-profile.dto";
 import { ProfileResponseDto } from "../dto/profile/profile-response.dto";
-
+import { AdminUpdateUserDto } from "../dto/profile/admin-update-user.dto";
 export interface IUserProfileService {
   getProfile(userId: number): Promise<ProfileResponseDto>;
   updateProfile(
@@ -9,9 +9,12 @@ export interface IUserProfileService {
     ipAddress?: string,
     userAgent?: string
   ): Promise<ProfileResponseDto>;
-  deleteProfile(
-    userId: number,
+  adminUpdateUser(
+    adminId: number,
+    targetUserId: number,
+    dto: AdminUpdateUserDto,
     ipAddress?: string,
     userAgent?: string
-  ): Promise<void>;
+  ): Promise<ProfileResponseDto>;
+  getAllUsers(): Promise<ProfileResponseDto[]>;
 }

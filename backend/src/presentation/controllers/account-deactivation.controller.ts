@@ -31,7 +31,7 @@ export class AccountDeactivationController {
 
   @Post("deactivate")
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  @ApiBearerAuth("JWT-auth")
   @ApiOperation({ summary: "Deactivate account (user-initiated)" })
   @ApiBody({ type: DeactivateAccountDto })
   @ApiResponse({ status: 200, description: "Account deactivated successfully" })
@@ -50,7 +50,7 @@ export class AccountDeactivationController {
 
   @Post("delete")
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  @ApiBearerAuth("JWT-auth")
   @ApiOperation({ summary: "Delete account (user-initiated)" })
   @ApiBody({ type: DeleteAccountDto })
   @ApiResponse({ status: 200, description: "Account deleted successfully" })

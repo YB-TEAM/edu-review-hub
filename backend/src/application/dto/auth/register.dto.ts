@@ -7,7 +7,7 @@ import {
   IsEnum,
 } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { AccountType } from "@/infrastructure/database/entities/user.entity";
+import { UserRole } from "@/infrastructure/database/entities/user.entity";
 
 export class RegisterDto {
   @ApiProperty({ description: "Username for the account" })
@@ -34,12 +34,10 @@ export class RegisterDto {
 
   @ApiPropertyOptional({
     description: "Account type",
-    enum: AccountType,
-    default: AccountType.STUDENT,
+    enum: UserRole,
+    default: UserRole.STUDENT,
   })
   @IsOptional()
-  @IsEnum(AccountType)
-  accountType?: AccountType = AccountType.STUDENT;
 
   @ApiPropertyOptional({ description: "Device ID" })
   @IsOptional()
@@ -55,4 +53,7 @@ export class RegisterDto {
   @IsOptional()
   @IsString()
   userAgent?: string;
+  
+  @IsEnum(UserRole)
+  accountType?: UserRole = UserRole.STUDENT;
 }
