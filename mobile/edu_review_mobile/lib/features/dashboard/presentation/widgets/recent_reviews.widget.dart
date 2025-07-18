@@ -1,5 +1,10 @@
+// ignore_for_file: deprecated_member_use
+
+import 'package:edu_review_mobile/common/widgets/button/custom_like_button.dart';
+import 'package:edu_review_mobile/core/utils/number_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:edu_review_mobile/core/config/theme/color.dart';
+import 'package:flutter_svg/svg.dart';
 
 class RecentReviews extends StatelessWidget {
   @override
@@ -33,7 +38,7 @@ class RecentReviews extends StatelessWidget {
     ];
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -58,7 +63,9 @@ class RecentReviews extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: 4),
           ListView.builder(
+            padding: EdgeInsets.zero,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: reviews.length,
@@ -74,6 +81,9 @@ class RecentReviews extends StatelessWidget {
                   comment: review['comment'] as String,
                   time: review['time'] as String,
                   avatar: review['avatar'] as String,
+                  likeCount: 5200, 
+                  commentCount: 2200,
+                  shareCount: 1300, 
                 ),
               );
             },
@@ -91,19 +101,19 @@ class RecentReviews extends StatelessWidget {
     required String comment,
     required String time,
     required String avatar,
+    required int likeCount,
+    required int commentCount,
+    required int shareCount,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppColors.primaryWhite,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.textGrey.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        border: Border.all(
+          color: AppColors.secondaryGrey,
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,52 +180,70 @@ class RecentReviews extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Text(
             comment,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w500,
               height: 1.5,
             ),
           ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.thumb_up_outlined,
-                  size: 16,
-                  color: AppColors.textGrey,
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Row(
+              children: [
+                CustomLikeButton(
+                  likeCount: likeCount,
+                  isLiked: false,
+                  onTap: (isLiked) {
+
+                  },
                 ),
-                constraints: const BoxConstraints(),
-                padding: EdgeInsets.zero,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'Helpful',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppColors.textGrey,
+                const SizedBox(width: 16),
+                GestureDetector(
+                  onTap: () {
+                    print('Comment tapped');
+                  },
+                  child: Row(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/ic_comment.svg',
+                        width: 16,
+                        height: 16,
+                        color: AppColors.primaryGrey,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(formatNumber(commentCount), style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: AppColors.textGrey,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 16),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.comment_outlined,
-                  size: 16,
-                  color: AppColors.textGrey,
+                const SizedBox(width: 16),
+                GestureDetector(
+                  onTap: () {
+                    print('Share tapped');
+                  },
+                  child: Row(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/ic_share.svg',
+                        width: 16,
+                        height: 16,
+                        color: AppColors.primaryGrey,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(formatNumber(shareCount), style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: AppColors.textGrey,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                constraints: const BoxConstraints(),
-                padding: EdgeInsets.zero,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'Reply',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppColors.textGrey,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
