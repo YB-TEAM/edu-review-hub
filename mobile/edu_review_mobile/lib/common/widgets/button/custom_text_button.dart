@@ -20,16 +20,16 @@ class CustomTextButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: onPressed,
-      style: ButtonStyle(
-        splashFactory: NoSplash.splashFactory, 
-      ),
+      style: ButtonStyle(splashFactory: NoSplash.splashFactory),
       child: Text(
         title,
-        style: style ?? Theme.of(context).textTheme.bodyMedium?.copyWith(
-          color: color ?? AppColors.primaryOrange,
-          fontWeight: fontWeight ?? FontWeight.w900,
-        ),
+        style:
+            style ??
+            Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: color ?? AppColors.textBlack,
+              fontWeight: fontWeight ?? FontWeight.w700,
+            ),
       ),
     );
   }
-} 
+}
