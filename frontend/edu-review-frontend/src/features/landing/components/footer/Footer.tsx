@@ -22,9 +22,9 @@ const FOOTER_LINKS = {
     { label: "Liên hệ", href: "#contact" },
   ],
   support: [
-    { label: "Trung tâm hỗ trợ", href: "/support" },
+    { label: "Trung tâm hỗ trợ", href: "/help" },
+    { label: "Liên hệ", href: "/contact" },
     { label: "Tài liệu", href: "/docs" },
-    { label: "API", href: "/api" },
     { label: "Trạng thái", href: "/status" },
   ],
   legal: [
