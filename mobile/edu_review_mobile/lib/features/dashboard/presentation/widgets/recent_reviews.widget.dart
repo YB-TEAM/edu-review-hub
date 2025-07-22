@@ -1,5 +1,10 @@
+// ignore_for_file: deprecated_member_use
+
+import 'package:edu_review_mobile/common/widgets/button/custom_like_button.dart';
+import 'package:edu_review_mobile/core/utils/number_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:edu_review_mobile/core/config/theme/color.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class RecentReviews extends StatelessWidget {
   @override
@@ -12,6 +17,7 @@ class RecentReviews extends StatelessWidget {
         'comment': 'Amazing engineering program with world-class facilities!',
         'time': '2 hours ago',
         'avatar': 'S',
+        'image': 'https://blog.e2.com.vn/wp-content/uploads/2022/01/MIT-Hyperloop-3-team.jpg',
       },
       {
         'user': 'John D.',
@@ -20,20 +26,21 @@ class RecentReviews extends StatelessWidget {
         'comment': 'Great campus life and excellent professors.',
         'time': '5 hours ago',
         'avatar': 'J',
+        'image': 'https://img2.storyblok.com/fit-in/1200x630/f/64062/1181x709/0a5a1e360a/stanford-br.png',
       },
       {
         'user': 'Emily R.',
         'university': 'Harvard University',
         'rating': 4.8,
-        'comment':
-            'Outstanding academic environment and research opportunities.',
+        'comment': 'Outstanding academic environment and research opportunities.',
         'time': '1 day ago',
         'avatar': 'E',
+        'image': 'https://image-static.collegedunia.com/public/college_data/images/studyabroad/appImage/college_1090_29-15:00_o-HARVARD-UNIVERSITY-BUILDING-facebook.jpeg',
       },
     ];
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -43,22 +50,22 @@ class RecentReviews extends StatelessWidget {
             children: [
               Text(
                 'Recent Reviews',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontSize: 20
-                ),
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontSize: 20),
               ),
               TextButton(
                 onPressed: () {},
                 child: Text(
                   'View All',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: AppColors.primaryBlue,
-                  ),
+                        color: AppColors.primaryBlue,
+                      ),
                 ),
               ),
             ],
           ),
+          const SizedBox(height: 4),
           ListView.builder(
+            padding: EdgeInsets.zero,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: reviews.length,
@@ -74,6 +81,10 @@ class RecentReviews extends StatelessWidget {
                   comment: review['comment'] as String,
                   time: review['time'] as String,
                   avatar: review['avatar'] as String,
+                  imageUrl: review['image'] as String,
+                  likeCount: 5200,
+                  commentCount: 2200,
+                  shareCount: 1300,
                 ),
               );
             },
@@ -91,19 +102,20 @@ class RecentReviews extends StatelessWidget {
     required String comment,
     required String time,
     required String avatar,
+    required String imageUrl,
+    required int likeCount,
+    required int commentCount,
+    required int shareCount,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppColors.primaryWhite,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.textGrey.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        border: Border.all(
+          color: AppColors.secondaryGrey,
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,46 +139,37 @@ class RecentReviews extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      user,
-                      style: Theme.of(context).textTheme.displayLarge
+                    Row(
+                      children: [
+                        Text(user, style: Theme.of(context).textTheme.displayLarge),
+                        const SizedBox(width: 16),
+                        Text(
+                          "• $time",
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: AppColors.textGrey,
+                          ),
+                        ),
+                      ]
                     ),
                     const SizedBox(height: 4),
                     Text(
                       university,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.textGrey,
-                      ),
+                            color: AppColors.textGrey,
+                          ),
                     ),
                   ],
                 ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.star,
-                        size: 16,
-                        color: AppColors.primaryYellow,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        rating.toString(),
-                        style: Theme.of(context).textTheme.displayMedium
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    time,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppColors.textGrey,
-                      fontSize: 10,
-                    ),
-                  ),
-                ],
+              GestureDetector(
+                onTap: () {
+                  print('Share tapped');
+                },
+                child: Icon(
+                  Icons.more_horiz,
+                  color: AppColors.primaryBlack,
+                  size: 24,
+                )
               ),
             ],
           ),
@@ -174,48 +177,78 @@ class RecentReviews extends StatelessWidget {
           Text(
             comment,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              height: 1.5,
-            ),
+                  fontWeight: FontWeight.w500,
+                  height: 1.5,
+                ),
           ),
           const SizedBox(height: 12),
-          Row(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.thumb_up_outlined,
-                  size: 16,
-                  color: AppColors.textGrey,
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.network(
+              imageUrl,
+              height: 160,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+          ),
+          const SizedBox(height: 24),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Row(
+              children: [
+                CustomLikeButton(
+                  likeCount: likeCount,
+                  isLiked: false,
+                  onTap: (isLiked) {},
                 ),
-                constraints: const BoxConstraints(),
-                padding: EdgeInsets.zero,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'Helpful',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppColors.textGrey,
+                const SizedBox(width: 36),
+                GestureDetector(
+                  onTap: () {
+                    print('Comment tapped');
+                  },
+                  child: Row(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/ic_comment.svg',
+                        width: 20,
+                        height: 20,
+                        color: AppColors.primaryGrey,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        formatNumber(commentCount),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: AppColors.textGrey,
+                            ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 16),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.comment_outlined,
-                  size: 16,
-                  color: AppColors.textGrey,
+                const SizedBox(width: 36),
+                GestureDetector(
+                  onTap: () {
+                    print('Share tapped');
+                  },
+                  child: Row(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/ic_share.svg',
+                        width: 20,
+                        height: 20,
+                        color: AppColors.primaryGrey,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        formatNumber(shareCount),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppColors.textGrey,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                constraints: const BoxConstraints(),
-                padding: EdgeInsets.zero,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'Reply',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppColors.textGrey,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

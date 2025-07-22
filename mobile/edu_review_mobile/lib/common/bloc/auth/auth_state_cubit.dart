@@ -8,11 +8,16 @@ class AuthStateCubit extends Cubit<AuthState>{
   AuthStateCubit() : super(AppInitialState());
 
   void appStarted() async {
-    var isLoggedIn = await sl<IsLoggedInUseCase>().call(NoParams());
-    if (isLoggedIn) {
-      emit (Authenticated());
-    } else {
-      emit (UnAuthenticated());
+    try {
+      var isLoggedIn = await sl<IsLoggedInUseCase>().call(NoParams());
+      if (isLoggedIn) {
+        await Future.delayed(const Duration(milliseconds: 100));
+        emit(Authenticated());
+      } else {
+        emit(UnAuthenticated());
+      }
+    } catch (e) {
+      emit(UnAuthenticated());
     }
   }
 }
