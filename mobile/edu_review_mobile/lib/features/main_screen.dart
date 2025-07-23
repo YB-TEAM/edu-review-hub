@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:edu_review_mobile/features/blog/presentation/pages/blog.page.dart';
 import 'package:edu_review_mobile/features/settings/presentation/pages/settings.page.dart';
 import 'package:flutter/material.dart';
 import 'package:edu_review_mobile/features/dashboard/presentation/pages/dashboard.page.dart';
@@ -50,6 +51,22 @@ class _MainScreenState extends State<MainScreen> {
         title: '',
         activeForegroundColor: AppColors.primaryBlue,
         inactiveForegroundColor: Colors.grey,
+      ),
+    ),
+    PersistentTabConfig(
+      screen: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.dark.copyWith(
+          statusBarColor: Colors.white,
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.light,
+        ),
+        child: const BlogPage(),
+      ),
+      item: ItemConfig(
+        icon: const Icon(Icons.newspaper),
+        title: '',
+        activeForegroundColor: AppColors.primaryBlue,
+        inactiveForegroundColor: AppColors.primaryGrey,
       ),
     ),
     PersistentTabConfig(
@@ -144,15 +161,18 @@ class _MainScreenState extends State<MainScreen> {
                     svgName = 'ic_home';
                     break;
                   case 1:
-                    svgName = 'ic_notifications';
+                    svgName = 'ic_community';
                     break;
                   case 2:
-                    svgName = 'ic_chat';
+                    svgName = 'ic_notifications';
                     break;
                   case 3:
-                    svgName = 'ic_user';
+                    svgName = 'ic_chat';
                     break;
                   case 4:
+                    svgName = 'ic_user';
+                    break;
+                  case 5:
                     svgName = 'ic_bar';
                     break;
                   default:

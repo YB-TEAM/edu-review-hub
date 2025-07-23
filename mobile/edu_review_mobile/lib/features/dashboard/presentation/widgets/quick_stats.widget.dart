@@ -35,7 +35,7 @@ class QuickStats extends StatelessWidget {
               Expanded(
                 child: _buildStatCard(
                   context: context,
-                  icon: 'assets/icons/ic_community_active.svg',
+                  icon: 'assets/icons/ic_users.svg',
                   title: 'Students',
                   value: '45.2K',
                   color: AppColors.primaryGreen,
