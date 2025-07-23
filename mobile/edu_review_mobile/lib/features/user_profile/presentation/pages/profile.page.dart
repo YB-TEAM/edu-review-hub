@@ -3,6 +3,7 @@ import 'package:edu_review_mobile/common/bloc/button/button_state_cubit.dart';
 import 'package:edu_review_mobile/common/widgets/button/primary_button.dart';
 import 'package:edu_review_mobile/common/widgets/loading/custom_loading_indicator.dart';
 import 'package:edu_review_mobile/common_libs.dart';
+import 'package:edu_review_mobile/core/utils/date_formatted.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user_display_cubit.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user_display_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -58,6 +59,7 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               BlocBuilder<UserDisplayCubit, UserDisplayState>(
                 builder: (context, state) {
+                  
                   if (state is UserLoading) {
                     return Center(child: CustomLoadingIndicator());
                   }
@@ -95,6 +97,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         ?.copyWith(fontWeight: FontWeight.w700),
                                   ),
                                 ),
+                                const SizedBox(height: 8),
                                 if (state.profileEntity.bio != null &&
                                     state.profileEntity.bio!.isNotEmpty) ...[
                                   Center(
@@ -118,6 +121,41 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ),
                                   ),
                                 ],
+                                const SizedBox(height: 16),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Studient',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            color: AppColors.textBlue,
+                                          ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Text(
+                                      '|',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            color: AppColors.textGrey,
+                                          ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Text(
+                                      'Joined ${formatDate(state.profileEntity.createdAt)}',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            color: AppColors.textBlack,
+                                          ),
+                                    ),
+                                  ],
+                                ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                                   child: PrimaryButton(

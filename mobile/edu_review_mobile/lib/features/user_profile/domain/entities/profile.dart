@@ -20,7 +20,7 @@ class ProfileEntity {
   final bool isStudentVerified;
   final Map<String, bool>? privacySettings;
   final Map<String, bool>? notificationSettings;
-  final String createAt;
+  final String createdAt;
   final String updatedAt;
 
   ProfileEntity({
@@ -45,7 +45,7 @@ class ProfileEntity {
     required this.isStudentVerified,
     this.privacySettings,
     this.notificationSettings,
-    required this.createAt,
+    required this.createdAt,
     required this.updatedAt,
   });
 }

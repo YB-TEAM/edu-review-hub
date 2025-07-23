@@ -33,7 +33,7 @@ class ProfileApiServiceImpl extends ProfileApiService {
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
       var token = sharedPreferences.getString('accessToken');
-      var response = await sl<DioClient>().put(
+      var response = await sl<DioClient>().patch(
         ApiUrls.userProfile,
         data: profileData,
         options: Options(

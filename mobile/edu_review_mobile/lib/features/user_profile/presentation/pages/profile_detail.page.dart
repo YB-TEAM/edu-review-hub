@@ -35,26 +35,31 @@ class ProfileDetailPage extends StatelessWidget {
                     Icons.cake_outlined,
                     'Birthday',
                     profileEntity.dateOfBirth,
+                    context
                   ),
                   _buildDetailInfoRow(
                     Icons.wc_outlined,
                     'Gender',
                     profileEntity.gender,
+                    context
                   ),
                   _buildDetailInfoRow(
                     Icons.location_on_outlined,
                     'Address',
                     profileEntity.address,
+                    context
                   ),
                   _buildDetailInfoRow(
                     Icons.flag_outlined,
                     'Country',
                     profileEntity.country,
+                    context
                   ),
                   _buildDetailInfoRow(
                     Icons.location_city_outlined,
                     'City',
                     profileEntity.city,
+                    context
                   ),
                 ],
               ),
@@ -82,21 +87,25 @@ class ProfileDetailPage extends StatelessWidget {
                     Icons.school_outlined,
                     'University',
                     profileEntity.universityName,
+                    context
                   ),
                   _buildDetailInfoRow(
                     Icons.book_outlined,
                     'Major',
                     profileEntity.major,
+                    context
                   ),
                   _buildDetailInfoRow(
                     Icons.badge_outlined,
                     'Student ID',
                     profileEntity.studentId,
+                    context
                   ),
                   _buildDetailInfoRow(
                     Icons.calendar_today_outlined,
                     'Graduation Year',
                     profileEntity.graduationYear?.toString(),
+                    context
                   ),
                 ],
               ),
@@ -107,7 +116,7 @@ class ProfileDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailInfoRow(IconData icon, String label, String? value) {
+  Widget _buildDetailInfoRow(IconData icon, String label, String? value, BuildContext context) {
     if (value == null || value.isEmpty) return SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -129,10 +138,8 @@ class ProfileDetailPage extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: AppColors.primaryBlack.withOpacity(0.7),
-                    fontWeight: FontWeight.w500,
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: AppColors.textGrey,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -142,6 +149,7 @@ class ProfileDetailPage extends StatelessWidget {
                     fontSize: 16,
                     color: AppColors.primaryBlack,
                     fontWeight: FontWeight.w600,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],

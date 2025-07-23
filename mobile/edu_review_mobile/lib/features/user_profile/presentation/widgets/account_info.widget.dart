@@ -38,7 +38,7 @@ class AccountInfoWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -52,15 +52,11 @@ class AccountInfoWidget extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             if (city != null && city!.isNotEmpty)
-              _buildInfoRow(Icons.location_city_outlined, 'Lives in', city!),
+              _buildInfoRow(Icons.location_city_outlined, 'Lives in', city!, context),
             if (universityName != null && universityName!.isNotEmpty)
-              _buildInfoRow(
-                Icons.school_outlined,
-                _getGraduationStatus(),
-                universityName!,
-              ),
+              _buildInfoRow(Icons.school_outlined, _getGraduationStatus(), universityName!, context),
             if (major != null && major!.isNotEmpty)
-              _buildInfoRow(Icons.book_outlined, 'Majoring in', major!),
+              _buildInfoRow(Icons.book_outlined, 'Majoring in', major!, context),
             SizedBox(
               width: double.infinity,
               child: CustomTextButton(
@@ -78,7 +74,7 @@ class AccountInfoWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String label, String value) {
+  Widget _buildInfoRow(IconData icon, String label, String value, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
@@ -99,10 +95,8 @@ class AccountInfoWidget extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: AppColors.primaryBlack.withOpacity(0.7),
-                    fontWeight: FontWeight.w500,
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: AppColors.textGrey,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -112,6 +106,7 @@ class AccountInfoWidget extends StatelessWidget {
                     fontSize: 16,
                     color: AppColors.primaryBlack,
                     fontWeight: FontWeight.w600,
+                    overflow: TextOverflow.ellipsis
                   ),
                 ),
               ],

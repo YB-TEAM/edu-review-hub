@@ -80,14 +80,7 @@ class _AchievementsWidgetState extends State<AchievementsWidget>
           decoration: BoxDecoration(
             color: AppColors.primaryWhite,
             borderRadius: BorderRadius.circular(8),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.primaryBlack.withOpacity(0.25),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
-                spreadRadius: 0,
-              ),
-            ],
+
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),

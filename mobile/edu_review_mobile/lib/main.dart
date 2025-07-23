@@ -10,12 +10,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:edu_review_mobile/features/main_screen.dart';
 
 void main() {
-
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   
   runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
+
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
       String initialRoute = RouteConstant.signIn;
 
@@ -36,8 +36,6 @@ void main() {
       };
 
       setUpServiceLocator();
-
-      
 
       runApp(MyApp(initialRoute: initialRoute));
     },
