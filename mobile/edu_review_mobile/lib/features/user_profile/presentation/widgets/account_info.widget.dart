@@ -1,5 +1,8 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:edu_review_mobile/common/widgets/button/custom_text_button.dart';
 import 'package:edu_review_mobile/common_libs.dart';
+import 'package:flutter_svg/svg.dart';
 
 class AccountInfoWidget extends StatelessWidget {
   final String? city;
@@ -52,11 +55,11 @@ class AccountInfoWidget extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             if (city != null && city!.isNotEmpty)
-              _buildInfoRow(Icons.location_city_outlined, 'Lives in', city!, context),
+              _buildInfoRow("assets/icons/ic_city.svg", 'Lives in', city!, context),
             if (universityName != null && universityName!.isNotEmpty)
-              _buildInfoRow(Icons.school_outlined, _getGraduationStatus(), universityName!, context),
+              _buildInfoRow("assets/icons/ic_university.svg", _getGraduationStatus(), universityName!, context),
             if (major != null && major!.isNotEmpty)
-              _buildInfoRow(Icons.book_outlined, 'Majoring in', major!, context),
+              _buildInfoRow("assets/icons/ic_book.svg", 'Majoring in', major!, context),
             SizedBox(
               width: double.infinity,
               child: CustomTextButton(
@@ -74,7 +77,7 @@ class AccountInfoWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String label, String value, BuildContext context) {
+  Widget _buildInfoRow(String icon, String label, String value, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
@@ -83,10 +86,15 @@ class AccountInfoWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.primaryBlue.withOpacity(0.1),
+              color: AppColors.primaryBlue,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(icon, size: 24, color: AppColors.primaryBlue),
+            child: SvgPicture.asset(
+              icon,
+              width: 24,
+              height: 24,
+              color: AppColors.primaryWhite,
+            ),
           ),
           const SizedBox(width: 14),
           Expanded(
