@@ -78,7 +78,7 @@ class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 32),
+      padding: const EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 32),
       child: SlideTransition(
         position: widget.slideAnimation,
         child: FadeTransition(
