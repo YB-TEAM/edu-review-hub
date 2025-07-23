@@ -53,6 +53,7 @@ class _ProfilePageState extends State<ProfilePage> {
       child: BlocListener<ButtonStateCubit, ButtonState>(
         listener: (context, state) {},
         child: Scaffold(
+          backgroundColor: AppColors.backgroundGrey,
           body: Stack(
             children: [
               BlocBuilder<UserDisplayCubit, UserDisplayState>(
@@ -67,24 +68,24 @@ class _ProfilePageState extends State<ProfilePage> {
                       header: null,
                       child: ListView(
                         children: [
-                          CoverPhotoWidget(
-                            imageUrl: state.profileEntity.coverImageUrl ?? '',
-                            onChangeCover: () {
-                              print('Nhấn đổi ảnh bìa');
-                            },
-                            child: EditAvatarButton(
-                              imageUrl: state.profileEntity.avatarUrl ?? '',
-                              size: 128,
-                              onPressed: () {
-                                print('Nhấn đổi avatar');
-                              },
-                            ),
-                          ),
-                          const SizedBox(height: 64),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                          Container(
+                            color: AppColors.primaryWhite,
                             child: Column(
                               children: [
+                                CoverPhotoWidget(
+                                  imageUrl: state.profileEntity.coverImageUrl ?? 'https://professionals.tarkett.co.uk/media/img/M/THH_25094225_25187225_001.jpg',
+                                  onChangeCover: () {
+                                    print('Nhấn đổi ảnh bìa');
+                                  },
+                                  child: EditAvatarButton(
+                                    imageUrl: state.profileEntity.avatarUrl ?? 'https://www.meme-arsenal.com/memes/4408af6c9803cb3f320ecc468b3abbfa.jpg',
+                                    size: 128,
+                                    onPressed: () {
+                                      print('Nhấn đổi avatar');
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: 64),
                                 Center(
                                   child: Text(
                                     state.profileEntity.displayName ?? '',
@@ -117,43 +118,49 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ),
                                   ),
                                 ],
-                                const SizedBox(height: 8),
-                                PrimaryButton(
-                                  onPressed:
-                                      () => navigateToEditProfile(context),
-                                  title: "Edit Public Details",
-                                  icon: Icon(
-                                    Icons.edit,
-                                    color: AppColors.primaryWhite,
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                  child: PrimaryButton(
+                                    onPressed:
+                                        () => navigateToEditProfile(context),
+                                    title: "Edit Public Details",
+                                    icon: Icon(
+                                      Icons.edit,
+                                      color: AppColors.primaryWhite,
+                                    ),
                                   ),
                                 ),
-                                const SizedBox(height: 16),
-                                AccountInfoWidget(
-                                  city: state.profileEntity.city,
-                                  universityName:
-                                      state.profileEntity.universityName,
-                                  major: state.profileEntity.major,
-                                  graduationYear:
-                                      state.profileEntity.graduationYear,
-                                  onSeeMorePressed: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      RouteConstant.detailProfile,
-                                      arguments: state.profileEntity,
-                                    );
-                                  },
-                                ),
-                                const SizedBox(height: 16),
-                                AchievementsWidget(
-                                  posts: 25,
-                                  likes: 150,
-                                  points: 750,
-                                  level: 5,
-                                  totalPoints: 1000,
-                                ),
-                                const SizedBox(height: 24),
                               ],
                             ),
+                          ),
+                          const SizedBox(height: 16),
+                          Column(
+                            children: [
+                              AccountInfoWidget(
+                                city: state.profileEntity.city,
+                                universityName:
+                                    state.profileEntity.universityName,
+                                major: state.profileEntity.major,
+                                graduationYear:
+                                    state.profileEntity.graduationYear,
+                                onSeeMorePressed: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    RouteConstant.detailProfile,
+                                    arguments: state.profileEntity,
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 16),
+                              AchievementsWidget(
+                                posts: 25,
+                                likes: 150,
+                                points: 750,
+                                level: 5,
+                                totalPoints: 1000,
+                              ),
+                              const SizedBox(height: 24),
+                            ],
                           ),
                         ],
                       ),

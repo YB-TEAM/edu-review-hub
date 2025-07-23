@@ -127,7 +127,7 @@ class _MainScreenState extends State<MainScreen> {
         navBarBuilder: (navBarConfig) {
           final selectedIndex = navBarConfig.selectedIndex;
           return Container(
-            height: 56,
+            height: 60,
             decoration: BoxDecoration(
               color: AppColors.primaryWhite,
               border: Border(
