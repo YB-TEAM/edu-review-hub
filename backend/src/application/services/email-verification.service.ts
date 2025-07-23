@@ -39,8 +39,8 @@ export class EmailVerificationService implements IEmailVerificationService {
       EmailVerificationType.EMAIL_VERIFICATION
     );
 
-    // Generate token
-    const token = this.generateToken();
+    // Generate OTP 6 số
+    const otp = this.generateOtp();
 
     // Create verification record
     const expiresAt = new Date();
@@ -49,38 +49,39 @@ export class EmailVerificationService implements IEmailVerificationService {
     await this.emailVerificationRepository.create({
       userId,
       email,
-      token,
+      otp,
       type: EmailVerificationType.EMAIL_VERIFICATION,
       status: EmailVerificationStatus.PENDING,
       expiresAt,
     });
 
-    // Send email
-    await this.emailService.sendEmailVerification(email, token, username);
+    // Send email (gửi OTP)
+    await this.emailService.sendEmailVerification(email, otp, username);
   }
 
-  async verifyEmail(token: string): Promise<boolean> {
-    const verification = await this.emailVerificationRepository.findByToken(
-      token
+  async verifyEmail(otp: string, email: string): Promise<boolean> {
+    const verification = await this.emailVerificationRepository.findByOtpAndEmail(
+      otp,
+      email
     );
 
     if (!verification) {
-      throw new NotFoundException("Invalid verification token");
+      throw new NotFoundException("Invalid verification code");
     }
 
     if (verification.status !== EmailVerificationStatus.PENDING) {
-      throw new BadRequestException("Token has already been used or expired");
+      throw new BadRequestException("Code has already been used or expired");
     }
 
     if (verification.expiresAt < new Date()) {
       await this.emailVerificationRepository.update(verification.id, {
         status: EmailVerificationStatus.EXPIRED,
       });
-      throw new BadRequestException("Verification token has expired");
+      throw new BadRequestException("Verification code has expired");
     }
 
     if (verification.type !== EmailVerificationType.EMAIL_VERIFICATION) {
-      throw new BadRequestException("Invalid token type");
+      throw new BadRequestException("Invalid code type");
     }
 
     // Update verification status
@@ -111,8 +112,8 @@ export class EmailVerificationService implements IEmailVerificationService {
       EmailVerificationType.PASSWORD_RESET
     );
 
-    // Generate token
-    const token = this.generateToken();
+    // Generate OTP 6 số
+    const otp = this.generateOtp();
 
     // Create verification record
     const expiresAt = new Date();
@@ -121,38 +122,39 @@ export class EmailVerificationService implements IEmailVerificationService {
     await this.emailVerificationRepository.create({
       userId: user.id,
       email,
-      token,
+      otp,
       type: EmailVerificationType.PASSWORD_RESET,
       status: EmailVerificationStatus.PENDING,
       expiresAt,
     });
 
-    // Send email
-    await this.emailService.sendPasswordReset(email, token, user.username);
+    // Send email (gửi OTP)
+    await this.emailService.sendPasswordReset(email, otp, user.username);
   }
 
-  async resetPassword(token: string, newPassword: string): Promise<boolean> {
-    const verification = await this.emailVerificationRepository.findByToken(
-      token
+  async resetPassword(otp: string, email: string, newPassword: string): Promise<boolean> {
+    const verification = await this.emailVerificationRepository.findByOtpAndEmail(
+      otp,
+      email
     );
 
     if (!verification) {
-      throw new NotFoundException("Invalid reset token");
+      throw new NotFoundException("Invalid reset code");
     }
 
     if (verification.status !== EmailVerificationStatus.PENDING) {
-      throw new BadRequestException("Token has already been used or expired");
+      throw new BadRequestException("Code has already been used or expired");
     }
 
     if (verification.expiresAt < new Date()) {
       await this.emailVerificationRepository.update(verification.id, {
         status: EmailVerificationStatus.EXPIRED,
       });
-      throw new BadRequestException("Reset token has expired");
+      throw new BadRequestException("Reset code has expired");
     }
 
     if (verification.type !== EmailVerificationType.PASSWORD_RESET) {
-      throw new BadRequestException("Invalid token type");
+      throw new BadRequestException("Invalid code type");
     }
 
     // Hash new password
@@ -181,56 +183,53 @@ export class EmailVerificationService implements IEmailVerificationService {
     // Cập nhật luôn email mới vào user
     await this.userRepository.update(userId, {
       email: newEmail,
-      // Nếu muốn reset trạng thái xác thực email, có thể thêm:
-      // emailVerifiedAt: null,
-      // isVerified: false,
     });
 
-    // (Có thể bỏ qua phần tạo record xác nhận nếu không cần tracking)
-    // Nếu vẫn muốn gửi email xác nhận, có thể giữ lại phần này:
-    const token = this.generateToken();
+    // Generate OTP 6 số
+    const otp = this.generateOtp();
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + 24); // 24 hours
 
     await this.emailVerificationRepository.create({
       userId,
       email: newEmail,
-      token,
+      otp,
       type: EmailVerificationType.EMAIL_CHANGE,
       status: EmailVerificationStatus.PENDING,
       expiresAt,
     });
 
-    // Gửi email xác nhận tới email mới
+    // Gửi email xác nhận tới email mới (gửi OTP)
     await this.emailService.sendEmailChangeConfirmation(
       newEmail,
-      token,
+      otp,
       username
     );
   }
 
-  async confirmEmailChange(token: string): Promise<boolean> {
-    const verification = await this.emailVerificationRepository.findByToken(
-      token
+  async confirmEmailChange(otp: string, email: string): Promise<boolean> {
+    const verification = await this.emailVerificationRepository.findByOtpAndEmail(
+      otp,
+      email
     );
 
     if (!verification) {
-      throw new NotFoundException("Invalid confirmation token");
+      throw new NotFoundException("Invalid confirmation code");
     }
 
     if (verification.status !== EmailVerificationStatus.PENDING) {
-      throw new BadRequestException("Token has already been used or expired");
+      throw new BadRequestException("Code has already been used or expired");
     }
 
     if (verification.expiresAt < new Date()) {
       await this.emailVerificationRepository.update(verification.id, {
         status: EmailVerificationStatus.EXPIRED,
       });
-      throw new BadRequestException("Confirmation token has expired");
+      throw new BadRequestException("Confirmation code has expired");
     }
 
     if (verification.type !== EmailVerificationType.EMAIL_CHANGE) {
-      throw new BadRequestException("Invalid token type");
+      throw new BadRequestException("Invalid code type");
     }
 
     // Update user email
@@ -262,7 +261,8 @@ export class EmailVerificationService implements IEmailVerificationService {
     await this.sendEmailVerification(user.id, email, user.username);
   }
 
-  private generateToken(): string {
-    return randomBytes(32).toString("hex");
+  private generateOtp(): string {
+    // Sinh mã OTP 6 số, chỉ số
+    return Math.floor(100000 + Math.random() * 900000).toString();
   }
 }
