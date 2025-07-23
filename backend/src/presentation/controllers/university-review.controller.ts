@@ -31,7 +31,6 @@ export class UniversityReviewController {
   ) {}
 
   @Get(":id")
-  @RequirePermissions("review:read")
   async getById(
     @Param("id", ParseIntPipe) id: number
   ): Promise<UniversityReviewResponseDto> {
@@ -39,7 +38,6 @@ export class UniversityReviewController {
   }
 
   @Get("/university/:universityId")
-  @RequirePermissions("review:read")
   async getByUniversity(
     @Param("universityId", ParseIntPipe) universityId: number
   ): Promise<UniversityReviewResponseDto[]> {
@@ -47,7 +45,8 @@ export class UniversityReviewController {
   }
 
   @Get("/user/:userId")
-  @RequirePermissions("review:read")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN)
   async getByUser(
     @Param("userId", ParseIntPipe) userId: number
   ): Promise<UniversityReviewResponseDto[]> {
@@ -55,7 +54,6 @@ export class UniversityReviewController {
   }
 
   @Post()
-  @RequirePermissions("review:create")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.STUDENT)
   @ApiBearerAuth("JWT-auth")
@@ -68,7 +66,6 @@ export class UniversityReviewController {
   }
 
   @Patch(":id")
-  @RequirePermissions("review:update")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.STUDENT)
   @ApiBearerAuth("JWT-auth")
@@ -82,7 +79,6 @@ export class UniversityReviewController {
   }
 
   @Delete(":id")
-  @RequirePermissions("review:delete")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.STUDENT)
   @ApiBearerAuth("JWT-auth")
@@ -93,11 +89,10 @@ export class UniversityReviewController {
     return this.reviewService.delete(req.user.id, id);
   }
 
-  // Moderate endpoint for admin, moderator
+  // Moderate endpoint for admin, moderator, super_admin
   @Patch(":id/moderate")
-  @RequirePermissions("review:moderate")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.MODERATOR)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.MODERATOR)
   @ApiBearerAuth("JWT-auth")
   async moderate(
     @Param("id", ParseIntPipe) id: number,
