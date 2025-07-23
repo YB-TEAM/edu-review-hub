@@ -22,58 +22,40 @@ export class EmailService implements IEmailService {
 
   async sendEmailVerification(
     email: string,
-    token: string,
+    otp: string,
     username: string
   ): Promise<void> {
-    const domain =
-      this.configService.get("APP_DOMAIN") ||
-      this.configService.get("FRONTEND_URL");
-    this.logger.log(`Using domain for email verification: ${domain}`);
-    const verificationUrl = `${domain}/verify-email?token=${token}`;
-
     const emailContent = `
       <h2>Xác thực Email</h2>
       <p>Xin chào ${username},</p>
-      <p>Cảm ơn bạn đã đăng ký tài khoản tại Edu Review Hub. Vui lòng click vào link bên dưới để xác thực email của bạn:</p>
-      <a href="${verificationUrl}">Xác thực Email</a>
-      <p>Link này sẽ hết hạn sau 24 giờ.</p>
+      <p>Cảm ơn bạn đã đăng ký tài khoản tại Edu Review Hub. Mã xác thực email của bạn là:</p>
+      <h3>${otp}</h3>
+      <p>Mã này sẽ hết hạn sau 24 giờ.</p>
       <p>Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email này.</p>
       <p>Trân trọng,<br>Edu Review Hub Team</p>
     `;
-
-    // Gửi email thật
     await this.transporter.sendMail({
       from: `"Edu Review Hub" <${this.configService.get("SMTP_USER")}>`,
       to: email,
       subject: "Xác thực Email - Edu Review Hub",
       html: emailContent,
     });
-
-    this.logger.log(`Email verification sent to ${email} for user ${username}`);
-    this.logger.log(`Verification URL: ${verificationUrl}`);
+    this.logger.log(`Email verification OTP sent to ${email} for user ${username}`);
+    this.logger.log(`OTP: ${otp}`);
     this.logger.log(`Email content: ${emailContent}`);
   }
 
   async sendPasswordReset(
     email: string,
-    token: string,
+    otp: string,
     username: string
   ): Promise<void> {
-    const resetUrl = `${this.configService.get(
-      "FRONTEND_URL"
-    )}/reset-password?token=${token}`;
-
-    this.logger.log(
-      `Password reset email sent to ${email} for user ${username}`
-    );
-    this.logger.log(`Reset URL: ${resetUrl}`);
-
     const emailContent = `
       <h2>Đặt lại Mật khẩu</h2>
       <p>Xin chào ${username},</p>
-      <p>Chúng tôi nhận được yêu cầu đặt lại mật khẩu cho tài khoản của bạn. Click vào link bên dưới để đặt lại mật khẩu:</p>
-      <a href="${resetUrl}">Đặt lại Mật khẩu</a>
-      <p>Link này sẽ hết hạn sau 1 giờ.</p>
+      <p>Mã đặt lại mật khẩu của bạn là:</p>
+      <h3>${otp}</h3>
+      <p>Mã này sẽ hết hạn sau 1 giờ.</p>
       <p>Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email này.</p>
       <p>Trân trọng,<br>Edu Review Hub Team</p>
     `;
@@ -83,6 +65,8 @@ export class EmailService implements IEmailService {
       subject: "Đặt lại Mật khẩu - Edu Review Hub",
       html: emailContent,
     });
+    this.logger.log(`Password reset OTP sent to ${email} for user ${username}`);
+    this.logger.log(`OTP: ${otp}`);
     this.logger.log(`Email content: ${emailContent}`);
   }
 
@@ -114,35 +98,26 @@ export class EmailService implements IEmailService {
 
   async sendEmailChangeConfirmation(
     email: string,
-    token: string,
+    otp: string,
     username: string
   ): Promise<void> {
-    const confirmationUrl = `${this.configService.get(
-      "FRONTEND_URL"
-    )}/confirm-email-change?token=${token}`;
-
-    this.logger.log(
-      `Email change confirmation sent to ${email} for user ${username}`
-    );
-    this.logger.log(`Confirmation URL: ${confirmationUrl}`);
-
     const emailContent = `
       <h2>Xác nhận Thay đổi Email</h2>
       <p>Xin chào ${username},</p>
-      <p>Chúng tôi nhận được yêu cầu thay đổi email cho tài khoản của bạn. Click vào link bên dưới để xác nhận:</p>
-      <a href="${confirmationUrl}">Xác nhận Thay đổi Email</a>
-      <p>Link này sẽ hết hạn sau 24 giờ.</p>
+      <p>Mã xác nhận thay đổi email của bạn là:</p>
+      <h3>${otp}</h3>
+      <p>Mã này sẽ hết hạn sau 24 giờ.</p>
       <p>Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email này.</p>
       <p>Trân trọng,<br>Edu Review Hub Team</p>
     `;
-
     await this.transporter.sendMail({
       from: `"Edu Review Hub" <${this.configService.get("SMTP_USER")}>`,
       to: email,
       subject: "Xác nhận Thay đổi Email - Edu Review Hub",
       html: emailContent,
     });
-
+    this.logger.log(`Email change confirmation OTP sent to ${email} for user ${username}`);
+    this.logger.log(`OTP: ${otp}`);
     this.logger.log(`Email content: ${emailContent}`);
   }
 

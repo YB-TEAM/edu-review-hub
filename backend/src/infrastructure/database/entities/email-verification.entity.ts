@@ -32,8 +32,6 @@ export class EmailVerification {
   @Column({ type: "varchar", length: 255 })
   email: string;
 
-  @Column({ type: "varchar", length: 255, unique: true })
-  token: string;
 
   @Column({
     type: "enum",
@@ -59,6 +57,9 @@ export class EmailVerification {
 
   @Column({ type: "text", nullable: true })
   userAgent: string;
+
+  @Column({ type: "varchar", length: 10, nullable: true, unique: true })
+  otp: string;
 
   @CreateDateColumn()
   createdAt: Date;

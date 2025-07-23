@@ -6,7 +6,6 @@ import {
 
 export interface IEmailVerificationRepository {
   create(verification: Partial<EmailVerification>): Promise<EmailVerification>;
-  findByToken(token: string): Promise<EmailVerification | null>;
   findByEmailAndType(
     email: string,
     type: EmailVerificationType
@@ -21,4 +20,5 @@ export interface IEmailVerificationRepository {
     userId: number,
     type: EmailVerificationType
   ): Promise<void>;
+  findByOtpAndEmail(otp: string, email: string): Promise<EmailVerification | null>;
 }

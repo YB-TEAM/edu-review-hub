@@ -1,18 +1,18 @@
 export interface IEmailService {
   sendEmailVerification(
     email: string,
-    token: string,
+    otp: string,
     username: string
   ): Promise<void>;
   sendPasswordReset(
     email: string,
-    token: string,
+    otp: string,
     username: string
   ): Promise<void>;
   sendWelcomeEmail(email: string, username: string): Promise<void>;
   sendEmailChangeConfirmation(
     email: string,
-    token: string,
+    otp: string,
     username: string
   ): Promise<void>;
   sendAccountDeactivated(

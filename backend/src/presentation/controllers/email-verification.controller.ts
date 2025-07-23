@@ -20,6 +20,32 @@ import { ForgotPasswordDto } from "@/application/dto/auth/forgot-password.dto";
 import { ResetPasswordDto } from "@/application/dto/auth/reset-password.dto";
 import { VerifyEmailDto } from "@/application/dto/auth/verify-email.dto";
 import { JwtAuthGuard } from "@/presentation/guards/jwt-auth.guard";
+import { IsString, IsEmail } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+
+export class VerifyOtpDto {
+  @ApiProperty({ description: 'Mã OTP 6 số' })
+  @IsString()
+  otp: string;
+
+  @ApiProperty({ description: 'Email' })
+  @IsEmail()
+  email: string;
+}
+
+export class ResetPasswordWithOtpDto {
+  @ApiProperty({ description: 'Mã OTP 6 số' })
+  @IsString()
+  otp: string;
+
+  @ApiProperty({ description: 'Email' })
+  @IsEmail()
+  email: string;
+
+  @ApiProperty({ description: 'Mật khẩu mới' })
+  @IsString()
+  newPassword: string;
+}
 
 @ApiTags("Email Verification")
 @Controller("email-verification")
@@ -30,24 +56,24 @@ export class EmailVerificationController {
   ) {}
 
   @Post("verify-email")
-  @ApiOperation({ summary: "Verify email address" })
-  @ApiBody({ type: VerifyEmailDto })
+  @ApiOperation({ summary: "Verify email address with OTP" })
+  @ApiBody({ type: VerifyOtpDto })
   @ApiResponse({
     status: 200,
     description: "Email verified successfully",
   })
   @ApiResponse({
     status: 400,
-    description: "Invalid or expired token",
+    description: "Invalid or expired code",
   })
   @ApiResponse({
     status: 404,
-    description: "Token not found",
+    description: "Code not found",
   })
   async verifyEmail(
-    @Body() verifyEmailDto: VerifyEmailDto
+    @Body() verifyOtpDto: VerifyOtpDto
   ): Promise<{ message: string }> {
-    await this.emailVerificationService.verifyEmail(verifyEmailDto.token);
+    await this.emailVerificationService.verifyEmail(verifyOtpDto.otp, verifyOtpDto.email);
     return { message: "Email verified successfully" };
   }
 
@@ -92,26 +118,27 @@ export class EmailVerificationController {
   }
 
   @Post("reset-password")
-  @ApiOperation({ summary: "Reset password with token" })
-  @ApiBody({ type: ResetPasswordDto })
+  @ApiOperation({ summary: "Reset password with OTP" })
+  @ApiBody({ type: ResetPasswordWithOtpDto })
   @ApiResponse({
     status: 200,
     description: "Password reset successfully",
   })
   @ApiResponse({
     status: 400,
-    description: "Invalid or expired token",
+    description: "Invalid or expired code",
   })
   @ApiResponse({
     status: 404,
-    description: "Token not found",
+    description: "Code not found",
   })
   async resetPassword(
-    @Body() resetPasswordDto: ResetPasswordDto
+    @Body() resetPasswordWithOtpDto: ResetPasswordWithOtpDto
   ): Promise<{ message: string }> {
     await this.emailVerificationService.resetPassword(
-      resetPasswordDto.token,
-      resetPasswordDto.newPassword
+      resetPasswordWithOtpDto.otp,
+      resetPasswordWithOtpDto.email,
+      resetPasswordWithOtpDto.newPassword
     );
     return { message: "Password reset successfully" };
   }
@@ -138,25 +165,26 @@ export class EmailVerificationController {
   }
 
   @Post("confirm-email-change")
-  @ApiOperation({ summary: "Confirm email change with token" })
-  @ApiBody({ type: VerifyEmailDto })
+  @ApiOperation({ summary: "Confirm email change with OTP" })
+  @ApiBody({ type: VerifyOtpDto })
   @ApiResponse({
     status: 200,
     description: "Email changed successfully",
   })
   @ApiResponse({
     status: 400,
-    description: "Invalid or expired token",
+    description: "Invalid or expired code",
   })
   @ApiResponse({
     status: 404,
-    description: "Token not found",
+    description: "Code not found",
   })
   async confirmEmailChange(
-    @Body() verifyEmailDto: VerifyEmailDto
+    @Body() verifyOtpDto: VerifyOtpDto
   ): Promise<{ message: string }> {
     await this.emailVerificationService.confirmEmailChange(
-      verifyEmailDto.token
+      verifyOtpDto.otp,
+      verifyOtpDto.email
     );
     return { message: "Email changed successfully" };
   }

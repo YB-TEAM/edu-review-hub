@@ -1,20 +1,46 @@
 import 'package:dio/dio.dart';
+import 'package:edu_review_mobile/core/network/auth_interceptors.dart';
+import 'package:edu_review_mobile/features/auth/data/data_sources/local/auth_local_service.dart';
+import 'package:edu_review_mobile/features/auth/data/data_sources/remote/auth_api_service.dart';
+import 'package:edu_review_mobile/service_locator.dart';
 
-import 'interceptors.dart';
+import 'logger_interceptors.dart';
 
 class DioClient {
-  
   late final Dio _dio;
-  DioClient(): _dio = Dio(
-    BaseOptions(
-      headers: {
-        'Content-Type': 'application/json; charset=UTF-8'
-      },
-      responseType: ResponseType.json,
-      sendTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 10)
-    ),
-  )..interceptors.addAll([LoggerInterceptor()]);
+  static Dio? _staticDio;
+  
+  DioClient() {
+    if (_staticDio != null) {
+      _dio = _staticDio!;
+      return;
+    }
+
+    _dio = Dio(
+      BaseOptions(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8'
+        },
+        responseType: ResponseType.json,
+        sendTimeout: const Duration(seconds: 10),
+        receiveTimeout: const Duration(seconds: 10)
+      ),
+    );
+
+    // Đảm bảo các interceptors được thêm vào chỉ một lần
+    if (_dio.interceptors.isEmpty) {
+      _dio.interceptors.addAll([
+        LoggerInterceptor(),
+        AuthInterceptor(
+          localService: sl<AuthLocalService>(),
+          apiService: sl<AuthApiService>(),
+          dio: _dio,
+        )
+      ]);
+    }
+    
+    _staticDio = _dio;
+  }
 
   // GET METHOD
   Future < Response > get(
