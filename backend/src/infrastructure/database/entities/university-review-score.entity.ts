@@ -6,6 +6,7 @@ import {
   JoinColumn,
 } from "typeorm";
 import { UniversityReview } from "./university-review.entity";
+import { UniversityReviewCriterion } from "./university-review-criterion.entity";
 
 @Entity("university_review_scores")
 export class UniversityReviewScore {
@@ -16,8 +17,9 @@ export class UniversityReviewScore {
   @JoinColumn({ name: "review_id" })
   review: UniversityReview;
 
-  @Column({ type: "varchar" })
-  criterion: string;
+  @ManyToOne(() => UniversityReviewCriterion, { nullable: false })
+  @JoinColumn({ name: "criterion_id" })
+  criterion: UniversityReviewCriterion;
 
   @Column({ type: "int" })
   score: number;

@@ -28,73 +28,76 @@ class SettingsPage extends StatelessWidget {
           }
         },
         child: Scaffold(
+          backgroundColor: AppColors.backgroundGrey,
           body: SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 30),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    "Account & Security",
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontFamily: 'Roboto-Bold',
-                      color: AppColors.textBlack,
+              child: Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      "Account & Security",
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontFamily: 'Roboto-Bold',
+                        color: AppColors.textBlack,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  NavigationButton(
-                    leadingIcon: Icons.person,
-                    title: "Personal Information",
-                    trailingIcon: Icons.arrow_forward_ios,
-                    onTap: () {},
-                  ),
-                  const SizedBox(height: 12),
-                  NavigationButton(
-                    leadingIcon: Icons.key,
-                    title: 'Change Password',
-                    trailingIcon: Icons.arrow_forward_ios,
-                    onTap: () {},
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    "Settings",
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontFamily: 'Roboto-Bold',
-                      color: AppColors.textBlack,
+                    const SizedBox(height: 12),
+                    NavigationButton(
+                      leadingIcon: Icons.person,
+                      title: "Personal Information",
+                      trailingIcon: Icons.arrow_forward_ios,
+                      onTap: () {},
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  NavigationButton(
-                    leadingIcon: Icons.book,
-                    title: 'Terms & Conditions',
-                    trailingIcon: Icons.arrow_forward_ios,
-                    onTap: () {},
-                  ),
-                  const SizedBox(height: 12),
-                  NavigationButton(
-                    leadingIcon: Icons.lock,
-                    title: 'Privacy Policy',
-                    trailingIcon: Icons.arrow_forward_ios,
-                    onTap: () {},
-                  ),
-                  const SizedBox(height: 12),
-                  NavigationButton(
-                    leadingIcon: Icons.phone,
-                    title: 'Contact Us',
-                    trailingIcon: Icons.arrow_forward_ios,
-                    onTap: () {},
-                  ),
-                  const SizedBox(height: 24),
-                  Builder(
-                    builder:
-                        (buttonContext) => PrimaryButton(
-                          onPressed: () => _logOut(buttonContext),
-                          title: "Sign Out",
-                          backgroundColor: AppColors.secondaryGrey,
-                          textColor: AppColors.textBlack,
-                        ),
-                  ),
-                ],
+                    const SizedBox(height: 12),
+                    NavigationButton(
+                      leadingIcon: Icons.key,
+                      title: 'Change Password',
+                      trailingIcon: Icons.arrow_forward_ios,
+                      onTap: () {},
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      "Settings",
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontFamily: 'Roboto-Bold',
+                        color: AppColors.textBlack,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    NavigationButton(
+                      leadingIcon: Icons.book,
+                      title: 'Terms & Conditions',
+                      trailingIcon: Icons.arrow_forward_ios,
+                      onTap: () {},
+                    ),
+                    const SizedBox(height: 12),
+                    NavigationButton(
+                      leadingIcon: Icons.lock,
+                      title: 'Privacy Policy',
+                      trailingIcon: Icons.arrow_forward_ios,
+                      onTap: () {},
+                    ),
+                    const SizedBox(height: 12),
+                    NavigationButton(
+                      leadingIcon: Icons.phone,
+                      title: 'Contact Us',
+                      trailingIcon: Icons.arrow_forward_ios,
+                      onTap: () {},
+                    ),
+                    const SizedBox(height: 24),
+                    Builder(
+                      builder:
+                          (buttonContext) => PrimaryButton(
+                            onPressed: () => _logOut(buttonContext),
+                            title: "Sign Out",
+                            backgroundColor: AppColors.primaryWhite,
+                            textColor: AppColors.primaryRed,
+                          ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
