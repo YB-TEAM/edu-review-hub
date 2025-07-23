@@ -5,14 +5,14 @@ export interface IEmailVerificationService {
     email: string,
     username: string
   ): Promise<void>;
-  verifyEmail(token: string): Promise<boolean>;
+  verifyEmail(otp: string, email: string): Promise<boolean>;
   sendPasswordReset(email: string): Promise<void>;
-  resetPassword(token: string, newPassword: string): Promise<boolean>;
+  resetPassword(otp: string, email: string, newPassword: string): Promise<boolean>;
   sendEmailChangeConfirmation(
     userId: number,
     newEmail: string,
     username: string
   ): Promise<void>;
-  confirmEmailChange(token: string): Promise<boolean>;
+  confirmEmailChange(otp: string, email: string): Promise<boolean>;
   resendVerification(email: string): Promise<void>;
 }

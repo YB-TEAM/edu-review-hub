@@ -25,12 +25,7 @@ export class EmailVerificationRepository
     return this.emailVerificationRepository.save(newVerification);
   }
 
-  async findByToken(token: string): Promise<EmailVerification | null> {
-    return this.emailVerificationRepository.findOne({
-      where: { token },
-      relations: ["user"],
-    });
-  }
+
 
   async findByEmailAndType(
     email: string,
@@ -40,6 +35,10 @@ export class EmailVerificationRepository
       where: { email, type },
       relations: ["user"],
     });
+  }
+
+  async findByOtpAndEmail(otp: string, email: string): Promise<EmailVerification | null> {
+    return this.emailVerificationRepository.findOne({ where: { otp, email } });
   }
 
   async update(
