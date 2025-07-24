@@ -20,7 +20,8 @@ import { IUniversityReviewService } from "@/application/services/university-revi
 import { CreateUniversityReviewDto } from "@/application/dto/university/create-university-review.dto";
 import { UpdateUniversityReviewDto } from "@/application/dto/university/update-university-review.dto";
 import { UniversityReviewResponseDto } from "@/application/dto/university/university-review-response.dto";
-import { ApiBearerAuth, ApiTags, ApiBody } from "@nestjs/swagger";
+import { ModerateUniversityReviewDto } from "@/application/dto/university/moderate-university-review.dto";
+import { ApiBearerAuth, ApiTags, ApiBody, ApiOperation, ApiResponse } from "@nestjs/swagger";
 
 @ApiTags("University Review")
 @Controller("university-reviews")
@@ -31,7 +32,6 @@ export class UniversityReviewController {
   ) {}
 
   @Get(":id")
-  @RequirePermissions("review:read")
   async getById(
     @Param("id", ParseIntPipe) id: number
   ): Promise<UniversityReviewResponseDto> {
@@ -39,7 +39,6 @@ export class UniversityReviewController {
   }
 
   @Get("/university/:universityId")
-  @RequirePermissions("review:read")
   async getByUniversity(
     @Param("universityId", ParseIntPipe) universityId: number
   ): Promise<UniversityReviewResponseDto[]> {
@@ -47,7 +46,8 @@ export class UniversityReviewController {
   }
 
   @Get("/user/:userId")
-  @RequirePermissions("review:read")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN)
   async getByUser(
     @Param("userId", ParseIntPipe) userId: number
   ): Promise<UniversityReviewResponseDto[]> {
@@ -55,7 +55,6 @@ export class UniversityReviewController {
   }
 
   @Post()
-  @RequirePermissions("review:create")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.STUDENT)
   @ApiBearerAuth("JWT-auth")
@@ -68,7 +67,6 @@ export class UniversityReviewController {
   }
 
   @Patch(":id")
-  @RequirePermissions("review:update")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.STUDENT)
   @ApiBearerAuth("JWT-auth")
@@ -82,7 +80,6 @@ export class UniversityReviewController {
   }
 
   @Delete(":id")
-  @RequirePermissions("review:delete")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.STUDENT)
   @ApiBearerAuth("JWT-auth")
@@ -93,16 +90,20 @@ export class UniversityReviewController {
     return this.reviewService.delete(req.user.id, id);
   }
 
-  // Moderate endpoint for admin, moderator
+  // Moderate endpoint for admin, moderator, super_admin
   @Patch(":id/moderate")
+  @ApiOperation({ summary: "Moderate a university review (admin/moderator)" })
+  @ApiBody({ type: ModerateUniversityReviewDto })
+  @ApiResponse({ status: 200, description: "Review moderated", type: UniversityReviewResponseDto })
+  @ApiResponse({ status: 404, description: "Review not found" })
+  @ApiBearerAuth("JWT-auth")
   @RequirePermissions("review:moderate")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.MODERATOR)
-  @ApiBearerAuth("JWT-auth")
   async moderate(
     @Param("id", ParseIntPipe) id: number,
-    @Body("status") status: string
+    @Body() body: ModerateUniversityReviewDto
   ): Promise<UniversityReviewResponseDto> {
-    return this.reviewService.moderate(id, status);
+    return this.reviewService.moderate(id, body.status);
   }
 }
