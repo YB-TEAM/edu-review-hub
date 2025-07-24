@@ -20,7 +20,8 @@ import { IUniversityReviewService } from "@/application/services/university-revi
 import { CreateUniversityReviewDto } from "@/application/dto/university/create-university-review.dto";
 import { UpdateUniversityReviewDto } from "@/application/dto/university/update-university-review.dto";
 import { UniversityReviewResponseDto } from "@/application/dto/university/university-review-response.dto";
-import { ApiBearerAuth, ApiTags, ApiBody } from "@nestjs/swagger";
+import { ModerateUniversityReviewDto } from "@/application/dto/university/moderate-university-review.dto";
+import { ApiBearerAuth, ApiTags, ApiBody, ApiOperation, ApiResponse } from "@nestjs/swagger";
 
 @ApiTags("University Review")
 @Controller("university-reviews")
@@ -91,13 +92,18 @@ export class UniversityReviewController {
 
   // Moderate endpoint for admin, moderator, super_admin
   @Patch(":id/moderate")
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.MODERATOR)
+  @ApiOperation({ summary: "Moderate a university review (admin/moderator)" })
+  @ApiBody({ type: ModerateUniversityReviewDto })
+  @ApiResponse({ status: 200, description: "Review moderated", type: UniversityReviewResponseDto })
+  @ApiResponse({ status: 404, description: "Review not found" })
   @ApiBearerAuth("JWT-auth")
+  @RequirePermissions("review:moderate")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.MODERATOR)
   async moderate(
     @Param("id", ParseIntPipe) id: number,
-    @Body("status") status: string
+    @Body() body: ModerateUniversityReviewDto
   ): Promise<UniversityReviewResponseDto> {
-    return this.reviewService.moderate(id, status);
+    return this.reviewService.moderate(id, body.status);
   }
 }
