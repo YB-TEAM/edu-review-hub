@@ -6,7 +6,7 @@ export class UniversityReviewCriterion1753288293334
   name = "UniversityReviewCriterion1753288293334";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`CREATE TABLE "university_review_criteria" (
+    await queryRunner.query(`CREATE TABLE IF NOT EXISTS "university_review_criteria" (
             "id" SERIAL NOT NULL,
             "name" character varying NOT NULL,
             "description" character varying,
@@ -16,6 +16,6 @@ export class UniversityReviewCriterion1753288293334
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP TABLE "university_review_criteria"`);
+    await queryRunner.query(`DROP TABLE IF EXISTS "university_review_criteria" CASCADE`);
   }
 }
