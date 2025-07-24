@@ -11,6 +11,7 @@ import { UpdateBlogDto } from "../dto/blog/update-blog.dto";
 import { BlogResponseDto } from "../dto/blog/blog-response.dto";
 import { Blog } from "@/infrastructure/database/entities/blog.entity";
 import { ModerateBlogDto } from "../dto/blog/moderate-blog.dto";
+import { PaginationDto } from "../dto/pagination/pagination.dto";
 
 @Injectable()
 export class BlogService implements IBlogService {
@@ -30,9 +31,17 @@ export class BlogService implements IBlogService {
     return this.toResponseDto(blog);
   }
 
-  async findAll(): Promise<BlogResponseDto[]> {
-    const blogs = await this.blogRepository.findAll();
-    return blogs.map(this.toResponseDto);
+  async findAll(pagination: PaginationDto): Promise<{ data: BlogResponseDto[]; metadata: any }> {
+    const { page = 1, limit = 10 } = pagination;
+    const [blogs, total] = await this.blogRepository.findAll({ page, limit });
+    const data = blogs.map(this.toResponseDto);
+    const metadata = {
+      totalItems: total,
+      pageSize: limit,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+    };
+    return { data, metadata };
   }
 
   async update(
