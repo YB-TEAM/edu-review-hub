@@ -82,7 +82,7 @@ class RecentReviews extends StatelessWidget {
                   time: review['time'] as String,
                   avatar: review['avatar'] as String,
                   imageUrl: review['image'] as String,
-                  likeCount: 5200,
+                  likeCount: 5299,
                   commentCount: 2200,
                   shareCount: 1300,
                 ),

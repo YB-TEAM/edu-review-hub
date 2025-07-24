@@ -19,6 +19,7 @@ class AppColors {
   static const Color textWhite = Color(0xFFFFFFFF);
   static const Color textGrey = Color(0xFF7D848D);
   static const Color textLightGrey = Color(0xFFC4C4C4);
+  static const Color textBlue = Color(0xFF1877F2);
 
   // New colors for gamification UI
   static const Color amber400 = Color(0xFFFFCA28);

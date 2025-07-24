@@ -1,5 +1,6 @@
 class ApiUrls {
-  static const baseURL = "http://192.168.99.110:3000/api/v1/";
+  static const baseURL = "http://192.168.99.113:3000/api/v1/";
+  // static const baseURL = "http://localhost:3000/api/v1/";
   //Authentication URLs
   static const register = "${baseURL}auth/register";
   static const login = "${baseURL}auth/login";

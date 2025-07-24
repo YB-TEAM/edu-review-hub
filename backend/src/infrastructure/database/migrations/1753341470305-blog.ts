@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class UniversityReview1753286976353 implements MigrationInterface {
-    name = 'UniversityReview1753286976353'
+export class Blog1753341470305 implements MigrationInterface {
+    name = 'Blog1753341470305'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE "user_roles" DROP CONSTRAINT IF EXISTS "FK_b23c65e50a758245a33ee35fda1"`);
@@ -12,6 +12,7 @@ export class UniversityReview1753286976353 implements MigrationInterface {
         await queryRunner.query(`DROP INDEX IF EXISTS "public"."IDX_b23c65e50a758245a33ee35fda"`);
         await queryRunner.query(`DROP INDEX IF EXISTS "public"."IDX_178199805b901ccd220ab7740e"`);
         await queryRunner.query(`DROP INDEX IF EXISTS "public"."IDX_17022daf3f885f7d35423e9971"`);
+        await queryRunner.query(`CREATE TABLE IF NOT EXISTS "blogs" ("id" SERIAL NOT NULL, "title" character varying(255) NOT NULL, "content" text NOT NULL, "image" character varying(500), "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_e113335f11c926da929a625f118" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE INDEX IF NOT EXISTS "IDX_178199805b901ccd220ab7740e" ON "role_permissions" ("role_id") `);
         await queryRunner.query(`CREATE INDEX IF NOT EXISTS "IDX_17022daf3f885f7d35423e9971" ON "role_permissions" ("permission_id") `);
         await queryRunner.query(`CREATE INDEX IF NOT EXISTS "IDX_87b8888186ca9769c960e92687" ON "user_roles" ("user_id") `);
@@ -31,6 +32,7 @@ export class UniversityReview1753286976353 implements MigrationInterface {
         await queryRunner.query(`DROP INDEX IF EXISTS "public"."IDX_87b8888186ca9769c960e92687"`);
         await queryRunner.query(`DROP INDEX IF EXISTS "public"."IDX_17022daf3f885f7d35423e9971"`);
         await queryRunner.query(`DROP INDEX IF EXISTS "public"."IDX_178199805b901ccd220ab7740e"`);
+        await queryRunner.query(`DROP TABLE IF EXISTS "blogs"`);
         await queryRunner.query(`CREATE INDEX IF NOT EXISTS "IDX_17022daf3f885f7d35423e9971" ON "role_permissions" ("permission_id") `);
         await queryRunner.query(`CREATE INDEX IF NOT EXISTS "IDX_178199805b901ccd220ab7740e" ON "role_permissions" ("role_id") `);
         await queryRunner.query(`CREATE INDEX IF NOT EXISTS "IDX_b23c65e50a758245a33ee35fda" ON "user_roles" ("role_id") `);
