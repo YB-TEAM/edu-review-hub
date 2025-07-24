@@ -1,268 +1,250 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { Loader2, Mail, Lock, KeyRound, CheckCircle, XCircle, User } from "lucide-react";
+import { NavbarLogo } from "@/features/landing/components/navbar/Navbar";
+import { useRouter } from "next/navigation";
 import "../auth.scss";
 
 export default function ForgotPasswordPage() {
-  const [isVisible, setIsVisible] = useState(false);
+  const [step, setStep] = useState<1 | 2>(1);
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+  const [otpFields, setOtpFields] = useState(["", "", "", "", "", ""]);
+  const [newPassword, setNewPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [otpError, setOtpError] = useState("");
 
-  useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), 300);
-    return () => clearTimeout(timer);
-  }, []);
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSendEmail = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    
+    if (!email) {
+      setError("Vui lòng nhập email");
+      return;
+    }
 
-    // Simulate API call
-    setTimeout(() => {
+    setIsLoading(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      const res = await fetch(`${API_BASE}/api/v1/email-verification/forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!res.ok) throw new Error("Không thể gửi email đặt lại mật khẩu");
+
+      setStep(2);
+      setSuccess("Đã gửi mã OTP về email của bạn.");
+      toast.success("Đã gửi mã OTP về email!");
+    } catch (err: any) {
+      setError(err.message || "Không thể gửi email đặt lại mật khẩu");
+    } finally {
       setIsLoading(false);
-      setIsSubmitted(true);
-    }, 2000);
+    }
   };
 
-  if (isSubmitted) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex items-center justify-center p-4">
-        {/* Background Animation */}
-        <div className="auth-background">
-          <div className="floating-shapes">
-            <div className="shape shape-1"></div>
-            <div className="shape shape-2"></div>
-            <div className="shape shape-3"></div>
-            <div className="shape shape-4"></div>
-            <div className="shape shape-5"></div>
-          </div>
-        </div>
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setOtpError("");
+    setSuccess("");
 
-        <div className="w-full max-w-md">
-          {/* Success Message */}
-          <div
-            className={cn(
-              "text-center mb-8 transition-all duration-1000 transform",
-              {
-                "translate-y-0 opacity-100": isVisible,
-                "translate-y-10 opacity-0": !isVisible,
-              }
-            )}
-          >
-            <div className="auth-logo mb-4">
-              <div className="logo-icon success-icon">✅</div>
-            </div>
-            <h1 className="text-3xl font-bold text-primary-900 mb-2">
-              Email đã được gửi!
-            </h1>
-            <p className="text-gray-600">
-              Chúng tôi đã gửi hướng dẫn đặt lại mật khẩu đến email của bạn
-            </p>
-          </div>
+    const otp = otpFields.join("");
 
-          {/* Success Card */}
-          <div
-            className={cn(
-              "auth-card transition-all duration-1000 delay-300 transform",
-              {
-                "translate-y-0 opacity-100": isVisible,
-                "translate-y-10 opacity-0": !isVisible,
-              }
-            )}
-          >
-            <div className="text-center space-y-4">
-              <div className="success-animation">
-                <div className="checkmark">✓</div>
-              </div>
+    try {
+      if (!/^[0-9]{6}$/.test(otp)) throw new Error("OTP phải gồm 6 số.");
+      if (!/^.{8,}$/.test(newPassword) ||
+          !/[A-Z]/.test(newPassword) ||
+          !/[a-z]/.test(newPassword) ||
+          !/\d/.test(newPassword) ||
+          !/[!@#$%^&*(),.?":{}|<>]/.test(newPassword)) {
+        throw new Error("Mật khẩu phải >=8 ký tự, có chữ hoa, thường, số, ký tự đặc biệt.");
+      }
 
-              <div className="space-y-2">
-                <h3 className="text-lg font-semibold text-primary-900">
-                  Kiểm tra email của bạn
-                </h3>
-                <p className="text-gray-600 text-sm">
-                  Chúng tôi đã gửi email đến <strong>{email}</strong> với hướng
-                  dẫn đặt lại mật khẩu.
-                </p>
-              </div>
+      const res = await fetch(`${API_BASE}/api/v1/email-verification/reset-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp, newPassword }),
+      });
 
-              <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
-                <div className="flex items-start space-x-3">
-                  <div className="text-primary-600 text-lg">💡</div>
-                  <div className="text-left">
-                    <p className="text-sm font-medium text-primary-900 mb-1">
-                      Không nhận được email?
-                    </p>
-                    <ul className="text-xs text-primary-700 space-y-1">
-                      <li>• Kiểm tra thư mục spam</li>
-                      <li>• Đảm bảo email được nhập chính xác</li>
-                      <li>• Thử lại sau vài phút</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+      if (!res.ok) throw new Error("OTP không đúng hoặc đã hết hạn.");
 
-              <div className="flex flex-col space-y-3 pt-4">
-                <Button
-                  onClick={() => setIsSubmitted(false)}
-                  className="auth-submit-btn"
-                >
-                  <span className="btn-icon">🔄</span>
-                  Gửi lại email
-                </Button>
+      setSuccess("Đặt lại mật khẩu thành công! Bạn có thể đăng nhập.");
+      toast.success("Đặt lại mật khẩu thành công!");
+      setTimeout(() => window.location.href = "/auth/login", 1500);
+    } catch (err: any) {
+      setOtpError(err.message || "OTP không đúng hoặc đã hết hạn.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-                <Link href="/auth/login">
-                  <Button variant="outline" className="w-full">
-                    <span className="btn-icon">⬅️</span>
-                    Quay lại đăng nhập
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const handleOtpChange = (idx: number, value: string) => {
+    if (!/^[0-9]?$/.test(value)) return;
+    
+    const newOtp = [...otpFields];
+    newOtp[idx] = value;
+    setOtpFields(newOtp);
+
+    if (value && idx < 5) {
+      const next = document.getElementById(`otp-${idx + 1}`);
+      if (next) (next as HTMLInputElement).focus();
+    }
+    if (!value && idx > 0) {
+      const prev = document.getElementById(`otp-${idx - 1}`);
+      if (prev) (prev as HTMLInputElement).focus();
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex items-center justify-center p-4">
-      {/* Background Animation */}
-      <div className="auth-background">
-        <div className="floating-shapes">
-          <div className="shape shape-1"></div>
-          <div className="shape shape-2"></div>
-          <div className="shape shape-3"></div>
-          <div className="shape shape-4"></div>
-          <div className="shape shape-5"></div>
-        </div>
+    <div className="auth-container">
+      <div className="auth-logo">
+        <NavbarLogo isScrolled={true} onLogoClick={() => router.push("/")} />
       </div>
 
-      <div className="w-full max-w-md">
-        {/* Logo/Brand Section */}
-        <div
-          className={cn(
-            "text-center mb-8 transition-all duration-1000 transform",
-            {
-              "translate-y-0 opacity-100": isVisible,
-              "translate-y-10 opacity-0": !isVisible,
-            }
-          )}
-        >
-          <div className="auth-logo mb-4">
-            <div className="logo-icon">🔐</div>
-          </div>
-          <h1 className="text-3xl font-bold text-primary-900 mb-2">
-            Quên mật khẩu?
-          </h1>
-          <p className="text-gray-600">
-            Đừng lo lắng! Chúng tôi sẽ giúp bạn đặt lại mật khẩu
-          </p>
+      <div className="auth-background">
+        <video autoPlay loop muted playsInline>
+          <source src="/videos/auth-background.mp4" type="video/mp4" />
+        </video>
+      </div>
+
+      <div className="auth-card">
+        <div className="auth-header">
+          <Link href="/auth/register" className="nav-btn inactive">
+            Sign up
+          </Link>
+          <button className="nav-btn active">Forgot password</button>
+          <button className="close-btn">×</button>
         </div>
 
-        {/* Forgot Password Form */}
-        <div
-          className={cn(
-            "auth-card transition-all duration-1000 delay-300 transform",
-            {
-              "translate-y-0 opacity-100": isVisible,
-              "translate-y-10 opacity-0": !isVisible,
-            }
-          )}
-        >
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email Field */}
+        <h2 className="auth-title">
+          {step === 1 ? "Forgot your password?" : "Reset your password"}
+        </h2>
+
+        {error && (
+          <div className="alert error">
+            <XCircle className="w-5 h-5" />
+            {error}
+          </div>
+        )}
+
+        {success && (
+          <div className="alert success">
+            <CheckCircle className="w-5 h-5" />
+            {success}
+          </div>
+        )}
+
+        {step === 1 && (
+          <form onSubmit={handleSendEmail} className="space-y-4">
             <div className="form-group">
-              <label htmlFor="email" className="form-label">
-                Email
-              </label>
-              <div className="input-wrapper">
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Nhập email của bạn"
-                  className="form-input"
-                  required
-                />
-                <div className="input-icon">📧</div>
-              </div>
+              <Mail className="input-icon" />
+              <Input
+                name="email"
+                placeholder="Email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                className="form-input"
+              />
             </div>
 
-            {/* Info Box */}
-            <div className="bg-secondary-50 border border-secondary-200 rounded-lg p-4">
-              <div className="flex items-start space-x-3">
-                <div className="text-secondary-600 text-lg">ℹ️</div>
-                <div className="text-left">
-                  <p className="text-sm font-medium text-secondary-900 mb-1">
-                    Làm thế nào để đặt lại mật khẩu?
-                  </p>
-                  <p className="text-xs text-secondary-700">
-                    Chúng tôi sẽ gửi email chứa link đặt lại mật khẩu. Link này
-                    sẽ hết hạn sau 1 giờ để đảm bảo an toàn.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Submit Button */}
             <Button
               type="submit"
-              disabled={isLoading || !email}
-              className="auth-submit-btn w-full"
+              className="auth-btn"
+              disabled={isLoading}
             >
-              {isLoading ? (
-                <div className="loading-spinner">
-                  <div className="spinner"></div>
-                  <span>Đang gửi email...</span>
-                </div>
-              ) : (
-                <>
-                  <span className="btn-icon">📤</span>
-                  Gửi email đặt lại mật khẩu
-                </>
-              )}
+              {isLoading ? <div className="loading-spinner" /> : "Send reset email"}
             </Button>
           </form>
+        )}
 
-          {/* Back to Login */}
-          <div className="text-center mt-6">
-            <Link
-              href="/auth/login"
-              className="text-primary-600 hover:text-primary-700 font-semibold transition-colors"
-            >
-              <span className="btn-icon">⬅️</span>
-              Quay lại đăng nhập
-            </Link>
-          </div>
+        {step === 2 && (
+          <form onSubmit={handleResetPassword} className="space-y-4">
+            <div className="otp-container">
+              <KeyRound className="otp-icon" />
+              <div className="otp-inputs">
+                {otpFields.map((value, i) => (
+                  <input
+                    key={i}
+                    id={`otp-${i}`}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={value}
+                    onChange={e => handleOtpChange(i, e.target.value)}
+                    className="otp-input"
+                  />
+                ))}
+              </div>
+
+              <div className="form-group mt-4 w-full">
+                <Lock className="input-icon" />
+                <Input
+                  name="newPassword"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="New password"
+                  value={newPassword}
+                  onChange={e => setNewPassword(e.target.value)}
+                  className="form-input"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="password-toggle"
+                >
+                  {showPassword ? "🙈" : "👁️"}
+                </button>
+              </div>
+
+              {otpError && (
+                <div className="alert error">
+                  <XCircle className="w-5 h-5" />
+                  {otpError}
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                className="auth-btn"
+                disabled={isLoading}
+              >
+                {isLoading ? <div className="loading-spinner" /> : "Reset password"}
+              </Button>
+            </div>
+          </form>
+        )}
+
+        <div className="divider">
+          <div className="divider-line" />
+          <span className="divider-text">OR SIGN IN</span>
+          <div className="divider-line" />
         </div>
 
-        {/* Additional Help */}
-        <div
-          className={cn(
-            "text-center mt-6 transition-all duration-1000 delay-500 transform",
-            {
-              "translate-y-0 opacity-100": isVisible,
-              "translate-y-10 opacity-0": !isVisible,
-            }
-          )}
-        >
-          <p className="text-gray-600 text-sm">
-            Vẫn gặp vấn đề?{" "}
-            <Link
-              href="/contact"
-              className="text-primary-600 hover:text-primary-700 font-semibold transition-colors"
-            >
-              Liên hệ hỗ trợ
-            </Link>
-          </p>
+        <div className="social-buttons">
+          <Link href="/auth/login" className="flex-1">
+            <Button className="auth-btn variant-outline w-full">
+              <User className="w-5 h-5 mr-2" />
+              Login
+            </Button>
+          </Link>
         </div>
+
+        <p className="footer-text">
+          By resetting password, you agree to our{" "}
+          <Link href="/terms">Terms & Service</Link>
+        </p>
       </div>
     </div>
   );

@@ -135,6 +135,8 @@ export function Navbar({ rightSlot }: { rightSlot?: React.ReactNode } = {}) {
   );
 }
 
+export { NavbarLogo };
+
 // Sub-components
 function NavbarLogo({
   isScrolled,
