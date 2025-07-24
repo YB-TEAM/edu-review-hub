@@ -10,6 +10,7 @@ import {
   Request,
   ParseIntPipe,
   Inject,
+  Query,
 } from "@nestjs/common";
 import { JwtAuthGuard } from "@/presentation/guards/jwt-auth.guard";
 import { RolesGuard } from "@/presentation/guards/role.guard";
@@ -21,7 +22,8 @@ import { CreateBlogDto } from "@/application/dto/blog/create-blog.dto";
 import { UpdateBlogDto } from "@/application/dto/blog/update-blog.dto";
 import { BlogResponseDto } from "@/application/dto/blog/blog-response.dto";
 import { ModerateBlogDto } from "@/application/dto/blog/moderate-blog.dto";
-import { ApiBearerAuth, ApiTags, ApiBody, ApiParam } from "@nestjs/swagger";
+import { PaginationDto } from "@/application/dto/pagination/pagination.dto";
+import { ApiBearerAuth, ApiTags, ApiBody, ApiParam, ApiQuery } from "@nestjs/swagger";
 
 @ApiTags("Blog")
 @Controller("blogs")
@@ -33,8 +35,10 @@ export class BlogController {
 
   @Get()
   @RequirePermissions("blog:read")
-  async findAll(): Promise<BlogResponseDto[]> {
-    return this.blogService.findAll();
+  @ApiQuery({ name: "page", required: false, type: Number, description: "Trang hiện tại" })
+  @ApiQuery({ name: "limit", required: false, type: Number, description: "Số lượng mỗi trang" })
+  async findAll(@Query() pagination: PaginationDto) {
+    return this.blogService.findAll(pagination);
   }
 
   @Get(":id")
