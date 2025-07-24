@@ -72,6 +72,7 @@ flutter:
   - assets/icons/ic_chat_inactive.svg
   - assets/icons/ic_user_active.svg
   - assets/icons/ic_user_inactive.svg
+  - assets/icons/ic_users.svg
   - assets/icons/ic_bar_active.svg
   - assets/icons/ic_bar_inactive.svg
   - assets/icons/ic_search.svg
@@ -86,6 +87,17 @@ flutter:
   - assets/icons/ic_dislike_inactive.svg
   - assets/icons/ic_comment.svg
   - assets/icons/ic_share.svg
+  - assets/icons/ic_pencil.svg
+  - assets/icons/ic_camera.svg
+  - assets/icons/ic_book.svg
+  - assets/icons/ic_card.svg
+  - assets/icons/ic_calendar.svg
+  - assets/icons/ic_gender.svg
+  - assets/icons/ic_pin.svg
+  - assets/icons/ic_globe.svg
+  - assets/icons/ic_city.svg
+  - assets/icons/ic_cake.svg
+
   
   fonts:
     - family: Roboto-Thin

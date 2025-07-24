@@ -3,6 +3,7 @@ import 'package:edu_review_mobile/common/bloc/button/button_state_cubit.dart';
 import 'package:edu_review_mobile/common/widgets/button/primary_button.dart';
 import 'package:edu_review_mobile/common/widgets/loading/custom_loading_indicator.dart';
 import 'package:edu_review_mobile/common_libs.dart';
+import 'package:edu_review_mobile/core/utils/date_formatted.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user_display_cubit.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user_display_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -53,10 +54,12 @@ class _ProfilePageState extends State<ProfilePage> {
       child: BlocListener<ButtonStateCubit, ButtonState>(
         listener: (context, state) {},
         child: Scaffold(
+          backgroundColor: AppColors.backgroundGrey,
           body: Stack(
             children: [
               BlocBuilder<UserDisplayCubit, UserDisplayState>(
                 builder: (context, state) {
+                  
                   if (state is UserLoading) {
                     return Center(child: CustomLoadingIndicator());
                   }
@@ -67,24 +70,24 @@ class _ProfilePageState extends State<ProfilePage> {
                       header: null,
                       child: ListView(
                         children: [
-                          CoverPhotoWidget(
-                            imageUrl: state.profileEntity.coverImageUrl ?? '',
-                            onChangeCover: () {
-                              print('Nhấn đổi ảnh bìa');
-                            },
-                            child: EditAvatarButton(
-                              imageUrl: state.profileEntity.avatarUrl ?? '',
-                              size: 128,
-                              onPressed: () {
-                                print('Nhấn đổi avatar');
-                              },
-                            ),
-                          ),
-                          const SizedBox(height: 64),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                          Container(
+                            color: AppColors.primaryWhite,
                             child: Column(
                               children: [
+                                CoverPhotoWidget(
+                                  imageUrl: state.profileEntity.coverImageUrl ?? 'https://professionals.tarkett.co.uk/media/img/M/THH_25094225_25187225_001.jpg',
+                                  onChangeCover: () {
+                                    print('Nhấn đổi ảnh bìa');
+                                  },
+                                  child: EditAvatarButton(
+                                    imageUrl: state.profileEntity.avatarUrl ?? 'https://www.meme-arsenal.com/memes/4408af6c9803cb3f320ecc468b3abbfa.jpg',
+                                    size: 128,
+                                    onPressed: () {
+                                      print('Nhấn đổi avatar');
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: 64),
                                 Center(
                                   child: Text(
                                     state.profileEntity.displayName ?? '',
@@ -94,6 +97,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         ?.copyWith(fontWeight: FontWeight.w700),
                                   ),
                                 ),
+                                const SizedBox(height: 8),
                                 if (state.profileEntity.bio != null &&
                                     state.profileEntity.bio!.isNotEmpty) ...[
                                   Center(
@@ -117,43 +121,84 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ),
                                   ),
                                 ],
-                                const SizedBox(height: 8),
-                                PrimaryButton(
-                                  onPressed:
-                                      () => navigateToEditProfile(context),
-                                  title: "Edit Public Details",
-                                  icon: Icon(
-                                    Icons.edit,
-                                    color: AppColors.primaryWhite,
+                                const SizedBox(height: 16),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Studient',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            color: AppColors.textBlue,
+                                          ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Text(
+                                      '|',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            color: AppColors.textGrey,
+                                          ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Text(
+                                      'Joined ${formatDate(state.profileEntity.createdAt)}',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            color: AppColors.textBlack,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                  child: PrimaryButton(
+                                    onPressed:
+                                        () => navigateToEditProfile(context),
+                                    title: "Edit Public Details",
+                                    icon: Icon(
+                                      Icons.edit,
+                                      color: AppColors.primaryWhite,
+                                    ),
                                   ),
                                 ),
-                                const SizedBox(height: 16),
-                                AccountInfoWidget(
-                                  city: state.profileEntity.city,
-                                  universityName:
-                                      state.profileEntity.universityName,
-                                  major: state.profileEntity.major,
-                                  graduationYear:
-                                      state.profileEntity.graduationYear,
-                                  onSeeMorePressed: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      RouteConstant.detailProfile,
-                                      arguments: state.profileEntity,
-                                    );
-                                  },
-                                ),
-                                const SizedBox(height: 16),
-                                AchievementsWidget(
-                                  posts: 25,
-                                  likes: 150,
-                                  points: 750,
-                                  level: 5,
-                                  totalPoints: 1000,
-                                ),
-                                const SizedBox(height: 24),
                               ],
                             ),
+                          ),
+                          const SizedBox(height: 16),
+                          Column(
+                            children: [
+                              AccountInfoWidget(
+                                city: state.profileEntity.city,
+                                universityName:
+                                    state.profileEntity.universityName,
+                                major: state.profileEntity.major,
+                                graduationYear:
+                                    state.profileEntity.graduationYear,
+                                onSeeMorePressed: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    RouteConstant.detailProfile,
+                                    arguments: state.profileEntity,
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 16),
+                              AchievementsWidget(
+                                posts: 25,
+                                likes: 150,
+                                points: 750,
+                                level: 5,
+                                totalPoints: 1000,
+                              ),
+                              const SizedBox(height: 24),
+                            ],
                           ),
                         ],
                       ),

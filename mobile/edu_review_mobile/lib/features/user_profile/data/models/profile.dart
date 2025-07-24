@@ -22,7 +22,7 @@ class ProfileModel {
   final bool isStudentVerified;
   final Map<String, bool>? privacySettings;
   final Map<String, bool>? notificationSettings;
-  final String createAt;
+  final String createdAt;
   final String updatedAt;
 
   ProfileModel({
@@ -47,7 +47,7 @@ class ProfileModel {
     required this.isStudentVerified,
     this.privacySettings,
     this.notificationSettings,
-    required this.createAt,
+    required this.createdAt,
     required this.updatedAt,
   });
 
@@ -74,7 +74,7 @@ class ProfileModel {
       isStudentVerified: map['isStudentVerified'] ?? false,
       privacySettings: (map['privacySettings'] as Map?)?.cast<String, bool>(),
       notificationSettings: (map['notificationSettings'] as Map?)?.cast<String, bool>(),
-      createAt: map['createAt'] ?? '',
+      createdAt: map['createdAt'] ?? '',
       updatedAt: map['updatedAt'] ?? '',
     );
   }
@@ -102,7 +102,7 @@ class ProfileModel {
       'isStudentVerified': isStudentVerified,
       'privacySettings': privacySettings,
       'notificationSettings': notificationSettings,
-      'createAt': createAt,
+      'createdAt': createdAt,
       'updatedAt': updatedAt,
     };
   }
@@ -132,7 +132,7 @@ extension ProfileXModel on ProfileModel {
       isStudentVerified: isStudentVerified,
       privacySettings: privacySettings,
       notificationSettings: notificationSettings,
-      createAt: createAt,
+      createdAt: createdAt,
       updatedAt: updatedAt,
     );
   }

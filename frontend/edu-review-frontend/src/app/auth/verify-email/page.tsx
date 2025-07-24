@@ -3,10 +3,16 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { CheckCircle, XCircle, Mail, RefreshCw } from "lucide-react";
+import { NavbarLogo } from "@/features/landing/components/navbar/Navbar";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import "../auth.scss";
 
 export default function VerifyEmailPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [verificationStatus, setVerificationStatus] = useState<
     "loading" | "success" | "error" | "expired"
   >("loading");
@@ -16,24 +22,14 @@ export default function VerifyEmailPage() {
   const token = searchParams.get("token");
   const email = searchParams.get("email");
 
-  // Mock API call - replace with actual API
   const verifyEmail = async (token: string) => {
     try {
-      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      // Mock response - replace with actual API call
-      // const response = await fetch('/api/auth/verify-email', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ token })
-      // });
-
-      // if (!response.ok) throw new Error('Verification failed');
-
-      // Mock success
+      // Mock verification logic
       if (token === "valid-token") {
         setVerificationStatus("success");
+        toast.success("Email verified successfully!");
       } else {
         setVerificationStatus("error");
       }
@@ -45,18 +41,12 @@ export default function VerifyEmailPage() {
   const resendVerificationEmail = async () => {
     setIsResending(true);
     try {
-      // Mock API call - replace with actual API
       await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // const response = await fetch('/api/auth/resend-verification', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ email })
-      // });
-
       setCountdown(60);
-      setIsResending(false);
+      toast.success("Verification email sent!");
     } catch {
+      toast.error("Failed to send verification email");
+    } finally {
       setIsResending(false);
     }
   };
@@ -81,103 +71,88 @@ export default function VerifyEmailPage() {
       case "loading":
         return (
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <h2 className="text-xl font-semibold mb-2">
-              Đang xác minh email...
-            </h2>
+            <div className="loading-spinner mx-auto mb-4 w-12 h-12"></div>
+            <h2 className="auth-title">Đang xác minh email...</h2>
             <p className="text-gray-600">Vui lòng chờ trong giây lát</p>
           </div>
         );
 
       case "success":
         return (
-          <div className="text-center">
-            <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-green-600 mb-2">
-              Xác minh thành công!
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Email của bạn đã được xác minh. Bây giờ bạn có thể đăng nhập vào
-              tài khoản.
+          <div className="success-container">
+            <CheckCircle className="success-icon" />
+            <h2 className="success-title">Xác minh thành công!</h2>
+            <p className="success-description">
+              Email của bạn đã được xác minh. Bây giờ bạn có thể đăng nhập vào tài khoản.
             </p>
-            <Link
-              href="/auth/login"
-              className="inline-flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
-            >
-              Đăng nhập ngay
+            <Link href="/auth/login">
+              <Button className="auth-btn">
+                Đăng nhập ngay
+              </Button>
             </Link>
           </div>
         );
 
       case "error":
         return (
-          <div className="text-center">
-            <XCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-red-600 mb-2">
-              Xác minh thất bại
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Link xác minh không hợp lệ hoặc đã hết hạn. Vui lòng yêu cầu gửi
-              lại email xác minh.
+          <div className="error-container">
+            <XCircle className="error-icon" />
+            <h2 className="error-title">Xác minh thất bại</h2>
+            <p className="error-description">
+              Link xác minh không hợp lệ hoặc đã hết hạn. Vui lòng yêu cầu gửi lại email xác minh.
             </p>
-            <button
+            <Button
               onClick={resendVerificationEmail}
               disabled={isResending || countdown > 0}
-              className="inline-flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="auth-btn"
             >
               {isResending ? (
                 <>
-                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
                   Đang gửi...
                 </>
               ) : countdown > 0 ? (
                 `Gửi lại sau ${countdown}s`
               ) : (
                 <>
-                  <Mail className="h-4 w-4 mr-2" />
+                  <Mail className="w-4 h-4 mr-2" />
                   Gửi lại email xác minh
                 </>
               )}
-            </button>
+            </Button>
           </div>
         );
 
       case "expired":
         return (
-          <div className="text-center">
-            <XCircle className="h-16 w-16 text-orange-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-orange-600 mb-2">
-              Link đã hết hạn
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Link xác minh này đã hết hạn. Vui lòng yêu cầu gửi lại email xác
-              minh mới.
+          <div className="error-container">
+            <XCircle className="error-icon text-orange-500" />
+            <h2 className="error-title text-orange-600">Link đã hết hạn</h2>
+            <p className="error-description">
+              Link xác minh này đã hết hạn. Vui lòng yêu cầu gửi lại email xác minh mới.
             </p>
             <div className="space-y-3">
-              <button
+              <Button
                 onClick={resendVerificationEmail}
                 disabled={isResending || countdown > 0}
-                className="inline-flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="auth-btn"
               >
                 {isResending ? (
                   <>
-                    <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                    <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
                     Đang gửi...
                   </>
                 ) : countdown > 0 ? (
                   `Gửi lại sau ${countdown}s`
                 ) : (
                   <>
-                    <Mail className="h-4 w-4 mr-2" />
+                    <Mail className="w-4 h-4 mr-2" />
                     Gửi lại email xác minh
                   </>
                 )}
-              </button>
+              </Button>
               <div>
-                <Link
-                  href="/auth/login"
-                  className="text-primary hover:underline"
-                >
+                <Link href="/auth/login" className="auth-link">
                   Quay lại đăng nhập
                 </Link>
               </div>
@@ -188,20 +163,30 @@ export default function VerifyEmailPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-secondary-50 p-4">
-      <div className="max-w-md w-full">
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-white/20">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Xác minh Email
-            </h1>
-            <p className="text-gray-600">
-              {email && `Đang xác minh email: ${email}`}
-            </p>
-          </div>
+    <div className="auth-container">
+      <div className="auth-logo">
+        <NavbarLogo isScrolled={true} onLogoClick={() => router.push("/")} />
+      </div>
 
-          {renderContent()}
+      <div className="auth-background">
+        <video autoPlay loop muted playsInline>
+          <source src="/videos/auth-background.mp4" type="video/mp4" />
+        </video>
+      </div>
+
+      <div className="auth-card">
+        <div className="text-center mb-8">
+          <h1 className="auth-title">
+            Xác minh Email
+          </h1>
+          {email && (
+            <p className="text-gray-600">
+              Đang xác minh email: {email}
+            </p>
+          )}
         </div>
+
+        {renderContent()}
       </div>
     </div>
   );
