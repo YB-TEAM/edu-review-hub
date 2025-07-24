@@ -16,7 +16,7 @@ class AnimatedAppBar extends StatefulWidget {
 class _AnimatedAppBarState extends State<AnimatedAppBar> {
   @override
   Widget build(BuildContext context) {
-    final double expandedHeight = 100;
+    final double expandedHeight = 110;
     final double collapsedHeight =
         MediaQuery.of(context).padding.top + kToolbarHeight;
 

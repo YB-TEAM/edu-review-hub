@@ -1,4 +1,5 @@
 import 'package:edu_review_mobile/common_libs.dart';
+import 'package:flutter_svg/svg.dart';
 
 class EditAvatarButton extends StatefulWidget {
   final String imageUrl;
@@ -89,9 +90,11 @@ class _EditAvatarButtonState extends State<EditAvatarButton> {
                 elevation: 2,
               ),
               onPressed: widget.onPressed,
-              child: const Icon(
-                Icons.camera_alt,
-                size: 20,
+              child: SvgPicture.asset(
+                'assets/icons/ic_camera.svg',
+                width: 20,
+                height: 20,
+                // ignore: deprecated_member_use
                 color: AppColors.primaryBlack,
               ),
             ),

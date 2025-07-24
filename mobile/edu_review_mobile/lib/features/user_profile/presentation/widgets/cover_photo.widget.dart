@@ -1,4 +1,5 @@
 import 'package:edu_review_mobile/common_libs.dart';
+import 'package:flutter_svg/svg.dart';
 
 class CoverPhotoWidget extends StatefulWidget {
   final String imageUrl;
@@ -90,9 +91,11 @@ class _CoverPhotoWidgetState extends State<CoverPhotoWidget> {
               elevation: 2,
             ),
             onPressed: widget.onChangeCover,
-            child: const Icon(
-              Icons.image,
-              size: 20,
+            child: SvgPicture.asset(
+              'assets/icons/ic_camera.svg',
+              width: 20,
+              height: 20,
+              // ignore: deprecated_member_use
               color: AppColors.primaryBlack,
             ),
           ),
