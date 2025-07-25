@@ -77,12 +77,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
+
     return BlocProvider(
       create: (context) => AuthStateCubit()..appStarted(),
       child: MaterialApp(
         theme: AppTheme.lightTheme,
         onGenerateRoute: AppRouter.generateRoute,
         debugShowCheckedModeBanner: false,
+        navigatorKey: rootNavigatorKey,
         home: BlocListener<AuthStateCubit, AuthState>(
           listener: (context, state) {
             if (state is Authenticated) {
