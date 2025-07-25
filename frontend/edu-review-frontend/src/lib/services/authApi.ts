@@ -1,15 +1,15 @@
 import { api } from "../api";
 
 export interface LoginRequest {
-  email: string;
+  identifier: string;
   password: string;
 }
 
 export interface RegisterRequest {
-  name: string;
+  username: string;
   email: string;
   password: string;
-  password_confirmation: string;
+  phone?: string;
 }
 
 export interface User {
@@ -68,6 +68,51 @@ export const authApi = api.injectEndpoints({
       }),
       invalidatesTags: ["User"],
     }),
+
+    // Forgot Password
+    forgotPassword: builder.mutation<{ message: string }, { email: string }>({
+      query: (data) => ({
+        url: "/email-verification/forgot-password",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    // Reset Password
+    resetPassword: builder.mutation<
+      { message: string },
+      { email: string; otp: string; newPassword: string }
+    >({
+      query: (data) => ({
+        url: "/email-verification/reset-password",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    // Verify Email (OTP)
+    verifyEmail: builder.mutation<
+      { message: string },
+      { email: string; otp: string }
+    >({
+      query: (data) => ({
+        url: "/email-verification/verify-email",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    // Resend Verification Email
+    resendVerification: builder.mutation<
+      { message: string },
+      { email: string }
+    >({
+      query: (data) => ({
+        url: "/email-verification/resend-verification",
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -77,4 +122,8 @@ export const {
   useLogoutMutation,
   useGetProfileQuery,
   useUpdateProfileMutation,
+  useForgotPasswordMutation,
+  useResetPasswordMutation,
+  useVerifyEmailMutation,
+  useResendVerificationMutation,
 } = authApi;

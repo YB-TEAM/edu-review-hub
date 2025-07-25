@@ -9,6 +9,7 @@ import { Loader2, Mail, Lock, User, Phone, KeyRound, CheckCircle, XCircle } from
 import { NavbarLogo } from "@/features/landing/components/navbar/Navbar";
 import { useRouter } from "next/navigation";
 import "../auth.scss";
+import { useRegisterMutation, useVerifyEmailMutation, useResendVerificationMutation } from "@/lib/services/authApi";
 
 export default function RegisterPage() {
   const [step, setStep] = useState<1 | 2>(1);
@@ -26,7 +27,9 @@ export default function RegisterPage() {
   const [resendLoading, setResendLoading] = useState(false);
 
   const router = useRouter();
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  const [register, { isLoading: isRegisterLoading }] = useRegisterMutation();
+  const [verifyEmail, { isLoading: isVerifyLoading }] = useVerifyEmailMutation();
+  const [resendVerification, { isLoading: isResendLoading }] = useResendVerificationMutation();
 
   const validateStep1 = () => {
     if (!formData.username || !formData.email || !formData.password || !formData.phone) {
@@ -58,19 +61,16 @@ export default function RegisterPage() {
     setSuccess("");
 
     try {
-      const res = await fetch(`${API_BASE}/api/v1/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (res.status === 409) throw new Error("Email hoặc tên đăng nhập đã tồn tại");
-      if (!res.ok) throw new Error("Đăng ký thất bại");
-
+      await register({
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        phone: formData.phone,
+      }).unwrap();
       setStep(2);
       setSuccess("Mã OTP đã được gửi về email của bạn.");
     } catch (err: any) {
-      setError(err.message || "Email hoặc tên đăng nhập đã tồn tại");
+      setError(err?.data?.message || err.message || "Email hoặc tên đăng nhập đã tồn tại");
     } finally {
       setIsLoading(false);
     }
@@ -87,19 +87,12 @@ export default function RegisterPage() {
     try {
       if (!/^[0-9]{6}$/.test(otp)) throw new Error("OTP phải gồm 6 số.");
 
-      const res = await fetch(`${API_BASE}/api/v1/email-verification/verify-email`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: formData.email, otp }),
-      });
-
-      if (!res.ok) throw new Error("OTP không đúng hoặc đã hết hạn.");
-
+      await verifyEmail({ email: formData.email, otp }).unwrap();
       setSuccess("Xác thực thành công! Bạn có thể đăng nhập.");
       toast.success("Đăng ký thành công!", { description: "Bạn có thể đăng nhập." });
       setTimeout(() => window.location.href = "/auth/login", 1500);
     } catch (err: any) {
-      setOtpError(err.message || "OTP không đúng hoặc đã hết hạn.");
+      setOtpError(err?.data?.message || err.message || "OTP không đúng hoặc đã hết hạn.");
     } finally {
       setIsLoading(false);
     }
@@ -110,16 +103,10 @@ export default function RegisterPage() {
     setOtpError("");
 
     try {
-      const res = await fetch(`${API_BASE}/api/v1/email-verification/resend-verification`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: formData.email }),
-      });
-
-      if (!res.ok) throw new Error("Không thể gửi lại OTP");
+      await resendVerification({ email: formData.email }).unwrap();
       toast.success("Đã gửi lại OTP về email!");
     } catch (err: any) {
-      setOtpError(err.message || "Không thể gửi lại OTP");
+      setOtpError(err?.data?.message || err.message || "Không thể gửi lại OTP");
     } finally {
       setResendLoading(false);
     }
@@ -160,15 +147,15 @@ export default function RegisterPage() {
 
       <div className="auth-card">
         <div className="auth-header">
-          <button className="nav-btn active">Sign up</button>
+          <button className="nav-btn active">Đăng ký</button>
           <Link href="/auth/login" className="nav-btn inactive">
-            Sign in
+            Đăng nhập
           </Link>
           <button className="close-btn">×</button>
         </div>
 
         <h2 className="auth-title">
-          {step === 1 ? "Create an account" : "Verify your email"}
+          {step === 1 ? "Tạo tài khoản" : "Xác thực email"}
         </h2>
 
         {error && (
@@ -191,7 +178,7 @@ export default function RegisterPage() {
               <User className="input-icon" />
               <Input
                 name="username"
-                placeholder="Username"
+                placeholder="Tên đăng nhập"
                 value={formData.username}
                 onChange={e => handleInputChange('username', e.target.value)}
                 className="form-input"
@@ -202,7 +189,7 @@ export default function RegisterPage() {
               <Phone className="input-icon" />
               <Input
                 name="phone"
-                placeholder="Phone"
+                placeholder="Số điện thoại"
                 value={formData.phone}
                 onChange={e => handleInputChange('phone', e.target.value)}
                 className="form-input"
@@ -225,7 +212,7 @@ export default function RegisterPage() {
               <Input
                 name="password"
                 type="password"
-                placeholder="Password"
+                placeholder="Mật khẩu"
                 value={formData.password}
                 onChange={e => handleInputChange('password', e.target.value)}
                 className="form-input"
@@ -237,7 +224,7 @@ export default function RegisterPage() {
               className="auth-btn"
               disabled={isLoading}
             >
-              {isLoading ? <div className="loading-spinner" /> : "Create an account"}
+              {isLoading ? <div className="loading-spinner" /> : "Tạo tài khoản"}
             </Button>
           </form>
         )}
@@ -291,7 +278,7 @@ export default function RegisterPage() {
 
         <div className="divider">
           <div className="divider-line" />
-          <span className="divider-text">OR SIGN IN WITH</span>
+          <span className="divider-text">HOẶC ĐĂNG KÝ BẰNG</span>
           <div className="divider-line" />
         </div>
 
@@ -303,8 +290,7 @@ export default function RegisterPage() {
         </div>
 
         <p className="footer-text">
-          By creating an account, you agree to our{" "}
-          <Link href="/terms">Terms & Service</Link>
+          Khi đăng ký, bạn đồng ý với <Link href="/terms">Điều khoản & Dịch vụ</Link>
         </p>
       </div>
     </div>

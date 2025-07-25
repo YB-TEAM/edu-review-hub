@@ -9,6 +9,7 @@ import { Loader2, Mail, Lock, KeyRound, CheckCircle, XCircle, User } from "lucid
 import { NavbarLogo } from "@/features/landing/components/navbar/Navbar";
 import { useRouter } from "next/navigation";
 import "../auth.scss";
+import { useForgotPasswordMutation, useResetPasswordMutation } from "@/lib/services/authApi";
 
 export default function ForgotPasswordPage() {
   const [step, setStep] = useState<1 | 2>(1);
@@ -21,8 +22,9 @@ export default function ForgotPasswordPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [otpError, setOtpError] = useState("");
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
   const router = useRouter();
+  const [forgotPassword, { isLoading: isForgotLoading }] = useForgotPasswordMutation();
+  const [resetPasswordApi, { isLoading: isResetLoading }] = useResetPasswordMutation();
 
   const handleSendEmail = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,19 +39,12 @@ export default function ForgotPasswordPage() {
     setSuccess("");
 
     try {
-      const res = await fetch(`${API_BASE}/api/v1/email-verification/forgot-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-
-      if (!res.ok) throw new Error("Không thể gửi email đặt lại mật khẩu");
-
+      await forgotPassword({ email }).unwrap();
       setStep(2);
       setSuccess("Đã gửi mã OTP về email của bạn.");
       toast.success("Đã gửi mã OTP về email!");
     } catch (err: any) {
-      setError(err.message || "Không thể gửi email đặt lại mật khẩu");
+      setError(err?.data?.message || err.message || "Không thể gửi email đặt lại mật khẩu");
     } finally {
       setIsLoading(false);
     }
@@ -73,19 +68,12 @@ export default function ForgotPasswordPage() {
         throw new Error("Mật khẩu phải >=8 ký tự, có chữ hoa, thường, số, ký tự đặc biệt.");
       }
 
-      const res = await fetch(`${API_BASE}/api/v1/email-verification/reset-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, otp, newPassword }),
-      });
-
-      if (!res.ok) throw new Error("OTP không đúng hoặc đã hết hạn.");
-
+      await resetPasswordApi({ email, otp, newPassword }).unwrap();
       setSuccess("Đặt lại mật khẩu thành công! Bạn có thể đăng nhập.");
       toast.success("Đặt lại mật khẩu thành công!");
       setTimeout(() => window.location.href = "/auth/login", 1500);
     } catch (err: any) {
-      setOtpError(err.message || "OTP không đúng hoặc đã hết hạn.");
+      setOtpError(err?.data?.message || err.message || "OTP không đúng hoặc đã hết hạn.");
     } finally {
       setIsLoading(false);
     }
@@ -123,14 +111,14 @@ export default function ForgotPasswordPage() {
       <div className="auth-card">
         <div className="auth-header">
           <Link href="/auth/register" className="nav-btn inactive">
-            Sign up
+            Đăng ký
           </Link>
-          <button className="nav-btn active">Forgot password</button>
+          <button className="nav-btn active">Quên mật khẩu</button>
           <button className="close-btn">×</button>
         </div>
 
         <h2 className="auth-title">
-          {step === 1 ? "Forgot your password?" : "Reset your password"}
+          {step === 1 ? "Quên mật khẩu?" : "Đặt lại mật khẩu"}
         </h2>
 
         {error && (
@@ -165,7 +153,7 @@ export default function ForgotPasswordPage() {
               className="auth-btn"
               disabled={isLoading}
             >
-              {isLoading ? <div className="loading-spinner" /> : "Send reset email"}
+              {isLoading ? <div className="loading-spinner" /> : "Gửi email đặt lại mật khẩu"}
             </Button>
           </form>
         )}
@@ -194,7 +182,7 @@ export default function ForgotPasswordPage() {
                 <Input
                   name="newPassword"
                   type={showPassword ? "text" : "password"}
-                  placeholder="New password"
+                  placeholder="Mật khẩu mới"
                   value={newPassword}
                   onChange={e => setNewPassword(e.target.value)}
                   className="form-input"
@@ -220,7 +208,7 @@ export default function ForgotPasswordPage() {
                 className="auth-btn"
                 disabled={isLoading}
               >
-                {isLoading ? <div className="loading-spinner" /> : "Reset password"}
+                {isLoading ? <div className="loading-spinner" /> : "Đặt lại mật khẩu"}
               </Button>
             </div>
           </form>
@@ -228,7 +216,7 @@ export default function ForgotPasswordPage() {
 
         <div className="divider">
           <div className="divider-line" />
-          <span className="divider-text">OR SIGN IN</span>
+          <span className="divider-text">HOẶC ĐĂNG NHẬP</span>
           <div className="divider-line" />
         </div>
 
@@ -236,14 +224,13 @@ export default function ForgotPasswordPage() {
           <Link href="/auth/login" className="flex-1">
             <Button className="auth-btn variant-outline w-full">
               <User className="w-5 h-5 mr-2" />
-              Login
+              Đăng nhập
             </Button>
           </Link>
         </div>
 
         <p className="footer-text">
-          By resetting password, you agree to our{" "}
-          <Link href="/terms">Terms & Service</Link>
+          Khi đặt lại mật khẩu, bạn đồng ý với <Link href="/terms">Điều khoản & Dịch vụ</Link>
         </p>
       </div>
     </div>
