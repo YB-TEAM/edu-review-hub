@@ -193,7 +193,7 @@ class ProfileDetailPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: InkWell(
         onTap: () {
-          print("hello");
+          
         },
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,

@@ -38,17 +38,25 @@ class _ProfilePageState extends State<ProfilePage> {
     super.dispose();
   }
 
+  void _navigateToDetailProfile(BuildContext context, dynamic profileEntity) async{
+    await Navigator.of(context, rootNavigator: true).pushNamed(RouteConstant.detailProfile, arguments: profileEntity);
+    if (mounted) {
+      context.read<UserDisplayCubit>().reloadUser();
+    }
+  }
+
+  void navigateToEditProfile(BuildContext context) async {
+    await Navigator.of(
+      context,
+      rootNavigator: true,
+    ).pushNamed(RouteConstant.editProfile);
+    if (mounted) {
+      context.read<UserDisplayCubit>().reloadUser();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    void navigateToEditProfile(BuildContext context) async {
-      await Navigator.of(
-        context,
-        rootNavigator: true,
-      ).pushNamed(RouteConstant.editProfile);
-      if (mounted) {
-        context.read<UserDisplayCubit>().reloadUser();
-      }
-    }
 
     return MultiBlocProvider(
       providers: [BlocProvider(create: (context) => ButtonStateCubit())],
@@ -182,13 +190,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 major: state.profileEntity.major,
                                 graduationYear:
                                     state.profileEntity.graduationYear,
-                                onSeeMorePressed: () {
-                                  Navigator.pushNamed(
-                                    context,
-                                    RouteConstant.detailProfile,
-                                    arguments: state.profileEntity,
-                                  );
-                                },
+                                onSeeMorePressed: () => _navigateToDetailProfile(context, state.profileEntity),
                               ),
                               const SizedBox(height: 16),
                               AchievementsWidget(

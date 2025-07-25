@@ -34,8 +34,8 @@ class _SignUpPageState extends State<SignUpPage> {
     if (value == null || value.isEmpty) {
       return 'Please enter username';
     }
-    if (value.length < 6) {
-      return 'Username must be at least 6 characters';
+    if (value.length < 3) {
+      return 'Username must be at least 3 characters';
     }
     if (value.length > 20) {
       return 'Username cannot exceed 20 characters';
@@ -316,6 +316,7 @@ class _SignUpPageState extends State<SignUpPage> {
               BlocBuilder<ButtonStateCubit, ButtonState>(
                 builder: (context, state) {
                   if (state is ButtonLoadingState) {
+                    FocusScope.of(context).unfocus();
                     return AbsorbPointer(
                       absorbing: true,
                       child: Container(
