@@ -11,27 +11,27 @@ class ProfileDetailPage extends StatelessWidget {
 
   List<Map<String, String?>> get _personalInfoItems => [
     {
-      'icon': 'assets/icons/ic_cake.svg',
+      'icon': AppIcons.cake,
       'label': 'Birthday',
       'value': profileEntity.dateOfBirth,
     },
     {
-      'icon': 'assets/icons/ic_gender.svg',
+      'icon': AppIcons.gender,
       'label': 'Gender',
       'value': profileEntity.gender,
     },
     {
-      'icon': 'assets/icons/ic_pin.svg',
+      'icon': AppIcons.pin,
       'label': 'Address',
       'value': profileEntity.address,
     },
     {
-      'icon': 'assets/icons/ic_globe.svg',
+      'icon': AppIcons.globe,
       'label': 'Country',
       'value': profileEntity.country,
     },
     {
-      'icon': 'assets/icons/ic_city.svg',
+      'icon': AppIcons.city,
       'label': 'City',
       'value': profileEntity.city,
     },
@@ -39,22 +39,22 @@ class ProfileDetailPage extends StatelessWidget {
 
   List<Map<String, String?>> get _educationItems => [
     {
-      'icon': 'assets/icons/ic_university.svg',
+      'icon': AppIcons.university,
       'label': 'University',
       'value': profileEntity.universityName,
     },
     {
-      'icon': 'assets/icons/ic_book.svg',
+      'icon': AppIcons.book,
       'label': 'Major',
       'value': profileEntity.major,
     },
     {
-      'icon': 'assets/icons/ic_card.svg',
+      'icon': AppIcons.card,
       'label': 'Student ID',
       'value': profileEntity.studentId,
     },
     {
-      'icon': 'assets/icons/ic_calendar.svg',
+      'icon': AppIcons.calendar,
       'label': 'Graduation Year',
       'value': profileEntity.graduationYear?.toString(),
     },

@@ -1,7 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
-import 'package:flutter/material.dart';
-import 'package:edu_review_mobile/core/config/theme/color.dart';
+import 'package:edu_review_mobile/common_libs.dart';
 import 'dart:async';
 
 import 'package:flutter_svg/svg.dart';
@@ -174,7 +173,7 @@ class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStat
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            SvgPicture.asset('assets/icons/ic_search.svg', width: 16, height: 16, color: AppColors.primaryWhite),
+                            SvgPicture.asset(AppIcons.search, width: 16, height: 16, color: AppColors.primaryWhite),
                             const SizedBox(width: 8),
                             Text(
                               'Search Universities',

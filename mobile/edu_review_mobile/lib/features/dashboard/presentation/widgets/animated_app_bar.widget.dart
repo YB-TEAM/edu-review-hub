@@ -1,7 +1,6 @@
 // ignore_for_file: deprecated_member_use
 import 'package:edu_review_mobile/common/widgets/button/custom_icon_button.dart';
-import 'package:flutter/material.dart';
-import 'package:edu_review_mobile/core/config/theme/color.dart';
+import 'package:edu_review_mobile/common_libs.dart';
 import 'package:flutter_svg/svg.dart';
 
 class AnimatedAppBar extends StatefulWidget {
@@ -48,7 +47,7 @@ class _AnimatedAppBarState extends State<AnimatedAppBar> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SvgPicture.asset('assets/icons/ic_university.svg', width: 20, height: 20, color: AppColors.primaryWhite),
+                SvgPicture.asset(AppIcons.university, width: 20, height: 20, color: AppColors.primaryWhite),
                 const SizedBox(width: 8),
                 Text(
                   'EduReview Hub',
@@ -83,7 +82,7 @@ class _AnimatedAppBarState extends State<AnimatedAppBar> {
               opacity: scrollRatio,
               child: CustomIconButton(
                 isCollapsed: true,
-                iconAssetPath: 'assets/icons/ic_notifications_active.svg',
+                iconAssetPath: AppIcons.notificationsActive,
                 badgeCount: 3,
                 onTap: () {
                   print('Icon tapped!');
@@ -138,7 +137,7 @@ class _AnimatedAppBarState extends State<AnimatedAppBar> {
                         children: [
                           CustomIconButton(
                             isCollapsed: false,
-                            iconAssetPath: 'assets/icons/ic_university.svg',
+                            iconAssetPath: AppIcons.university,
                             onTap: () {
                               print('Icon tapped!');
                             },
@@ -168,7 +167,7 @@ class _AnimatedAppBarState extends State<AnimatedAppBar> {
                           ),
                           CustomIconButton(
                             isCollapsed: false,
-                            iconAssetPath: 'assets/icons/ic_notifications_active.svg',
+                            iconAssetPath: AppIcons.notificationsActive,
                             badgeCount: 3,
                             onTap: () {
                               print('Icon tapped!');

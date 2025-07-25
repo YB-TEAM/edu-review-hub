@@ -1,9 +1,8 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:edu_review_mobile/common/widgets/button/custom_like_button.dart';
+import 'package:edu_review_mobile/common_libs.dart';
 import 'package:edu_review_mobile/core/utils/number_formatter.dart';
-import 'package:flutter/material.dart';
-import 'package:edu_review_mobile/core/config/theme/color.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class RecentReviews extends StatelessWidget {
@@ -209,7 +208,7 @@ class RecentReviews extends StatelessWidget {
                   child: Row(
                     children: [
                       SvgPicture.asset(
-                        'assets/icons/ic_comment.svg',
+                        AppIcons.comment,
                         width: 20,
                         height: 20,
                         color: AppColors.primaryGrey,
@@ -232,7 +231,7 @@ class RecentReviews extends StatelessWidget {
                   child: Row(
                     children: [
                       SvgPicture.asset(
-                        'assets/icons/ic_share.svg',
+                        AppIcons.share,
                         width: 20,
                         height: 20,
                         color: AppColors.primaryGrey,

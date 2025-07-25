@@ -1,7 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
-import 'package:flutter/material.dart';
-import 'package:edu_review_mobile/core/config/theme/color.dart';
+import 'package:edu_review_mobile/common_libs.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class QuickStats extends StatelessWidget {
@@ -24,7 +23,7 @@ class QuickStats extends StatelessWidget {
               Expanded(
                 child: _buildStatCard(
                   context: context,
-                  icon: 'assets/icons/ic_university.svg',
+                  icon: AppIcons.university,
                   title: 'Universities',
                   value: '2,847',
                   color: AppColors.primaryBlue,
@@ -35,7 +34,7 @@ class QuickStats extends StatelessWidget {
               Expanded(
                 child: _buildStatCard(
                   context: context,
-                  icon: 'assets/icons/ic_users.svg',
+                  icon: AppIcons.users,
                   title: 'Students',
                   value: '45.2K',
                   color: AppColors.primaryGreen,
@@ -46,7 +45,7 @@ class QuickStats extends StatelessWidget {
               Expanded(
                 child: _buildStatCard(
                   context: context,
-                  icon: 'assets/icons/ic_star_active.svg',
+                  icon: AppIcons.starActive,
                   title: 'Reviews',
                   value: '12.8K',
                   color: AppColors.primaryOrange,

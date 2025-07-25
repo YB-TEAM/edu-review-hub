@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:edu_review_mobile/common/widgets/appbar/custom_appbar.dart';
 import 'package:edu_review_mobile/common/widgets/loading/custom_loading_indicator.dart';
 import 'package:edu_review_mobile/common/widgets/text_field/custom_text_field.dart';
@@ -7,6 +9,7 @@ import 'package:edu_review_mobile/features/user_profile/presentation/bloc/edit_p
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/edit_profile_state.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/widgets/image_picker.widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -170,9 +173,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                             elevation: 2,
                                           ),
                                           onPressed: _onAvatarPressed,
-                                          child: const Icon(
-                                            Icons.camera_alt,
-                                            size: 20,
+                                          child: SvgPicture.asset(
+                                            AppIcons.camera,
+                                            width: 20,
+                                            height: 20,
                                             color: Colors.black,
                                           ),
                                         ),
@@ -228,9 +232,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                             elevation: 2,
                                           ),
                                           onPressed: _onCoverPressed,
-                                          child: const Icon(
-                                            Icons.image,
-                                            size: 20,
+                                          child: SvgPicture.asset(
+                                            AppIcons.camera,
+                                            width: 20,
+                                            height: 20,
                                             color: Colors.black,
                                           ),
                                         ),
