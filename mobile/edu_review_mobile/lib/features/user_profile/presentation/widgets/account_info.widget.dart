@@ -41,7 +41,7 @@ class AccountInfoWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -55,11 +55,11 @@ class AccountInfoWidget extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             if (city != null && city!.isNotEmpty)
-              _buildInfoRow("assets/icons/ic_city.svg", 'Lives in', city!, context),
+              _buildInfoRow(AppIcons.city, 'Lives in', city!, context),
             if (universityName != null && universityName!.isNotEmpty)
-              _buildInfoRow("assets/icons/ic_university.svg", _getGraduationStatus(), universityName!, context),
+              _buildInfoRow(AppIcons.university, _getGraduationStatus(), universityName!, context),
             if (major != null && major!.isNotEmpty)
-              _buildInfoRow("assets/icons/ic_book.svg", 'Majoring in', major!, context),
+              _buildInfoRow(AppIcons.book, 'Majoring in', major!, context),
             SizedBox(
               width: double.infinity,
               child: CustomTextButton(

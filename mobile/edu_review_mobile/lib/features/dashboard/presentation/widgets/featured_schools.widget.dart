@@ -1,7 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
-import 'package:flutter/material.dart';
-import 'package:edu_review_mobile/core/config/theme/color.dart';
+import 'package:edu_review_mobile/common_libs.dart';
 import 'package:flutter_svg/svg.dart';
 
 class FeaturedSchools extends StatelessWidget {
@@ -146,7 +145,7 @@ class FeaturedSchools extends StatelessWidget {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          SvgPicture.asset('assets/icons/ic_star_active.svg', width: 16, height: 16, color: AppColors.primaryYellow),
+                          SvgPicture.asset(AppIcons.starActive, width: 16, height: 16, color: AppColors.primaryYellow),
                           const SizedBox(width: 4),
                           Text(
                             rating.toString(),

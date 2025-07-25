@@ -1,44 +1,21 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:dartz/dartz.dart';
-import 'package:dio/dio.dart';
+import 'package:edu_review_mobile/core/error/failures.dart';
 import 'package:edu_review_mobile/features/user_profile/data/data_souces/remote/profile_api_service.dart';
-import 'package:edu_review_mobile/features/user_profile/data/models/profile.dart';
+import 'package:edu_review_mobile/features/user_profile/data/models/edit_profile.dart';
 import 'package:edu_review_mobile/features/user_profile/domain/entities/profile.dart';
 import 'package:edu_review_mobile/features/user_profile/domain/repository/profile_repository.dart';
 import 'package:edu_review_mobile/service_locator.dart';
 
 class ProfileRepositoryImpl extends ProfileRepository {
   @override
-  Future<Either> getUser() async {
-    Either result = await sl<ProfileApiService>().getUser();
-    return result.fold(
-      (error) {
-        return Left(error);
-      },
-      (data) {
-        Response response = data;
-        var profileModel = ProfileModel.fromMap(response.data);
-        var profileEntity = profileModel.toEntity();
-        return Right(profileEntity);
-      },
-    );
+  Future<Either<Failure, ProfileEntity>> getUser() async {
+    return await sl<ProfileApiService>().getUser();
   }
+  
   @override
-  Future<Either<String, ProfileEntity>> editProfile(
-    Map<String, dynamic> profileData,
-  ) async {
-    Either result = await sl<ProfileApiService>().editProfile(profileData);
-    return result.fold(
-      (error) {
-        return Left(error.toString());
-      },
-      (data) {
-        Response response = data;
-        var profileModel = ProfileModel.fromMap(response.data);
-        var profileEntity = profileModel.toEntity();
-        return Right(profileEntity);
-      },
-    );
+  Future<Either<Failure, ProfileEntity>> editProfile(EditProfileModel editModel) async {
+    return await sl<ProfileApiService>().editProfile(editModel);
   }
 }

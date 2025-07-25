@@ -1,4 +1,5 @@
 import 'package:edu_review_mobile/core/usecases/no_params.dart';
+import 'package:edu_review_mobile/features/user_profile/data/models/edit_profile.dart';
 import 'package:edu_review_mobile/features/user_profile/domain/usecases/edit_profile.dart';
 import 'package:edu_review_mobile/features/user_profile/domain/usecases/get_user.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/edit_profile_state.dart';
@@ -21,9 +22,9 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     );
   }
 
-  Future<void> saveProfile(Map<String, dynamic> profileData) async {
+  Future<void> saveProfile(EditProfileModel editModel) async {
     emit(EditProfileSaving());
-    var result = await sl<EditProfileUseCase>().call(profileData);
+    var result = await sl<EditProfileUseCase>().call(editModel);
     result.fold(
       (error) {
         emit(EditProfileFailure(errorMessage: error));

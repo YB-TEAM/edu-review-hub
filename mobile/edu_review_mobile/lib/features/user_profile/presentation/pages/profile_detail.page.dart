@@ -9,6 +9,57 @@ class ProfileDetailPage extends StatelessWidget {
   const ProfileDetailPage({Key? key, required this.profileEntity})
     : super(key: key);
 
+  List<Map<String, String?>> get _personalInfoItems => [
+    {
+      'icon': AppIcons.cake,
+      'label': 'Birthday',
+      'value': profileEntity.dateOfBirth,
+    },
+    {
+      'icon': AppIcons.gender,
+      'label': 'Gender',
+      'value': profileEntity.gender,
+    },
+    {
+      'icon': AppIcons.pin,
+      'label': 'Address',
+      'value': profileEntity.address,
+    },
+    {
+      'icon': AppIcons.globe,
+      'label': 'Country',
+      'value': profileEntity.country,
+    },
+    {
+      'icon': AppIcons.city,
+      'label': 'City',
+      'value': profileEntity.city,
+    },
+  ];
+
+  List<Map<String, String?>> get _educationItems => [
+    {
+      'icon': AppIcons.university,
+      'label': 'University',
+      'value': profileEntity.universityName,
+    },
+    {
+      'icon': AppIcons.book,
+      'label': 'Major',
+      'value': profileEntity.major,
+    },
+    {
+      'icon': AppIcons.card,
+      'label': 'Student ID',
+      'value': profileEntity.studentId,
+    },
+    {
+      'icon': AppIcons.calendar,
+      'label': 'Graduation Year',
+      'value': profileEntity.graduationYear?.toString(),
+    },
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,36 +85,12 @@ class ProfileDetailPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  _buildDetailInfoRow(
-                    "assets/icons/ic_cake.svg",
-                    'Birthday',
-                    profileEntity.dateOfBirth,
-                    context
-                  ),
-                  _buildDetailInfoRow(
-                    "assets/icons/ic_gender.svg",
-                    'Gender',
-                    profileEntity.gender,
-                    context
-                  ),
-                  _buildDetailInfoRow(
-                    "assets/icons/ic_pin.svg",
-                    'Address',
-                    profileEntity.address,
-                    context
-                  ),
-                  _buildDetailInfoRow(
-                    "assets/icons/ic_globe.svg",
-                    'Country',
-                    profileEntity.country,
-                    context
-                  ),
-                  _buildDetailInfoRow(
-                    "assets/icons/ic_city.svg",
-                    'City',
-                    profileEntity.city,
-                    context
-                  ),
+                  ..._personalInfoItems.map((item) => _buildDetailInfoRow(
+                    item['icon']!,
+                    item['label']!,
+                    item['value'],
+                    context,
+                  )).toList(),
                 ],
               ),
             ),
@@ -86,30 +113,12 @@ class ProfileDetailPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  _buildDetailInfoRow(
-                    "assets/icons/ic_university.svg",
-                    'University',
-                    profileEntity.universityName,
-                    context
-                  ),
-                  _buildDetailInfoRow(
-                    "assets/icons/ic_book.svg",
-                    'Major',
-                    profileEntity.major,
-                    context
-                  ),
-                  _buildDetailInfoRow(
-                    "assets/icons/ic_card.svg",
-                    'Student ID',
-                    profileEntity.studentId,
-                    context
-                  ),
-                  _buildDetailInfoRow(
-                    "assets/icons/ic_calendar.svg",
-                    'Graduation Year',
-                    profileEntity.graduationYear?.toString(),
-                    context
-                  ),
+                  ..._educationItems.map((item) => _buildDetailInfoRow(
+                    item['icon']!,
+                    item['label']!,
+                    item['value'],
+                    context,
+                  )).toList(),
                 ],
               ),
             ),
@@ -184,7 +193,7 @@ class ProfileDetailPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: InkWell(
         onTap: () {
-          print("hello");
+          
         },
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -206,7 +215,7 @@ class ProfileDetailPage extends StatelessWidget {
             Expanded(
               child: Text(
                 content,
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
                   color: AppColors.textGrey,
                 ),
               ),

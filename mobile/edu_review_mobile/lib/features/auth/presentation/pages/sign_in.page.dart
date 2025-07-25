@@ -272,6 +272,7 @@ class _SignInPageState extends State<SignInPage> {
               BlocBuilder<ButtonStateCubit, ButtonState>(
                 builder: (context, state) {
                   if (state is ButtonLoadingState) {
+                    FocusScope.of(context).unfocus();
                     return AbsorbPointer(
                       absorbing: true,
                       child: Container(
