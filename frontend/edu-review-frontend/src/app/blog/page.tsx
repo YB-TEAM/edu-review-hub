@@ -27,7 +27,8 @@ import {
   Hash,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 
 const popularCategories = [
   {
@@ -91,9 +92,25 @@ const popularTags = [
 ];
 
 export default function BlogPage() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const limit = 6;
-  
+  const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+  const [currentPage, setCurrentPage] = useState(() => {
+    if (searchParams && searchParams.get('page')) return Number(searchParams.get('page'));
+    return 1;
+  });
+  const [limit, setLimit] = useState(() => {
+    if (searchParams && searchParams.get('limit')) return Number(searchParams.get('limit'));
+    return 4;
+  });
+  const router = useRouter();
+
+  useEffect(() => {
+    // Cập nhật URL khi đổi page hoặc limit
+    const params = new URLSearchParams(window.location.search);
+    params.set('page', String(currentPage));
+    params.set('limit', String(limit));
+    router.replace(`?${params.toString()}`);
+  }, [currentPage, limit]);
+
   const { data, isLoading, error } = useGetBlogsQuery({ 
     page: currentPage, 
     limit 
@@ -103,7 +120,6 @@ export default function BlogPage() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    // Scroll to top smoothly
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -189,23 +205,17 @@ export default function BlogPage() {
               </div>
             )}
 
-            <div className="grid gap-8 md:grid-cols-2">
-              {data?.data?.map((blog, index) => (
+            <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2">
+              {data?.data?.map((blog) => (
                 <article
                   key={blog.id}
-                  className={`group bg-white dark:bg-gray-900 rounded-3xl shadow-lg border border-gray-100 dark:border-gray-800 overflow-hidden transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl hover:shadow-blue-500/10 relative ${
-                    index === 0 ? 'md:col-span-2' : ''
-                  }`}
+                  className="group bg-white dark:bg-gray-900 rounded-3xl shadow-lg border border-gray-100 dark:border-gray-800 overflow-hidden transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl hover:shadow-blue-500/10 relative"
                 >
                   {/* Featured Badge for first post */}
-                  {index === 0 && (
-                    <div className="absolute top-4 right-4 z-10 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-                      <Star className="h-3 w-3 inline mr-1" />
-                      Nổi bật
-                    </div>
-                  )}
+                  {/* This logic needs to be adjusted if we want to show a featured badge for the first blog on each page */}
+                  {/* For now, it's removed as per the new grid structure */}
                   
-                  <div className={`relative ${index === 0 ? 'h-80' : 'h-64'} overflow-hidden`}>
+                  <div className={`relative ${blog.image ? 'h-64' : 'h-64'} overflow-hidden`}>
                     {blog.image ? (
                       <img
                         src={blog.image}
@@ -243,9 +253,7 @@ export default function BlogPage() {
                       </span>
                     </div>
                     
-                    <h2 className={`font-bold text-gray-900 dark:text-white mb-4 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300 ${
-                      index === 0 ? 'text-3xl' : 'text-xl'
-                    }`}>
+                    <h2 className={`font-bold text-gray-900 dark:text-white mb-4 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300 text-xl`}>
                       {blog.title}
                     </h2>
                     
@@ -278,59 +286,46 @@ export default function BlogPage() {
             </div>
 
             {/* Enhanced Pagination */}
-            {totalPages > 1 && (
-              <div className="mt-16 flex justify-center">
-                <Pagination className="mx-auto">
-                  <PaginationContent className="gap-2">
-                    <PaginationItem>
-                      <PaginationPrevious 
+            <div className="mt-16 flex justify-center">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href="#"
+                      onClick={e => {
+                        e.preventDefault();
+                        if (currentPage > 1) handlePageChange(currentPage - 1);
+                      }}
+                      className={currentPage <= 1 ? 'opacity-50 cursor-not-allowed' : ''}
+                    />
+                  </PaginationItem>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page, idx, arr) => (
+                    <PaginationItem key={page}>
+                      <PaginationLink
                         href="#"
-                        onClick={(e) => {
+                        onClick={e => {
                           e.preventDefault();
-                          if (currentPage > 1) handlePageChange(currentPage - 1);
+                          handlePageChange(page);
                         }}
-                        className={`rounded-xl shadow-sm border-gray-200 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-blue-950/20 ${
-                          currentPage <= 1 ? 'opacity-50 cursor-not-allowed' : ''
-                        }`}
-                      />
+                        isActive={page === currentPage}
+                      >
+                        {page}
+                      </PaginationLink>
                     </PaginationItem>
-                    
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                      <PaginationItem key={page}>
-                        <PaginationLink
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handlePageChange(page);
-                          }}
-                          isActive={page === currentPage}
-                          className={`rounded-xl shadow-sm border-gray-200 dark:border-gray-700 ${
-                            page === currentPage
-                              ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white border-transparent shadow-lg'
-                              : 'hover:bg-blue-50 dark:hover:bg-blue-950/20'
-                          }`}
-                        >
-                          {page}
-                        </PaginationLink>
-                      </PaginationItem>
-                    ))}
-                    
-                    <PaginationItem>
-                      <PaginationNext
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          if (currentPage < totalPages) handlePageChange(currentPage + 1);
-                        }}
-                        className={`rounded-xl shadow-sm border-gray-200 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-blue-950/20 ${
-                          currentPage >= totalPages ? 'opacity-50 cursor-not-allowed' : ''
-                        }`}
-                      />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
-              </div>
-            )}
+                  ))}
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      onClick={e => {
+                        e.preventDefault();
+                        if (currentPage < totalPages) handlePageChange(currentPage + 1);
+                      }}
+                      className={currentPage >= totalPages ? 'opacity-50 cursor-not-allowed' : ''}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
           </div>
 
           {/* Enhanced Sidebar */}
