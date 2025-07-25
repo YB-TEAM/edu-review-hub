@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:edu_review_mobile/common/bloc/button/button_state.dart';
 import 'package:edu_review_mobile/common/bloc/button/button_state_cubit.dart';
 import 'package:edu_review_mobile/common/widgets/button/custom_text_button.dart';
@@ -92,7 +95,19 @@ class _SignUpPageState extends State<SignUpPage> {
     return null;
   }
 
-  void _handleSignUp(BuildContext context) {
+  Future<String?> _getDeviceId() async {
+    final deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      final androidInfo = await deviceInfo.androidInfo;
+      return androidInfo.id;
+    } else if (Platform.isIOS) {
+      final iosInfo = await deviceInfo.iosInfo;
+      return iosInfo.identifierForVendor;
+    }
+    return null;
+  }
+
+  void _handleSignUp(BuildContext context) async {
     setState(() {
       _isFormSubmitted = true;
     });
@@ -109,12 +124,14 @@ class _SignUpPageState extends State<SignUpPage> {
       _validateEmail(_emailController.text) == null &&
       _validatePassword(_passwordController.text) == null &&
       _validateConfirmedPassword(_confirmedpasswordController.text) == null) {
+      final deviceId = await _getDeviceId();
       context.read<ButtonStateCubit>().execute(
         usecase: sl<SignUpUseCase>(),
         params: SignUpParams(
           username: _usernameController.text,
           email: _emailController.text,
           password: _passwordController.text,
+          deviceId: deviceId
         ),
       );
     }
