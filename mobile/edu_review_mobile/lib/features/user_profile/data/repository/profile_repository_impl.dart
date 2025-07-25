@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:edu_review_mobile/features/user_profile/data/data_souces/remote/profile_api_service.dart';
 import 'package:edu_review_mobile/features/user_profile/data/models/profile.dart';
+import 'package:edu_review_mobile/features/user_profile/data/models/edit_profile.dart';
 import 'package:edu_review_mobile/features/user_profile/domain/entities/profile.dart';
 import 'package:edu_review_mobile/features/user_profile/domain/repository/profile_repository.dart';
 import 'package:edu_review_mobile/service_locator.dart';
@@ -26,9 +27,9 @@ class ProfileRepositoryImpl extends ProfileRepository {
   }
   @override
   Future<Either<String, ProfileEntity>> editProfile(
-    Map<String, dynamic> profileData,
+    EditProfileModel editModel,
   ) async {
-    Either result = await sl<ProfileApiService>().editProfile(profileData);
+    Either result = await sl<ProfileApiService>().editProfile(editModel);
     return result.fold(
       (error) {
         return Left(error.toString());

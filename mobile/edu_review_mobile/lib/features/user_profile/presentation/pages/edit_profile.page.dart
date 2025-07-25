@@ -4,6 +4,7 @@ import 'package:edu_review_mobile/common/widgets/appbar/custom_appbar.dart';
 import 'package:edu_review_mobile/common/widgets/loading/custom_loading_indicator.dart';
 import 'package:edu_review_mobile/common/widgets/text_field/custom_text_field.dart';
 import 'package:edu_review_mobile/common_libs.dart';
+import 'package:edu_review_mobile/features/user_profile/data/models/edit_profile.dart';
 import 'package:edu_review_mobile/features/user_profile/domain/entities/profile.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/edit_profile_cubit.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/edit_profile_state.dart';
@@ -24,6 +25,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _majorController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _displayNameController = TextEditingController();
+  bool _isInitialized = false; // Thêm biến này
 
   @override
   void dispose() {
@@ -36,11 +38,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void _initializeControllers(ProfileEntity profile) {
-    _cityController.text = profile.city ?? '';
-    _universityController.text = profile.universityName ?? '';
-    _majorController.text = profile.major ?? '';
-    _bioController.text = profile.bio ?? '';
-    _displayNameController.text = profile.displayName ?? '';
+    if (!_isInitialized) { // Chỉ khởi tạo một lần
+      _cityController.text = profile.city ?? '';
+      _universityController.text = profile.universityName ?? '';
+      _majorController.text = profile.major ?? '';
+      _bioController.text = profile.bio ?? '';
+      _displayNameController.text = profile.displayName ?? '';
+      _isInitialized = true;
+    }
   }
 
   void _onAvatarPressed() async {
@@ -58,17 +63,43 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void _saveProfile(EditProfileCubit cubit, ProfileEntity currentProfile) {
-    final profileData = {
-      'city': _cityController.text.trim(),
-      'universityName': _universityController.text.trim(),
-      'major': _majorController.text.trim(),
-      'bio': _bioController.text.trim(),
-      'displayName': _displayNameController.text.trim(),
-      'avatarUrl': currentProfile.avatarUrl,
-      'coverImageUrl': currentProfile.coverImageUrl,
-    };
+    final editModel = EditProfileModel(
+      // Basic Info
+      firstName: currentProfile.firstName,
+      lastName: currentProfile.lastName,
+      displayName: _displayNameController.text.trim(),
+      bio: _bioController.text.trim(),
+      
+      // Images
+      avatarUrl: currentProfile.avatarUrl,
+      coverImageUrl: currentProfile.coverImageUrl,
+      
+      // Personal Info
+      dateOfBirth: currentProfile.dateOfBirth,
+      gender: currentProfile.gender,
+      
+      // Location Info
+      country: currentProfile.country,
+      city: _cityController.text.trim(),
+      address: currentProfile.address,
+      
+      // Preferences
+      timezone: currentProfile.timezone,
+      language: currentProfile.language,
+      
+      // Education Info
+      universityName: _universityController.text.trim(),
+      major: _majorController.text.trim(),
+      graduationYear: currentProfile.graduationYear,
+      studentId: currentProfile.studentId,
+      isStudentVerified: currentProfile.isStudentVerified,
+      
+      // Settings
+      privacySettings: currentProfile.privacySettings,
+      notificationSettings: currentProfile.notificationSettings,
+    );
 
-    cubit.saveProfile(profileData);
+    cubit.saveProfile(editModel);
   }
 
   @override

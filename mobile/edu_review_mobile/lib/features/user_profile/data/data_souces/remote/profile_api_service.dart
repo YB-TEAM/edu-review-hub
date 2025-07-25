@@ -2,20 +2,20 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:edu_review_mobile/common/constants/api_urls.dart';
 import 'package:edu_review_mobile/core/network/dio_client.dart';
+import 'package:edu_review_mobile/features/user_profile/data/models/edit_profile.dart';
 import 'package:edu_review_mobile/service_locator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class ProfileApiService {
-  Future<Either> getUser();
-  Future<Either> editProfile(Map<String, dynamic> profileData);
+  Future<Either<String, Response>> getUser();
+  Future<Either<String, Response>> editProfile(EditProfileModel profileData);
 }
 
 class ProfileApiServiceImpl extends ProfileApiService {
   @override
-  Future<Either> getUser() async {
+  Future<Either<String, Response>> getUser() async {
     try {
-      SharedPreferences sharedPreferences =
-          await SharedPreferences.getInstance();
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
       var token = sharedPreferences.getString('accessToken');
       var response = await sl<DioClient>().get(
         ApiUrls.userProfile,
@@ -28,14 +28,13 @@ class ProfileApiServiceImpl extends ProfileApiService {
   }
 
   @override
-  Future<Either> editProfile(Map<String, dynamic> profileData) async {
+  Future<Either<String, Response>> editProfile(EditProfileModel profileData) async {
     try {
-      SharedPreferences sharedPreferences =
-          await SharedPreferences.getInstance();
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
       var token = sharedPreferences.getString('accessToken');
       var response = await sl<DioClient>().patch(
         ApiUrls.userProfile,
-        data: profileData,
+        data: profileData.toMap(),
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
