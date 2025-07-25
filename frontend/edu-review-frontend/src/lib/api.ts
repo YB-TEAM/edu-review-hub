@@ -23,7 +23,7 @@ export interface ApiResponse<T> {
 
 // Base query with error handling
 const baseQuery = fetchBaseQuery({
-  baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api",
+  baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api/v1",
   prepareHeaders: (headers) => {
     // Add auth token if available
     const token = localStorage.getItem("authToken");
@@ -90,7 +90,7 @@ const baseQueryWithErrorHandling: BaseQueryFn<
 export const api = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithErrorHandling,
-  tagTypes: ["User", "Review", "Course", "Institution"],
+  tagTypes: ["User", "Review", "Course", "Institution", "Blog"],
   endpoints: () => ({}),
 });
 
