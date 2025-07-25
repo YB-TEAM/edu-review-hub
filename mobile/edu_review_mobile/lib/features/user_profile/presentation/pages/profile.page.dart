@@ -1,5 +1,6 @@
 import 'package:edu_review_mobile/common/bloc/button/button_state.dart';
 import 'package:edu_review_mobile/common/bloc/button/button_state_cubit.dart';
+import 'package:edu_review_mobile/common/constants/app_default_images.dart';
 import 'package:edu_review_mobile/common/widgets/button/primary_button.dart';
 import 'package:edu_review_mobile/common/widgets/loading/custom_loading_indicator.dart';
 import 'package:edu_review_mobile/common_libs.dart';
@@ -75,12 +76,12 @@ class _ProfilePageState extends State<ProfilePage> {
                             child: Column(
                               children: [
                                 CoverPhotoWidget(
-                                  imageUrl: state.profileEntity.coverImageUrl ?? 'https://professionals.tarkett.co.uk/media/img/M/THH_25094225_25187225_001.jpg',
+                                  imageUrl: state.profileEntity.coverImageUrl ?? AppDefaultImages.defaultCover,
                                   onChangeCover: () {
                                     print('Nhấn đổi ảnh bìa');
                                   },
                                   child: EditAvatarButton(
-                                    imageUrl: state.profileEntity.avatarUrl ?? 'https://www.meme-arsenal.com/memes/4408af6c9803cb3f320ecc468b3abbfa.jpg',
+                                    imageUrl: state.profileEntity.avatarUrl ?? AppDefaultImages.defaultAvatar,
                                     size: 128,
                                     onPressed: () {
                                       print('Nhấn đổi avatar');

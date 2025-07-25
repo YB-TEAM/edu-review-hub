@@ -156,7 +156,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                                       ?.isNotEmpty ==
                                                   true
                                               ? state.profileEntity.avatarUrl!
-                                              : 'https://www.meme-arsenal.com/memes/4408af6c9803cb3f320ecc468b3abbfa.jpg',
+                                              : AppDefaultImages.defaultAvatar,
                                           width: 120,
                                           height: 120,
                                           fit: BoxFit.cover,
@@ -216,7 +216,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                                     ?.isNotEmpty ==
                                                 true
                                             ? state.profileEntity.coverImageUrl!
-                                            : 'https://professionals.tarkett.co.uk/media/img/M/THH_25094225_25187225_001.jpg',
+                                            : AppDefaultImages.defaultCover,
                                         width: double.infinity,
                                         height: 120,
                                         fit: BoxFit.cover,
