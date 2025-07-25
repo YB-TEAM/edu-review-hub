@@ -37,7 +37,6 @@ export const authApi = api.injectEndpoints({
       }),
       invalidatesTags: ["User"],
     }),
-
     register: builder.mutation<AuthResponse, RegisterRequest>({
       query: (userData) => ({
         url: "/auth/register",
@@ -46,7 +45,6 @@ export const authApi = api.injectEndpoints({
       }),
       invalidatesTags: ["User"],
     }),
-
     logout: builder.mutation<void, void>({
       query: () => ({
         url: "/auth/logout",
@@ -54,12 +52,10 @@ export const authApi = api.injectEndpoints({
       }),
       invalidatesTags: ["User"],
     }),
-
     getProfile: builder.query<User, void>({
       query: () => "/auth/profile",
       providesTags: ["User"],
     }),
-
     updateProfile: builder.mutation<User, Partial<User>>({
       query: (userData) => ({
         url: "/auth/profile",
@@ -68,8 +64,6 @@ export const authApi = api.injectEndpoints({
       }),
       invalidatesTags: ["User"],
     }),
-
-    // Forgot Password
     forgotPassword: builder.mutation<{ message: string }, { email: string }>({
       query: (data) => ({
         url: "/email-verification/forgot-password",
@@ -77,8 +71,6 @@ export const authApi = api.injectEndpoints({
         body: data,
       }),
     }),
-
-    // Reset Password
     resetPassword: builder.mutation<
       { message: string },
       { email: string; otp: string; newPassword: string }
@@ -89,8 +81,6 @@ export const authApi = api.injectEndpoints({
         body: data,
       }),
     }),
-
-    // Verify Email (OTP)
     verifyEmail: builder.mutation<
       { message: string },
       { email: string; otp: string }
@@ -101,8 +91,6 @@ export const authApi = api.injectEndpoints({
         body: data,
       }),
     }),
-
-    // Resend Verification Email
     resendVerification: builder.mutation<
       { message: string },
       { email: string }

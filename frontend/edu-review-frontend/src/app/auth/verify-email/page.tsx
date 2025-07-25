@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, XCircle, Mail, RefreshCw } from "lucide-react";
 import { NavbarLogo } from "@/features/landing/components/navbar/Navbar";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/sonner";
 import "../auth.scss";
 import { useVerifyEmailMutation, useResendVerificationMutation } from "@/lib/services/authApi";
 
