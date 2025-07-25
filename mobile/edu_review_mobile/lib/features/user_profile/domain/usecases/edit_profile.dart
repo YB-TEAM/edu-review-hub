@@ -10,7 +10,11 @@ class EditProfileUseCase
   @override
   Future<Either<String, ProfileEntity>> call(EditProfileModel editModel) async {
     try {
-      return await sl<ProfileRepository>().editProfile(editModel);
+      final result = await sl<ProfileRepository>().editProfile(editModel);
+      return result.fold(
+        (failure) => Left(failure.toString()),
+        (profile) => Right(profile),
+      );
     } catch (e) {
       return Left(e.toString());
     }
