@@ -23,6 +23,12 @@ import { ModerateBlogDto } from "../dto/blog/moderate-blog.dto";
 import { PaginationDto } from "../dto/pagination/pagination.dto";
 import { UserRole } from "@/infrastructure/database/entities/user.entity";
 import { CloudinaryService } from "@/infrastructure/services/cloudinary.service";
+import {
+  ApproveBlogDto,
+  RejectBlogDto,
+  BanBlogDto,
+} from "../dto/blog/moderate-blog.dto";
+import { IUploadedFileRepository } from "@/domain/repositories/uploaded-file.repository.interface";
 
 @Injectable()
 export class BlogService implements IBlogService {
@@ -33,7 +39,9 @@ export class BlogService implements IBlogService {
     private readonly tagRepository: ITagRepository,
     private readonly blogLikeRepository: BlogLikeRepository,
     private readonly userActivityRepository: UserActivityRepository,
-    private readonly cloudinaryService: CloudinaryService
+    private readonly cloudinaryService: CloudinaryService,
+    @Inject("IUploadedFileRepository")
+    private readonly uploadedFileRepository: IUploadedFileRepository
   ) {}
 
   async create(
@@ -113,15 +121,21 @@ export class BlogService implements IBlogService {
         role.name === "super_admin"
     );
 
-    // If not admin and blog is not published, deny access
-    if (!isAdmin && blog.status !== BlogStatus.PUBLISHED) {
+    // Check if user is the author of the blog
+    const isAuthor = user && blog.authorId === user.id;
+
+    // Access control logic:
+    // - Admin/Moderator: can see all blogs
+    // - Author: can see their own blogs (any status)
+    // - Regular users: can only see APPROVED blogs
+    if (!isAdmin && !isAuthor && blog.status !== BlogStatus.APPROVED) {
       throw new ForbiddenException("Blog not accessible");
     }
 
     // Increment view count
     await this.blogRepository.incrementViewCount(id);
 
-    return this.toResponseDto(blog);
+    return await this.toResponseDtoWithUser(blog, user);
   }
 
   async findAll(
@@ -135,8 +149,19 @@ export class BlogService implements IBlogService {
       tagIds?: string;
     }
   ): Promise<{ data: BlogResponseDto[]; metadata: any }> {
-    // For public API, always show only approved blogs
-    filters = { ...filters, status: BlogStatus.APPROVED };
+    // Check if user is admin/moderator
+    const isAdmin = user?.roles?.some(
+      (role: any) =>
+        role.name === "admin" ||
+        role.name === "moderator" ||
+        role.name === "super_admin"
+    );
+
+    // For public API (user = null), always show only approved blogs
+    // For admin, allow filtering by any status
+    if (!user || !isAdmin) {
+      filters = { ...filters, status: BlogStatus.APPROVED };
+    }
 
     const { page = 1, limit = 10 } = pagination;
     const [blogs, total] = await this.blogRepository.findAll({
@@ -145,7 +170,21 @@ export class BlogService implements IBlogService {
       filters,
     });
 
-    const data = blogs.map((blog) => this.toResponseDto(blog));
+    // Check like status for authenticated users
+    let likeStatusMap = new Map<number, boolean>();
+    if (user && user.id) {
+      likeStatusMap = await this.checkLikeStatusForBlogs(blogs, user.id);
+    }
+
+    const data = blogs.map((blog) => {
+      const blogDto = this.toResponseDto(blog);
+      // Add isLiked field if user is authenticated
+      if (user && user.id) {
+        blogDto.isLiked = likeStatusMap.get(blog.id) || false;
+      }
+      return blogDto;
+    });
+
     const metadata = {
       totalItems: total,
       pageSize: limit,
@@ -153,6 +192,36 @@ export class BlogService implements IBlogService {
       totalPages: Math.ceil(total / limit),
     };
     return { data, metadata };
+  }
+
+  // Helper method to check like status for multiple blogs
+  private async checkLikeStatusForBlogs(
+    blogs: Blog[],
+    userId: number
+  ): Promise<Map<number, boolean>> {
+    if (!userId || blogs.length === 0) {
+      return new Map();
+    }
+
+    try {
+      const blogIds = blogs.map((blog) => blog.id);
+      // This would need a new method in BlogLikeRepository to get multiple likes at once
+      // For now, we'll check individually (can be optimized later)
+      const likeStatusMap = new Map<number, boolean>();
+
+      for (const blog of blogs) {
+        const existingLike = await this.blogLikeRepository.findByUserAndBlog(
+          userId,
+          blog.id
+        );
+        likeStatusMap.set(blog.id, !!existingLike);
+      }
+
+      return likeStatusMap;
+    } catch (error) {
+      console.error("Failed to check like status for blogs:", error);
+      return new Map();
+    }
   }
 
   async update(
@@ -170,6 +239,8 @@ export class BlogService implements IBlogService {
 
     // Handle featuredImage if provided
     if (dto.featuredImage !== undefined) {
+      const oldFeaturedImage = blog.featuredImage;
+
       if (dto.featuredImage) {
         // Validate that the new image exists on Cloudinary
         try {
@@ -179,8 +250,61 @@ export class BlogService implements IBlogService {
             "Invalid featured image. Image not found on Cloudinary."
           );
         }
+
+        // If changing to a different image, delete the old one
+        if (oldFeaturedImage && oldFeaturedImage !== dto.featuredImage) {
+          try {
+            await this.cloudinaryService.deleteImage(oldFeaturedImage);
+            console.log(
+              "✅ Deleted old featured image from Cloudinary:",
+              oldFeaturedImage
+            );
+
+            // Mark old image as deleted in uploaded_files table
+            const oldUploadedFile =
+              await this.uploadedFileRepository.findByPublicId(
+                oldFeaturedImage
+              );
+            if (oldUploadedFile) {
+              await this.uploadedFileRepository.delete(oldUploadedFile.id);
+              console.log(
+                "✅ Marked old uploaded file as deleted:",
+                oldUploadedFile.id
+              );
+            }
+          } catch (error) {
+            console.error("❌ Failed to delete old featured image:", error);
+            // Don't throw error, continue with update
+          }
+        }
+      } else {
+        // If setting featuredImage to null/empty, delete the old image
+        if (oldFeaturedImage) {
+          try {
+            await this.cloudinaryService.deleteImage(oldFeaturedImage);
+            console.log(
+              "✅ Deleted featured image from Cloudinary:",
+              oldFeaturedImage
+            );
+
+            // Mark old image as deleted in uploaded_files table
+            const oldUploadedFile =
+              await this.uploadedFileRepository.findByPublicId(
+                oldFeaturedImage
+              );
+            if (oldUploadedFile) {
+              await this.uploadedFileRepository.delete(oldUploadedFile.id);
+              console.log(
+                "✅ Marked uploaded file as deleted:",
+                oldUploadedFile.id
+              );
+            }
+          } catch (error) {
+            console.error("❌ Failed to delete featured image:", error);
+            // Don't throw error, continue with update
+          }
+        }
       }
-      // If featuredImage is null/empty, it will be cleared
     }
 
     // If blog is published, changing content requires re-moderation
@@ -209,6 +333,15 @@ export class BlogService implements IBlogService {
           "✅ Deleted featured image from Cloudinary:",
           blog.featuredImage
         );
+
+        // Mark image as deleted in uploaded_files table
+        const uploadedFile = await this.uploadedFileRepository.findByPublicId(
+          blog.featuredImage
+        );
+        if (uploadedFile) {
+          await this.uploadedFileRepository.delete(uploadedFile.id);
+          console.log("✅ Marked uploaded file as deleted:", uploadedFile.id);
+        }
       } catch (error) {
         console.error(
           "❌ Failed to delete featured image from Cloudinary:",
@@ -250,6 +383,82 @@ export class BlogService implements IBlogService {
     if (dto.status === BlogStatus.APPROVED && !blog.publishedAt) {
       updateData.publishedAt = new Date();
     }
+
+    const updated = await this.blogRepository.update(id, updateData);
+    return this.toResponseDto(updated);
+  }
+
+  async approve(
+    id: number,
+    moderatorId: number,
+    dto: ApproveBlogDto
+  ): Promise<BlogResponseDto> {
+    const blog = await this.blogRepository.findById(id);
+    if (!blog) throw new NotFoundException("Blog not found");
+
+    // Only published blogs can be approved
+    if (blog.status !== BlogStatus.PUBLISHED) {
+      throw new BadRequestException("Only published blogs can be approved");
+    }
+
+    const updateData: any = {
+      status: BlogStatus.APPROVED,
+      moderatorId: moderatorId,
+      moderatedAt: new Date(),
+      publishedAt: blog.publishedAt || new Date(), // Set publishedAt if not already set
+    };
+
+    if (dto.moderationReason) {
+      updateData.moderationReason = dto.moderationReason;
+    }
+
+    const updated = await this.blogRepository.update(id, updateData);
+    return this.toResponseDto(updated);
+  }
+
+  async reject(
+    id: number,
+    moderatorId: number,
+    dto: RejectBlogDto
+  ): Promise<BlogResponseDto> {
+    const blog = await this.blogRepository.findById(id);
+    if (!blog) throw new NotFoundException("Blog not found");
+
+    // Only published blogs can be rejected
+    if (blog.status !== BlogStatus.PUBLISHED) {
+      throw new BadRequestException("Only published blogs can be rejected");
+    }
+
+    const updateData: any = {
+      status: BlogStatus.REJECTED,
+      moderatorId: moderatorId,
+      moderatedAt: new Date(),
+      moderationReason: dto.moderationReason,
+    };
+
+    const updated = await this.blogRepository.update(id, updateData);
+    return this.toResponseDto(updated);
+  }
+
+  async ban(
+    id: number,
+    moderatorId: number,
+    dto: BanBlogDto
+  ): Promise<BlogResponseDto> {
+    const blog = await this.blogRepository.findById(id);
+    if (!blog) throw new NotFoundException("Blog not found");
+
+    // Blog can be banned from any status except already banned
+    if (blog.status === BlogStatus.BANNED) {
+      throw new BadRequestException("Blog is already banned");
+    }
+
+    const updateData: any = {
+      status: BlogStatus.BANNED,
+      moderatorId: moderatorId,
+      moderatedAt: new Date(),
+      moderationReason: dto.banReason,
+    };
 
     const updated = await this.blogRepository.update(id, updateData);
     return this.toResponseDto(updated);
@@ -351,7 +560,15 @@ export class BlogService implements IBlogService {
       filters: { authorId: userId },
     });
 
-    const data = blogs.map(this.toResponseDto);
+    // Check like status for user's own blogs
+    const likeStatusMap = await this.checkLikeStatusForBlogs(blogs, userId);
+
+    const data = blogs.map((blog) => {
+      const blogDto = this.toResponseDto(blog);
+      blogDto.isLiked = likeStatusMap.get(blog.id) || false;
+      return blogDto;
+    });
+
     const metadata = {
       totalItems: total,
       pageSize: limit,
@@ -382,17 +599,118 @@ export class BlogService implements IBlogService {
   }
 
   private toResponseDto(blog: Blog): BlogResponseDto {
+    // Generate featured image URLs if public_id exists
+    let featuredImageUrl = null;
+    let featuredImageUrls = null;
+
+    if (blog.featuredImage) {
+      try {
+        featuredImageUrl = this.cloudinaryService.generateImageUrl(
+          blog.featuredImage,
+          {
+            quality: "auto",
+            crop: "fill",
+          }
+        );
+
+        featuredImageUrls = this.cloudinaryService.generateResponsiveUrls(
+          blog.featuredImage
+        );
+      } catch (error) {
+        console.error("Failed to generate image URLs:", error);
+      }
+    }
+
     return {
       id: blog.id,
       title: blog.title,
       content: blog.content,
       excerpt: blog.excerpt,
       featuredImage: blog.featuredImage,
+      featuredImageUrl: featuredImageUrl,
+      featuredImageUrls: featuredImageUrls,
       category: blog.category,
       status: blog.status,
       moderationReason: blog.moderationReason,
       viewCount: blog.viewCount,
       likeCount: blog.likeCount,
+      commentCount: blog.commentCount,
+      tags: blog.tags?.map((tag) => ({
+        id: tag.id,
+        name: tag.name,
+        description: tag.description,
+        color: tag.color,
+        isActive: tag.isActive,
+        usageCount: tag.usageCount,
+        createdAt: tag.createdAt,
+        updatedAt: tag.updatedAt,
+      })),
+      publishedAt: blog.publishedAt,
+      moderatedAt: blog.moderatedAt,
+      authorId: blog.authorId,
+      authorName: blog.author?.username,
+      moderatorId: blog.moderatorId,
+      moderatorName: blog.moderator?.username,
+      createdAt: blog.createdAt,
+      updatedAt: blog.updatedAt,
+    };
+  }
+
+  private async toResponseDtoWithUser(
+    blog: Blog,
+    user?: any
+  ): Promise<BlogResponseDto> {
+    // Generate featured image URLs if public_id exists
+    let featuredImageUrl = null;
+    let featuredImageUrls = null;
+
+    if (blog.featuredImage) {
+      try {
+        featuredImageUrl = this.cloudinaryService.generateImageUrl(
+          blog.featuredImage,
+          {
+            quality: "auto",
+            crop: "fill",
+          }
+        );
+
+        featuredImageUrls = this.cloudinaryService.generateResponsiveUrls(
+          blog.featuredImage
+        );
+      } catch (error) {
+        console.error("Failed to generate image URLs:", error);
+      }
+    }
+
+    // Check if user has liked this blog
+    let isLiked = null;
+    if (user && user.id) {
+      try {
+        const existingLike = await this.blogLikeRepository.findByUserAndBlog(
+          user.id,
+          blog.id
+        );
+        isLiked = !!existingLike;
+      } catch (error) {
+        console.error("Failed to check like status:", error);
+        isLiked = null;
+      }
+    }
+
+    return {
+      id: blog.id,
+      title: blog.title,
+      content: blog.content,
+      excerpt: blog.excerpt,
+      featuredImage: blog.featuredImage,
+      featuredImageUrl: featuredImageUrl,
+      featuredImageUrls: featuredImageUrls,
+      category: blog.category,
+      status: blog.status,
+      moderationReason: blog.moderationReason,
+      viewCount: blog.viewCount,
+      likeCount: blog.likeCount,
+      isLiked: isLiked,
       commentCount: blog.commentCount,
       tags: blog.tags?.map((tag) => ({
         id: tag.id,

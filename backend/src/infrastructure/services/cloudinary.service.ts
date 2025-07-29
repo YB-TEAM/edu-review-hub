@@ -161,4 +161,47 @@ export class CloudinaryService {
       ...options,
     });
   }
+
+  // Helper methods for common image sizes
+  generateThumbnailUrl(publicId: string): string {
+    return this.generateImageUrl(publicId, {
+      width: 300,
+      height: 200,
+      crop: "fill",
+      quality: "auto",
+    });
+  }
+
+  generateMediumUrl(publicId: string): string {
+    return this.generateImageUrl(publicId, {
+      width: 800,
+      height: 600,
+      crop: "fill",
+      quality: "auto",
+    });
+  }
+
+  generateLargeUrl(publicId: string): string {
+    return this.generateImageUrl(publicId, {
+      width: 1200,
+      height: 800,
+      crop: "fill",
+      quality: "auto",
+    });
+  }
+
+  // Generate responsive URLs for different screen sizes
+  generateResponsiveUrls(publicId: string): {
+    thumbnail: string;
+    medium: string;
+    large: string;
+    original: string;
+  } {
+    return {
+      thumbnail: this.generateThumbnailUrl(publicId),
+      medium: this.generateMediumUrl(publicId),
+      large: this.generateLargeUrl(publicId),
+      original: this.generateImageUrl(publicId, { quality: "auto" }),
+    };
+  }
 }

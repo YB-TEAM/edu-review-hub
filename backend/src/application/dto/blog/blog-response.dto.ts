@@ -18,8 +18,38 @@ export class BlogResponseDto {
   @ApiPropertyOptional({ example: "A brief summary of the blog post" })
   excerpt?: string;
 
-  @ApiPropertyOptional({ example: "https://example.com/featured-image.jpg" })
+  @ApiPropertyOptional({
+    example: "edu-review-hub/zirc5boiivyb3bocqhrt",
+    description: "Cloudinary public ID of featured image",
+  })
   featuredImage?: string;
+
+  @ApiPropertyOptional({
+    example:
+      "https://res.cloudinary.com/your-cloud/image/upload/v1234567890/edu-review-hub/zirc5boiivyb3bocqhrt.jpg",
+    description: "Full URL of featured image",
+  })
+  featuredImageUrl?: string;
+
+  @ApiPropertyOptional({
+    example: {
+      thumbnail:
+        "https://res.cloudinary.com/your-cloud/image/upload/w_300,h_200,c_fill,q_auto/edu-review-hub/zirc5boiivyb3bocqhrt.jpg",
+      medium:
+        "https://res.cloudinary.com/your-cloud/image/upload/w_800,h_600,c_fill,q_auto/edu-review-hub/zirc5boiivyb3bocqhrt.jpg",
+      large:
+        "https://res.cloudinary.com/your-cloud/image/upload/w_1200,h_800,c_fill,q_auto/edu-review-hub/zirc5boiivyb3bocqhrt.jpg",
+      original:
+        "https://res.cloudinary.com/your-cloud/image/upload/q_auto/edu-review-hub/zirc5boiivyb3bocqhrt.jpg",
+    },
+    description: "Responsive image URLs for different screen sizes",
+  })
+  featuredImageUrls?: {
+    thumbnail: string;
+    medium: string;
+    large: string;
+    original: string;
+  };
 
   @ApiProperty({ enum: BlogCategory, example: BlogCategory.GUIDE })
   category: BlogCategory;
@@ -35,6 +65,13 @@ export class BlogResponseDto {
 
   @ApiProperty({ example: 25 })
   likeCount: number;
+
+  @ApiPropertyOptional({
+    example: true,
+    description:
+      "Whether the current user has liked this blog (null if not authenticated)",
+  })
+  isLiked?: boolean;
 
   @ApiProperty({ example: 10 })
   commentCount: number;

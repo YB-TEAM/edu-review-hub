@@ -56,4 +56,22 @@ export class BlogQueryDto {
   @IsOptional()
   @IsString()
   search?: string;
+
+  @ApiProperty({
+    required: false,
+    enum: BlogStatus,
+    description: "Filter by blog status",
+  })
+  @IsOptional()
+  @IsEnum(BlogStatus)
+  status?: BlogStatus;
+
+  @ApiProperty({
+    required: false,
+    enum: BlogCategory,
+    description: "Filter by blog category",
+  })
+  @IsOptional()
+  @IsEnum(BlogCategory)
+  category?: BlogCategory;
 }

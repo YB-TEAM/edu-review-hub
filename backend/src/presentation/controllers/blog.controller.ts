@@ -15,6 +15,7 @@ import {
   HttpStatus,
 } from "@nestjs/common";
 import { JwtAuthGuard } from "@/presentation/guards/jwt-auth.guard";
+import { OptionalJwtAuthGuard } from "@/presentation/guards/optional-jwt-auth.guard";
 import { RolesGuard } from "@/presentation/guards/role.guard";
 import { Roles } from "@/presentation/decorators/roles.decorator";
 import { RequirePermissions } from "@/presentation/decorators/permissions.decorator";
@@ -23,7 +24,12 @@ import { IBlogService } from "@/application/services/blog.service.interface";
 import { CreateBlogDto } from "@/application/dto/blog/create-blog.dto";
 import { UpdateBlogDto } from "@/application/dto/blog/update-blog.dto";
 import { BlogResponseDto } from "@/application/dto/blog/blog-response.dto";
-import { ModerateBlogDto } from "@/application/dto/blog/moderate-blog.dto";
+import {
+  ModerateBlogDto,
+  ApproveBlogDto,
+  RejectBlogDto,
+  BanBlogDto,
+} from "@/application/dto/blog/moderate-blog.dto";
 import { BlogQueryDto } from "@/application/dto/blog/blog-query.dto";
 import { PaginationDto } from "@/application/dto/pagination/pagination.dto";
 import {
@@ -55,10 +61,12 @@ export class BlogController {
   ) {}
 
   @Get()
+  @UseGuards(OptionalJwtAuthGuard)
+  @ApiBearerAuth("JWT-auth")
   @ApiOperation({
     summary: "Get all published blogs",
     description:
-      "Retrieve all published blogs. This endpoint is public and does not require authentication.",
+      "Retrieve all published blogs. Authentication is optional - if provided, includes like status for the user.",
   })
   @ApiQuery({
     name: "page",
@@ -92,11 +100,38 @@ export class BlogController {
     status: 400,
     description: "Bad request",
   })
-  async findAll(@Query() query: BlogQueryDto) {
+  @ApiResponse({
+    status: 401,
+    description:
+      "Invalid JWT token (optional - request continues without authentication)",
+  })
+  async findAll(@Request() req: any, @Query() query: BlogQueryDto) {
     const { page, limit, authorId, search, tagIds } = query;
     const pagination = { page, limit };
     const filters = { authorId, search, tagIds };
-    return this.blogService.findAll(null, pagination, filters);
+    return this.blogService.findAll(req.user, pagination, filters);
+  }
+
+  @Get("public/:id")
+  @ApiOperation({
+    summary: "Get public blog by ID",
+    description:
+      "Retrieve a specific approved blog by its ID. This endpoint is public and does not require authentication.",
+  })
+  @ApiParam({ name: "id", type: Number, description: "Blog ID" })
+  @ApiOkResponse({
+    description: "Blog retrieved successfully",
+    type: BlogResponseDto,
+  })
+  @ApiNotFoundResponse({ description: "Blog not found" })
+  @ApiResponse({
+    status: 403,
+    description: "Forbidden - Blog not approved or accessible",
+  })
+  async findByIdPublic(
+    @Param("id", ParseIntPipe) id: number
+  ): Promise<BlogResponseDto> {
+    return this.blogService.findById(id, null); // null user = public access
   }
 
   @Get("my")
@@ -218,9 +253,9 @@ export class BlogController {
     description: "Forbidden - Admin access required",
   })
   async getAllBlogsAdmin(@Request() req: any, @Query() query: BlogQueryDto) {
-    const { page, limit, authorId, search, tagIds } = query;
+    const { page, limit, status, category, authorId, search, tagIds } = query;
     const pagination = { page, limit };
-    const filters = { authorId, search, tagIds };
+    const filters = { status, category, authorId, search, tagIds };
     return this.blogService.findAll(req.user, pagination, filters);
   }
 
@@ -229,7 +264,7 @@ export class BlogController {
   @ApiOperation({
     summary: "Get blog by ID",
     description:
-      "Retrieve a specific blog by its ID. Regular users can only see published blogs.",
+      "Retrieve a specific blog by its ID. Admin/moderators can see all blogs, authors can see their own blogs, regular users can only see approved blogs.",
   })
   @ApiParam({ name: "id", type: Number, description: "Blog ID" })
   @ApiOkResponse({
@@ -409,5 +444,83 @@ export class BlogController {
     @Body() dto: ModerateBlogDto
   ): Promise<BlogResponseDto> {
     return this.blogService.moderate(id, req.user.id, dto);
+  }
+
+  @Patch(":id/approve")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.MODERATOR)
+  @ApiBearerAuth("JWT-auth")
+  @ApiOperation({
+    summary: "Approve blog",
+    description: "Approve a blog (admin/moderator only)",
+  })
+  @ApiParam({ name: "id", type: Number, description: "Blog ID" })
+  @ApiBody({ type: ApproveBlogDto, description: "Approve data" })
+  @ApiOkResponse({
+    description: "Blog approved successfully",
+    type: BlogResponseDto,
+  })
+  @ApiBadRequestResponse({ description: "Invalid approve data" })
+  @ApiUnauthorizedResponse({ description: "Unauthorized" })
+  @ApiForbiddenResponse({ description: "Insufficient permissions" })
+  @ApiNotFoundResponse({ description: "Blog not found" })
+  async approve(
+    @Request() req,
+    @Param("id", ParseIntPipe) id: number,
+    @Body() dto: ApproveBlogDto
+  ): Promise<BlogResponseDto> {
+    return this.blogService.approve(id, req.user.id, dto);
+  }
+
+  @Patch(":id/reject")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.MODERATOR)
+  @ApiBearerAuth("JWT-auth")
+  @ApiOperation({
+    summary: "Reject blog",
+    description: "Reject a blog (admin/moderator only)",
+  })
+  @ApiParam({ name: "id", type: Number, description: "Blog ID" })
+  @ApiBody({ type: RejectBlogDto, description: "Reject data" })
+  @ApiOkResponse({
+    description: "Blog rejected successfully",
+    type: BlogResponseDto,
+  })
+  @ApiBadRequestResponse({ description: "Invalid reject data" })
+  @ApiUnauthorizedResponse({ description: "Unauthorized" })
+  @ApiForbiddenResponse({ description: "Insufficient permissions" })
+  @ApiNotFoundResponse({ description: "Blog not found" })
+  async reject(
+    @Request() req,
+    @Param("id", ParseIntPipe) id: number,
+    @Body() dto: RejectBlogDto
+  ): Promise<BlogResponseDto> {
+    return this.blogService.reject(id, req.user.id, dto);
+  }
+
+  @Patch(":id/ban")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.MODERATOR)
+  @ApiBearerAuth("JWT-auth")
+  @ApiOperation({
+    summary: "Ban blog",
+    description: "Ban a blog (admin/moderator only)",
+  })
+  @ApiParam({ name: "id", type: Number, description: "Blog ID" })
+  @ApiBody({ type: BanBlogDto, description: "Ban data" })
+  @ApiOkResponse({
+    description: "Blog banned successfully",
+    type: BlogResponseDto,
+  })
+  @ApiBadRequestResponse({ description: "Invalid ban data" })
+  @ApiUnauthorizedResponse({ description: "Unauthorized" })
+  @ApiForbiddenResponse({ description: "Insufficient permissions" })
+  @ApiNotFoundResponse({ description: "Blog not found" })
+  async ban(
+    @Request() req,
+    @Param("id", ParseIntPipe) id: number,
+    @Body() dto: BanBlogDto
+  ): Promise<BlogResponseDto> {
+    return this.blogService.ban(id, req.user.id, dto);
   }
 }
