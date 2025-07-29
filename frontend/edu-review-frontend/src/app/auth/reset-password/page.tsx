@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/sonner";
 import {
   Eye,
   EyeOff,
@@ -18,6 +18,7 @@ import {
 import { NavbarLogo } from "@/features/landing/components/navbar/Navbar";
 import { useRouter } from "next/navigation";
 import "../auth.scss";
+import { useResetPasswordMutation } from "@/lib/services/authApi";
 
 export default function ResetPasswordPage() {
   const searchParams = useSearchParams();
@@ -42,6 +43,8 @@ export default function ResetPasswordPage() {
     number: false,
     special: false,
   });
+
+  const [resetPasswordApi, { isLoading: isResetLoading }] = useResetPasswordMutation();
 
   useEffect(() => {
     const tokenParam = searchParams.get("token");
@@ -119,11 +122,11 @@ export default function ResetPasswordPage() {
     }
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await resetPasswordApi({ email, otp: token, newPassword: password }).unwrap();
       setStep("success");
       toast.success("Đặt lại mật khẩu thành công!");
-    } catch {
-      setError("Có lỗi xảy ra. Vui lòng thử lại sau.");
+    } catch (err: any) {
+      setError(err?.data?.message || err.message || "Có lỗi xảy ra. Vui lòng thử lại sau.");
     } finally {
       setIsLoading(false);
     }
@@ -235,7 +238,7 @@ export default function ResetPasswordPage() {
             type={showPassword ? "text" : "password"}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Nhập mật khẩu mới"
+            placeholder="Mật khẩu mới"
             className="form-input"
             required
           />
@@ -287,7 +290,7 @@ export default function ResetPasswordPage() {
             type={showConfirmPassword ? "text" : "password"}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            placeholder="Nhập lại mật khẩu mới"
+            placeholder="Xác nhận mật khẩu mới"
             className="form-input"
             required
           />

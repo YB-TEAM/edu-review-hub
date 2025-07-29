@@ -4,11 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/sonner";
 import { Loader2, Lock, User, CheckCircle, XCircle } from "lucide-react";
 import { NavbarLogo } from "@/features/landing/components/navbar/Navbar";
 import { useRouter } from "next/navigation";
 import "../auth.scss";
+import { useLoginMutation } from "@/lib/services/authApi";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -21,7 +22,7 @@ export default function LoginPage() {
   const [success, setSuccess] = useState("");
 
   const router = useRouter();
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  const [login, { isLoading: isLoginLoading }] = useLoginMutation();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -41,28 +42,16 @@ export default function LoginPage() {
     setSuccess("");
 
     try {
-      const res = await fetch(`${API_BASE}/api/v1/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          identifier: formData.username,
-          password: formData.password,
-          deviceId: "web",
-          rememberMe: true,
-          ip: "",
-          userAgent: typeof window !== "undefined" ? window.navigator.userAgent : "",
-        }),
-      });
-
-      if (res.status === 401) throw new Error("Sai tài khoản hoặc mật khẩu");
-      if (!res.ok) throw new Error("Đăng nhập thất bại");
-
+      const result = await login({
+        identifier: formData.username,
+        password: formData.password,
+      }).unwrap();
       setSuccess("Đăng nhập thành công!");
       toast.success("Đăng nhập thành công!");
       setTimeout(() => window.location.href = "/", 1200);
     } catch (err: any) {
-      setError(err.message || "Đăng nhập thất bại");
-      toast.error(err.message || "Đăng nhập thất bại");
+      setError(err?.data?.message || err.message || "Đăng nhập thất bại");
+      toast.error(err?.data?.message || err.message || "Đăng nhập thất bại");
     } finally {
       setIsLoading(false);
     }
@@ -83,13 +72,13 @@ export default function LoginPage() {
       <div className="auth-card">
         <div className="auth-header">
           <Link href="/auth/register" className="nav-btn inactive">
-            Sign up
+            Đăng ký
           </Link>
-          <button className="nav-btn active">Sign in</button>
+          <button className="nav-btn active">Đăng nhập</button>
           <button className="close-btn">×</button>
         </div>
 
-        <h2 className="auth-title">Sign in to your account</h2>
+        <h2 className="auth-title">Đăng nhập vào tài khoản</h2>
 
         {error && (
           <div className="alert error">
@@ -110,7 +99,7 @@ export default function LoginPage() {
             <User className="input-icon" />
             <Input
               name="username"
-              placeholder="Username"
+              placeholder="Tên đăng nhập"
               value={formData.username}
               onChange={handleInputChange}
               className="form-input"
@@ -122,7 +111,7 @@ export default function LoginPage() {
             <Input
               name="password"
               type={showPassword ? "text" : "password"}
-              placeholder="Password"
+              placeholder="Mật khẩu"
               value={formData.password}
               onChange={handleInputChange}
               className="form-input"
@@ -141,7 +130,7 @@ export default function LoginPage() {
             className="auth-btn"
             disabled={isLoading}
           >
-            {isLoading ? <div className="loading-spinner" /> : "Sign in"}
+            {isLoading ? <div className="loading-spinner" /> : "Đăng nhập"}
           </Button>
 
           <div className="text-right mt-2">
@@ -153,7 +142,7 @@ export default function LoginPage() {
 
         <div className="divider">
           <div className="divider-line" />
-          <span className="divider-text">OR SIGN IN WITH</span>
+          <span className="divider-text">HOẶC ĐĂNG NHẬP BẰNG</span>
           <div className="divider-line" />
         </div>
 
@@ -165,8 +154,7 @@ export default function LoginPage() {
         </div>
 
         <p className="footer-text">
-          By signing in, you agree to our{" "}
-          <Link href="/terms">Terms & Service</Link>
+          Khi đăng nhập, bạn đồng ý với <Link href="/terms">Điều khoản & Dịch vụ</Link>
         </p>
       </div>
     </div>

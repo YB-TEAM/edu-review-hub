@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, XCircle, Mail, RefreshCw } from "lucide-react";
 import { NavbarLogo } from "@/features/landing/components/navbar/Navbar";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/sonner";
 import "../auth.scss";
+import { useVerifyEmailMutation, useResendVerificationMutation } from "@/lib/services/authApi";
 
 export default function VerifyEmailPage() {
   const searchParams = useSearchParams();
@@ -19,20 +20,18 @@ export default function VerifyEmailPage() {
   const [countdown, setCountdown] = useState(0);
   const [isResending, setIsResending] = useState(false);
 
+  const [verifyEmailApi] = useVerifyEmailMutation();
+  const [resendVerificationApi] = useResendVerificationMutation();
+
   const token = searchParams.get("token");
   const email = searchParams.get("email");
 
   const verifyEmail = async (token: string) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Mock verification logic
-      if (token === "valid-token") {
-        setVerificationStatus("success");
-        toast.success("Email verified successfully!");
-      } else {
-        setVerificationStatus("error");
-      }
+      if (!email) throw new Error("Không tìm thấy email");
+      await verifyEmailApi({ email, otp: token }).unwrap();
+      setVerificationStatus("success");
+      toast.success("Xác minh email thành công!");
     } catch {
       setVerificationStatus("error");
     }
@@ -41,11 +40,12 @@ export default function VerifyEmailPage() {
   const resendVerificationEmail = async () => {
     setIsResending(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (!email) throw new Error("Không tìm thấy email");
+      await resendVerificationApi({ email }).unwrap();
       setCountdown(60);
-      toast.success("Verification email sent!");
+      toast.success("Đã gửi email xác minh!");
     } catch {
-      toast.error("Failed to send verification email");
+      toast.error("Gửi email xác minh thất bại");
     } finally {
       setIsResending(false);
     }
@@ -72,7 +72,9 @@ export default function VerifyEmailPage() {
         return (
           <div className="text-center">
             <div className="loading-spinner mx-auto mb-4 w-12 h-12"></div>
-            <h2 className="auth-title">Đang xác minh email...</h2>
+            <h2 className="auth-title">
+              Đang xác minh email...
+            </h2>
             <p className="text-gray-600">Vui lòng chờ trong giây lát</p>
           </div>
         );
@@ -177,7 +179,7 @@ export default function VerifyEmailPage() {
       <div className="auth-card">
         <div className="text-center mb-8">
           <h1 className="auth-title">
-            Xác minh Email
+            Xác minh email
           </h1>
           {email && (
             <p className="text-gray-600">

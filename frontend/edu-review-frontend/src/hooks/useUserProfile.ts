@@ -2,22 +2,60 @@ import { useState } from "react";
 
 export interface UserProfile {
   id: string;
-  name: string;
-  email: string;
-  avatarUrl?: string;
-  phone?: string;
+  userId: string;
+  displayName: string;
+  avatarUrl?: string | null;
+  coverImageUrl?: string | null;
+  bio?: string | null;
+  dateOfBirth?: string | null;
+  gender?: string | null;
+  country?: string | null;
+  city?: string | null;
+  address?: string | null;
+  phone?: string | null;
+  universityName?: string | null;
+  major?: string | null;
+  graduationYear?: string | number | null;
+  studentId?: string | null;
+  isStudentVerified?: boolean;
   status: "active" | "inactive";
   createdAt: string;
+  updatedAt?: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  timezone?: string | null;
+  language?: string | null;
+  privacySettings?: any;
+  notificationSettings?: any;
 }
 
 const MOCK_PROFILE: UserProfile = {
   id: "u123",
-  name: "Nguyễn Văn A",
-  email: "nguyenvana@email.com",
+  userId: "u123",
+  displayName: "Nguyễn Văn A",
   avatarUrl: "https://i.pravatar.cc/150?img=3",
+  coverImageUrl: null,
+  bio: "Sinh viên năm 3 ngành CNTT.",
+  dateOfBirth: "2002-05-10",
+  gender: "Nam",
+  country: "Việt Nam",
+  city: "Hà Nội",
+  address: "123 Đường ABC",
   phone: "0123456789",
+  universityName: "Đại học Quốc gia Hà Nội",
+  major: "Công nghệ thông tin",
+  graduationYear: "2025",
+  studentId: "SV123456",
+  isStudentVerified: true,
   status: "active",
   createdAt: "2023-01-01T12:00:00Z",
+  updatedAt: "2023-01-01T12:00:00Z",
+  firstName: "Nguyễn",
+  lastName: "A",
+  timezone: "Asia/Ho_Chi_Minh",
+  language: "vi",
+  privacySettings: { showEmail: false },
+  notificationSettings: { email: true },
 };
 
 export function useUserProfile() {
