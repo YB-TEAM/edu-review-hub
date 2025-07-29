@@ -1,3 +1,6 @@
+import 'package:dartz/dartz.dart';
+import 'package:edu_review_mobile/core/error/failures.dart';
+
 abstract class SettingsRepository {
-  Future logOut();
+  Future<Either<Failure, void>> logOut();
 }

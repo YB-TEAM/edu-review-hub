@@ -1,4 +1,5 @@
 import 'package:edu_review_mobile/common_libs.dart';
+import 'package:edu_review_mobile/core/usecases/no_params.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:edu_review_mobile/common/widgets/button/primary_button.dart';
 import 'package:edu_review_mobile/common/bloc/button/button_state.dart';
@@ -13,14 +14,18 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     void _logOut(BuildContext context) {
-      context.read<ButtonStateCubit>().execute(usecase: sl<LogOutUseCase>());
+      context.read<ButtonStateCubit>().execute(usecase: sl<LogOutUseCase>(), params: NoParams());
     }
 
     return MultiBlocProvider(
       providers: [BlocProvider(create: (context) => ButtonStateCubit())],
       child: BlocListener<ButtonStateCubit, ButtonState>(
         listener: (context, state) {
-          if (state is ButtonSuccessState) {
+          if (state is ButtonFailureState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Lỗi: ${state.errorMessage}")),
+            );
+          } else if (state is ButtonSuccessState) {
             Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil(
               RouteConstant.signIn,
               (route) => false,
@@ -32,72 +37,70 @@ class SettingsPage extends StatelessWidget {
           body: SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 30),
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      "Account & Security",
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontFamily: 'Roboto-Bold',
-                        color: AppColors.textBlack,
-                      ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    "Account & Security",
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontFamily: 'Roboto-Bold',
+                      color: AppColors.textBlack,
                     ),
-                    const SizedBox(height: 12),
-                    NavigationButton(
-                      leadingIcon: Icons.person,
-                      title: "Personal Information",
-                      trailingIcon: Icons.arrow_forward_ios,
-                      onTap: () {},
+                  ),
+                  const SizedBox(height: 12),
+                  NavigationButton(
+                    leadingIcon: Icons.person,
+                    title: "Personal Information",
+                    trailingIcon: Icons.arrow_forward_ios,
+                    onTap: () {},
+                  ),
+                  const SizedBox(height: 12),
+                  NavigationButton(
+                    leadingIcon: Icons.key,
+                    title: 'Change Password',
+                    trailingIcon: Icons.arrow_forward_ios,
+                    onTap: () {},
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    "Settings",
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontFamily: 'Roboto-Bold',
+                      color: AppColors.textBlack,
                     ),
-                    const SizedBox(height: 12),
-                    NavigationButton(
-                      leadingIcon: Icons.key,
-                      title: 'Change Password',
-                      trailingIcon: Icons.arrow_forward_ios,
-                      onTap: () {},
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      "Settings",
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontFamily: 'Roboto-Bold',
-                        color: AppColors.textBlack,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    NavigationButton(
-                      leadingIcon: Icons.book,
-                      title: 'Terms & Conditions',
-                      trailingIcon: Icons.arrow_forward_ios,
-                      onTap: () {},
-                    ),
-                    const SizedBox(height: 12),
-                    NavigationButton(
-                      leadingIcon: Icons.lock,
-                      title: 'Privacy Policy',
-                      trailingIcon: Icons.arrow_forward_ios,
-                      onTap: () {},
-                    ),
-                    const SizedBox(height: 12),
-                    NavigationButton(
-                      leadingIcon: Icons.phone,
-                      title: 'Contact Us',
-                      trailingIcon: Icons.arrow_forward_ios,
-                      onTap: () {},
-                    ),
-                    const SizedBox(height: 24),
-                    Builder(
-                      builder:
-                          (buttonContext) => PrimaryButton(
-                            onPressed: () => _logOut(buttonContext),
-                            title: "Sign Out",
-                            backgroundColor: AppColors.primaryWhite,
-                            textColor: AppColors.primaryRed,
-                          ),
-                    ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 12),
+                  NavigationButton(
+                    leadingIcon: Icons.book,
+                    title: 'Terms & Conditions',
+                    trailingIcon: Icons.arrow_forward_ios,
+                    onTap: () {},
+                  ),
+                  const SizedBox(height: 12),
+                  NavigationButton(
+                    leadingIcon: Icons.lock,
+                    title: 'Privacy Policy',
+                    trailingIcon: Icons.arrow_forward_ios,
+                    onTap: () {},
+                  ),
+                  const SizedBox(height: 12),
+                  NavigationButton(
+                    leadingIcon: Icons.phone,
+                    title: 'Contact Us',
+                    trailingIcon: Icons.arrow_forward_ios,
+                    onTap: () {},
+                  ),
+                  const SizedBox(height: 24),
+                  Builder(
+                    builder:
+                        (buttonContext) => PrimaryButton(
+                          onPressed: () => _logOut(buttonContext),
+                          title: "Sign Out",
+                          backgroundColor: AppColors.primaryWhite,
+                          textColor: AppColors.primaryRed,
+                        ),
+                  ),
+                ],
               ),
             ),
           ),

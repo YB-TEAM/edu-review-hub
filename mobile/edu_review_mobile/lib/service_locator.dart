@@ -1,9 +1,11 @@
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:edu_review_mobile/core/network/dio_client.dart';
 import 'package:edu_review_mobile/features/auth/data/data_sources/local/auth_local_service.dart';
 import 'package:edu_review_mobile/features/auth/data/data_sources/remote/auth_api_service.dart';
 import 'package:edu_review_mobile/features/auth/data/repository/auth_repository_imp.dart';
 import 'package:edu_review_mobile/features/auth/domain/repository/auth_repository.dart';
 import 'package:edu_review_mobile/features/auth/domain/usecases/sign_in.dart';
+import 'package:edu_review_mobile/features/settings/data/data_sources/remote/settings_api_service.dart';
 import 'package:edu_review_mobile/features/settings/data/repository/settings_repository_impl.dart';
 import 'package:edu_review_mobile/features/settings/domain/repository/settings_repository.dart';
 import 'package:edu_review_mobile/features/user_profile/data/repository/profile_repository_impl.dart';
@@ -22,32 +24,26 @@ final sl = GetIt.instance;
 void setUpServiceLocator() {
   sl.registerSingleton<DioClient>(DioClient());
 
-  // Service
+  // Tools & Plugins
+  sl.registerSingleton<DeviceInfoPlugin>(DeviceInfoPlugin());
+
+  // Services
   sl.registerSingleton<AuthApiService>(AuthApiServiceImpl());
-
   sl.registerSingleton<AuthLocalService>(AuthLocalServiceImpl());
-
   sl.registerSingleton<ProfileApiService>(ProfileApiServiceImpl());
-
   sl.registerSingleton<SettingsLocalService>(SettingsLocalServiceImpl());
+  sl.registerSingleton<SettingsApiService>(SettingsApiServiceImpl());
 
   // Repositories
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl());
-
   sl.registerSingleton<ProfileRepository>(ProfileRepositoryImpl());
-
   sl.registerSingleton<SettingsRepository>(SettingsRepositoryImpl());
 
   // Usecases
   sl.registerSingleton<SignUpUseCase>(SignUpUseCase());
-
-  sl.registerSingleton<IsLoggedInUseCase>(IsLoggedInUseCase());
-
-  sl.registerSingleton<GetUserUseCase>(GetUserUseCase());
-
-  sl.registerSingleton<EditProfileUseCase>(EditProfileUseCase());
-
-  sl.registerSingleton<LogOutUseCase>(LogOutUseCase());
-  
   sl.registerSingleton<SignInUseCase>(SignInUseCase());
+  sl.registerSingleton<IsLoggedInUseCase>(IsLoggedInUseCase());
+  sl.registerSingleton<GetUserUseCase>(GetUserUseCase());
+  sl.registerSingleton<EditProfileUseCase>(EditProfileUseCase());
+  sl.registerSingleton<LogOutUseCase>(LogOutUseCase());
 }

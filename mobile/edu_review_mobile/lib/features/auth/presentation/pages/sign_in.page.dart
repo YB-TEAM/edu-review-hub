@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:edu_review_mobile/common/bloc/button/button_state.dart';
 import 'package:edu_review_mobile/common/bloc/button/button_state_cubit.dart';
 import 'package:edu_review_mobile/common/widgets/button/custom_text_button.dart';
@@ -61,7 +64,19 @@ class _SignInPageState extends State<SignInPage> {
     return null;
   }
 
-  void _handleSignIn(BuildContext context) {
+  Future<String?> _getDeviceId() async {
+    final deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      final androidInfo = await deviceInfo.androidInfo;
+      return androidInfo.id;
+    } else if (Platform.isIOS) {
+      final iosInfo = await deviceInfo.iosInfo;
+      return iosInfo.identifierForVendor;
+    }
+    return null;
+  }
+
+  void _handleSignIn(BuildContext context) async {
     setState(() {
       _isFormSubmitted = true;
     });
@@ -69,17 +84,20 @@ class _SignInPageState extends State<SignInPage> {
     // Force validation to show errors
     _formKey.currentState!.validate();
 
+
+
     // Check if form is valid before proceeding
     if (_identifierController.text.isNotEmpty &&
         _passwordController.text.isNotEmpty &&
         _validateIdentifier(_identifierController.text) == null &&
         _validatePassword(_passwordController.text) == null) {
+      final deviceId = await _getDeviceId();
       context.read<ButtonStateCubit>().execute(
         usecase: sl<SignInUseCase>(),
         params: SignInParams(
           identifier: _identifierController.text,
           password: _passwordController.text,
-          deviceId: null, 
+          deviceId: deviceId, 
           rememberMe: null, 
         ),
       );

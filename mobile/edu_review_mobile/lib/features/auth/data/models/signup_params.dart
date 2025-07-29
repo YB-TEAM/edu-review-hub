@@ -3,12 +3,14 @@ class SignUpParams {
   final String email;
   final String password;
   final String? phone;
+  final String? deviceId;
   final String? accountType;
 
   SignUpParams({
     required this.username,
     required this.email, 
     required this.password, 
+    this.deviceId,
     this.phone,
     this.accountType,
   });
@@ -18,6 +20,7 @@ class SignUpParams {
       'username': username,
       'email': email,
       'password': password,
+      'deviceId': deviceId ?? '',
     };
     if (phone != null) {
       map['phone'] = phone;
