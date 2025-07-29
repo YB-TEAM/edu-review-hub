@@ -20,29 +20,53 @@ import { ForgotPasswordDto } from "@/application/dto/auth/forgot-password.dto";
 import { ResetPasswordDto } from "@/application/dto/auth/reset-password.dto";
 import { VerifyEmailDto } from "@/application/dto/auth/verify-email.dto";
 import { JwtAuthGuard } from "@/presentation/guards/jwt-auth.guard";
-import { IsString, IsEmail } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsEmail } from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class VerifyOtpDto {
-  @ApiProperty({ description: 'Mã OTP 6 số' })
+  @ApiProperty({
+    description: "Mã OTP 6 số để xác thực email",
+    example: "123456",
+  })
   @IsString()
   otp: string;
 
-  @ApiProperty({ description: 'Email' })
+  @ApiProperty({
+    description: "Email cần xác thực",
+    example: "student@example.com",
+  })
+  @IsEmail()
+  email: string;
+}
+
+export class ResendVerificationDto {
+  @ApiProperty({
+    description: "Email cần gửi lại mã xác thực",
+    example: "student@example.com",
+  })
   @IsEmail()
   email: string;
 }
 
 export class ResetPasswordWithOtpDto {
-  @ApiProperty({ description: 'Mã OTP 6 số' })
+  @ApiProperty({
+    description: "Mã OTP 6 số để reset password",
+    example: "123456",
+  })
   @IsString()
   otp: string;
 
-  @ApiProperty({ description: 'Email' })
+  @ApiProperty({
+    description: "Email của tài khoản",
+    example: "student@example.com",
+  })
   @IsEmail()
   email: string;
 
-  @ApiProperty({ description: 'Mật khẩu mới' })
+  @ApiProperty({
+    description: "Mật khẩu mới",
+    example: "newpassword123",
+  })
   @IsString()
   newPassword: string;
 }
@@ -56,7 +80,10 @@ export class EmailVerificationController {
   ) {}
 
   @Post("verify-email")
-  @ApiOperation({ summary: "Verify email address with OTP" })
+  @ApiOperation({
+    summary: "Verify email address with OTP",
+    description: "Xác thực email bằng mã OTP 6 số được gửi qua email",
+  })
   @ApiBody({ type: VerifyOtpDto })
   @ApiResponse({
     status: 200,
@@ -73,16 +100,23 @@ export class EmailVerificationController {
   async verifyEmail(
     @Body() verifyOtpDto: VerifyOtpDto
   ): Promise<{ message: string }> {
-    await this.emailVerificationService.verifyEmail(verifyOtpDto.otp, verifyOtpDto.email);
+    await this.emailVerificationService.verifyEmail(
+      verifyOtpDto.otp,
+      verifyOtpDto.email
+    );
     return { message: "Email verified successfully" };
   }
 
   @Post("resend-verification")
-  @ApiOperation({ summary: "Resend email verification" })
-  @ApiBody({ type: ForgotPasswordDto })
+  @ApiOperation({
+    summary: "Resend email verification",
+    description:
+      "Gửi lại mã OTP xác thực email nếu chưa nhận được hoặc mã đã hết hạn",
+  })
+  @ApiBody({ type: ResendVerificationDto })
   @ApiResponse({
     status: 200,
-    description: "Verification email sent",
+    description: "Verification email sent successfully",
   })
   @ApiResponse({
     status: 400,
@@ -93,12 +127,12 @@ export class EmailVerificationController {
     description: "User not found",
   })
   async resendVerification(
-    @Body() forgotPasswordDto: ForgotPasswordDto
+    @Body() resendVerificationDto: ResendVerificationDto
   ): Promise<{ message: string }> {
     await this.emailVerificationService.resendVerification(
-      forgotPasswordDto.email
+      resendVerificationDto.email
     );
-    return { message: "Verification email sent" };
+    return { message: "Verification email sent successfully" };
   }
 
   @Post("forgot-password")

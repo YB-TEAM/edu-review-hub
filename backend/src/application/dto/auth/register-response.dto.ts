@@ -4,30 +4,13 @@ import {
   UserStatus,
 } from "@/infrastructure/database/entities/user.entity";
 
-export class AuthResponseDto {
+export class RegisterResponseDto {
   @ApiProperty({
-    description: "JWT access token for API authentication",
-    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    description: "Success message",
+    example:
+      "Registration successful. Please check your email to verify your account.",
   })
-  accessToken: string;
-
-  @ApiProperty({
-    description: "JWT refresh token to get new access token",
-    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  })
-  refreshToken: string;
-
-  @ApiProperty({
-    description: "Token type",
-    example: "Bearer",
-  })
-  tokenType: string;
-
-  @ApiProperty({
-    description: "Token expiration time in seconds",
-    example: 604800,
-  })
-  expiresIn: number;
+  message: string;
 
   @ApiProperty({
     description: "User information",

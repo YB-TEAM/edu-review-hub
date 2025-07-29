@@ -34,6 +34,8 @@ import { UserActivityRepository } from "@/infrastructure/database/repositories/u
 import { UserActivityService } from "@/application/services/user-activity.service";
 import { UserActivityController } from "@/presentation/controllers/user-activity.controller";
 import { RefreshToken } from "@/infrastructure/database/entities/refresh-token.entity";
+import { RefreshTokenRepository } from "@/infrastructure/database/repositories/refresh-token.repository";
+import { UserSessionRepository } from "@/infrastructure/database/repositories/user-session.repository";
 
 @Module({
   imports: [
@@ -47,7 +49,7 @@ import { RefreshToken } from "@/infrastructure/database/entities/refresh-token.e
       EmailVerification,
       AccountDeactivation,
       UserActivity,
-      RefreshToken, // Thêm entity, không thêm repository class
+      RefreshToken,
     ]),
     PassportModule,
     JwtModule.registerAsync({
@@ -81,6 +83,8 @@ import { RefreshToken } from "@/infrastructure/database/entities/refresh-token.e
     CloudinaryService,
     UserActivityService,
     UserActivityRepository,
+    RefreshTokenRepository,
+    UserSessionRepository,
     JwtStrategy,
     LocalStrategy,
     {
