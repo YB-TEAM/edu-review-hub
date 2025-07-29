@@ -120,32 +120,30 @@ class _BlogPageState extends State<BlogPage> {
   }
 
   void _openBlogPost(int index) {
-  Navigator.push(
-    context,
-    PageRouteBuilder(
-      transitionDuration: const Duration(milliseconds: 500),
-      pageBuilder: (context, animation, secondaryAnimation) =>
-          BlogDetailPage(index: index),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        final curvedAnimation = CurvedAnimation(
-          parent: animation,
-          curve: Curves.easeInOutCubic,
-        );
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 500),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            BlogDetailPage(index: index),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          final curvedAnimation = CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeInOutCubic,
+          );
 
-        return FadeTransition(
-          opacity: curvedAnimation,
-          child: SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(0.1, 0), // nhẹ nhàng slide từ phải
-              end: Offset.zero,
-            ).animate(curvedAnimation),
-            child: child,
-          ),
-        );
-      },
-    ),
-  );
-}
-
-
+          return FadeTransition(
+            opacity: curvedAnimation,
+            child: SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0.1, 0), // nhẹ nhàng slide từ phải
+                end: Offset.zero,
+              ).animate(curvedAnimation),
+              child: child,
+            ),
+          );
+        },
+      ),
+    );
+  }
 }
