@@ -25,7 +25,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _majorController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _displayNameController = TextEditingController();
-  bool _isInitialized = false; // Thêm biến này
+  bool _isInitialized = false;
 
   @override
   void dispose() {
@@ -38,7 +38,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void _initializeControllers(ProfileEntity profile) {
-    if (!_isInitialized) { // Chỉ khởi tạo một lần
+    if (!_isInitialized) {
       _cityController.text = profile.city ?? '';
       _universityController.text = profile.universityName ?? '';
       _majorController.text = profile.major ?? '';
