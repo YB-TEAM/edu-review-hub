@@ -45,6 +45,28 @@ export enum ActivityType {
   REVIEW_LIKED = "review_liked",
   REVIEW_UNLIKED = "review_unliked",
   REVIEW_REPORTED = "review_reported",
+
+  // Blog activities
+  BLOG_CREATED = "blog_created",
+  BLOG_UPDATED = "blog_updated",
+  BLOG_DELETED = "blog_deleted",
+  BLOG_PUBLISHED = "blog_published",
+  BLOG_MODERATED = "blog_moderated",
+  BLOG_LIKED = "blog_liked",
+  BLOG_UNLIKED = "blog_unliked",
+  BLOG_VIEWED = "blog_viewed",
+
+  // Tag activities
+  TAG_CREATED = "tag_created",
+  TAG_UPDATED = "tag_updated",
+  TAG_DELETED = "tag_deleted",
+  TAG_ASSIGNED = "tag_assigned",
+  TAG_REMOVED = "tag_removed",
+
+  // Upload activities
+  UPLOAD_IMAGE = "upload_image",
+  UPDATE_IMAGE = "update_image",
+  DELETE_IMAGE = "delete_image",
 }
 
 @Entity("user_activities")

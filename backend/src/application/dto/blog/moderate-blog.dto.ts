@@ -1,15 +1,22 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsEnum, IsOptional, IsString, IsNotEmpty } from "class-validator";
+import { BlogStatus } from "@/infrastructure/database/entities/blog.entity";
 
 export class ModerateBlogDto {
   @ApiProperty({
-    example: "approved",
-    description: "Moderation status (approved/rejected)",
+    enum: BlogStatus,
+    example: BlogStatus.PUBLISHED,
+    description: "New status for the blog",
   })
-  status: string;
+  @IsEnum(BlogStatus)
+  @IsNotEmpty()
+  status: BlogStatus;
 
   @ApiPropertyOptional({
-    example: "Vi phạm nội dung",
-    description: "Lý do từ chối (nếu có)",
+    example: "Content violates community guidelines",
+    description: "Reason for moderation (required if status is REJECTED)",
   })
-  reason?: string;
+  @IsOptional()
+  @IsString()
+  moderationReason?: string;
 }

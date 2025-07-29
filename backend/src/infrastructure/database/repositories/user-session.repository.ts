@@ -19,15 +19,13 @@ export class UserSessionRepository {
     sessionToken: string
   ): Promise<UserSession | undefined> {
     return this.repository.findOne({
-      where: { sessionToken, isActive: true },
-      relations: ["user"],
+      where: { sessionToken },
     });
   }
 
   async findByUserId(userId: number): Promise<UserSession[]> {
     return this.repository.find({
-      where: { userId, isActive: true },
-      relations: ["user"],
+      where: { userId },
     });
   }
 
@@ -36,12 +34,7 @@ export class UserSessionRepository {
   }
 
   async deactivateAllForUser(userId: number): Promise<void> {
-    await this.repository
-      .createQueryBuilder()
-      .update(UserSession)
-      .set({ isActive: false })
-      .where("userId = :userId", { userId })
-      .execute();
+    await this.repository.update({ userId }, { isActive: false });
   }
 
   async updateLastActivity(sessionToken: string): Promise<void> {
@@ -54,12 +47,12 @@ export class UserSessionRepository {
   async findActiveSessionsByUser(userId: number): Promise<UserSession[]> {
     return this.repository.find({
       where: { userId, isActive: true },
-      relations: ["user"],
     });
   }
 
   async save(data: Partial<UserSession>): Promise<UserSession> {
-    return this.repository.save(data);
+    const session = this.repository.create(data);
+    return this.repository.save(session);
   }
 
   async findOne(options: any): Promise<UserSession | undefined> {

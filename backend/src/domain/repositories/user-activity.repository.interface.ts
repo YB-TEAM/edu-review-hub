@@ -22,5 +22,14 @@ export interface IUserActivityRepository {
     offset?: number
   ): Promise<UserActivity[]>;
   getActivityCount(userId: number): Promise<number>;
+  findAll(
+    limit: number,
+    offset: number,
+    filters?: { userId?: number; activityType?: string }
+  ): Promise<UserActivity[]>;
+  getTotalCount(filters?: {
+    userId?: number;
+    activityType?: string;
+  }): Promise<number>;
   deleteOldActivities(daysOld: number): Promise<void>;
 }

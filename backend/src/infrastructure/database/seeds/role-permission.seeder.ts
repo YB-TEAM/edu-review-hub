@@ -145,6 +145,50 @@ export class RolePermissionSeeder {
         resource: "blog",
         action: "moderate",
       },
+      {
+        name: "blog:publish",
+        description: "Publish blog posts for moderation",
+        resource: "blog",
+        action: "publish",
+      },
+      {
+        name: "blog:like",
+        description: "Like/unlike blog posts",
+        resource: "blog",
+        action: "like",
+      },
+
+      // Tag management
+      {
+        name: "tag:read",
+        description: "Read tags",
+        resource: "tag",
+        action: "read",
+      },
+      {
+        name: "tag:create",
+        description: "Create tags",
+        resource: "tag",
+        action: "create",
+      },
+      {
+        name: "tag:update",
+        description: "Update tags",
+        resource: "tag",
+        action: "update",
+      },
+      {
+        name: "tag:delete",
+        description: "Delete tags",
+        resource: "tag",
+        action: "delete",
+      },
+      {
+        name: "tag:manage",
+        description: "Manage all tags",
+        resource: "tag",
+        action: "manage",
+      },
 
       // System management
       {
@@ -229,6 +273,38 @@ export class RolePermissionSeeder {
         resource: "permission",
         action: "manage",
       },
+
+      // Upload management
+      {
+        name: "upload:read",
+        description: "Read uploaded files",
+        resource: "upload",
+        action: "read",
+      },
+      {
+        name: "upload:create",
+        description: "Upload images",
+        resource: "upload",
+        action: "create",
+      },
+      {
+        name: "upload:update",
+        description: "Update images",
+        resource: "upload",
+        action: "update",
+      },
+      {
+        name: "upload:delete",
+        description: "Delete images",
+        resource: "upload",
+        action: "delete",
+      },
+      {
+        name: "upload:manage",
+        description: "Manage all uploads",
+        resource: "upload",
+        action: "manage",
+      },
     ];
 
     const createdPermissions = [];
@@ -271,6 +347,13 @@ export class RolePermissionSeeder {
           "university:delete",
           "blog:read",
           "blog:moderate",
+          "blog:publish",
+          "blog:like",
+          "tag:read",
+          "tag:create",
+          "tag:update",
+          "tag:delete",
+          "tag:manage",
           "system:read",
           "system:manage",
           "role:read",
@@ -281,6 +364,11 @@ export class RolePermissionSeeder {
           "permission:create",
           "permission:update",
           "permission:delete",
+          "upload:read",
+          "upload:create",
+          "upload:update",
+          "upload:delete",
+          "upload:manage",
         ],
       },
       {
@@ -293,7 +381,11 @@ export class RolePermissionSeeder {
           "review:moderate",
           "blog:read",
           "blog:moderate",
-          "university:read",
+          "tag:read",
+          "upload:read",
+          "upload:create",
+          "upload:update",
+          "upload:delete",
         ],
       },
       {
@@ -309,6 +401,13 @@ export class RolePermissionSeeder {
           "blog:create",
           "blog:update",
           "blog:delete",
+          "blog:publish",
+          "blog:like",
+          "tag:read",
+          "upload:read",
+          "upload:create",
+          "upload:update",
+          "upload:delete",
         ],
       },
       {
@@ -327,6 +426,13 @@ export class RolePermissionSeeder {
           "blog:create",
           "blog:update",
           "blog:delete",
+          "blog:publish",
+          "blog:like",
+          "tag:read",
+          "upload:read",
+          "upload:create",
+          "upload:update",
+          "upload:delete",
         ],
       },
       {
@@ -348,14 +454,14 @@ export class RolePermissionSeeder {
           isSystem: roleData.isSystem,
         });
         await roleRepository.save(role);
-
-        // Assign permissions to role
-        const rolePermissions = permissions.filter((p) =>
-          roleData.permissions.includes(p.name)
-        );
-        role.permissions = rolePermissions;
-        await roleRepository.save(role);
       }
+
+      // Always assign/update permissions to role (for both new and existing roles)
+      const rolePermissions = permissions.filter((p) =>
+        roleData.permissions.includes(p.name)
+      );
+      role.permissions = rolePermissions;
+      await roleRepository.save(role);
     }
   }
 }

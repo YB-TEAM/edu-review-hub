@@ -70,4 +70,52 @@ export class UserActivityRepository implements IUserActivityRepository {
       createdAt: LessThan(cutoffDate),
     });
   }
+
+  async findAll(
+    limit: number,
+    offset: number,
+    filters?: { userId?: number; activityType?: string }
+  ): Promise<UserActivity[]> {
+    const queryBuilder = this.userActivityRepository
+      .createQueryBuilder("activity")
+      .leftJoinAndSelect("activity.user", "user")
+      .orderBy("activity.createdAt", "DESC");
+
+    if (filters?.userId) {
+      queryBuilder.andWhere("activity.userId = :userId", {
+        userId: filters.userId,
+      });
+    }
+
+    if (filters?.activityType) {
+      queryBuilder.andWhere("activity.activityType = :activityType", {
+        activityType: filters.activityType,
+      });
+    }
+
+    queryBuilder.skip(offset).take(limit);
+    return queryBuilder.getMany();
+  }
+
+  async getTotalCount(filters?: {
+    userId?: number;
+    activityType?: string;
+  }): Promise<number> {
+    const queryBuilder =
+      this.userActivityRepository.createQueryBuilder("activity");
+
+    if (filters?.userId) {
+      queryBuilder.andWhere("activity.userId = :userId", {
+        userId: filters.userId,
+      });
+    }
+
+    if (filters?.activityType) {
+      queryBuilder.andWhere("activity.activityType = :activityType", {
+        activityType: filters.activityType,
+      });
+    }
+
+    return queryBuilder.getCount();
+  }
 }

@@ -73,7 +73,6 @@ export class AuthController {
 
   @Post("login")
   @HttpCode(HttpStatus.OK)
-  @UseGuards(LocalAuthGuard)
   @ApiOperation({
     summary: "Login user",
     description: "Authenticate user with email/username and password",
@@ -86,11 +85,38 @@ export class AuthController {
   })
   @ApiResponse({
     status: 401,
-    description: "Invalid credentials",
+    description: "Account not found or invalid password",
+    schema: {
+      type: "object",
+      properties: {
+        message: {
+          type: "string",
+          examples: [
+            "Account not found. Please check your email/username and try again.",
+            "Invalid password. Please check your password and try again.",
+            "Account is not active. Please contact support.",
+          ],
+        },
+        error: { type: "string", example: "Unauthorized" },
+        statusCode: { type: "number", example: 401 },
+      },
+    },
   })
   @ApiResponse({
     status: 403,
     description: "Email not verified",
+    schema: {
+      type: "object",
+      properties: {
+        message: {
+          type: "string",
+          example:
+            "Email not verified. Please check your email and verify your account.",
+        },
+        error: { type: "string", example: "Forbidden" },
+        statusCode: { type: "number", example: 403 },
+      },
+    },
   })
   async login(
     @Body() loginDto: LoginDto,

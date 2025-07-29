@@ -16,10 +16,10 @@ export class UserSession {
   @Column({ type: "bigint" })
   userId: number;
 
-  @Column({ type: "varchar", length: 255, unique: true })
+  @Column({ type: "varchar", length: 1000, unique: true })
   sessionToken: string;
 
-  @Column({ type: "varchar", length: 255, unique: true, nullable: true })
+  @Column({ type: "varchar", length: 1000, unique: true, nullable: true })
   refreshToken: string;
 
   @Column({ type: "varchar", length: 255, nullable: true })
