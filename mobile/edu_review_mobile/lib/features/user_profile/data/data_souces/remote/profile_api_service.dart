@@ -27,7 +27,7 @@ class ProfileApiServiceImpl extends ProfileApiService {
       var profileModel = ProfileModel.fromMap(response.data);
       return Right(profileModel.toEntity());
     } on DioException catch (e) {
-      return Left(ServerFailure(e.response?.data['message'] ?? 'Server Error'));
+      return Left(ServerFailure(message: e.response?.data['message'] ?? 'Some errors occur when fetching user profile', statusCode: e.response?.statusCode));
     }
   }
 
@@ -49,9 +49,8 @@ class ProfileApiServiceImpl extends ProfileApiService {
       var profileModel = ProfileModel.fromMap(response.data);
       return Right(profileModel.toEntity());
     } on DioException catch (e) {
-      return Left(ServerFailure(
-        e.response?.data['message'] ?? 'Some errors occur when edit profile',
-      ));
+      return Left(ServerFailure(message: e.response?.data['message'] ?? 'Some errors occur when fetching user profile', statusCode: e.response?.statusCode)
+      );
     }
   }
 }
