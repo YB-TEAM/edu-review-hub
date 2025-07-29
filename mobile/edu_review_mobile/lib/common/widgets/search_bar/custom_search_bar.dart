@@ -1,171 +1,175 @@
-import 'package:flutter/material.dart';
+  import 'package:edu_review_mobile/core/config/theme/color.dart';
+  import 'package:flutter/material.dart';
+  import 'package:flutter/services.dart';
+  import 'package:flutter_svg/svg.dart';
+  import 'package:material_floating_search_bar_2/material_floating_search_bar_2.dart';
 
-class CustomSearchBar extends StatefulWidget {
-  final Function(String)? onSearch;
-  final String? hintText;
-  final List<String>? suggestions;
-  final double opacity;
+  class CustomSearchBar extends StatefulWidget {
+    final bool isPortrait;
 
-  const CustomSearchBar({
-    Key? key,
-    this.onSearch,
-    this.hintText,
-    this.suggestions,
-    this.opacity = 1.0,
-  }) : super(key: key);
+    const CustomSearchBar({Key? key, required this.isPortrait}) : super(key: key);
 
-  @override
-  State<CustomSearchBar> createState() => _CustomSearchBarBarState();
-}
-
-class _CustomSearchBarBarState extends State<CustomSearchBar>
-    with TickerProviderStateMixin {
-  final TextEditingController _controller = TextEditingController();
-  final FocusNode _focusNode = FocusNode();
-  late AnimationController _animationController;
-  late Animation<double> _scaleAnimation;
-  bool _isExpanded = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.02,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
-
-    _focusNode.addListener(() {
-      setState(() {
-        _isExpanded = _focusNode.hasFocus;
-      });
-      if (_focusNode.hasFocus) {
-        _animationController.forward();
-      } else {
-        _animationController.reverse();
-      }
-    });
-
-    _controller.addListener(() {
-      _filterSuggestions(_controller.text);
-    });
+    @override
+    State<CustomSearchBar> createState() => _CustomSearchBarState();
   }
 
-  void _filterSuggestions(String query) {
-    if (widget.suggestions != null && query.isNotEmpty) {
-      setState(() {
-      });
-    } else {
-      setState(() {
-      });
+  class _CustomSearchBarState extends State<CustomSearchBar> {
+    final FloatingSearchBarController _controller = FloatingSearchBarController();
+    final List<Map<String, String>> suggestions = [
+      {
+        'title': 'ĐH Bách Khoa HN',
+        'subtitle': 'Cơ sở vật chất cực xịn',
+        'icon': 'assets/icons/ic_star_active.svg',
+      },
+      {
+        'title': 'ĐH Kinh Tế TP.HCM',
+        'subtitle': 'Đời sống sinh viên năng động',
+        'icon': 'assets/icons/ic_city.svg',
+      },
+      {
+        'title': 'ĐH Đà Lạt',
+        'subtitle': 'View đẹp như Đà Lạt thu nhỏ',
+        'icon': 'assets/icons/ic_book.svg',
+      },
+      {
+        'title': 'ĐH Quốc Gia HN',
+        'subtitle': 'Trường đại học hàng đầu Việt Nam',
+        'icon': 'assets/icons/ic_university.svg',
+      },
+      {
+        'title': 'ĐH Sư Phạm Kỹ Thuật HCM',
+        'subtitle': 'Chất lượng đào tạo kỹ thuật cao',
+        'icon': 'assets/icons/ic_book.svg',
+      },
+      {
+        'title': 'ĐH Ngoại Thương',
+        'subtitle': 'Chuyên ngành kinh tế quốc tế',
+        'icon': 'assets/icons/ic_book.svg',
+      },
+      {
+        'title': 'ĐH Y Dược TP.HCM',
+        'subtitle': 'Chất lượng đào tạo y khoa hàng đầu',
+        'icon': 'assets/icons/ic_book.svg',
+      },
+      {
+        'title': 'ĐH Kiến Trúc HN',
+        'subtitle': 'Kiến trúc sư tương lai',
+        'icon': 'assets/icons/ic_book.svg',
+      },
+    ];
+
+    @override
+    Widget build(BuildContext context) {
+      
+      return FloatingSearchBar(
+        margins: EdgeInsets.only(left: 12, right: 12, top: MediaQuery.of(context).padding.top + 12, bottom: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        height: 52,
+        controller: _controller,
+        hint: 'Search blogs, news, etc.',
+        hintStyle: Theme.of(context).textTheme.labelMedium?.copyWith(color: AppColors.textGrey, fontWeight: FontWeight.w500),
+        queryStyle: Theme.of(context).textTheme.labelMedium?.copyWith(color: AppColors.textBlack, fontWeight: FontWeight.w500),
+        iconColor: AppColors.textGrey,
+        transitionDuration: const Duration(milliseconds: 800),
+        transitionCurve: Curves.easeInOutCubic,
+        physics: const BouncingScrollPhysics(),
+        axisAlignment: widget.isPortrait ? 0.0 : -1.0,
+        openAxisAlignment: 0.0,
+        leadingActions: [
+          FloatingSearchBarAction(
+            showIfClosed: false,
+            showIfOpened: true,
+            child: GestureDetector(
+              onTap: () {
+                _controller.close(); 
+                FocusScope.of(context).unfocus(); 
+              },
+              child: Icon(
+                Icons.chevron_left,
+                color: AppColors.primaryGrey,
+                size: 28,
+              ),
+            ),
+          ),
+          FloatingSearchBarAction(
+            showIfClosed: true,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 4),
+              child: SvgPicture.asset(
+                'assets/icons/ic_university.svg',
+                width: 24,
+                height: 24,
+                colorFilter: const ColorFilter.mode(
+                  AppColors.primaryGrey,
+                  BlendMode.srcIn,
+                ),
+              ),
+            ),
+          ),
+        ],
+        actions: [
+          FloatingSearchBarAction.searchToClear(showIfClosed: false),
+        ],
+        onQueryChanged: (query) {
+          
+        },
+        onKeyEvent: (KeyEvent keyEvent) {
+          if (keyEvent.logicalKey == LogicalKeyboardKey.escape) {
+            _controller.query = '';
+            _controller.close();
+          }
+        },
+        scrollPadding: EdgeInsets.zero,
+        transition: CircularFloatingSearchBarTransition(spacing: 16),
+        builder: (context, transition) => _buildSuggestionList(),
+      );
     }
-  }
 
-  @override
-  void dispose() {
-    _animationController.dispose();
-    _controller.dispose();
-    _focusNode.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedOpacity(
-      opacity: widget.opacity,
-      duration: const Duration(milliseconds: 200),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        child: AnimatedBuilder(
-          animation: _scaleAnimation,
-          builder: (context, child) {
-            return Transform.scale(
-              scale: _scaleAnimation.value,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: _isExpanded ? 15 : 8,
-                      offset: const Offset(0, 3),
+    Widget _buildSuggestionList() {
+      return Material(
+        borderRadius: BorderRadius.circular(8),
+        color: Colors.white,
+        child: ListView.separated(
+          shrinkWrap: true,
+          padding: EdgeInsets.zero,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: suggestions.length,
+          separatorBuilder: (_, __) => Divider(height: 0, thickness: 1, indent: 32, endIndent: 32, color: AppColors.primaryBlack.withOpacity(0.1)),
+          itemBuilder: (context, index) {
+            final item = suggestions[index];
+            return InkWell(
+              onTap: () {
+                _controller.close();
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    SvgPicture.asset(
+                      item['icon'] ?? 'assets/icons/ic_search.svg',
+                      width: 28,
+                      height: 28,
+                      colorFilter: ColorFilter.mode(AppColors.primaryGrey, BlendMode.srcIn),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(item['title'] ?? '', style: Theme.of(context).textTheme.titleMedium),
+                          Text(
+                            item['subtitle'] ?? '',
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.textGrey),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
-                ),
-                child: TextField(
-                  controller: _controller,
-                  focusNode: _focusNode,
-                  onSubmitted: (value) {
-                    if (widget.onSearch != null) {
-                      widget.onSearch!(value);
-                    }
-                  },
-                  decoration: InputDecoration(
-                    hintText: widget.hintText ?? 'Tìm kiếm blog...',
-                    hintStyle: TextStyle(
-                      color: Colors.grey[400],
-                      fontSize: 14,
-                    ),
-                    prefixIcon: AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      child: Icon(
-                        Icons.search,
-                        color: _isExpanded
-                            ? Theme.of(context).primaryColor
-                            : Colors.grey[400],
-                        size: 20
-                      ),
-                    ),
-                    suffixIcon: _controller.text.isNotEmpty
-                        ? IconButton(
-                            icon: Icon(
-                              Icons.clear,
-                              color: Colors.grey,
-                              size: 18
-                            ),
-                            onPressed: () {
-                              _controller.clear();
-                              setState(() {
-                              });
-                            },
-                          )
-                        : null,
-                    filled: true,
-                    fillColor: Colors.white.withOpacity(0.95),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide.none,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide(
-                        color: Theme.of(context).primaryColor,
-                        width: 2,
-                      ),
-                    ),
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                  ),
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black87,
-                  ),
                 ),
               ),
             );
           },
         ),
-      ),
-    );
+      );
+    }
   }
-}
