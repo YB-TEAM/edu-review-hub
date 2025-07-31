@@ -2,20 +2,17 @@ abstract class Failure {
   final String message;
   final int? statusCode;
 
-  const Failure(this.message, {this.statusCode});
+  const Failure({required this.message, this.statusCode});
 }
 
 class ServerFailure extends Failure {
-  const ServerFailure(String message, {int? statusCode})
-      : super(message, statusCode: statusCode);
+  const ServerFailure({required super.message, super.statusCode});
 }
 
 class CacheFailure extends Failure {
-  const CacheFailure(String message, {int? statusCode})
-      : super(message, statusCode: statusCode);
+  const CacheFailure({required super.message, super.statusCode});
 }
 
 class NetworkFailure extends Failure {
-  const NetworkFailure(String message, {int? statusCode})
-      : super(message, statusCode: statusCode);
+  const NetworkFailure({required super.message, super.statusCode});
 }

@@ -55,9 +55,9 @@ class _MainScreenState extends State<MainScreen> {
     ),
     PersistentTabConfig(
       screen: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.dark.copyWith(
-          statusBarColor: Colors.white,
-          statusBarIconBrightness: Brightness.dark,
+        value: SystemUiOverlayStyle.light.copyWith(
+          statusBarColor: AppColors.primaryBlue,
+          statusBarIconBrightness: Brightness.light,
           statusBarBrightness: Brightness.light,
         ),
         child: const BlogPage(),
@@ -175,7 +175,7 @@ class _MainScreenState extends State<MainScreen> {
                   case 5:
                     svgName = 'ic_bar';
                     break;
-                  default:
+                  default:///...
                     svgName = 'ic_home';
                 }
                 final svgPath =

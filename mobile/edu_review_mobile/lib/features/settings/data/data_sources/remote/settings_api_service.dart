@@ -23,7 +23,7 @@ class SettingsApiServiceImpl implements SettingsApiService {
       );
       return const Right(null);
     } on DioException catch (e) {
-      return Left(ServerFailure(e.response?.data['message'] ?? 'Logout failed'));
+      return Left(ServerFailure(message: e.response?.data['message'] ?? 'Some errors occur when fetching user profile', statusCode: e.response?.statusCode));
     }
   }
 }

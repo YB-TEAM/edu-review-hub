@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:dio/dio.dart';
 import 'package:edu_review_mobile/core/error/failures.dart';
 import 'package:edu_review_mobile/features/settings/data/data_sources/local/settings_local_service.dart';
 import 'package:edu_review_mobile/features/settings/data/data_sources/remote/settings_api_service.dart';
@@ -28,8 +29,8 @@ class SettingsRepositoryImpl implements SettingsRepository {
         await sl<SettingsLocalService>().logOut();
       }
       return result;
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+    } on DioException catch (e) {
+      return Left(ServerFailure(message: e.response?.data['message'] ?? 'Some errors occur when fetching user profile', statusCode: e.response?.statusCode));
     }
   }
 }
