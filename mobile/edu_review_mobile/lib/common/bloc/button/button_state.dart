@@ -8,5 +8,6 @@ class ButtonSuccessState extends ButtonState {}
 
 class ButtonFailureState extends ButtonState {
   final String errorMessage;
-  ButtonFailureState({required this.errorMessage});
+  final int? statusCode;
+  ButtonFailureState({required this.errorMessage, this.statusCode});
 }

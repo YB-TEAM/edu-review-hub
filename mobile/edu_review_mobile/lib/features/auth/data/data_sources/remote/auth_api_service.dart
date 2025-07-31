@@ -3,29 +3,31 @@ import 'package:dio/dio.dart';
 import 'package:edu_review_mobile/common/constants/api_urls.dart';
 import 'package:edu_review_mobile/core/error/failures.dart';
 import 'package:edu_review_mobile/core/network/dio_client.dart';
-import 'package:edu_review_mobile/features/auth/data/models/auth_tokens.dart';
+import 'package:edu_review_mobile/features/auth/data/models/signin_response.dart';
 import 'package:edu_review_mobile/features/auth/data/models/signin_params.dart';
+import 'package:edu_review_mobile/features/auth/data/models/signup_response.dart';
 import 'package:edu_review_mobile/features/auth/data/models/signup_params.dart';
+import 'package:edu_review_mobile/features/auth/data/models/verify_email_params.dart';
 import 'package:edu_review_mobile/service_locator.dart';
 
 abstract class AuthApiService {
-  Future<Either<Failure, AuthTokenModel>> signUp(SignUpParams signupParams);
-  Future<Either<Failure, AuthTokenModel>> signIn(SignInParams signinParams);
-  Future<AuthTokenModel> refreshToken(String refreshToken);
+  Future<Either<Failure, SignUpResponse>> signUp(SignUpParams signupParams);
+  Future<Either<Failure, SignInResponse>> signIn(SignInParams signinParams);
+  Future<SignInResponse> refreshToken(String refreshToken);
+  Future<Either<Failure, void>> verifyEmail(VerifyEmailParams verifyEmailParams);
 }
 
 class AuthApiServiceImpl extends AuthApiService {
 
   @override
-  Future<Either<Failure, AuthTokenModel>> signUp(SignUpParams signupParams) async {
+  Future<Either<Failure, SignUpResponse>> signUp(SignUpParams signupParams) async {
     try {
       final response = await sl<DioClient>().post(
         ApiUrls.register,
         data: signupParams.toMap(),
       );
-
-      final authToken = AuthTokenModel.fromJson(response.data);
-      return Right(authToken);
+      final signUpResponse = SignUpResponse.fromJson(response.data);
+      return Right(signUpResponse);
     } on DioException catch (e) {
       return Left(
         ServerFailure(
@@ -39,15 +41,15 @@ class AuthApiServiceImpl extends AuthApiService {
   }
 
   @override
-  Future<Either<Failure, AuthTokenModel>> signIn(SignInParams signinParams) async {
+  Future<Either<Failure, SignInResponse>> signIn(SignInParams signinParams) async {
     try {
       final response = await sl<DioClient>().post(
         ApiUrls.login,
         data: signinParams.toMap(),
       );
 
-      final authToken = AuthTokenModel.fromJson(response.data);
-      return Right(authToken);
+      final signInResponse = SignInResponse.fromJson(response.data);
+      return Right(signInResponse);
     } on DioException catch (e) {
       return Left(
         ServerFailure(
@@ -61,12 +63,30 @@ class AuthApiServiceImpl extends AuthApiService {
   }
 
   @override
-  Future<AuthTokenModel> refreshToken(String refreshToken) async {
+  Future<SignInResponse> refreshToken(String refreshToken) async {
     final response = await sl<DioClient>().post(
       ApiUrls.refreshToken,
       data: {'refreshToken': refreshToken},
     );
 
-    return AuthTokenModel.fromJson(response.data);
+    return SignInResponse.fromJson(response.data);
+  }
+
+  @override
+  Future<Either<Failure, void>> verifyEmail(VerifyEmailParams verifyEmailParams) async {
+    try {
+      await sl<DioClient>().post(
+        ApiUrls.verifyEmail,
+        data: verifyEmailParams.toMap(),
+      );
+      return Right(null); 
+    } on DioException catch (e) {
+      return Left(ServerFailure(
+        message: e.response?.data['message'] ?? 'OTP verification failed',
+        statusCode: e.response?.statusCode,
+      ));
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
   }
 }

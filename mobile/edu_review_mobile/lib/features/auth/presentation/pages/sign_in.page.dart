@@ -143,6 +143,14 @@ class _SignInPageState extends State<SignInPage> {
               Navigator.pushReplacementNamed(context, RouteConstant.mainScreen);
             }
             if (state is ButtonFailureState) {
+              // if (state.statusCode == 403) {
+              //   Navigator.pushNamed(
+              //     context,
+              //     RouteConstant.verifyEmail,
+              //     arguments: emailController.text, 
+              //   );
+              //   return;
+              // }
               showAppDialog(
                 context: context,
                 title: 'Error',

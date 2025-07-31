@@ -7,6 +7,6 @@ class IsLoggedInUseCase implements UseCase<bool, dynamic> {
 
   @override
   Future<bool> call(dynamic param) async{
-   return sl<AuthRepository>().isLoggedIn();
+   return await sl<AuthRepository>().isLoggedIn();
   }
 }

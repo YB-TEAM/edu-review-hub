@@ -5,6 +5,7 @@ import 'package:edu_review_mobile/features/auth/data/data_sources/remote/auth_ap
 import 'package:edu_review_mobile/features/auth/data/repository/auth_repository_imp.dart';
 import 'package:edu_review_mobile/features/auth/domain/repository/auth_repository.dart';
 import 'package:edu_review_mobile/features/auth/domain/usecases/sign_in.dart';
+import 'package:edu_review_mobile/features/auth/domain/usecases/verify_email.dart';
 import 'package:edu_review_mobile/features/settings/data/data_sources/remote/settings_api_service.dart';
 import 'package:edu_review_mobile/features/settings/data/repository/settings_repository_impl.dart';
 import 'package:edu_review_mobile/features/settings/domain/repository/settings_repository.dart';
@@ -43,6 +44,9 @@ void setUpServiceLocator() {
   sl.registerSingleton<SignUpUseCase>(SignUpUseCase());
   sl.registerSingleton<SignInUseCase>(SignInUseCase());
   sl.registerSingleton<IsLoggedInUseCase>(IsLoggedInUseCase());
+  sl.registerSingleton<VerifyEmailUseCase>(VerifyEmailUseCase());
+
+
   sl.registerSingleton<GetUserUseCase>(GetUserUseCase());
   sl.registerSingleton<EditProfileUseCase>(EditProfileUseCase());
   sl.registerSingleton<LogOutUseCase>(LogOutUseCase());
