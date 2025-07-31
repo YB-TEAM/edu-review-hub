@@ -91,7 +91,7 @@ class _EditAvatarButtonState extends State<EditAvatarButton> {
               ),
               onPressed: widget.onPressed,
               child: SvgPicture.asset(
-                'assets/icons/ic_camera.svg',
+                AppIcons.camera,
                 width: 20,
                 height: 20,
                 // ignore: deprecated_member_use

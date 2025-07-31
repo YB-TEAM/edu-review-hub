@@ -13,7 +13,7 @@ class ProfileModel {
   final String? country;
   final String? city;
   final String? address;
-  final String timeZone;
+  final String timezone;
   final String language;
   final String? universityName;
   final String? major;
@@ -38,7 +38,7 @@ class ProfileModel {
     this.country,
     this.city,
     this.address,
-    required this.timeZone,
+    required this.timezone,
     required this.language,
     this.universityName,
     this.major,
@@ -65,7 +65,7 @@ class ProfileModel {
       country: map['country'],
       city: map['city'],
       address: map['address'],
-      timeZone: map['timeZone'] ?? 'UTC',
+      timezone: map['timezone'] ?? 'UTC',
       language: map['language'] ?? 'vi',
       universityName: map['universityName'],
       major: map['major'],
@@ -93,7 +93,7 @@ class ProfileModel {
       'country': country,
       'city': city,
       'address': address,
-      'timeZone': timeZone,
+      'timezone': timezone,
       'language': language,
       'universityName': universityName,
       'major': major,
@@ -105,6 +105,34 @@ class ProfileModel {
       'createdAt': createdAt,
       'updatedAt': updatedAt,
     };
+  }
+
+  factory ProfileModel.fromEntity(ProfileEntity entity) {
+    return ProfileModel(
+      userId: entity.userId,
+      firstName: entity.firstName,
+      lastName: entity.lastName,
+      displayName: entity.displayName,
+      avatarUrl: entity.avatarUrl,
+      coverImageUrl: entity.coverImageUrl,
+      bio: entity.bio,
+      dateOfBirth: entity.dateOfBirth,
+      gender: entity.gender,
+      country: entity.country,
+      city: entity.city,
+      address: entity.address,
+      timezone: entity.timezone,
+      language: entity.language,
+      universityName: entity.universityName,
+      major: entity.major,
+      graduationYear: entity.graduationYear,
+      studentId: entity.studentId,
+      isStudentVerified: entity.isStudentVerified,
+      privacySettings: entity.privacySettings,
+      notificationSettings: entity.notificationSettings,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
+    );
   }
 }
 
@@ -123,7 +151,7 @@ extension ProfileXModel on ProfileModel {
       country: country,
       city: city,
       address: address,
-      timeZone: timeZone,
+      timezone: timezone,
       language: language,
       universityName: universityName,
       major: major,

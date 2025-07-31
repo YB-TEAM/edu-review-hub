@@ -6,4 +6,5 @@ class RouteConstant {
   static const String profile = '/profile';
   static const String editProfile = '/edit_profile';
   static const String detailProfile = '/detail_profile';
+  static const String verifyEmail = '/verify_email';
 }

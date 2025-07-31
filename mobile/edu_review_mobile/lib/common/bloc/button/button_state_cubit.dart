@@ -11,11 +11,10 @@ class ButtonStateCubit extends Cubit<ButtonState>{
     await Future.delayed(const Duration(seconds: 2));
     try {
       Either result = await usecase.call(params);
-
       result.fold(
         (error) {
           emit(
-            ButtonFailureState(errorMessage: error)
+            ButtonFailureState(errorMessage: error.message, statusCode: error.statusCode)
           );
         }, 
         (data) {
@@ -24,7 +23,7 @@ class ButtonStateCubit extends Cubit<ButtonState>{
       );
     } catch (e) {
       emit(
-        ButtonFailureState(errorMessage: e.toString())
+        ButtonFailureState(errorMessage: e.toString(), statusCode: null)
       );
     }
   }

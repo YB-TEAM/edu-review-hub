@@ -5,7 +5,6 @@ import 'package:edu_review_mobile/common/bloc/auth/auth_state_cubit.dart';
 import 'package:edu_review_mobile/service_locator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:edu_review_mobile/common_libs.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:edu_review_mobile/features/main_screen.dart';
 
@@ -14,8 +13,6 @@ void main() {
   runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
-
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
       String initialRoute = RouteConstant.signIn;
 
@@ -80,6 +77,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return BlocProvider(
       create: (context) => AuthStateCubit()..appStarted(),
       child: MaterialApp(

@@ -92,7 +92,7 @@ class _CoverPhotoWidgetState extends State<CoverPhotoWidget> {
             ),
             onPressed: widget.onChangeCover,
             child: SvgPicture.asset(
-              'assets/icons/ic_camera.svg',
+              AppIcons.camera,
               width: 20,
               height: 20,
               // ignore: deprecated_member_use

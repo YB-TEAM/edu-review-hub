@@ -24,13 +24,12 @@ class DioClient {
         responseType: ResponseType.json,
         sendTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10)
-      ),
-    );
+      )
+    )..interceptors.addAll([LoggerInterceptor()]);
 
     // Đảm bảo các interceptors được thêm vào chỉ một lần
     if (_dio.interceptors.isEmpty) {
       _dio.interceptors.addAll([
-        LoggerInterceptor(),
         AuthInterceptor(
           localService: sl<AuthLocalService>(),
           apiService: sl<AuthApiService>(),

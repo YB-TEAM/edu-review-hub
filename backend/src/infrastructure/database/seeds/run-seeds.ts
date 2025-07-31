@@ -1,5 +1,6 @@
 import { AppDataSource } from "../data-source";
 import { RolePermissionSeeder } from "./role-permission.seeder";
+import { UserAccountSeeder } from "./user-account.seeder";
 
 async function runSeeds() {
   try {
@@ -11,6 +12,11 @@ async function runSeeds() {
     const rolePermissionSeeder = new RolePermissionSeeder(AppDataSource);
     await rolePermissionSeeder.run();
     console.log("Role and permission seeding completed");
+
+    // Run user account seeder
+    const userAccountSeeder = new UserAccountSeeder(AppDataSource);
+    await userAccountSeeder.run();
+    console.log("User account seeding completed");
 
     // Close database connection
     await AppDataSource.destroy();

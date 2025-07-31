@@ -16,6 +16,8 @@ import { UserSession } from "./user-session.entity";
 import { UserDevice } from "./user-device.entity";
 import { Role } from "./role.entity";
 import { UserActivity } from "./user-activity.entity";
+import { Blog } from "./blog.entity";
+import { BlogLike } from "./blog-like.entity";
 
 export enum UserStatus {
   ACTIVE = "active",
@@ -114,4 +116,10 @@ export class User {
 
   @OneToMany(() => UserActivity, (activity) => activity.user)
   activities: UserActivity[];
+
+  @OneToMany(() => Blog, (blog) => blog.author)
+  blogs: Blog[];
+
+  @OneToMany(() => BlogLike, (like) => like.user)
+  blogLikes: BlogLike[];
 }

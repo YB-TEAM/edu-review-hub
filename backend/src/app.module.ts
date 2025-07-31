@@ -8,6 +8,7 @@ import { UniversityModule } from "@/infrastructure/config/university.module";
 import { UniversityReviewModule } from "@/infrastructure/config/university-review.module";
 import { UniversityReviewCriterionModule } from "@/infrastructure/config/university-review-criterion.module";
 import { BlogModule } from "@/infrastructure/config/blog.module";
+import { UploadModule } from "@/infrastructure/config/upload.module";
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -20,6 +21,7 @@ import { BlogModule } from "@/infrastructure/config/blog.module";
     UniversityReviewModule,
     UniversityReviewCriterionModule,
     BlogModule,
+    UploadModule,
   ],
 })
 export class AppModule {}

@@ -18,6 +18,7 @@ import { User } from "@/infrastructure/database/entities/user.entity";
 import { UserProfile } from "@/infrastructure/database/entities/user-profile.entity";
 import { UserSession } from "@/infrastructure/database/entities/user-session.entity";
 import { UserDevice } from "@/infrastructure/database/entities/user-device.entity";
+import { UserActivity } from "@/infrastructure/database/entities/user-activity.entity";
 import { Role } from "@/infrastructure/database/entities/role.entity";
 import { Permission } from "@/infrastructure/database/entities/permission.entity";
 import { EmailVerification } from "@/infrastructure/database/entities/email-verification.entity";
@@ -29,11 +30,15 @@ import { UserProfileRepository } from "@/infrastructure/database/repositories/us
 import { UserProfileService } from "@/application/services/user-profile.service";
 import { ProfileController } from "@/presentation/controllers/profile.controller";
 import { CloudinaryService } from "@/infrastructure/services/cloudinary.service";
-import { UserActivity } from "@/infrastructure/database/entities/user-activity.entity";
 import { UserActivityRepository } from "@/infrastructure/database/repositories/user-activity.repository";
 import { UserActivityService } from "@/application/services/user-activity.service";
 import { UserActivityController } from "@/presentation/controllers/user-activity.controller";
 import { RefreshToken } from "@/infrastructure/database/entities/refresh-token.entity";
+import { RefreshTokenRepository } from "@/infrastructure/database/repositories/refresh-token.repository";
+import { UserSessionRepository } from "@/infrastructure/database/repositories/user-session.repository";
+import { UserDeviceRepository } from "@/infrastructure/database/repositories/user-device.repository";
+import { UserRole } from "@/infrastructure/database/entities/user-role.entity";
+import { UserRoleRepository } from "@/infrastructure/database/repositories/user-role.repository";
 
 @Module({
   imports: [
@@ -42,12 +47,13 @@ import { RefreshToken } from "@/infrastructure/database/entities/refresh-token.e
       UserProfile,
       UserSession,
       UserDevice,
+      UserActivity,
       Role,
       Permission,
       EmailVerification,
       AccountDeactivation,
-      UserActivity,
-      RefreshToken, // Thêm entity, không thêm repository class
+      RefreshToken,
+      UserRole,
     ]),
     PassportModule,
     JwtModule.registerAsync({
@@ -81,6 +87,10 @@ import { RefreshToken } from "@/infrastructure/database/entities/refresh-token.e
     CloudinaryService,
     UserActivityService,
     UserActivityRepository,
+    RefreshTokenRepository,
+    UserSessionRepository,
+    UserDeviceRepository,
+    UserRoleRepository,
     JwtStrategy,
     LocalStrategy,
     {
@@ -127,7 +137,17 @@ import { RefreshToken } from "@/infrastructure/database/entities/refresh-token.e
       provide: "IUserActivityRepository",
       useClass: UserActivityRepository,
     },
+    {
+      provide: "IUserRoleRepository",
+      useClass: UserRoleRepository,
+    },
   ],
-  exports: [AuthService, UserRepository],
+  exports: [
+    AuthService,
+    UserRepository,
+    UserActivityRepository,
+    UserDeviceRepository,
+    UserSessionRepository,
+  ],
 })
 export class AuthModule {}

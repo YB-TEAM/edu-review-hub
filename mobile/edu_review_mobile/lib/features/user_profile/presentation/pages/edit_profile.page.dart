@@ -1,12 +1,16 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:edu_review_mobile/common/widgets/appbar/custom_appbar.dart';
 import 'package:edu_review_mobile/common/widgets/loading/custom_loading_indicator.dart';
 import 'package:edu_review_mobile/common/widgets/text_field/custom_text_field.dart';
 import 'package:edu_review_mobile/common_libs.dart';
+import 'package:edu_review_mobile/features/user_profile/data/models/edit_profile.dart';
 import 'package:edu_review_mobile/features/user_profile/domain/entities/profile.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/edit_profile_cubit.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/edit_profile_state.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/widgets/image_picker.widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -21,6 +25,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _majorController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _displayNameController = TextEditingController();
+  bool _isInitialized = false;
 
   @override
   void dispose() {
@@ -33,11 +38,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void _initializeControllers(ProfileEntity profile) {
-    _cityController.text = profile.city ?? '';
-    _universityController.text = profile.universityName ?? '';
-    _majorController.text = profile.major ?? '';
-    _bioController.text = profile.bio ?? '';
-    _displayNameController.text = profile.displayName ?? '';
+    if (!_isInitialized) {
+      _cityController.text = profile.city ?? '';
+      _universityController.text = profile.universityName ?? '';
+      _majorController.text = profile.major ?? '';
+      _bioController.text = profile.bio ?? '';
+      _displayNameController.text = profile.displayName ?? '';
+      _isInitialized = true;
+    }
   }
 
   void _onAvatarPressed() async {
@@ -55,17 +63,43 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void _saveProfile(EditProfileCubit cubit, ProfileEntity currentProfile) {
-    final profileData = {
-      'city': _cityController.text.trim(),
-      'universityName': _universityController.text.trim(),
-      'major': _majorController.text.trim(),
-      'bio': _bioController.text.trim(),
-      'displayName': _displayNameController.text.trim(),
-      'avatarUrl': currentProfile.avatarUrl,
-      'coverImageUrl': currentProfile.coverImageUrl,
-    };
+    final editModel = EditProfileModel(
+      // Basic Info
+      firstName: currentProfile.firstName,
+      lastName: currentProfile.lastName,
+      displayName: _displayNameController.text.trim(),
+      bio: _bioController.text.trim(),
+      
+      // Images
+      avatarUrl: currentProfile.avatarUrl,
+      coverImageUrl: currentProfile.coverImageUrl,
+      
+      // Personal Info
+      dateOfBirth: currentProfile.dateOfBirth,
+      gender: currentProfile.gender,
+      
+      // Location Info
+      country: currentProfile.country,
+      city: _cityController.text.trim(),
+      address: currentProfile.address,
+      
+      // Preferences
+      timezone: currentProfile.timezone,
+      language: currentProfile.language,
+      
+      // Education Info
+      universityName: _universityController.text.trim(),
+      major: _majorController.text.trim(),
+      graduationYear: currentProfile.graduationYear,
+      studentId: currentProfile.studentId,
+      isStudentVerified: currentProfile.isStudentVerified,
+      
+      // Settings
+      privacySettings: currentProfile.privacySettings,
+      notificationSettings: currentProfile.notificationSettings,
+    );
 
-    cubit.saveProfile(profileData);
+    cubit.saveProfile(editModel);
   }
 
   @override
@@ -153,7 +187,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                                       ?.isNotEmpty ==
                                                   true
                                               ? state.profileEntity.avatarUrl!
-                                              : 'https://www.meme-arsenal.com/memes/4408af6c9803cb3f320ecc468b3abbfa.jpg',
+                                              : AppDefaultImages.defaultAvatar,
                                           width: 120,
                                           height: 120,
                                           fit: BoxFit.cover,
@@ -170,9 +204,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                             elevation: 2,
                                           ),
                                           onPressed: _onAvatarPressed,
-                                          child: const Icon(
-                                            Icons.camera_alt,
-                                            size: 20,
+                                          child: SvgPicture.asset(
+                                            AppIcons.camera,
+                                            width: 20,
+                                            height: 20,
                                             color: Colors.black,
                                           ),
                                         ),
@@ -212,7 +247,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                                     ?.isNotEmpty ==
                                                 true
                                             ? state.profileEntity.coverImageUrl!
-                                            : 'https://professionals.tarkett.co.uk/media/img/M/THH_25094225_25187225_001.jpg',
+                                            : AppDefaultImages.defaultCover,
                                         width: double.infinity,
                                         height: 120,
                                         fit: BoxFit.cover,
@@ -228,9 +263,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                             elevation: 2,
                                           ),
                                           onPressed: _onCoverPressed,
-                                          child: const Icon(
-                                            Icons.image,
-                                            size: 20,
+                                          child: SvgPicture.asset(
+                                            AppIcons.camera,
+                                            width: 20,
+                                            height: 20,
                                             color: Colors.black,
                                           ),
                                         ),

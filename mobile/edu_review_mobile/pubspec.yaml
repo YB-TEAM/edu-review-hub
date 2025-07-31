@@ -20,6 +20,9 @@ dependencies:
   flutter_svg: ^2.2.0
   device_info_plus: ^11.5.0
   like_button: ^2.0.5
+  pin_code_fields: ^8.0.1
+  material_floating_search_bar_2: ^0.5.0
+
 
   #state management
   flutter_bloc: ^9.1.1
@@ -62,42 +65,7 @@ flutter:
 
   assets:
   - assets/images/
-
-  # icon
-  - assets/icons/ic_home_active.svg
-  - assets/icons/ic_home_inactive.svg
-  - assets/icons/ic_notifications_active.svg
-  - assets/icons/ic_notifications_inactive.svg
-  - assets/icons/ic_chat_active.svg
-  - assets/icons/ic_chat_inactive.svg
-  - assets/icons/ic_user_active.svg
-  - assets/icons/ic_user_inactive.svg
-  - assets/icons/ic_users.svg
-  - assets/icons/ic_bar_active.svg
-  - assets/icons/ic_bar_inactive.svg
-  - assets/icons/ic_search.svg
-  - assets/icons/ic_university.svg
-  - assets/icons/ic_star_active.svg
-  - assets/icons/ic_star_inactive.svg
-  - assets/icons/ic_community_active.svg
-  - assets/icons/ic_community_inactive.svg
-  - assets/icons/ic_like_active.svg
-  - assets/icons/ic_like_inactive.svg
-  - assets/icons/ic_dislike_active.svg
-  - assets/icons/ic_dislike_inactive.svg
-  - assets/icons/ic_comment.svg
-  - assets/icons/ic_share.svg
-  - assets/icons/ic_pencil.svg
-  - assets/icons/ic_camera.svg
-  - assets/icons/ic_book.svg
-  - assets/icons/ic_card.svg
-  - assets/icons/ic_calendar.svg
-  - assets/icons/ic_gender.svg
-  - assets/icons/ic_pin.svg
-  - assets/icons/ic_globe.svg
-  - assets/icons/ic_city.svg
-  - assets/icons/ic_cake.svg
-
+  - assets/icons/
   
   fonts:
     - family: Roboto-Thin

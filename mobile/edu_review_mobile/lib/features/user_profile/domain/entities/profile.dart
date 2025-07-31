@@ -11,7 +11,7 @@ class ProfileEntity {
   final String? country;
   final String? city;
   final String? address;
-  final String timeZone;
+  final String timezone;
   final String language;
   final String? universityName;
   final String? major;
@@ -36,7 +36,7 @@ class ProfileEntity {
     this.country,
     this.city,
     this.address,
-    required this.timeZone,
+    required this.timezone,
     required this.language,
     this.universityName,
     this.major,

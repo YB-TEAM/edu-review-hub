@@ -1,11 +1,36 @@
-// ignore_for_file: non_constant_identifier_names
+import 'dart:io';
+import 'package:dartz/dartz.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:dio/dio.dart';
+import 'package:edu_review_mobile/core/error/failures.dart';
 import 'package:edu_review_mobile/features/settings/data/data_sources/local/settings_local_service.dart';
+import 'package:edu_review_mobile/features/settings/data/data_sources/remote/settings_api_service.dart';
 import 'package:edu_review_mobile/features/settings/domain/repository/settings_repository.dart';
 import 'package:edu_review_mobile/service_locator.dart';
 
-class SettingsRepositoryImpl extends SettingsRepository {
+class SettingsRepositoryImpl implements SettingsRepository {
   @override
-  Future logOut() async {
-    await sl<SettingsLocalService>().logOut();
+  Future<Either<Failure, void>> logOut() async {
+    try {
+      String deviceId;
+      if (Platform.isAndroid) {
+        final androidInfo = await sl<DeviceInfoPlugin>().androidInfo;
+        deviceId = androidInfo.id;
+      } else if (Platform.isIOS) {
+        final iosInfo = await sl<DeviceInfoPlugin>().iosInfo;
+        deviceId = iosInfo.identifierForVendor ?? '';
+      } else {
+        deviceId = 'unknown';
+      }
+
+      final result = await sl<SettingsApiService>().logout(deviceId);
+      
+      if (result.isRight()) {
+        await sl<SettingsLocalService>().logOut();
+      }
+      return result;
+    } on DioException catch (e) {
+      return Left(ServerFailure(message: e.response?.data['message'] ?? 'Some errors occur when fetching user profile', statusCode: e.response?.statusCode));
+    }
   }
 }

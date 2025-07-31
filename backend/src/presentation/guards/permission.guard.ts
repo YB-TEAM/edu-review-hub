@@ -11,22 +11,38 @@ export class PermissionGuard implements CanActivate {
       context.getHandler()
     );
 
+    console.log(
+      "🔐 PermissionGuard - Required permissions:",
+      requiredPermissions
+    );
+
     if (!requiredPermissions) {
+      console.log(
+        "🔐 PermissionGuard - No permissions required, allowing access"
+      );
       return true;
     }
 
     const { user } = context.switchToHttp().getRequest();
 
+    console.log("🔐 PermissionGuard - User:", user);
+
     if (!user) {
+      console.log("🔐 PermissionGuard - No user found, denying access");
       return false;
     }
 
     // Check if user has required permissions
-    return this.hasPermission(user, requiredPermissions);
+    const hasPermission = this.hasPermission(user, requiredPermissions);
+    console.log("🔐 PermissionGuard - Has permission:", hasPermission);
+    return hasPermission;
   }
 
   private hasPermission(user: any, requiredPermissions: string[]): boolean {
+    console.log("🔐 PermissionGuard - User roles:", user.roles);
+
     if (!user.roles || !Array.isArray(user.roles)) {
+      console.log("🔐 PermissionGuard - No roles found");
       return false;
     }
 
@@ -34,6 +50,12 @@ export class PermissionGuard implements CanActivate {
 
     // Collect all permissions from user's roles
     user.roles.forEach((role) => {
+      console.log(
+        "🔐 PermissionGuard - Role:",
+        role.name,
+        "Permissions:",
+        role.permissions
+      );
       if (role.permissions && Array.isArray(role.permissions)) {
         role.permissions.forEach((permission) => {
           userPermissions.add(permission.name);
@@ -41,9 +63,20 @@ export class PermissionGuard implements CanActivate {
       }
     });
 
+    console.log(
+      "🔐 PermissionGuard - User permissions:",
+      Array.from(userPermissions)
+    );
+
     // Check if user has all required permissions
-    return requiredPermissions.every((permission) =>
+    const hasAllPermissions = requiredPermissions.every((permission) =>
       userPermissions.has(permission)
     );
+
+    console.log(
+      "🔐 PermissionGuard - Has all required permissions:",
+      hasAllPermissions
+    );
+    return hasAllPermissions;
   }
 }
