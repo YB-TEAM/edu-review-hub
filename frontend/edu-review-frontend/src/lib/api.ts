@@ -26,9 +26,16 @@ const baseQuery = fetchBaseQuery({
   baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api/v1",
   prepareHeaders: (headers) => {
     // Add auth token if available
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("token");
     if (token) {
+      console.log("Token found:", token.substring(0, 50) + "...");
       headers.set("authorization", `Bearer ${token}`);
+      console.log(
+        "Authorization header set:",
+        `Bearer ${token.substring(0, 50)}...`
+      );
+    } else {
+      console.log("No token found in localStorage");
     }
 
     // Add content type
@@ -53,8 +60,9 @@ const baseQueryWithErrorHandling: BaseQueryFn<
     // Handle authentication errors
     if (status === 401) {
       // Clear auth token and redirect to login
-      localStorage.removeItem("authToken");
-      window.location.href = "/login";
+      localStorage.removeItem("token");
+      // window.location.href = "/auth/login";
+      console.log("401 error - token cleared but not redirecting");
       return result;
     }
 
@@ -90,7 +98,7 @@ const baseQueryWithErrorHandling: BaseQueryFn<
 export const api = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithErrorHandling,
-  tagTypes: ["User", "Review", "Course", "Institution", "Blog"],
+  tagTypes: ["User", "Profile", "Review", "Course", "Institution", "Blog"],
   endpoints: () => ({}),
 });
 

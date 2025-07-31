@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ModeToggle } from "@/components/ui/mode-toggle";
+import { AvatarDropdown } from "@/components/ui/avatar-dropdown";
+import { useAuth } from "@/hooks/useAuth";
 
 export function Navbar({ rightSlot }: { rightSlot?: React.ReactNode } = {}) {
   const { isScrolled } = useNavbar();
@@ -244,35 +246,49 @@ function DesktopNavigation({
   );
 }
 
-function DesktopCTAButtons({
-  isScrolled,
-  onStartClick,
-}: {
-  isScrolled: boolean;
-  onStartClick: () => void;
-}) {
+function DesktopCTAButtons({ isScrolled, onStartClick }: { isScrolled: boolean; onStartClick: () => void; }) {
+  const { user, isAuthenticated, isLoading } = useAuth();
+
   return (
     <div className="hidden lg:flex items-center space-x-3">
-      <Button
-        variant="ghost"
-        size="sm"
-        className={cn(
-          "navbar__login-btn relative overflow-hidden font-medium transition-all duration-300 hover:scale-105",
+      {isAuthenticated && user ? (
+        <div className={cn(
+          "transition-all duration-300",
           {
-            "text-gray-700 hover:text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200":
-              isScrolled,
-            "text-white hover:text-white border border-white/30 hover:border-white hover:bg-white/10 backdrop-blur-sm":
-              !isScrolled,
+            "opacity-90": isScrolled,
+            "opacity-100": !isScrolled,
           }
-        )}
-        asChild
-      >
-        <Link href="/auth/login">Đăng nhập</Link>
-      </Button>
+        )}>
+          <AvatarDropdown profile={user} isScrolled={isScrolled} />
+        </div>
+      ) : (
+        <Button
+          variant="ghost"
+          size="sm"
+          className={cn(
+            "navbar__login-btn relative overflow-hidden font-medium transition-all duration-300 hover:scale-105",
+            {
+              "text-gray-700 hover:text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200":
+                isScrolled,
+              "text-white hover:text-white border border-white/30 hover:border-white hover:bg-white/10 backdrop-blur-sm":
+                !isScrolled,
+            }
+          )}
+          asChild
+        >
+          <Link href="/auth/login">Đăng nhập</Link>
+        </Button>
+      )}
       <Button
         variant="default"
         size="sm"
-        className="font-semibold shadow-md hover:shadow-lg transition-all duration-300"
+        className={cn(
+          "font-semibold shadow-md hover:shadow-lg transition-all duration-300",
+          {
+            "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700": isScrolled,
+            "bg-gradient-to-r from-blue-500 via-purple-500 to-orange-400 hover:from-blue-600 hover:via-purple-600 hover:to-orange-500": !isScrolled,
+          }
+        )}
         onClick={onStartClick}
       >
         Bắt đầu

@@ -23,8 +23,11 @@ export interface User {
 
 export interface AuthResponse {
   user: User;
-  token: string;
-  message: string;
+  accessToken: string;
+  refreshToken: string;
+  tokenType: string;
+  expiresIn: number;
+  message?: string;
 }
 
 export const authApi = api.injectEndpoints({
@@ -35,7 +38,24 @@ export const authApi = api.injectEndpoints({
         method: "POST",
         body: credentials,
       }),
-      invalidatesTags: ["User"],
+      // Tự động lưu token và invalidate cache
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          console.log("Login response:", data);
+          console.log("Token from response:", data.accessToken);
+          // Lưu token vào localStorage
+          localStorage.setItem("token", data.accessToken);
+          console.log("Token saved to localStorage");
+          // Invalidate và refetch profile
+          dispatch(authApi.util.invalidateTags(["User", "Profile"]));
+        } catch (error) {
+          console.error("Login error:", error);
+          // Xóa token nếu login thất bại
+          localStorage.removeItem("token");
+        }
+      },
+      invalidatesTags: ["User", "Profile"],
     }),
     register: builder.mutation<AuthResponse, RegisterRequest>({
       query: (userData) => ({
@@ -43,26 +63,37 @@ export const authApi = api.injectEndpoints({
         method: "POST",
         body: userData,
       }),
-      invalidatesTags: ["User"],
+      // Tự động lưu token sau register
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          localStorage.setItem("token", data.accessToken);
+          dispatch(authApi.util.invalidateTags(["User", "Profile"]));
+        } catch (error) {
+          localStorage.removeItem("token");
+        }
+      },
+      invalidatesTags: ["User", "Profile"],
     }),
     logout: builder.mutation<void, void>({
       query: () => ({
         url: "/auth/logout",
         method: "POST",
       }),
-      invalidatesTags: ["User"],
-    }),
-    getProfile: builder.query<User, void>({
-      query: () => "/auth/profile",
-      providesTags: ["User"],
-    }),
-    updateProfile: builder.mutation<User, Partial<User>>({
-      query: (userData) => ({
-        url: "/auth/profile",
-        method: "PUT",
-        body: userData,
-      }),
-      invalidatesTags: ["User"],
+      // Tự động xóa token và clear cache
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          localStorage.removeItem("token");
+          // Clear tất cả cache
+          dispatch(api.util.resetApiState());
+        } catch (error) {
+          // Vẫn xóa token ngay cả khi logout API thất bại
+          localStorage.removeItem("token");
+          dispatch(api.util.resetApiState());
+        }
+      },
+      invalidatesTags: ["User", "Profile"],
     }),
     forgotPassword: builder.mutation<{ message: string }, { email: string }>({
       query: (data) => ({
@@ -108,8 +139,6 @@ export const {
   useLoginMutation,
   useRegisterMutation,
   useLogoutMutation,
-  useGetProfileQuery,
-  useUpdateProfileMutation,
   useForgotPasswordMutation,
   useResetPasswordMutation,
   useVerifyEmailMutation,
