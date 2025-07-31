@@ -171,7 +171,9 @@ class _SignUpPageState extends State<SignUpPage> {
         child: BlocListener<ButtonStateCubit, ButtonState>(
           listener: (context, state) {
             if (state is ButtonSuccessState) {
-              Navigator.pushReplacementNamed(context, RouteConstant.mainScreen);
+
+              Navigator.pushReplacementNamed(context, RouteConstant.verifyEmail, arguments: _emailController.text);
+
             }
             if (state is ButtonFailureState) {
               showAppDialog(

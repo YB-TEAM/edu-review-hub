@@ -1,3 +1,4 @@
+import 'package:edu_review_mobile/features/auth/presentation/pages/verify_email.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/pages/profile.page.dart';
 import 'package:edu_review_mobile/features/main_screen.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/pages/profile_detail.page.dart';
@@ -77,6 +78,13 @@ class AppRouter {
         return MaterialPageRoute(
           settings: settings,
           builder: (_) => const EditProfilePage(),
+        );
+
+      case RouteConstant.verifyEmail:
+        final email = settings.arguments as String;
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => VerifyEmailScreen(email: email),
         );
 
       default:
