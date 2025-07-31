@@ -9,6 +9,7 @@ class ApiUrls {
 
   //Email Verification
   static const verifyEmail = "${baseURL}email-verification/verify-email";
+  static const resendVerification = "${baseURL}email-verification/resend-verification";
 
   //User Profile URLs
   static const userProfile = "${baseURL}profile/me";
