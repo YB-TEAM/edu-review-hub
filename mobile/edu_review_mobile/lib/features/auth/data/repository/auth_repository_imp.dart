@@ -26,7 +26,6 @@ class AuthRepositoryImpl extends AuthRepository {
     return await result.fold<Future<Either<Failure, SignInResponse>>>(
       (error) async => Left(error),
       (signInResponse) async {
-        print(signInResponse);
         await _localService.saveTokens(signInResponse.accessToken, signInResponse.refreshToken);
         return Right(signInResponse);
       },
@@ -45,6 +44,16 @@ class AuthRepositoryImpl extends AuthRepository {
       return result;
     } on DioException catch (e) {
       return Left(ServerFailure(message: e.response?.data['message'] ?? 'Some errors occur when verifying email', statusCode: e.response?.statusCode));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> resendVerification(String email) async {
+    try {
+      final result = await _apiService.resendVerification(email);
+      return result;
+    } on DioException catch (e) {
+      return Left(ServerFailure(message: e.response?.data['message'] ?? 'Some errors occur when resend verification', statusCode: e.response?.statusCode));
     }
   }
 }
