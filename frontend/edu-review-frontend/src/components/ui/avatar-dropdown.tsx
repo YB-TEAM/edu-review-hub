@@ -11,10 +11,10 @@ import {
 import Link from "next/link";
 import { LogOut, Settings, User as UserIcon, ChevronDown } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import type { UserProfile } from "@/lib/services/profileApi";
+import type { User } from "@/types";
 import { cn } from "@/lib/utils";
 
-export function AvatarDropdown({ profile, isScrolled = false }: { profile?: UserProfile | null; isScrolled?: boolean }) {
+export function AvatarDropdown({ profile, isScrolled = false }: { profile?: User | null; isScrolled?: boolean }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const { logout } = useAuth();

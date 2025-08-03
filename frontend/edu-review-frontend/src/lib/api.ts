@@ -23,7 +23,7 @@ export interface ApiResponse<T> {
 
 // Base query with error handling
 const baseQuery = fetchBaseQuery({
-  baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api/v1",
+  baseUrl: "http://localhost:3000/api/v1",
   prepareHeaders: (headers) => {
     // Add auth token if available
     const token = localStorage.getItem("token");
@@ -40,13 +40,12 @@ const baseQuery = fetchBaseQuery({
 
     // Add content type
     headers.set("Content-Type", "application/json");
-
     return headers;
   },
 });
 
 // Custom base query with error handling
-const baseQueryWithErrorHandling: BaseQueryFn<
+export const baseQueryWithErrorHandling: BaseQueryFn<
   string | FetchArgs,
   unknown,
   FetchBaseQueryError

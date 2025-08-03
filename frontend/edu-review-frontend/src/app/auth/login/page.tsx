@@ -49,9 +49,10 @@ export default function LoginPage() {
       setSuccess("Đăng nhập thành công!");
       toast.success("Đăng nhập thành công!");
       setTimeout(() => window.location.href = "/", 1200);
-    } catch (err: any) {
-      setError(err?.data?.message || err.message || "Đăng nhập thất bại");
-      toast.error(err?.data?.message || err.message || "Đăng nhập thất bại");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Đăng nhập thất bại";
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

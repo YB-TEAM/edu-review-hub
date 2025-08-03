@@ -9,7 +9,7 @@ import { Loader2, Mail, Lock, User, Phone, KeyRound, CheckCircle, XCircle } from
 import { NavbarLogo } from "@/features/landing/components/navbar/Navbar";
 import { useRouter } from "next/navigation";
 import "../auth.scss";
-import { useRegisterMutation, useVerifyEmailMutation, useResendVerificationMutation } from "@/lib/services/authApi";
+import { useRegisterMutation, useVerifyEmailMutation, useResendVerificationEmailMutation } from "@/lib/services/authApi";
 
 export default function RegisterPage() {
   const [step, setStep] = useState<1 | 2>(1);
@@ -29,7 +29,7 @@ export default function RegisterPage() {
   const router = useRouter();
   const [register, { isLoading: isRegisterLoading }] = useRegisterMutation();
   const [verifyEmail, { isLoading: isVerifyLoading }] = useVerifyEmailMutation();
-  const [resendVerification, { isLoading: isResendLoading }] = useResendVerificationMutation();
+  const [resendVerification, { isLoading: isResendLoading }] = useResendVerificationEmailMutation();
 
   const validateStep1 = () => {
     if (!formData.username || !formData.email || !formData.password || !formData.phone) {
@@ -69,8 +69,9 @@ export default function RegisterPage() {
       }).unwrap();
       setStep(2);
       setSuccess("Mã OTP đã được gửi về email của bạn.");
-    } catch (err: any) {
-      setError(err?.data?.message || err.message || "Email hoặc tên đăng nhập đã tồn tại");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Email hoặc tên đăng nhập đã tồn tại";
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -87,12 +88,13 @@ export default function RegisterPage() {
     try {
       if (!/^[0-9]{6}$/.test(otp)) throw new Error("OTP phải gồm 6 số.");
 
-      await verifyEmail({ email: formData.email, otp }).unwrap();
+      await verifyEmail({ token: otp }).unwrap();
       setSuccess("Xác thực thành công! Bạn có thể đăng nhập.");
       toast.success("Đăng ký thành công!", { description: "Bạn có thể đăng nhập." });
       setTimeout(() => window.location.href = "/auth/login", 1500);
-    } catch (err: any) {
-      setOtpError(err?.data?.message || err.message || "OTP không đúng hoặc đã hết hạn.");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "OTP không đúng hoặc đã hết hạn.";
+      setOtpError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -103,10 +105,11 @@ export default function RegisterPage() {
     setOtpError("");
 
     try {
-      await resendVerification({ email: formData.email }).unwrap();
+      await resendVerification().unwrap();
       toast.success("Đã gửi lại OTP về email!");
-    } catch (err: any) {
-      setOtpError(err?.data?.message || err.message || "Không thể gửi lại OTP");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Không thể gửi lại OTP";
+      setOtpError(errorMessage);
     } finally {
       setResendLoading(false);
     }

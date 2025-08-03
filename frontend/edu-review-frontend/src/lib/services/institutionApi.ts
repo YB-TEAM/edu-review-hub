@@ -1,151 +1,191 @@
-import { api } from "../api";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import type {
+  Institution,
+  InstitutionDetail,
+  CreateInstitutionRequest,
+  UpdateInstitutionRequest,
+  InstitutionFilters,
+  PaginatedResponse,
+} from "@/types";
 
-export interface Institution {
-  id: number;
-  name: string;
-  description?: string;
-  address?: string;
-  website?: string;
-  email?: string;
-  phone?: string;
-  logo_url?: string;
-  type?: "university" | "college" | "school" | "training_center";
-  created_at: string;
-  updated_at: string;
-  courses_count?: number;
-  reviews_count?: number;
-  average_rating?: number;
-}
-
-export interface CreateInstitutionRequest {
-  name: string;
-  description?: string;
-  address?: string;
-  website?: string;
-  email?: string;
-  phone?: string;
-  type?: "university" | "college" | "school" | "training_center";
-}
-
-export interface UpdateInstitutionRequest {
-  name?: string;
-  description?: string;
-  address?: string;
-  website?: string;
-  email?: string;
-  phone?: string;
-  type?: "university" | "college" | "school" | "training_center";
-}
-
-export interface InstitutionFilters {
-  type?: "university" | "college" | "school" | "training_center";
-  search?: string;
-  page?: number;
-  limit?: number;
-  sort_by?: "name" | "created_at" | "average_rating" | "reviews_count";
-  sort_order?: "asc" | "desc";
-}
-
-export const institutionApi = api.injectEndpoints({
+export const institutionApi = createApi({
+  reducerPath: "institutionApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: "/api/v1",
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as any).auth.accessToken;
+      if (token) {
+        headers.set("authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
+  tagTypes: ["Institution", "InstitutionDetail"],
   endpoints: (builder) => ({
+    // Get all institutions with pagination and filters
     getInstitutions: builder.query<
-      {
-        data: Institution[];
-        total: number;
-        current_page: number;
-        last_page: number;
-      },
+      PaginatedResponse<Institution>,
       InstitutionFilters
     >({
       query: (filters) => ({
-        url: "/institutions",
+        url: "/universities",
         params: filters,
       }),
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.data.map(({ id }) => ({
-                type: "Institution" as const,
-                id,
-              })),
-              { type: "Institution", id: "LIST" },
-            ]
-          : [{ type: "Institution", id: "LIST" }],
+      providesTags: ["Institution"],
     }),
 
-    getInstitution: builder.query<Institution, number>({
-      query: (id) => `/institutions/${id}`,
-      providesTags: (result, error, id) => [{ type: "Institution", id }],
+    // Get institution by ID
+    getInstitutionById: builder.query<InstitutionDetail, number>({
+      query: (id) => `/universities/${id}`,
+      providesTags: (result, error, id) => [{ type: "InstitutionDetail", id }],
     }),
 
+    // Create new institution (Admin only)
     createInstitution: builder.mutation<Institution, CreateInstitutionRequest>({
       query: (institutionData) => ({
-        url: "/institutions",
+        url: "/universities",
         method: "POST",
         body: institutionData,
       }),
-      invalidatesTags: [{ type: "Institution", id: "LIST" }],
+      invalidatesTags: ["Institution"],
     }),
 
+    // Update institution (Admin only)
     updateInstitution: builder.mutation<
       Institution,
       { id: number; data: UpdateInstitutionRequest }
     >({
       query: ({ id, data }) => ({
-        url: `/institutions/${id}`,
-        method: "PUT",
+        url: `/universities/${id}`,
+        method: "PATCH",
         body: data,
       }),
       invalidatesTags: (result, error, { id }) => [
-        { type: "Institution", id },
-        { type: "Institution", id: "LIST" },
+        "Institution",
+        { type: "InstitutionDetail", id },
       ],
     }),
 
+    // Delete institution (Admin only)
     deleteInstitution: builder.mutation<void, number>({
       query: (id) => ({
-        url: `/institutions/${id}`,
+        url: `/universities/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: [{ type: "Institution", id: "LIST" }],
+      invalidatesTags: ["Institution"],
     }),
 
-    getTopInstitutions: builder.query<Institution[], { limit?: number }>({
+    // Search institutions
+    searchInstitutions: builder.query<
+      PaginatedResponse<Institution>,
+      InstitutionFilters
+    >({
+      query: (filters) => ({
+        url: "/universities/search",
+        params: filters,
+      }),
+      providesTags: ["Institution"],
+    }),
+
+    // Get institutions by location
+    getInstitutionsByLocation: builder.query<Institution[], string[]>({
+      query: (locations) => ({
+        url: "/universities/by-location",
+        params: { locations },
+      }),
+      providesTags: ["Institution"],
+    }),
+
+    // Get top rated institutions
+    getTopRatedInstitutions: builder.query<Institution[], { limit?: number }>({
       query: ({ limit = 10 }) => ({
-        url: "/institutions/top",
+        url: "/universities/top-rated",
         params: { limit },
       }),
-      providesTags: [{ type: "Institution", id: "TOP" }],
+      providesTags: ["Institution"],
     }),
 
-    searchInstitutions: builder.query<
-      { data: Institution[]; total: number },
-      { query: string; page?: number; limit?: number }
-    >({
-      query: ({ query, page = 1, limit = 10 }) => ({
-        url: "/institutions/search",
-        params: { q: query, page, limit },
+    // Get institutions by program
+    getInstitutionsByProgram: builder.query<Institution[], string[]>({
+      query: (programs) => ({
+        url: "/universities/by-program",
+        params: { programs },
       }),
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.data.map(({ id }) => ({
-                type: "Institution" as const,
-                id,
-              })),
-              { type: "Institution", id: "SEARCH" },
-            ]
-          : [{ type: "Institution", id: "SEARCH" }],
+      providesTags: ["Institution"],
+    }),
+
+    // Get institution statistics
+    getInstitutionStats: builder.query<
+      {
+        totalInstitutions: number;
+        totalStudents: number;
+        averageRating: number;
+        topPrograms: string[];
+      },
+      void
+    >({
+      query: () => "/universities/stats",
+      providesTags: ["Institution"],
+    }),
+
+    // Upload institution logo
+    uploadInstitutionLogo: builder.mutation<
+      { logoUrl: string },
+      { id: number; formData: FormData }
+    >({
+      query: ({ id, formData }) => ({
+        url: `/universities/${id}/logo`,
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        "Institution",
+        { type: "InstitutionDetail", id },
+      ],
+    }),
+
+    // Get institution reviews
+    getInstitutionReviews: builder.query<
+      PaginatedResponse<any>,
+      { institutionId: number; page?: number; limit?: number }
+    >({
+      query: ({ institutionId, page = 1, limit = 10 }) => ({
+        url: `/universities/${institutionId}/reviews`,
+        params: { page, limit },
+      }),
+      providesTags: (result, error, { institutionId }) => [
+        { type: "InstitutionDetail", id: institutionId },
+      ],
+    }),
+
+    // Get institution courses
+    getInstitutionCourses: builder.query<
+      PaginatedResponse<any>,
+      { institutionId: number; page?: number; limit?: number }
+    >({
+      query: ({ institutionId, page = 1, limit = 10 }) => ({
+        url: `/universities/${institutionId}/courses`,
+        params: { page, limit },
+      }),
+      providesTags: (result, error, { institutionId }) => [
+        { type: "InstitutionDetail", id: institutionId },
+      ],
     }),
   }),
 });
 
 export const {
   useGetInstitutionsQuery,
-  useGetInstitutionQuery,
+  useGetInstitutionByIdQuery,
   useCreateInstitutionMutation,
   useUpdateInstitutionMutation,
   useDeleteInstitutionMutation,
-  useGetTopInstitutionsQuery,
   useSearchInstitutionsQuery,
+  useGetInstitutionsByLocationQuery,
+  useGetTopRatedInstitutionsQuery,
+  useGetInstitutionsByProgramQuery,
+  useGetInstitutionStatsQuery,
+  useUploadInstitutionLogoMutation,
+  useGetInstitutionReviewsQuery,
+  useGetInstitutionCoursesQuery,
 } = institutionApi;

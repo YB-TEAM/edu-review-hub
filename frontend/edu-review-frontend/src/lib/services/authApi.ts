@@ -1,136 +1,148 @@
-import { api } from "../api";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import type {
+  AuthResponse,
+  LoginRequest,
+  RegisterRequest,
+  RefreshTokenRequest,
+  User,
+  UserProfile,
+  UpdateProfileRequest,
+  ChangePasswordRequest,
+  ForgotPasswordRequest,
+  ResetPasswordRequest,
+} from "@/types";
+import { baseQueryWithErrorHandling } from "../api";
 
-export interface LoginRequest {
-  identifier: string;
-  password: string;
-}
-
-export interface RegisterRequest {
-  username: string;
-  email: string;
-  password: string;
-  phone?: string;
-}
-
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-  email_verified_at?: string;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface AuthResponse {
-  user: User;
-  accessToken: string;
-  refreshToken: string;
-  tokenType: string;
-  expiresIn: number;
-  message?: string;
-}
-
-export const authApi = api.injectEndpoints({
+export const authApi = createApi({
+  reducerPath: "authApi",
+  baseQuery: baseQueryWithErrorHandling,
+  tagTypes: ["Auth", "User", "Profile"],
   endpoints: (builder) => ({
+    // Authentication
     login: builder.mutation<AuthResponse, LoginRequest>({
       query: (credentials) => ({
         url: "/auth/login",
         method: "POST",
         body: credentials,
       }),
-      // Tự động lưu token và invalidate cache
-      async onQueryStarted(_, { dispatch, queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-          console.log("Login response:", data);
-          console.log("Token from response:", data.accessToken);
-          // Lưu token vào localStorage
-          localStorage.setItem("token", data.accessToken);
-          console.log("Token saved to localStorage");
-          // Invalidate và refetch profile
-          dispatch(authApi.util.invalidateTags(["User", "Profile"]));
-        } catch (error) {
-          console.error("Login error:", error);
-          // Xóa token nếu login thất bại
-          localStorage.removeItem("token");
-        }
-      },
-      invalidatesTags: ["User", "Profile"],
+      invalidatesTags: ["Auth"],
     }),
+
     register: builder.mutation<AuthResponse, RegisterRequest>({
       query: (userData) => ({
         url: "/auth/register",
         method: "POST",
         body: userData,
       }),
-      // Tự động lưu token sau register
-      async onQueryStarted(_, { dispatch, queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-          localStorage.setItem("token", data.accessToken);
-          dispatch(authApi.util.invalidateTags(["User", "Profile"]));
-        } catch (error) {
-          localStorage.removeItem("token");
-        }
-      },
-      invalidatesTags: ["User", "Profile"],
+      invalidatesTags: ["Auth"],
     }),
+
+    refreshToken: builder.mutation<AuthResponse, RefreshTokenRequest>({
+      query: (refreshData) => ({
+        url: "/auth/refresh",
+        method: "POST",
+        body: refreshData,
+      }),
+      invalidatesTags: ["Auth"],
+    }),
+
     logout: builder.mutation<void, void>({
       query: () => ({
         url: "/auth/logout",
         method: "POST",
       }),
-      // Tự động xóa token và clear cache
-      async onQueryStarted(_, { dispatch, queryFulfilled }) {
-        try {
-          await queryFulfilled;
-          localStorage.removeItem("token");
-          // Clear tất cả cache
-          dispatch(api.util.resetApiState());
-        } catch (error) {
-          // Vẫn xóa token ngay cả khi logout API thất bại
-          localStorage.removeItem("token");
-          dispatch(api.util.resetApiState());
-        }
-      },
+      invalidatesTags: ["Auth", "User", "Profile"],
+    }),
+
+    // Password Management
+    forgotPassword: builder.mutation<void, ForgotPasswordRequest>({
+      query: (data) => ({
+        url: "/auth/forgot-password",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    resetPassword: builder.mutation<void, ResetPasswordRequest>({
+      query: (data) => ({
+        url: "/auth/reset-password",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    changePassword: builder.mutation<void, ChangePasswordRequest>({
+      query: (data) => ({
+        url: "/auth/change-password",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    // User Profile
+    getCurrentUser: builder.query<User, void>({
+      query: () => "/profile/me",
+      providesTags: ["User"],
+    }),
+
+    updateProfile: builder.mutation<User, UpdateProfileRequest>({
+      query: (profileData) => ({
+        url: "/profile/me",
+        method: "PATCH",
+        body: profileData,
+      }),
       invalidatesTags: ["User", "Profile"],
     }),
-    forgotPassword: builder.mutation<{ message: string }, { email: string }>({
+
+    uploadAvatar: builder.mutation<{ avatarUrl: string }, FormData>({
+      query: (formData) => ({
+        url: "/profile/me/avatar",
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: ["User", "Profile"],
+    }),
+
+    // Email Verification
+    verifyEmail: builder.mutation<void, { token: string }>({
       query: (data) => ({
-        url: "/email-verification/forgot-password",
+        url: "/auth/verify-email",
         method: "POST",
         body: data,
+      }),
+      invalidatesTags: ["User"],
+    }),
+
+    resendVerificationEmail: builder.mutation<void, void>({
+      query: () => ({
+        url: "/auth/resend-verification",
+        method: "POST",
       }),
     }),
-    resetPassword: builder.mutation<
-      { message: string },
-      { email: string; otp: string; newPassword: string }
-    >({
-      query: (data) => ({
-        url: "/email-verification/reset-password",
-        method: "POST",
-        body: data,
-      }),
+
+    // Admin User Management
+    getAllUsers: builder.query<User[], void>({
+      query: () => "/profile/admin/users",
+      providesTags: ["User"],
     }),
-    verifyEmail: builder.mutation<
-      { message: string },
-      { email: string; otp: string }
-    >({
-      query: (data) => ({
-        url: "/email-verification/verify-email",
-        method: "POST",
-        body: data,
+
+    updateUser: builder.mutation<User, { userId: number; data: Partial<User> }>(
+      {
+        query: ({ userId, data }) => ({
+          url: `/profile/admin/user/${userId}`,
+          method: "PATCH",
+          body: data,
+        }),
+        invalidatesTags: ["User"],
+      }
+    ),
+
+    deleteUser: builder.mutation<void, number>({
+      query: (userId) => ({
+        url: `/profile/admin/user/${userId}`,
+        method: "DELETE",
       }),
-    }),
-    resendVerification: builder.mutation<
-      { message: string },
-      { email: string }
-    >({
-      query: (data) => ({
-        url: "/email-verification/resend-verification",
-        method: "POST",
-        body: data,
-      }),
+      invalidatesTags: ["User"],
     }),
   }),
 });
@@ -138,9 +150,17 @@ export const authApi = api.injectEndpoints({
 export const {
   useLoginMutation,
   useRegisterMutation,
+  useRefreshTokenMutation,
   useLogoutMutation,
   useForgotPasswordMutation,
   useResetPasswordMutation,
+  useChangePasswordMutation,
+  useGetCurrentUserQuery,
+  useUpdateProfileMutation,
+  useUploadAvatarMutation,
   useVerifyEmailMutation,
-  useResendVerificationMutation,
+  useResendVerificationEmailMutation,
+  useGetAllUsersQuery,
+  useUpdateUserMutation,
+  useDeleteUserMutation,
 } = authApi;

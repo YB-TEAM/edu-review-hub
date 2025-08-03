@@ -43,8 +43,9 @@ export default function ForgotPasswordPage() {
       setStep(2);
       setSuccess("Đã gửi mã OTP về email của bạn.");
       toast.success("Đã gửi mã OTP về email!");
-    } catch (err: any) {
-      setError(err?.data?.message || err.message || "Không thể gửi email đặt lại mật khẩu");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Không thể gửi email đặt lại mật khẩu";
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -68,12 +69,13 @@ export default function ForgotPasswordPage() {
         throw new Error("Mật khẩu phải >=8 ký tự, có chữ hoa, thường, số, ký tự đặc biệt.");
       }
 
-      await resetPasswordApi({ email, otp, newPassword }).unwrap();
+      await resetPasswordApi({ token: otp, password: newPassword, email }).unwrap();
       setSuccess("Đặt lại mật khẩu thành công! Bạn có thể đăng nhập.");
       toast.success("Đặt lại mật khẩu thành công!");
       setTimeout(() => window.location.href = "/auth/login", 1500);
-    } catch (err: any) {
-      setOtpError(err?.data?.message || err.message || "OTP không đúng hoặc đã hết hạn.");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "OTP không đúng hoặc đã hết hạn.";
+      setOtpError(errorMessage);
     } finally {
       setIsLoading(false);
     }

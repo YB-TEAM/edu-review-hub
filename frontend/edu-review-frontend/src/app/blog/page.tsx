@@ -116,7 +116,7 @@ export default function BlogPage() {
     limit 
   });
 
-  const totalPages = data?.metadata?.totalPages || 1;
+  const totalPages = data?.meta?.totalPages || 1;
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -164,7 +164,7 @@ export default function BlogPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
             <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-              {data?.metadata?.totalItems || 0}
+              {data?.meta?.totalItems || 0}
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-400">Bài viết</div>
           </div>
@@ -215,10 +215,10 @@ export default function BlogPage() {
                   {/* This logic needs to be adjusted if we want to show a featured badge for the first blog on each page */}
                   {/* For now, it's removed as per the new grid structure */}
                   
-                  <div className={`relative ${blog.image ? 'h-64' : 'h-64'} overflow-hidden`}>
-                    {blog.image ? (
+                  <div className={`relative ${blog.featuredImage ? 'h-64' : 'h-64'} overflow-hidden`}>
+                    {blog.featuredImage ? (
                       <img
-                        src={blog.image}
+                        src={blog.featuredImage}
                         alt={blog.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       />
