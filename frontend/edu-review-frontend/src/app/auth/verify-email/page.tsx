@@ -8,12 +8,15 @@ import { CheckCircle, XCircle, Mail, RefreshCw } from "lucide-react";
 import { NavbarLogo } from "@/features/landing/components/navbar/Navbar";
 import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/sonner";
+import { useSelector } from "react-redux";
+import { RootState } from "@/lib/store";
 import "../auth.scss";
-import { useVerifyEmailMutation, useResendVerificationMutation } from "@/lib/services/authApi";
+import { useVerifyEmailMutation, useResendVerificationEmailMutation } from "@/lib/services/authApi";
 
 export default function VerifyEmailPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { user } = useSelector((state: RootState) => state.auth);
   const [verificationStatus, setVerificationStatus] = useState<
     "loading" | "success" | "error" | "expired"
   >("loading");
@@ -21,18 +24,47 @@ export default function VerifyEmailPage() {
   const [isResending, setIsResending] = useState(false);
 
   const [verifyEmailApi] = useVerifyEmailMutation();
-  const [resendVerificationApi] = useResendVerificationMutation();
+  const [resendVerificationApi] = useResendVerificationEmailMutation();
 
   const token = searchParams.get("token");
-  const email = searchParams.get("email");
+  const emailFromParams = searchParams.get("email");
+  
+  // Lấy email từ URL params, Redux store, hoặc localStorage
+  const getEmail = () => {
+    if (emailFromParams) return emailFromParams;
+    if (user?.email) return user.email;
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("pendingVerificationEmail");
+    }
+    return null;
+  };
+  
+  const email = getEmail();
+  const [displayEmail, setDisplayEmail] = useState(email || "");
+
+  // Cập nhật displayEmail khi email thay đổi
+  useEffect(() => {
+    if (email) {
+      setDisplayEmail(email);
+    }
+  }, [email]);
 
   const verifyEmail = async (token: string) => {
     try {
-      if (!email) throw new Error("Không tìm thấy email");
-      await verifyEmailApi({ email, otp: token }).unwrap();
+      if (!displayEmail) {
+        setVerificationStatus("error");
+        return;
+      }
+      await verifyEmailApi({ token, email: displayEmail }).unwrap();
       setVerificationStatus("success");
       toast.success("Xác minh email thành công!");
-    } catch {
+      
+      // Xóa email khỏi localStorage khi verify thành công
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("pendingVerificationEmail");
+      }
+    } catch (err: any) {
+      console.error("Verification error:", err);
       setVerificationStatus("error");
     }
   };
@@ -40,11 +72,14 @@ export default function VerifyEmailPage() {
   const resendVerificationEmail = async () => {
     setIsResending(true);
     try {
-      if (!email) throw new Error("Không tìm thấy email");
-      await resendVerificationApi({ email }).unwrap();
+      if (!displayEmail) {
+        toast.error("Không tìm thấy email");
+        return;
+      }
+      await resendVerificationApi({ email: displayEmail }).unwrap();
       setCountdown(60);
       toast.success("Đã gửi email xác minh!");
-    } catch {
+    } catch (err: any) {
       toast.error("Gửi email xác minh thất bại");
     } finally {
       setIsResending(false);
@@ -182,9 +217,16 @@ export default function VerifyEmailPage() {
             Xác minh email
           </h1>
           {email && (
-            <p className="text-gray-600">
-              Đang xác minh email: {email}
-            </p>
+            <div className="mt-4">
+              <p className="text-gray-600 mb-2">Email cần xác thực:</p>
+              <input
+                type="email"
+                value={displayEmail}
+                onChange={(e) => setDisplayEmail(e.target.value)}
+                className="w-full max-w-md px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Nhập email của bạn"
+              />
+            </div>
           )}
         </div>
 

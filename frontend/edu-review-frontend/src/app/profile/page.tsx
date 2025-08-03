@@ -1,7 +1,9 @@
 "use client";
 import { useAuth } from "@/hooks/useAuth";
 import { useUpdateProfileMutation } from "@/lib/services/profileApi";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "@/components/ui/sonner";
 import { CheckCircle, XCircle, Loader2, Camera, Upload, User, UserCircle, Calendar as CalendarIconLucide, BadgeCheck, GraduationCap, School, MapPin, Landmark, Mail } from "lucide-react";
 import { Navbar } from "@/features/landing/components/navbar/Navbar";
 import { Footer } from "@/features/landing/components/footer/Footer";
@@ -37,7 +39,8 @@ const VIETNAM_PROVINCES = [
 ];
 
 export default function ProfilePage() {
-  const { user: profile, isLoading, error } = useAuth();
+  const { user: profile, isAuthenticated, isLoading } = useAuth();
+  const router = useRouter();
   const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation();
   const [edit, setEdit] = useState(false);
   const [form, setForm] = useState({
@@ -62,6 +65,14 @@ export default function ProfilePage() {
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
 
+  // Bảo vệ route - redirect nếu chưa đăng nhập
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      toast.error("Vui lòng đăng nhập để xem hồ sơ.");
+      router.push("/auth/login");
+    }
+  }, [isAuthenticated, isLoading, router]);
+
   // Cập nhật form khi profile thay đổi
   React.useEffect(() => {
     if (profile) {
@@ -84,6 +95,7 @@ export default function ProfilePage() {
     }
   }, [profile]);
 
+  // Loading state
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -101,6 +113,12 @@ export default function ProfilePage() {
     );
   }
 
+  // Redirect nếu chưa đăng nhập
+  if (!isAuthenticated) {
+    return null; // Sẽ redirect trong useEffect
+  }
+
+  // Không có profile data
   if (!profile) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -110,7 +128,7 @@ export default function ProfilePage() {
             <CardContent className="pt-6">
               <XCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
               <h2 className="text-xl font-bold mb-2">
-                Vui lòng đăng nhập để xem hồ sơ.
+                Không tìm thấy thông tin hồ sơ.
               </h2>
             </CardContent>
           </Card>

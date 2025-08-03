@@ -4,7 +4,8 @@ import { usePathname } from "next/navigation";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { AvatarDropdown } from "@/components/ui/avatar-dropdown";
 import { Bell, LayoutDashboard, Star } from "lucide-react";
-import { useUserProfile } from "@/hooks/useUserProfile";
+import { useSelector } from "react-redux";
+import { RootState } from "@/lib/store";
 
 const MENU = [
   {
@@ -26,7 +27,7 @@ const MENU = [
 
 export function AppHeader() {
   const pathname = usePathname();
-  const { profile } = useUserProfile();
+  const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   return (
     <header className="sticky top-0 z-40 w-full bg-white/90 dark:bg-gray-950/90 border-b border-gray-100 dark:border-gray-800 shadow-sm backdrop-blur">
@@ -63,7 +64,7 @@ export function AppHeader() {
         {/* Actions */}
         <div className="flex items-center gap-2">
           <ModeToggle />
-          <AvatarDropdown profile={profile} />
+          {isAuthenticated && <AvatarDropdown profile={user} />}
         </div>
       </div>
     </header>

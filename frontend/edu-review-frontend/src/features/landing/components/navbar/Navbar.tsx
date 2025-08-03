@@ -187,67 +187,135 @@ function DesktopNavigation({
 }) {
   return (
     <div className="hidden lg:flex items-center space-x-8">
-      {navItems.map((item) => (
-        <button
-          key={item.href}
-          onClick={() => onNavClick(item.href)}
-          className={cn(
-            "navbar__nav-link navbar__nav-link--ripple px-3 py-2 text-sm font-medium transition-all duration-300 relative group",
-            {
-              // Active state colors
-              "text-blue-600 font-semibold": item.isActive && isScrolled,
-              "text-white font-semibold drop-shadow-md":
-                item.isActive && !isScrolled,
-              // Normal state colors
-              "text-gray-700 hover:text-blue-600": !item.isActive && isScrolled,
-              "text-white/90 hover:text-white drop-shadow-md":
-                !item.isActive && !isScrolled,
-            }
-          )}
-        >
-          <span className="relative inline-flex items-center">
-            {item.label}
-            {/* Badge - positioned to not overlap text */}
-            {item.badge && (
-              <span className="ml-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs px-2 py-1 rounded-full font-bold animate-pulse">
-                {item.badge}
+      {navItems.map((item) => {
+        // Sử dụng Link cho các trang khác, button cho anchor links
+        const isAnchorLink = item.href.startsWith("#");
+        
+        if (isAnchorLink) {
+          return (
+            <button
+              key={item.href}
+              onClick={() => onNavClick(item.href)}
+              className={cn(
+                "navbar__nav-link navbar__nav-link--ripple px-3 py-2 text-sm font-medium transition-all duration-300 relative group",
+                {
+                  // Active state colors
+                  "text-blue-600 font-semibold": item.isActive && isScrolled,
+                  "text-white font-semibold drop-shadow-md":
+                    item.isActive && !isScrolled,
+                  // Normal state colors
+                  "text-gray-700 hover:text-blue-600": !item.isActive && isScrolled,
+                  "text-white/90 hover:text-white drop-shadow-md":
+                    !item.isActive && !isScrolled,
+                }
+              )}
+            >
+              <span className="relative inline-flex items-center">
+                {item.label}
+                {/* Badge - positioned to not overlap text */}
+                {item.badge && (
+                  <span className="ml-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs px-2 py-1 rounded-full font-bold animate-pulse">
+                    {item.badge}
+                  </span>
+                )}
               </span>
-            )}
-          </span>
 
-          {/* Active indicator */}
-          {item.isActive && (
-            <span
+              {/* Active indicator */}
+              {item.isActive && (
+                <span
+                  className={cn(
+                    "absolute -bottom-1 left-0 w-full h-0.5 rounded-full transition-all duration-300",
+                    {
+                      "bg-gradient-to-r from-blue-600 to-orange-500": isScrolled,
+                      "bg-white shadow-sm": !isScrolled,
+                    }
+                  )}
+                />
+              )}
+
+              {/* Hover indicator */}
+              {!item.isActive && (
+                <span
+                  className={cn(
+                    "absolute -bottom-1 left-0 w-0 h-0.5 rounded-full transition-all duration-300 group-hover:w-full",
+                    {
+                      "bg-gradient-to-r from-blue-600 to-orange-500": isScrolled,
+                      "bg-white": !isScrolled,
+                    }
+                  )}
+                />
+              )}
+            </button>
+          );
+        } else {
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
               className={cn(
-                "absolute -bottom-1 left-0 w-full h-0.5 rounded-full transition-all duration-300",
+                "navbar__nav-link navbar__nav-link--ripple px-3 py-2 text-sm font-medium transition-all duration-300 relative group",
                 {
-                  "bg-gradient-to-r from-blue-600 to-orange-500": isScrolled,
-                  "bg-white shadow-sm": !isScrolled,
+                  // Active state colors
+                  "text-blue-600 font-semibold": item.isActive && isScrolled,
+                  "text-white font-semibold drop-shadow-md":
+                    item.isActive && !isScrolled,
+                  // Normal state colors
+                  "text-gray-700 hover:text-blue-600": !item.isActive && isScrolled,
+                  "text-white/90 hover:text-white drop-shadow-md":
+                    !item.isActive && !isScrolled,
                 }
               )}
-            />
-          )}
+            >
+              <span className="relative inline-flex items-center">
+                {item.label}
+                {/* Badge - positioned to not overlap text */}
+                {item.badge && (
+                  <span className="ml-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs px-2 py-1 rounded-full font-bold animate-pulse">
+                    {item.badge}
+                  </span>
+                )}
+              </span>
 
-          {/* Hover indicator */}
-          {!item.isActive && (
-            <span
-              className={cn(
-                "absolute -bottom-1 left-0 w-0 h-0.5 rounded-full transition-all duration-300 group-hover:w-full",
-                {
-                  "bg-gradient-to-r from-blue-600 to-orange-500": isScrolled,
-                  "bg-white": !isScrolled,
-                }
+              {/* Active indicator */}
+              {item.isActive && (
+                <span
+                  className={cn(
+                    "absolute -bottom-1 left-0 w-full h-0.5 rounded-full transition-all duration-300",
+                    {
+                      "bg-gradient-to-r from-blue-600 to-orange-500": isScrolled,
+                      "bg-white shadow-sm": !isScrolled,
+                    }
+                  )}
+                />
               )}
-            />
-          )}
-        </button>
-      ))}
+
+              {/* Hover indicator */}
+              {!item.isActive && (
+                <span
+                  className={cn(
+                    "absolute -bottom-1 left-0 w-0 h-0.5 rounded-full transition-all duration-300 group-hover:w-full",
+                    {
+                      "bg-gradient-to-r from-blue-600 to-orange-500": isScrolled,
+                      "bg-white": !isScrolled,
+                    }
+                  )}
+                />
+              )}
+            </Link>
+          );
+        }
+      })}
     </div>
   );
 }
 
 function DesktopCTAButtons({ isScrolled, onStartClick }: { isScrolled: boolean; onStartClick: () => void; }) {
   const { user, isAuthenticated, isLoading } = useAuth();
+
+  // Debug logs
+  console.log("Navbar - isAuthenticated:", isAuthenticated);
+  console.log("Navbar - user:", user);
+  console.log("Navbar - isLoading:", isLoading);
 
   return (
     <div className="hidden lg:flex items-center space-x-3">

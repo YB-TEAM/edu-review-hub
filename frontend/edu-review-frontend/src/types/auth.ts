@@ -51,18 +51,20 @@ export interface UserProfile {
   };
 }
 
+// AuthResponse có thể có hoặc không có token (tùy theo endpoint)
 export interface AuthResponse {
-  accessToken: string;
-  refreshToken: string;
-  tokenType: string;
-  expiresIn: number;
-  refreshExpiresIn: number;
-  user: User & { profile?: UserProfile };
+  accessToken?: string;
+  refreshToken?: string;
+  tokenType?: string;
+  expiresIn?: number;
+  refreshExpiresIn?: number;
+  user?: User & { profile?: UserProfile };
   session?: {
     sessionId: string;
     deviceId?: string;
     ipAddress?: string;
   };
+  message?: string; // Cho register thành công
 }
 
 export interface LoginRequest {
@@ -119,4 +121,13 @@ export interface UpdateProfileRequest {
     github?: string;
     twitter?: string;
   };
+}
+
+// Email verification types
+export interface VerifyEmailRequest {
+  token: string;
+}
+
+export interface ResendVerificationRequest {
+  email?: string; // Optional, can be inferred from current user
 }

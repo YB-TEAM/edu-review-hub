@@ -26,7 +26,7 @@ const baseQuery = fetchBaseQuery({
   baseUrl: "http://localhost:3000/api/v1",
   prepareHeaders: (headers) => {
     // Add auth token if available
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
     if (token) {
       console.log("Token found:", token.substring(0, 50) + "...");
       headers.set("authorization", `Bearer ${token}`);
@@ -49,44 +49,32 @@ export const baseQueryWithErrorHandling: BaseQueryFn<
   string | FetchArgs,
   unknown,
   FetchBaseQueryError
-> = async (args, api, extraOptions) => {
+> = async (args: any, api: any, extraOptions: any) => {
   const result = await baseQuery(args, api, extraOptions);
+  
+  // Chỉ chạy trên client side và khi có data
+  if (typeof window !== "undefined" && result.data) {
+    const token = localStorage.getItem("accessToken");
+    
+    if (token) {
+      // Thêm token vào headers nếu cần
+      console.log("Adding token to request");
+    }
+  }
 
-  // Handle different error scenarios
   if (result.error) {
-    const { status, data } = result.error;
-
+    const { status } = result.error;
+    
     // Handle authentication errors
     if (status === 401) {
-      // Clear auth token and redirect to login
-      localStorage.removeItem("token");
-      // window.location.href = "/auth/login";
-      console.log("401 error - token cleared but not redirecting");
+      // Don't clear tokens immediately, let the component handle it
+      console.log("401 error - token may be expired, but not clearing immediately");
       return result;
     }
-
-    // Handle forbidden errors
+    
+    // Handle other errors
     if (status === 403) {
-      console.error("Access forbidden:", data);
-      return result;
-    }
-
-    // Handle server errors
-    if (typeof status === "number" && status >= 500) {
-      console.error("Server error:", data);
-      return result;
-    }
-
-    // Handle validation errors
-    if (status === 422) {
-      console.error("Validation error:", data);
-      return result;
-    }
-
-    // Handle not found errors
-    if (status === 404) {
-      console.error("Resource not found:", data);
-      return result;
+      console.log("403 error - forbidden");
     }
   }
 

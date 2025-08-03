@@ -16,7 +16,10 @@ const initialState: AuthState = {
     typeof window !== "undefined" ? localStorage.getItem("accessToken") : null,
   refreshToken:
     typeof window !== "undefined" ? localStorage.getItem("refreshToken") : null,
-  isAuthenticated: false,
+  isAuthenticated: 
+    typeof window !== "undefined" 
+      ? !!(localStorage.getItem("accessToken") && localStorage.getItem("refreshToken"))
+      : false,
   isLoading: false,
   error: null,
 };
@@ -27,16 +30,20 @@ const authSlice = createSlice({
   reducers: {
     // Set authentication data
     setAuth: (state, action: PayloadAction<AuthResponse>) => {
-      state.user = action.payload.user;
-      state.accessToken = action.payload.accessToken;
-      state.refreshToken = action.payload.refreshToken;
+      state.user = action.payload.user || null;
+      state.accessToken = action.payload.accessToken || null;
+      state.refreshToken = action.payload.refreshToken || null;
       state.isAuthenticated = true;
       state.error = null;
 
       // Save to localStorage
       if (typeof window !== "undefined") {
-        localStorage.setItem("accessToken", action.payload.accessToken);
-        localStorage.setItem("refreshToken", action.payload.refreshToken);
+        if (action.payload.accessToken) {
+          localStorage.setItem("accessToken", action.payload.accessToken);
+        }
+        if (action.payload.refreshToken) {
+          localStorage.setItem("refreshToken", action.payload.refreshToken);
+        }
       }
     },
 

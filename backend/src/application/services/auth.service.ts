@@ -498,6 +498,7 @@ export class AuthService implements IAuthService {
     refreshToken: string;
     tokenType: string;
     expiresIn: number;
+    refreshExpiresIn: number;
   }> {
     const payload = {
       sub: user.id,
@@ -516,6 +517,7 @@ export class AuthService implements IAuthService {
       refreshToken,
       tokenType: "Bearer",
       expiresIn: rememberMe ? 30 * 24 * 60 * 60 : 7 * 24 * 60 * 60, // seconds
+      refreshExpiresIn: rememberMe ? 30 * 24 * 60 * 60 : 7 * 24 * 60 * 60, // seconds
     };
   }
 }

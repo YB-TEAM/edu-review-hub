@@ -61,17 +61,35 @@ export default function RegisterPage() {
     setSuccess("");
 
     try {
-      await register({
+      const result = await register({
         username: formData.username,
         email: formData.email,
         password: formData.password,
         phone: formData.phone,
       }).unwrap();
+      
+      // Lưu email vào localStorage để dùng cho verify
+      if (typeof window !== "undefined") {
+        localStorage.setItem("pendingVerificationEmail", formData.email);
+      }
+      
+      // Register thành công, không có token - chỉ thông báo cần xác thực
       setStep(2);
-      setSuccess("Mã OTP đã được gửi về email của bạn.");
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : "Email hoặc tên đăng nhập đã tồn tại";
+      setSuccess("Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.");
+      toast.success("Đăng ký thành công!", { 
+        description: "Vui lòng kiểm tra email để xác thực tài khoản." 
+      });
+    } catch (err: any) {
+      let errorMessage = "Đăng ký thất bại";
+      
+      if (err?.data?.message) {
+        errorMessage = err.data.message;
+      } else if (err?.message) {
+        errorMessage = err.message;
+      }
+      
       setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -88,13 +106,21 @@ export default function RegisterPage() {
     try {
       if (!/^[0-9]{6}$/.test(otp)) throw new Error("OTP phải gồm 6 số.");
 
-      await verifyEmail({ token: otp }).unwrap();
+      await verifyEmail({ token: otp, email: formData.email }).unwrap();
       setSuccess("Xác thực thành công! Bạn có thể đăng nhập.");
-      toast.success("Đăng ký thành công!", { description: "Bạn có thể đăng nhập." });
-      setTimeout(() => window.location.href = "/auth/login", 1500);
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : "OTP không đúng hoặc đã hết hạn.";
+      toast.success("Xác thực thành công!", { description: "Bạn có thể đăng nhập." });
+      setTimeout(() => router.push("/auth/login"), 1500);
+    } catch (err: any) {
+      let errorMessage = "OTP không đúng hoặc đã hết hạn.";
+      
+      if (err?.data?.message) {
+        errorMessage = err.data.message;
+      } else if (err?.message) {
+        errorMessage = err.message;
+      }
+      
       setOtpError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -105,7 +131,7 @@ export default function RegisterPage() {
     setOtpError("");
 
     try {
-      await resendVerification().unwrap();
+      await resendVerification({ email: formData.email }).unwrap();
       toast.success("Đã gửi lại OTP về email!");
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : "Không thể gửi lại OTP";

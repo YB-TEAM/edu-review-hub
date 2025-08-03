@@ -104,19 +104,25 @@ export const authApi = createApi({
     }),
 
     // Email Verification
-    verifyEmail: builder.mutation<void, { token: string }>({
+    verifyEmail: builder.mutation<void, { token: string; email?: string }>({
       query: (data) => ({
-        url: "/auth/verify-email",
+        url: "/email-verification/verify-email",
         method: "POST",
-        body: data,
+        body: {
+          otp: data.token,
+          email: data.email || "",
+        },
       }),
       invalidatesTags: ["User"],
     }),
 
-    resendVerificationEmail: builder.mutation<void, void>({
-      query: () => ({
-        url: "/auth/resend-verification",
+    resendVerificationEmail: builder.mutation<void, { email?: string }>({
+      query: (data) => ({
+        url: "/email-verification/resend-verification",
         method: "POST",
+        body: {
+          email: data.email || "",
+        },
       }),
     }),
 
