@@ -1,0 +1,834 @@
+[
+  {
+    "name": "Trường Đại học Khoa học Tự nhiên",
+    "address": "VNU-HUS",
+    "website": "QHT",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Khoa học Xã hội và Nhân văn",
+    "address": "VNU-USSH",
+    "website": "QHX",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Việt - Nhật",
+    "address": "VNU-VJU",
+    "website": "QHJ",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Công nghệ",
+    "address": "VNU-UET",
+    "website": "QHI",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Giáo dục",
+    "address": "VNU-UED",
+    "website": "QHS",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Kinh tế",
+    "address": "VNU-UEB",
+    "website": "QHE",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Ngoại ngữ",
+    "address": "VNU-ULIS",
+    "website": "QHF",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Y Dược",
+    "address": "VNU-UMP",
+    "website": "QHY",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Luật[6]",
+    "address": "VNU-UL",
+    "website": "QHL",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Quản trị và Kinh doanh",
+    "address": "VNU-HSB",
+    "website": "QHD",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Quốc tế",
+    "address": "VNU-IS",
+    "website": "QHQ",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Khoa học liên ngành và Nghệ thuật",
+    "address": "VNU-SIS",
+    "website": "QHK",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Khoa Quốc tế Pháp ngữ",
+    "address": "VNU-IFI",
+    "website": "QHP",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Đại học Bách khoa Hà Nội",
+    "address": "HUST",
+    "website": "BKA",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Công đoàn",
+    "address": "TUU",
+    "website": "LDA",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Công nghệ Giao thông vận tải",
+    "address": "UTT",
+    "website": "GTA",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Tài nguyên và Môi trường Hà Nội",
+    "address": "HUNRE",
+    "website": "DMT",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Công nghiệp Hà Nội",
+    "address": "HAUI",
+    "website": "DCN",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Công nghiệp Việt-Hung",
+    "address": "VIU",
+    "website": "VHD",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Dược Hà Nội",
+    "address": "HUP",
+    "website": "DKH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Điện lực",
+    "address": "EPU",
+    "website": "DDL",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Giao thông Vận tải",
+    "address": "UTC",
+    "website": "GHA",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Hà Nội",
+    "address": "HANU",
+    "website": "NHF",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Khoa học và Công nghệ Hà Nội",
+    "address": "USTH",
+    "website": "KCN",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Kiểm sát Hà Nội",
+    "address": "TKS",
+    "website": "DKS",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Kiến trúc Hà Nội",
+    "address": "HAU",
+    "website": "KTA",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Kinh tế - Kỹ thuật Công nghiệp",
+    "address": "UNETI",
+    "website": "DKK",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Đại học Kinh tế Quốc dân",
+    "address": "NEU",
+    "website": "KHA",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Lao động - Xã hội",
+    "address": "ULSA",
+    "website": "DLX",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Lâm nghiệp Việt Nam",
+    "address": "VNUF",
+    "website": "LNH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Luật Hà Nội",
+    "address": "HLU",
+    "website": "LPH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Mỏ - Địa chất",
+    "address": "HUMG",
+    "website": "MDA",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Mỹ thuật Công nghiệp",
+    "address": "UAD",
+    "website": "MTC",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Mỹ thuật Việt Nam",
+    "address": "VNUFA",
+    "website": "MTH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Ngoại thương",
+    "address": "FTU",
+    "website": "NTH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Sân khấu - Điện ảnh Hà Nội",
+    "address": "SKDA",
+    "website": "SKD",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Sư phạm Hà Nội",
+    "address": "HNUE",
+    "website": "SPH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Sư phạm Nghệ thuật Trung ương",
+    "address": "NUAE",
+    "website": "GNT",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Sư phạm Thể dục Thể thao Hà Nội",
+    "address": "HUPES",
+    "website": "TDH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Thủy lợi",
+    "address": "TLU",
+    "website": "TLA",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Thương mại",
+    "address": "TMU",
+    "website": "TMA",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Văn hóa Hà Nội",
+    "address": "HUC",
+    "website": "VHH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Xây dựng Hà Nội",
+    "address": "HUCE",
+    "website": "XDA",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Y Hà Nội",
+    "address": "HMU",
+    "website": "YHB",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Y tế Công cộng",
+    "address": "HUPH",
+    "website": "YTC",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Thủ đô Hà Nội",
+    "address": "HNMU",
+    "website": "HNM",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Công nghiệp Dệt May Hà Nội",
+    "address": "HTU",
+    "website": "CCM",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Mở Hà Nội",
+    "address": "HOU",
+    "website": "MHN",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Văn hóa - Nghệ thuật Quân đội",
+    "address": "MUCA",
+    "website": "ZNH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Phòng cháy chữa cháy",
+    "address": "UFPF",
+    "website": "PCH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Múa Việt Nam",
+    "address": "VNAD",
+    "website": "",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Âm nhạc Quốc gia Việt Nam",
+    "address": "VNAM",
+    "website": "NVH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Chính trị Quốc gia Hồ Chí Minh",
+    "address": "HCMA",
+    "website": "",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Báo chí và Tuyên truyền",
+    "address": "AJC",
+    "website": "HBT",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Hành chính và Quản trị công",
+    "address": "APAG",
+    "website": "HCH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Chính trị Khu vực I",
+    "address": "APRI",
+    "website": "",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Biên phòng",
+    "address": "HVBP",
+    "website": "BPH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Công nghệ Bưu chính Viễn thông",
+    "address": "PTIT",
+    "website": "BVH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Chính trị",
+    "address": "",
+    "website": "HCB",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Kỹ thuật Mật mã",
+    "address": "VACT",
+    "website": "KMA",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Ngân hàng",
+    "address": "BAV",
+    "website": "NHH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Ngoại giao",
+    "address": "DAV",
+    "website": "HQT",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Nông nghiệp Việt Nam",
+    "address": "VNUA",
+    "website": "HVN",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Phụ nữ Việt Nam",
+    "address": "VWA",
+    "website": "HPN",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Tòa án",
+    "address": "CTA",
+    "website": "HTA",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Tư pháp",
+    "address": "",
+    "website": "HVC",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Tài chính",
+    "address": "AOF",
+    "website": "HTC",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Quân y(Đại học Y - Dược Lê Hữu Trác)",
+    "address": "",
+    "website": "YQH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Y – Dược học cổ truyền Việt Nam",
+    "address": "",
+    "website": "HYD",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Chính sách và Phát triển",
+    "address": "APD",
+    "website": "HCP",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Thanh thiếu niên Việt Nam",
+    "address": "VYA",
+    "website": "HTN",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện An ninh nhân dân",
+    "address": "T31/T01/C500",
+    "website": "ANH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Cảnh sát nhân dân",
+    "address": "T32/T02/T18",
+    "website": "CSH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Phòng không - Không quân",
+    "address": "",
+    "website": "KPH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Sĩ quan Đặc công",
+    "address": "",
+    "website": "DCH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Sĩ quan Pháo binh",
+    "address": "",
+    "website": "PBH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Sĩ quan Phòng hóa",
+    "address": "",
+    "website": "HGH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Sĩ quan Lục quân 1(Trường Đại học Trần Quốc Tuấn)",
+    "address": "",
+    "website": "LAH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Quản lý Giáo dục",
+    "address": "",
+    "website": "HVQ",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Kỹ thuật Quân sự",
+    "address": "MTA",
+    "website": "KQH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Hậu cần",
+    "address": "",
+    "website": "HEH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Khoa học Quân sự",
+    "address": "MSA",
+    "website": "NQH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Dân tộc",
+    "address": "VAEM",
+    "website": "HVD",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Quốc phòng",
+    "address": "",
+    "website": "",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Sĩ quan Chính trị",
+    "address": "",
+    "website": "LCH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Chính trị Công an Nhân dân",
+    "address": "T29/T03",
+    "website": "HCA",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Thành Đô",
+    "address": "TDU",
+    "website": "TDD",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Đại học Phenikaa",
+    "address": "PHENA",
+    "website": "PKA",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Thăng Long",
+    "address": "TLU",
+    "website": "DTL",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Phương Đông",
+    "address": "PDU",
+    "website": "DPD",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học CMC",
+    "address": "",
+    "website": "MCA",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Đông Đô",
+    "address": "HDIU",
+    "website": "DDU",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học VinUni",
+    "address": "VINUNI",
+    "website": "VIN",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Công nghệ Đông Á",
+    "address": "EAUT",
+    "website": "DDA",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học FPT",
+    "address": "FPTU",
+    "website": "FPT",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Công nghệ và Quản lý Hữu nghị",
+    "address": "UTM",
+    "website": "DCQ",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Quốc tế RMIT Việt Nam",
+    "address": "RMIT",
+    "website": "RMU",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Nguyễn Trãi",
+    "address": "NTU",
+    "website": "NTU",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Hòa Bình",
+    "address": "HBU",
+    "website": "ETU",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Đại Nam",
+    "address": "DNU",
+    "website": "DDN",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Tài chính - Ngân hàng Hà Nội",
+    "address": "FBU",
+    "website": "FBU",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Quốc tế Bắc Hà(văn phòng tuyển sinh)",
+    "address": "BHIU",
+    "website": "DBH",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Trường Đại học Kinh doanh và Công nghệ Hà Nội",
+    "address": "HUBT",
+    "website": "DQK",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  },
+  {
+    "name": "Học viện Thiết kế và Thời trang London",
+    "address": "",
+    "website": "LCDF",
+    "type": "Đại học/Cao đẳng",
+    "location": "Hà Nội",
+    "source": "Wikipedia"
+  }
+]

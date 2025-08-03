@@ -9,6 +9,8 @@ import { UniversityReviewModule } from "@/infrastructure/config/university-revie
 import { UniversityReviewCriterionModule } from "@/infrastructure/config/university-review-criterion.module";
 import { BlogModule } from "@/infrastructure/config/blog.module";
 import { UploadModule } from "@/infrastructure/config/upload.module";
+import { DashboardModule } from "@/infrastructure/config/dashboard.module";
+import { SystemManagementModule } from "@/infrastructure/config/system-management.module";
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -22,6 +24,8 @@ import { UploadModule } from "@/infrastructure/config/upload.module";
     UniversityReviewCriterionModule,
     BlogModule,
     UploadModule,
+    DashboardModule,
+    SystemManagementModule,
   ],
 })
 export class AppModule {}
