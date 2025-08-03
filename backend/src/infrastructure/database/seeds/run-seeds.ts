@@ -1,7 +1,7 @@
 import { AppDataSource } from "../data-source";
 import { RolePermissionSeeder } from "./role-permission.seeder";
 import { UserAccountSeeder } from "./user-account.seeder";
-import { UniversitySeeder } from "./university.seeder";
+import { EnhancedUniversitySeeder } from "./enhanced-university.seeder";
 
 async function runSeeds() {
   try {
@@ -19,10 +19,10 @@ async function runSeeds() {
     await userAccountSeeder.run();
     console.log("User account seeding completed");
 
-    // Run university seeder
-    const universitySeeder = new UniversitySeeder(AppDataSource);
+    // Run enhanced university seeder
+    const universitySeeder = new EnhancedUniversitySeeder(AppDataSource);
     await universitySeeder.run();
-    console.log("University seeding completed");
+    console.log("Enhanced university seeding completed");
 
     // Close database connection
     await AppDataSource.destroy();
