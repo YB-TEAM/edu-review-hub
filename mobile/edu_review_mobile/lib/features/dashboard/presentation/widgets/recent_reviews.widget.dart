@@ -16,7 +16,7 @@ class RecentReviews extends StatelessWidget {
         'comment': 'Amazing engineering program with world-class facilities!',
         'time': '2 hours ago',
         'avatar': 'S',
-        'image': 'https://blog.e2.com.vn/wp-content/uploads/2022/01/MIT-Hyperloop-3-team.jpg',
+        'image': 'https://wp.technologyreview.com/wp-content/uploads/2025/06/MIT-Dome-green.png',
       },
       {
         'user': 'John D.',
@@ -188,7 +188,16 @@ class RecentReviews extends StatelessWidget {
               height: 160,
               width: double.infinity,
               fit: BoxFit.cover,
+               errorBuilder: (context, error, stackTrace) {
+                return Image.network(
+                  AppDefaultImages.defaultImage,
+                  height: 160,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                );
+              },
             ),
+            
           ),
           const SizedBox(height: 24),
           Padding(

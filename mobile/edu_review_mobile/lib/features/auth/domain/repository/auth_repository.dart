@@ -11,4 +11,5 @@ abstract class AuthRepository {
   Future<Either<Failure, SignInResponse>> signIn(SignInParams signinParams);
   Future<bool> isLoggedIn();
   Future<Either<Failure, void>> verifyEmail(VerifyEmailParams verifyEmailParams);
+  Future<Either<Failure, void>> resendVerification(String email);
 }

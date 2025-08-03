@@ -15,6 +15,7 @@ abstract class AuthApiService {
   Future<Either<Failure, SignInResponse>> signIn(SignInParams signinParams);
   Future<SignInResponse> refreshToken(String refreshToken);
   Future<Either<Failure, void>> verifyEmail(VerifyEmailParams verifyEmailParams);
+  Future<Either<Failure, void>> resendVerification(String param);
 }
 
 class AuthApiServiceImpl extends AuthApiService {
@@ -83,6 +84,24 @@ class AuthApiServiceImpl extends AuthApiService {
     } on DioException catch (e) {
       return Left(ServerFailure(
         message: e.response?.data['message'] ?? 'OTP verification failed',
+        statusCode: e.response?.statusCode,
+      ));
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> resendVerification(String email) async {
+    try {
+      await sl<DioClient>().post(
+        ApiUrls.resendVerification,
+        data: {'email': email},
+      );
+      return Right(null); 
+    } on DioException catch (e) {
+      return Left(ServerFailure(
+        message: e.response?.data['message'] ?? 'Resend verification failed',
         statusCode: e.response?.statusCode,
       ));
     } catch (e) {
