@@ -29,6 +29,7 @@ import {
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 const popularCategories = [
   {
@@ -154,10 +155,28 @@ export default function BlogPage() {
           <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 dark:from-white dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent mb-6">
             Chia Sẻ & Khám Phá
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed mb-8">
             Nơi kết nối cộng đồng sinh viên, chia sẻ kinh nghiệm quý giá và 
             khám phá những câu chuyện truyền cảm hứng từ các trường đại học
           </p>
+          
+          {/* Create Blog Button */}
+          <div className="flex justify-center gap-4">
+            <Button 
+              onClick={() => router.push('/blog/new')}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+            >
+              <PenSquare className="h-5 w-5 mr-2" />
+              Tạo bài viết mới
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => router.push('/blog/my-drafts')}
+              className="border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 px-6 py-3 rounded-full"
+            >
+              Bài viết của tôi
+            </Button>
+          </div>
         </div>
 
         {/* Stats Bar */}

@@ -10,6 +10,8 @@ import {
   logout as logoutAction,
   setError,
   clearError,
+  setUser,
+  restoreAuth,
 } from "@/lib/slices/authSlice";
 import type { RootState } from "@/lib/store";
 import type { LoginRequest, RegisterRequest, User } from "@/types";
@@ -27,38 +29,45 @@ export const useAuth = () => {
     console.log("useAuth - localStorage accessToken:", localStorage.getItem("accessToken"));
   }
 
+  // Get current user data - luôn chạy nếu có token
+  const { data: currentUser, isLoading: isUserLoading, error: userError } =
+    useGetCurrentUserQuery(undefined, {
+      skip: !isAuthenticated && !localStorage.getItem("accessToken"),
+    });
+
   // Khôi phục authentication state từ localStorage khi component mount
   useEffect(() => {
     if (typeof window !== "undefined") {
       const accessToken = localStorage.getItem("accessToken");
       const refreshToken = localStorage.getItem("refreshToken");
       
+      // Nếu có token nhưng chưa authenticated, restore auth state
       if (accessToken && refreshToken && !isAuthenticated) {
         console.log("Restoring auth state from localStorage");
-        // Có thể dispatch action để khôi phục state
-        // dispatch(restoreAuth({ accessToken, refreshToken }));
+        dispatch(restoreAuth());
       }
     }
   }, [isAuthenticated, dispatch]);
 
-  const [login, { isLoading: isLoginLoading }] = useLoginMutation();
-  const [register, { isLoading: isRegisterLoading }] = useRegisterMutation();
-  const [logout, { isLoading: isLogoutLoading }] = useLogoutMutation();
-
-  // Get current user data
-  const { data: currentUser, isLoading: isUserLoading, error: userError } =
-    useGetCurrentUserQuery(undefined, {
-      skip: !isAuthenticated,
-    });
+  // Cập nhật user data khi có currentUser
+  useEffect(() => {
+    if (currentUser && !user) {
+      console.log("Updating user data from currentUser query");
+      dispatch(setUser(currentUser as User));
+    }
+  }, [currentUser, user, dispatch]);
 
   // Handle 401 errors from user query
   useEffect(() => {
     if (userError && 'status' in userError && userError.status === 401) {
-      console.log("User query returned 401, attempting refresh...");
-      // Try to refresh token or clear auth state
+      console.log("User query returned 401, logging out...");
       dispatch(logoutAction());
     }
   }, [userError, dispatch]);
+
+  const [login, { isLoading: isLoginLoading }] = useLoginMutation();
+  const [register, { isLoading: isRegisterLoading }] = useRegisterMutation();
+  const [logout, { isLoading: isLogoutLoading }] = useLogoutMutation();
 
   const handleLogin = async (credentials: LoginRequest) => {
     try {
@@ -105,7 +114,7 @@ export const useAuth = () => {
   return {
     // State
     user: currentUser || user,
-    isAuthenticated,
+    isAuthenticated: isAuthenticated || !!(localStorage.getItem("accessToken") && localStorage.getItem("refreshToken")),
     isLoading:
       isLoading ||
       isLoginLoading ||

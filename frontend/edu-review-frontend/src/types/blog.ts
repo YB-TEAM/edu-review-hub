@@ -108,7 +108,7 @@ export enum BlogCategory {
 export enum BlogStatus {
   DRAFT = "draft",
   PUBLISHED = "published",
-  PENDING = "pending",
+  APPROVED = "approved",
   REJECTED = "rejected",
   BANNED = "banned",
 }

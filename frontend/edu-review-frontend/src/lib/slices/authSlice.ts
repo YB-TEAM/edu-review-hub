@@ -105,6 +105,20 @@ const authSlice = createSlice({
         localStorage.setItem("refreshToken", action.payload.refreshToken);
       }
     },
+
+    // Restore auth from localStorage
+    restoreAuth: (state) => {
+      if (typeof window !== "undefined") {
+        const accessToken = localStorage.getItem("accessToken");
+        const refreshToken = localStorage.getItem("refreshToken");
+        
+        if (accessToken && refreshToken) {
+          state.accessToken = accessToken;
+          state.refreshToken = refreshToken;
+          state.isAuthenticated = true;
+        }
+      }
+    },
   },
 });
 
@@ -117,6 +131,7 @@ export const {
   clearError,
   logout,
   updateTokens,
+  restoreAuth,
 } = authSlice.actions;
 
 export default authSlice.reducer;
