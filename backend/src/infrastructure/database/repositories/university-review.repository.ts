@@ -1,7 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { UniversityReview } from "../entities/university-review.entity";
+import {
+  UniversityReview,
+  ReviewStatus,
+} from "../entities/university-review.entity";
 import { IUniversityReviewRepository } from "@/domain/repositories/university-review.repository.interface";
 
 @Injectable()
@@ -44,7 +47,7 @@ export class UniversityReviewRepository implements IUniversityReviewRepository {
     return this.findById(id) as Promise<UniversityReview>;
   }
 
-  async updateStatus(id: number, status: string): Promise<void> {
+  async updateStatus(id: number, status: ReviewStatus): Promise<void> {
     await this.repo.update(id, { status });
   }
 

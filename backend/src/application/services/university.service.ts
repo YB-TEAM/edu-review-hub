@@ -1,10 +1,22 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like, In } from 'typeorm';
-import { University, UniversityType, UniversityStatus } from '../../infrastructure/database/entities/university.entity';
-import { UniversityReview, ReviewStatus, ReviewType } from '../../infrastructure/database/entities/university-review.entity';
-import { UniversityReviewCriterion } from '../../infrastructure/database/entities/university-review-criterion.entity';
-import { IUniversityService } from './university.service.interface';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository, Like, In } from "typeorm";
+import {
+  University,
+  UniversityType,
+  UniversityStatus,
+} from "../../infrastructure/database/entities/university.entity";
+import {
+  UniversityReview,
+  ReviewStatus,
+  ReviewType,
+} from "../../infrastructure/database/entities/university-review.entity";
+import { UniversityReviewCriterion } from "../../infrastructure/database/entities/university-review-criterion.entity";
+import { IUniversityService } from "./university.service.interface";
 
 @Injectable()
 export class UniversityService implements IUniversityService {
@@ -14,52 +26,106 @@ export class UniversityService implements IUniversityService {
     @InjectRepository(UniversityReview)
     private readonly reviewRepository: Repository<UniversityReview>,
     @InjectRepository(UniversityReviewCriterion)
-    private readonly criterionRepository: Repository<UniversityReviewCriterion>,
+    private readonly criterionRepository: Repository<UniversityReviewCriterion>
   ) {}
 
   // University CRUD
-  async getAllUniversities(filters?: any): Promise<{ universities: University[]; total: number }> {
-    const queryBuilder = this.universityRepository.createQueryBuilder('university');
+  async getAllUniversities(
+    filters: {
+      page?: number;
+      limit?: number;
+      type?: string;
+      location?: string;
+      search?: string;
+      status?: string;
+    } = {}
+  ): Promise<{
+    universities: University[];
+    pagination: {
+      currentPage: number;
+      limit: number;
+      totalItems: number;
+      totalPages: number;
+      itemsInCurrentPage: number;
+      hasPreviousPage: boolean;
+      hasNextPage: boolean;
+      previousPage: number | null;
+      nextPage: number | null;
+    };
+  }> {
+    const queryBuilder =
+      this.universityRepository.createQueryBuilder("university");
 
     if (filters?.type) {
-      queryBuilder.andWhere('university.type = :type', { type: filters.type });
+      queryBuilder.andWhere("university.type = :type", { type: filters.type });
     }
 
     if (filters?.location) {
-      queryBuilder.andWhere('university.location @> ARRAY[:location]', { location: filters.location });
+      queryBuilder.andWhere("university.location @> ARRAY[:location]", {
+        location: filters.location,
+      });
     }
 
     if (filters?.search) {
       queryBuilder.andWhere(
-        '(university.name ILIKE :search OR university.short_name ILIKE :search OR university.english_name ILIKE :search)',
+        "(university.name ILIKE :search OR university.short_name ILIKE :search OR university.english_name ILIKE :search)",
         { search: `%${filters.search}%` }
       );
     }
 
     if (filters?.status) {
-      queryBuilder.andWhere('university.status = :status', { status: filters.status });
+      queryBuilder.andWhere("university.status = :status", {
+        status: filters.status,
+      });
     }
 
+    // Sử dụng giá trị mặc định từ PaginationDto
     const page = filters?.page || 1;
     const limit = filters?.limit || 10;
     const offset = (page - 1) * limit;
 
     queryBuilder
-      .orderBy('university.is_featured', 'DESC')
-      .addOrderBy('university.average_rating', 'DESC')
-      .addOrderBy('university.name', 'ASC')
+      .orderBy("university.is_featured", "DESC")
+      .addOrderBy("university.average_rating", "DESC")
+      .addOrderBy("university.name", "ASC")
       .skip(offset)
       .take(limit);
 
-    const [universities, total] = await queryBuilder.getManyAndCount();
+    const [universities, totalItems] = await queryBuilder.getManyAndCount();
 
-    return { universities, total };
+    // Tính toán thông tin phân trang chi tiết
+    const totalPages = Math.ceil(totalItems / limit);
+    const itemsInCurrentPage = universities.length;
+    const hasPreviousPage = page > 1;
+    const hasNextPage = page < totalPages;
+    const previousPage = hasPreviousPage ? page - 1 : null;
+    const nextPage = hasNextPage ? page + 1 : null;
+
+    return {
+      universities,
+      pagination: {
+        currentPage: page,
+        limit,
+        totalItems,
+        totalPages,
+        itemsInCurrentPage,
+        hasPreviousPage,
+        hasNextPage,
+        previousPage,
+        nextPage,
+      },
+    };
   }
 
   async getUniversityById(id: number): Promise<University> {
     const university = await this.universityRepository.findOne({
       where: { id },
-      relations: ['reviews', 'reviews.user', 'reviews.scores', 'reviews.scores.criterion'],
+      relations: [
+        "reviews",
+        "reviews.user",
+        "reviews.scores",
+        "reviews.scores.criterion",
+      ],
     });
 
     if (!university) {
@@ -76,7 +142,12 @@ export class UniversityService implements IUniversityService {
   async getUniversityBySlug(slug: string): Promise<University> {
     const university = await this.universityRepository.findOne({
       where: { short_name: slug },
-      relations: ['reviews', 'reviews.user', 'reviews.scores', 'reviews.scores.criterion'],
+      relations: [
+        "reviews",
+        "reviews.user",
+        "reviews.scores",
+        "reviews.scores.criterion",
+      ],
     });
 
     if (!university) {
@@ -88,7 +159,10 @@ export class UniversityService implements IUniversityService {
 
   async createUniversity(universityData: any): Promise<University> {
     const university = this.universityRepository.create(universityData);
-    return await this.universityRepository.save(university);
+    const savedUniversity = await this.universityRepository.save(university);
+    return Array.isArray(savedUniversity)
+      ? savedUniversity[0]
+      : savedUniversity;
   }
 
   async updateUniversity(id: number, universityData: any): Promise<University> {
@@ -110,7 +184,7 @@ export class UniversityService implements IUniversityService {
         { short_name: Like(`%${query}%`) },
         { english_name: Like(`%${query}%`) },
       ],
-      order: { average_rating: 'DESC' },
+      order: { average_rating: "DESC" },
       take: 20,
     });
   }
@@ -118,21 +192,21 @@ export class UniversityService implements IUniversityService {
   async getUniversitiesByType(type: UniversityType): Promise<University[]> {
     return await this.universityRepository.find({
       where: { type, status: UniversityStatus.ACTIVE },
-      order: { average_rating: 'DESC' },
+      order: { average_rating: "DESC" },
     });
   }
 
   async getUniversitiesByLocation(location: string): Promise<University[]> {
     return await this.universityRepository.find({
       where: { location: In([location]), status: UniversityStatus.ACTIVE },
-      order: { average_rating: 'DESC' },
+      order: { average_rating: "DESC" },
     });
   }
 
   async getFeaturedUniversities(): Promise<University[]> {
     return await this.universityRepository.find({
       where: { is_featured: true, status: UniversityStatus.ACTIVE },
-      order: { average_rating: 'DESC' },
+      order: { average_rating: "DESC" },
       take: 10,
     });
   }
@@ -140,7 +214,7 @@ export class UniversityService implements IUniversityService {
   async getTopRatedUniversities(limit: number = 10): Promise<University[]> {
     return await this.universityRepository.find({
       where: { status: UniversityStatus.ACTIVE },
-      order: { average_rating: 'DESC' },
+      order: { average_rating: "DESC" },
       take: limit,
     });
   }
@@ -156,12 +230,14 @@ export class UniversityService implements IUniversityService {
       totalReviews,
     ] = await Promise.all([
       this.universityRepository.count(),
-      this.universityRepository.count({ where: { status: UniversityStatus.ACTIVE } }),
+      this.universityRepository.count({
+        where: { status: UniversityStatus.ACTIVE },
+      }),
       this.universityRepository.count({ where: { is_featured: true } }),
       this.universityRepository.count({ where: { is_verified: true } }),
       this.universityRepository
-        .createQueryBuilder('university')
-        .select('AVG(university.average_rating)', 'avg')
+        .createQueryBuilder("university")
+        .select("AVG(university.average_rating)", "avg")
         .getRawOne(),
       this.reviewRepository.count({ where: { status: ReviewStatus.APPROVED } }),
     ]);
@@ -171,7 +247,7 @@ export class UniversityService implements IUniversityService {
       activeUniversities,
       featuredUniversities,
       verifiedUniversities,
-      averageRating: parseFloat(averageRating?.avg || '0'),
+      averageRating: parseFloat(averageRating?.avg || "0"),
       totalReviews,
       lastUpdated: new Date(),
     };
@@ -201,30 +277,31 @@ export class UniversityService implements IUniversityService {
   // University reviews
   async getUniversityReviews(
     universityId: number,
-    filters?: any,
+    filters?: any
   ): Promise<{ reviews: UniversityReview[]; total: number }> {
-    const queryBuilder = this.reviewRepository.createQueryBuilder('review');
+    const queryBuilder = this.reviewRepository.createQueryBuilder("review");
 
     queryBuilder
-      .leftJoinAndSelect('review.user', 'user')
-      .leftJoinAndSelect('review.scores', 'scores')
-      .leftJoinAndSelect('scores.criterion', 'criterion')
-      .where('review.university_id = :universityId', { universityId });
+      .leftJoinAndSelect("review.user", "user")
+      .leftJoinAndSelect("review.scores", "scores")
+      .leftJoinAndSelect("scores.criterion", "criterion")
+      .where("review.university_id = :universityId", { universityId });
 
     if (filters?.status) {
-      queryBuilder.andWhere('review.status = :status', { status: filters.status });
+      queryBuilder.andWhere("review.status = :status", {
+        status: filters.status,
+      });
     } else {
-      queryBuilder.andWhere('review.status = :status', { status: ReviewStatus.APPROVED });
+      queryBuilder.andWhere("review.status = :status", {
+        status: ReviewStatus.APPROVED,
+      });
     }
 
     const page = filters?.page || 1;
     const limit = filters?.limit || 10;
     const offset = (page - 1) * limit;
 
-    queryBuilder
-      .orderBy('review.created_at', 'DESC')
-      .skip(offset)
-      .take(limit);
+    queryBuilder.orderBy("review.created_at", "DESC").skip(offset).take(limit);
 
     const [reviews, total] = await queryBuilder.getManyAndCount();
 
@@ -238,10 +315,13 @@ export class UniversityService implements IUniversityService {
     // Update university statistics
     await this.updateUniversityReviewStats(reviewData.university_id);
 
-    return savedReview;
+    return Array.isArray(savedReview) ? savedReview[0] : savedReview;
   }
 
-  async updateUniversityReview(id: number, reviewData: any): Promise<UniversityReview> {
+  async updateUniversityReview(
+    id: number,
+    reviewData: any
+  ): Promise<UniversityReview> {
     const review = await this.reviewRepository.findOne({ where: { id } });
     if (!review) {
       throw new NotFoundException(`Review with ID ${id} not found`);
@@ -268,7 +348,11 @@ export class UniversityService implements IUniversityService {
     await this.updateUniversityReviewStats(review.university_id);
   }
 
-  async moderateReview(id: number, status: ReviewStatus, moderatorId: number): Promise<UniversityReview> {
+  async moderateReview(
+    id: number,
+    status: ReviewStatus,
+    moderatorId: number
+  ): Promise<UniversityReview> {
     const review = await this.reviewRepository.findOne({ where: { id } });
     if (!review) {
       throw new NotFoundException(`Review with ID ${id} not found`);
@@ -295,7 +379,9 @@ export class UniversityService implements IUniversityService {
     });
 
     const totalReviews = reviews.length;
-    const averageRating = reviews.reduce((sum, review) => sum + review.overall_score, 0) / totalReviews || 0;
+    const averageRating =
+      reviews.reduce((sum, review) => sum + review.overall_score, 0) /
+        totalReviews || 0;
 
     const ratingDistribution = this.calculateRatingDistribution(reviews);
     const reviewTypes = this.calculateReviewTypeDistribution(reviews);
@@ -312,18 +398,22 @@ export class UniversityService implements IUniversityService {
   async getReviewAnalytics(universityId: number): Promise<any> {
     const reviews = await this.reviewRepository.find({
       where: { university_id: universityId, status: ReviewStatus.APPROVED },
-      relations: ['scores', 'scores.criterion'],
+      relations: ["scores", "scores.criterion"],
     });
 
-    const criteria = await this.criterionRepository.find({ where: { is_active: true } });
-    const criteriaAnalytics = criteria.map(criterion => {
+    const criteria = await this.criterionRepository.find({
+      where: { is_active: true },
+    });
+    const criteriaAnalytics = criteria.map((criterion) => {
       const criterionScores = reviews
-        .flatMap(review => review.scores)
-        .filter(score => score.criterion.id === criterion.id);
+        .flatMap((review) => review.scores)
+        .filter((score) => score.criterion.id === criterion.id);
 
-      const averageScore = criterionScores.length > 0
-        ? criterionScores.reduce((sum, score) => sum + score.score, 0) / criterionScores.length
-        : 0;
+      const averageScore =
+        criterionScores.length > 0
+          ? criterionScores.reduce((sum, score) => sum + score.score, 0) /
+            criterionScores.length
+          : 0;
 
       return {
         criterion: criterion.display_name,
@@ -343,10 +433,10 @@ export class UniversityService implements IUniversityService {
   async compareUniversities(universityIds: number[]): Promise<any> {
     const universities = await this.universityRepository.find({
       where: { id: In(universityIds) },
-      relations: ['reviews'],
+      relations: ["reviews"],
     });
 
-    const comparison = universities.map(university => ({
+    const comparison = universities.map((university) => ({
       id: university.id,
       name: university.name,
       short_name: university.short_name,
@@ -376,13 +466,16 @@ export class UniversityService implements IUniversityService {
     // In a real implementation, this would use ML algorithms
     return await this.universityRepository.find({
       where: { status: UniversityStatus.ACTIVE, is_verified: true },
-      order: { average_rating: 'DESC' },
+      order: { average_rating: "DESC" },
       take: 10,
     });
   }
 
   // University management (admin only)
-  async updateUniversityStatus(id: number, status: UniversityStatus): Promise<University> {
+  async updateUniversityStatus(
+    id: number,
+    status: UniversityStatus
+  ): Promise<University> {
     const university = await this.getUniversityById(id);
     university.status = status;
     return await this.universityRepository.save(university);
@@ -401,7 +494,10 @@ export class UniversityService implements IUniversityService {
   }
 
   // University content management
-  async updateUniversityContent(id: number, contentData: any): Promise<University> {
+  async updateUniversityContent(
+    id: number,
+    contentData: any
+  ): Promise<University> {
     const university = await this.getUniversityById(id);
     Object.assign(university, contentData);
     return await this.universityRepository.save(university);
@@ -410,7 +506,7 @@ export class UniversityService implements IUniversityService {
   async uploadUniversityImage(id: number, imageFile: any): Promise<string> {
     // In a real implementation, this would upload to cloud storage
     const imageUrl = `https://example.com/uploads/universities/${id}/${imageFile.originalname}`;
-    
+
     const university = await this.getUniversityById(id);
     university.logo_url = imageUrl;
     await this.universityRepository.save(university);
@@ -419,18 +515,21 @@ export class UniversityService implements IUniversityService {
   }
 
   // University reporting
-  async generateUniversityReport(universityId: number, reportType: string): Promise<any> {
+  async generateUniversityReport(
+    universityId: number,
+    reportType: string
+  ): Promise<any> {
     const university = await this.getUniversityById(universityId);
     const reviews = await this.reviewRepository.find({
       where: { university_id: universityId, status: ReviewStatus.APPROVED },
     });
 
     switch (reportType) {
-      case 'overview':
+      case "overview":
         return this.generateOverviewReport(university, reviews);
-      case 'reviews':
+      case "reviews":
         return this.generateReviewsReport(university, reviews);
-      case 'analytics':
+      case "analytics":
         return this.generateAnalyticsReport(university, reviews);
       default:
         throw new BadRequestException(`Unknown report type: ${reportType}`);
@@ -458,26 +557,33 @@ export class UniversityService implements IUniversityService {
   }
 
   // Private helper methods
-  private async updateUniversityReviewStats(universityId: number): Promise<void> {
+  private async updateUniversityReviewStats(
+    universityId: number
+  ): Promise<void> {
     const reviews = await this.reviewRepository.find({
       where: { university_id: universityId, status: ReviewStatus.APPROVED },
     });
 
     const totalReviews = reviews.length;
-    const averageRating = totalReviews > 0
-      ? reviews.reduce((sum, review) => sum + review.overall_score, 0) / totalReviews
-      : 0;
+    const averageRating =
+      totalReviews > 0
+        ? reviews.reduce((sum, review) => sum + review.overall_score, 0) /
+          totalReviews
+        : 0;
 
     await this.universityRepository.update(universityId, {
       review_count: totalReviews,
       average_rating: averageRating,
-      total_rating: reviews.reduce((sum, review) => sum + review.overall_score, 0),
+      total_rating: reviews.reduce(
+        (sum, review) => sum + review.overall_score,
+        0
+      ),
     });
   }
 
   private calculateRatingDistribution(reviews: UniversityReview[]): any {
     const distribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-    reviews.forEach(review => {
+    reviews.forEach((review) => {
       const rating = Math.round(review.overall_score);
       if (rating >= 1 && rating <= 5) {
         distribution[rating]++;
@@ -488,7 +594,7 @@ export class UniversityService implements IUniversityService {
 
   private calculateReviewTypeDistribution(reviews: UniversityReview[]): any {
     const distribution = {};
-    reviews.forEach(review => {
+    reviews.forEach((review) => {
       const type = review.review_type;
       distribution[type] = (distribution[type] || 0) + 1;
     });
@@ -497,16 +603,19 @@ export class UniversityService implements IUniversityService {
 
   private calculateReviewGrowth(reviews: UniversityReview[]): any {
     const monthlyGrowth = {};
-    reviews.forEach(review => {
+    reviews.forEach((review) => {
       const month = review.created_at.toISOString().slice(0, 7); // YYYY-MM
       monthlyGrowth[month] = (monthlyGrowth[month] || 0) + 1;
     });
     return monthlyGrowth;
   }
 
-  private generateOverviewReport(university: University, reviews: UniversityReview[]): any {
+  private generateOverviewReport(
+    university: University,
+    reviews: UniversityReview[]
+  ): any {
     return {
-      type: 'overview',
+      type: "overview",
       university: {
         id: university.id,
         name: university.name,
@@ -521,14 +630,17 @@ export class UniversityService implements IUniversityService {
     };
   }
 
-  private generateReviewsReport(university: University, reviews: UniversityReview[]): any {
+  private generateReviewsReport(
+    university: University,
+    reviews: UniversityReview[]
+  ): any {
     return {
-      type: 'reviews',
+      type: "reviews",
       university: {
         id: university.id,
         name: university.name,
       },
-      reviews: reviews.slice(0, 50).map(review => ({
+      reviews: reviews.slice(0, 50).map((review) => ({
         id: review.id,
         content: review.content,
         overall_score: review.overall_score,
@@ -539,9 +651,12 @@ export class UniversityService implements IUniversityService {
     };
   }
 
-  private generateAnalyticsReport(university: University, reviews: UniversityReview[]): any {
+  private generateAnalyticsReport(
+    university: University,
+    reviews: UniversityReview[]
+  ): any {
     return {
-      type: 'analytics',
+      type: "analytics",
       university: {
         id: university.id,
         name: university.name,
@@ -557,7 +672,7 @@ export class UniversityService implements IUniversityService {
 
   private calculateAverageRatingTrend(reviews: UniversityReview[]): any {
     const monthlyRatings = {};
-    reviews.forEach(review => {
+    reviews.forEach((review) => {
       const month = review.created_at.toISOString().slice(0, 7);
       if (!monthlyRatings[month]) {
         monthlyRatings[month] = { total: 0, count: 0 };
@@ -566,7 +681,7 @@ export class UniversityService implements IUniversityService {
       monthlyRatings[month].count += 1;
     });
 
-    return Object.keys(monthlyRatings).map(month => ({
+    return Object.keys(monthlyRatings).map((month) => ({
       month,
       averageRating: monthlyRatings[month].total / monthlyRatings[month].count,
     }));
@@ -574,25 +689,33 @@ export class UniversityService implements IUniversityService {
 
   private identifyStrengths(reviews: UniversityReview[]): string[] {
     // Mock implementation - in real app, this would analyze review content
-    return ['Chất lượng giảng dạy tốt', 'Cơ sở vật chất hiện đại', 'Môi trường học tập thân thiện'];
+    return [
+      "Chất lượng giảng dạy tốt",
+      "Cơ sở vật chất hiện đại",
+      "Môi trường học tập thân thiện",
+    ];
   }
 
   private identifyWeaknesses(reviews: UniversityReview[]): string[] {
     // Mock implementation
-    return ['Chi phí học tập cao', 'Ký túc xá cần cải thiện'];
+    return ["Chi phí học tập cao", "Ký túc xá cần cải thiện"];
   }
 
   private generateRecommendations(reviews: UniversityReview[]): string[] {
     // Mock implementation
-    return ['Cải thiện cơ sở vật chất', 'Mở rộng chương trình học bổng', 'Tăng cường hoạt động ngoại khóa'];
+    return [
+      "Cải thiện cơ sở vật chất",
+      "Mở rộng chương trình học bổng",
+      "Tăng cường hoạt động ngoại khóa",
+    ];
   }
 
   private analyzeTrends(reviews: UniversityReview[]): any {
     // Mock implementation
     return {
-      ratingTrend: 'increasing',
-      reviewVolumeTrend: 'stable',
-      sentimentTrend: 'positive',
+      ratingTrend: "increasing",
+      reviewVolumeTrend: "stable",
+      sentimentTrend: "positive",
     };
   }
 }
