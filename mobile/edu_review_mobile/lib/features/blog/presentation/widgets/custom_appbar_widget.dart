@@ -1,4 +1,5 @@
 import 'package:edu_review_mobile/common_libs.dart';
+import 'package:edu_review_mobile/core/utils/typewritter_text.dart';
 
 class CustomAppBar extends SliverPersistentHeaderDelegate {
   final double statusBarHeight;
@@ -27,7 +28,6 @@ class CustomAppBar extends SliverPersistentHeaderDelegate {
     return Stack(
       fit: StackFit.expand,
       children: [
-        // Gradient background
         Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -48,17 +48,16 @@ class CustomAppBar extends SliverPersistentHeaderDelegate {
           right: 16,
           child: Opacity(
             opacity: fade,
-            child: Text(
-              'Blog',
-              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
+            child: TypewriterText(
+                text: 'Blog – Explore Reviews and Insights',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              )
           ),
         ),
 
-        // SearchBar fixed at the bottom
         Positioned(
           bottom: 0,
           left: 0,
