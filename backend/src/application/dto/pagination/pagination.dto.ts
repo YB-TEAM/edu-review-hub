@@ -3,7 +3,11 @@ import { Type } from "class-transformer";
 import { IsInt, Min, IsOptional } from "class-validator";
 
 export class PaginationDto {
-  @ApiProperty({ example: 1, required: false, description: "Trang hiện tại" })
+  @ApiProperty({
+    example: 1,
+    required: false,
+    description: "Current page number",
+  })
   @Type(() => Number)
   @IsInt()
   @Min(1)
@@ -13,7 +17,7 @@ export class PaginationDto {
   @ApiProperty({
     example: 10,
     required: false,
-    description: "Số lượng mỗi trang",
+    description: "Number of items per page",
   })
   @Type(() => Number)
   @IsInt()

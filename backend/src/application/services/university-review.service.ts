@@ -10,7 +10,10 @@ import { IUniversityReviewCriterionRepository } from "@/domain/repositories/univ
 import { CreateUniversityReviewDto } from "../dto/university/create-university-review.dto";
 import { UpdateUniversityReviewDto } from "../dto/university/update-university-review.dto";
 import { UniversityReviewResponseDto } from "../dto/university/university-review-response.dto";
-import { UniversityReview } from "@/infrastructure/database/entities/university-review.entity";
+import {
+  UniversityReview,
+  ReviewStatus,
+} from "@/infrastructure/database/entities/university-review.entity";
 import { UniversityReviewScore } from "@/infrastructure/database/entities/university-review-score.entity";
 import { UniversityReviewCriterion } from "@/infrastructure/database/entities/university-review-criterion.entity";
 
@@ -72,7 +75,7 @@ export class UniversityReviewService implements IUniversityReviewService {
       user: { id: userId } as any,
       content: dto.content,
       overall_score,
-      status: "pending",
+      status: ReviewStatus.PENDING,
       created_at: new Date(),
       updated_at: new Date(),
       scores,
