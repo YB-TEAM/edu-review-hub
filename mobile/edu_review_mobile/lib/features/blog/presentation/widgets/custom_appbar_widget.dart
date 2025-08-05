@@ -1,3 +1,4 @@
+import 'package:edu_review_mobile/common/widgets/search_bar/custom_search_bar.dart';
 import 'package:edu_review_mobile/common_libs.dart';
 import 'package:edu_review_mobile/core/utils/typewritter_text.dart';
 
@@ -9,7 +10,7 @@ class CustomAppBar extends SliverPersistentHeaderDelegate {
   CustomAppBar({
     required this.statusBarHeight,
     this.appBarHeight = 40,
-    this.searchBarHeight = 70,
+    this.searchBarHeight = 56, 
   });
 
   @override
@@ -23,7 +24,7 @@ class CustomAppBar extends SliverPersistentHeaderDelegate {
     final double fadeDistance = maxExtent - minExtent;
     final double effectiveShrinkOffset = shrinkOffset.clamp(0.0, fadeDistance);
     final double fade = (1 - effectiveShrinkOffset / fadeDistance).clamp(0.0, 1.0);
-    final double offsetY = -effectiveShrinkOffset * 0.6; 
+    final double offsetY = -effectiveShrinkOffset * 0.6;
 
     return Stack(
       fit: StackFit.expand,
@@ -35,51 +36,36 @@ class CustomAppBar extends SliverPersistentHeaderDelegate {
               end: Alignment.topCenter,
               colors: [
                 AppColors.primaryBlue,
-                const Color(0xFF2563EB), 
-                const Color(0xFF1E40AF), 
+                Color(0xFF2563EB),
+                Color(0xFF1E40AF),
               ],
-            )
+            ),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(16),
+              bottomRight: Radius.circular(16),
+            ),
           ),
         ),
-
         Positioned(
-          top: statusBarHeight+ 8 + offsetY,
+          top: statusBarHeight + 8 + offsetY,
           left: 16,
           right: 16,
           child: Opacity(
             opacity: fade,
             child: TypewriterText(
-                text: 'Blog – Explore Reviews and Insights',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
-              )
+              text: 'Blog – Insightful Reviews & Tips',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
           ),
         ),
-
         Positioned(
           bottom: 0,
           left: 0,
           right: 0,
-          child: Container(
-            height: searchBarHeight,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: TextField(
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                hintText: 'Tìm kiếm bài viết...',
-                hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
-                filled: true,
-                fillColor: Colors.grey[200],
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-          ),
+          child: CustomSearchBar(height: searchBarHeight),
         ),
       ],
     );
