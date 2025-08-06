@@ -72,6 +72,16 @@ export class User {
   })
   accountType: UserRole;
 
+  // Getter for role (alias for accountType)
+  get role(): UserRole {
+    return this.accountType;
+  }
+
+  // Getter for isActive
+  get isActive(): boolean {
+    return this.status === UserStatus.ACTIVE && !this.isBanned;
+  }
+
   @Column({ type: "boolean", default: false })
   isVerified: boolean;
 
@@ -86,6 +96,18 @@ export class User {
 
   @Column({ type: "timestamp", nullable: true })
   lockedUntil: Date;
+
+  @Column({ type: "boolean", default: false })
+  isBanned: boolean;
+
+  @Column({ type: "varchar", length: 500, nullable: true })
+  banReason: string;
+
+  @Column({ type: "timestamp", nullable: true })
+  bannedAt: Date;
+
+  @Column({ type: "timestamp", nullable: true })
+  banExpiresAt: Date;
 
   @CreateDateColumn()
   createdAt: Date;
