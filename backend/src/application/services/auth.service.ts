@@ -107,8 +107,9 @@ export class AuthService implements IAuthService {
         ipAddress: ip,
         userAgent: userAgent,
       });
+      console.log("✅ Activity tracked: PROFILE_CREATED for user", user.id);
     } catch (error) {
-      // Activity tracking failed silently
+      console.error("❌ Failed to track activity:", error);
     }
 
     // 4. Assign default role based on account type
@@ -146,11 +147,14 @@ export class AuthService implements IAuthService {
           role_id: role.id,
         });
         await this.userRoleRepository.save(userRole);
+        console.log(
+          `✅ Assigned role '${defaultRoleName}' to user ${username}`
+        );
       } else {
-        // Role not found - handled silently
+        console.error(`❌ Role '${defaultRoleName}' not found`);
       }
     } catch (error) {
-      // Role assignment failed silently
+      console.error("❌ Failed to assign role:", error);
     }
 
     // Send email verification
@@ -178,9 +182,15 @@ export class AuthService implements IAuthService {
     const { identifier, password, deviceId, rememberMe, ip, userAgent } =
       loginDto;
 
+    console.log("🔍 Login attempt for:", identifier);
+    console.log("📱 Device ID:", deviceId);
+    console.log("🌐 IP:", ip);
+    console.log("🔧 User Agent:", userAgent);
+
     // Check if user exists first
     const user = await this.userRepository.findByEmailOrUsername(identifier);
     if (!user) {
+      console.log("❌ Login failed: Account not found");
       throw new UnauthorizedException(
         "Account not found. Please check your email/username and try again."
       );
@@ -188,6 +198,7 @@ export class AuthService implements IAuthService {
 
     // Check if account is active
     if (user.status !== UserStatus.ACTIVE) {
+      console.log("❌ Login failed: Account not active");
       throw new UnauthorizedException(
         "Account is not active. Please contact support."
       );
@@ -195,14 +206,10 @@ export class AuthService implements IAuthService {
 
     // Check if email is verified
     if (!user.isVerified || !user.emailVerifiedAt) {
-      const errorResponse = {
-        message:
-          "Email not verified. Please check your email and verify your account.",
-        email: user.email,
-        username: user.username,
-        requiresVerification: true,
-      };
-      throw new ForbiddenException(errorResponse);
+      console.log("❌ Login failed: Email not verified");
+      throw new ForbiddenException(
+        "Email not verified. Please check your email and verify your account."
+      );
     }
 
     // Validate password
@@ -212,10 +219,14 @@ export class AuthService implements IAuthService {
       await this.userRepository.update(user.id, {
         failedLoginAttempts: user.failedLoginAttempts + 1,
       });
+      console.log("❌ Login failed: Invalid password");
       throw new UnauthorizedException(
         "Invalid password. Please check your password and try again."
       );
     }
+
+    console.log("✅ User validated:", user.username);
+    console.log("✅ All checks passed, proceeding with login...");
 
     // Update last login
     await this.userRepository.update(user.id, {
@@ -254,6 +265,8 @@ export class AuthService implements IAuthService {
       expiresAt: new Date(Date.now() + sessionExpiry),
     });
 
+    console.log("✅ Session and tokens created successfully");
+
     // Track device
     if (deviceId) {
       try {
@@ -267,8 +280,9 @@ export class AuthService implements IAuthService {
           browser: deviceInfo.browser,
           lastUsedAt: new Date(),
         });
+        console.log("✅ Device tracked for user", user.id);
       } catch (error) {
-        // Device tracking failed silently
+        console.error("❌ Failed to track device:", error);
       }
     }
 
@@ -286,8 +300,9 @@ export class AuthService implements IAuthService {
         ipAddress: ip,
         userAgent: userAgent,
       });
+      console.log("✅ Activity tracked: LOGIN_SUCCESS for user", user.id);
     } catch (error) {
-      // Activity tracking failed silently
+      console.error("❌ Failed to track activity:", error);
     }
 
     return {
@@ -370,21 +385,27 @@ export class AuthService implements IAuthService {
 
   async logout(userId: number, sessionToken?: string): Promise<void> {
     try {
+      console.log(`Logging out user ID: ${userId}`);
+
       if (sessionToken) {
         // Logout specific session
         await this.userSessionRepository.deactivateSession(sessionToken);
+        console.log(`Deactivated session: ${sessionToken}`);
       } else {
         // Logout all sessions for user
         await this.userSessionRepository.deactivateAllForUser(userId);
+        console.log(`Deactivated all sessions for user ID: ${userId}`);
       }
 
       // Thu hồi tất cả refresh tokens của user
       await this.refreshTokenRepository.deactivateAllForUser(userId);
+      console.log(`Deactivated all refresh tokens for user ID: ${userId}`);
 
       // Update last activity
       await this.userRepository.update(userId, {
         lastActivityAt: new Date(),
       });
+      console.log(`Updated last activity for user ID: ${userId}`);
 
       // Track logout activity
       try {
@@ -398,10 +419,12 @@ export class AuthService implements IAuthService {
           ipAddress: null,
           userAgent: null,
         });
+        console.log("✅ Activity tracked: LOGOUT for user", userId);
       } catch (error) {
-        // Activity tracking failed silently
+        console.error("❌ Failed to track logout activity:", error);
       }
     } catch (error) {
+      console.error("Logout error:", error);
       throw error;
     }
   }
@@ -475,7 +498,6 @@ export class AuthService implements IAuthService {
     refreshToken: string;
     tokenType: string;
     expiresIn: number;
-    refreshExpiresIn: number;
   }> {
     const payload = {
       sub: user.id,
@@ -494,7 +516,6 @@ export class AuthService implements IAuthService {
       refreshToken,
       tokenType: "Bearer",
       expiresIn: rememberMe ? 30 * 24 * 60 * 60 : 7 * 24 * 60 * 60, // seconds
-      refreshExpiresIn: rememberMe ? 30 * 24 * 60 * 60 : 7 * 24 * 60 * 60, // seconds
     };
   }
 }

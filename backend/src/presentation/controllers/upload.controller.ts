@@ -101,6 +101,8 @@ export class UploadController {
     file: Express.Multer.File,
     @Request() req: any
   ): Promise<UploadImageResponseDto> {
+    console.log("🔐 Upload request - User:", req.user);
+    console.log("🔐 Upload request - Headers:", req.headers.authorization);
     return await this.uploadService.uploadImage(
       file,
       "edu-review-hub",
