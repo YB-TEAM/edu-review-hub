@@ -73,7 +73,7 @@ export class BlogService implements IBlogService {
         );
       }
     }
-
+    // fix conflict
     const blog = await this.blogRepository.create({
       ...dto,
       featuredImage,
