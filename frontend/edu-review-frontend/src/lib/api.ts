@@ -23,7 +23,7 @@ export interface ApiResponse<T> {
 
 // Base query with error handling
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://localhost:3001/api/v1",
+  baseUrl: "http://localhost:3000/api/v1",
   prepareHeaders: (headers) => {
     // Add auth token if available
     const token = localStorage.getItem("accessToken");
