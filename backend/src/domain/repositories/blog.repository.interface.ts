@@ -22,5 +22,4 @@ export interface IBlogRepository {
   delete(id: number): Promise<void>;
   incrementViewCount(id: number): Promise<void>;
   toggleLike(id: number, userId: number): Promise<void>;
-  updateTags(id: number, tagIds: number[]): Promise<void>;
 }

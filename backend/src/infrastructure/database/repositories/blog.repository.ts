@@ -111,16 +111,4 @@ export class BlogRepository implements IBlogRepository {
     // For now, we'll just increment the like count
     await this.repo.increment({ id }, "likeCount", 1);
   }
-
-  async updateTags(id: number, tagIds: number[]): Promise<void> {
-    const blog = await this.findById(id);
-    if (!blog) {
-      throw new Error("Blog not found");
-    }
-
-    // In a real implementation, you would update the blog-tags relationship
-    // For now, we'll just update the blog entity
-    // This is a simplified implementation
-    await this.repo.update(id, {});
-  }
 }
