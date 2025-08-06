@@ -164,8 +164,6 @@ export class AuthController {
   })
   async logout(@Request() req): Promise<void> {
     try {
-      console.log("Logout request - User:", req.user);
-
       if (!req.user || !req.user.id) {
         throw new Error("Invalid user in request");
       }

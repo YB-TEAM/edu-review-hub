@@ -36,7 +36,7 @@ export default function DemoPage() {
 
 ### 5. Code:
 \`\`\`javascript
-console.log("Hello World!");
+
 \`\`\`
 
 ### 6. Quote:

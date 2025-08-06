@@ -23,27 +23,23 @@ export const useAuth = () => {
     (state: RootState) => state.auth
   );
 
-  // Debug logs - chỉ chạy trên client side
-  if (typeof window !== "undefined") {
-    console.log("useAuth - Redux state:", { user, isAuthenticated, isLoading, error });
-    console.log("useAuth - localStorage accessToken:", localStorage.getItem("accessToken"));
-  }
-
   // Get current user data - luôn chạy nếu có token
-  const { data: currentUser, isLoading: isUserLoading, error: userError } =
-    useGetCurrentUserQuery(undefined, {
-      skip: !isAuthenticated && !localStorage.getItem("accessToken"),
-    });
+  const {
+    data: currentUser,
+    isLoading: isUserLoading,
+    error: userError,
+  } = useGetCurrentUserQuery(undefined, {
+    skip: !isAuthenticated && !localStorage.getItem("accessToken"),
+  });
 
   // Khôi phục authentication state từ localStorage khi component mount
   useEffect(() => {
     if (typeof window !== "undefined") {
       const accessToken = localStorage.getItem("accessToken");
       const refreshToken = localStorage.getItem("refreshToken");
-      
+
       // Nếu có token nhưng chưa authenticated, restore auth state
       if (accessToken && refreshToken && !isAuthenticated) {
-        console.log("Restoring auth state from localStorage");
         dispatch(restoreAuth());
       }
     }
@@ -52,15 +48,13 @@ export const useAuth = () => {
   // Cập nhật user data khi có currentUser
   useEffect(() => {
     if (currentUser && !user) {
-      console.log("Updating user data from currentUser query");
       dispatch(setUser(currentUser as User));
     }
   }, [currentUser, user, dispatch]);
 
   // Handle 401 errors from user query
   useEffect(() => {
-    if (userError && 'status' in userError && userError.status === 401) {
-      console.log("User query returned 401, logging out...");
+    if (userError && "status" in userError && userError.status === 401) {
       dispatch(logoutAction());
     }
   }, [userError, dispatch]);
@@ -99,7 +93,7 @@ export const useAuth = () => {
     try {
       await logout().unwrap();
     } catch (error) {
-      console.error("Logout error:", error);
+      // Logout error handled silently
     } finally {
       dispatch(logoutAction());
     }
@@ -114,7 +108,12 @@ export const useAuth = () => {
   return {
     // State
     user: currentUser || user,
-    isAuthenticated: isAuthenticated || !!(localStorage.getItem("accessToken") && localStorage.getItem("refreshToken")),
+    isAuthenticated:
+      isAuthenticated ||
+      !!(
+        localStorage.getItem("accessToken") &&
+        localStorage.getItem("refreshToken")
+      ),
     isLoading:
       isLoading ||
       isLoginLoading ||

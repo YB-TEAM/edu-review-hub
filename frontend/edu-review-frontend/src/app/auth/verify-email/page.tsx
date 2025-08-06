@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, XCircle, Mail, RefreshCw } from "lucide-react";
+import { CheckCircle, XCircle, Mail, RefreshCw, KeyRound, Loader2, ArrowLeft } from "lucide-react";
 import { NavbarLogo } from "@/features/landing/components/navbar/Navbar";
 import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/sonner";
@@ -18,10 +18,13 @@ export default function VerifyEmailPage() {
   const router = useRouter();
   const { user } = useSelector((state: RootState) => state.auth);
   const [verificationStatus, setVerificationStatus] = useState<
-    "loading" | "success" | "error" | "expired"
-  >("loading");
+    "idle" | "loading" | "success" | "error" | "expired"
+  >("idle");
   const [countdown, setCountdown] = useState(0);
   const [isResending, setIsResending] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [otpFields, setOtpFields] = useState<string[]>(["", "", "", "", "", ""]);
+  const [otpError, setOtpError] = useState("");
 
   const [verifyEmailApi] = useVerifyEmailMutation();
   const [resendVerificationApi] = useResendVerificationEmailMutation();
@@ -49,13 +52,17 @@ export default function VerifyEmailPage() {
     }
   }, [email]);
 
-  const verifyEmail = async (token: string) => {
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setOtpError("");
+
+    const otp = otpFields.join("");
+    
     try {
-      if (!displayEmail) {
-        setVerificationStatus("error");
-        return;
-      }
-      await verifyEmailApi({ token, email: displayEmail }).unwrap();
+      if (!/^[0-9]{6}$/.test(otp)) throw new Error("OTP phải gồm 6 số.");
+
+      await verifyEmailApi({ token: otp, email: displayEmail }).unwrap();
       setVerificationStatus("success");
       toast.success("Xác minh email thành công!");
       
@@ -63,14 +70,30 @@ export default function VerifyEmailPage() {
       if (typeof window !== "undefined") {
         localStorage.removeItem("pendingVerificationEmail");
       }
+
+      // Redirect to login after 2 seconds
+      setTimeout(() => router.push("/auth/login"), 2000);
     } catch (err: any) {
-      console.error("Verification error:", err);
       setVerificationStatus("error");
+      let errorMessage = "OTP không đúng hoặc đã hết hạn.";
+      
+      if (err?.data?.message) {
+        errorMessage = err.data.message;
+      } else if (err?.message) {
+        errorMessage = err.message;
+      }
+      
+      setOtpError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const resendVerificationEmail = async () => {
+  const handleResendOtp = async () => {
     setIsResending(true);
+    setOtpError("");
+
     try {
       if (!displayEmail) {
         toast.error("Không tìm thấy email");
@@ -78,21 +101,60 @@ export default function VerifyEmailPage() {
       }
       await resendVerificationApi({ email: displayEmail }).unwrap();
       setCountdown(60);
-      toast.success("Đã gửi email xác minh!");
+      toast.success("Đã gửi mã OTP mới về email!");
     } catch (err: any) {
-      toast.error("Gửi email xác minh thất bại");
+      const errorMessage = err?.data?.message || "Gửi email xác minh thất bại";
+      setOtpError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsResending(false);
     }
   };
 
+  const handleOtpChange = (idx: number, value: string) => {
+    if (!/^[0-9]?$/.test(value)) return;
+    
+    const newOtp = [...otpFields];
+    newOtp[idx] = value;
+    setOtpFields(newOtp);
+
+    if (value && idx < 5) {
+      const next = document.getElementById(`otp-${idx + 1}`);
+      if (next) (next as HTMLInputElement).focus();
+    }
+    if (!value && idx > 0) {
+      const prev = document.getElementById(`otp-${idx - 1}`);
+      if (prev) (prev as HTMLInputElement).focus();
+    }
+  };
+
   useEffect(() => {
     if (token) {
-      verifyEmail(token);
+      // Nếu có token từ URL, tự động verify
+      const verifyWithToken = async () => {
+        setIsLoading(true);
+        try {
+          await verifyEmailApi({ token, email: displayEmail }).unwrap();
+          setVerificationStatus("success");
+          toast.success("Xác minh email thành công!");
+          
+          if (typeof window !== "undefined") {
+            localStorage.removeItem("pendingVerificationEmail");
+          }
+          
+          setTimeout(() => router.push("/auth/login"), 2000);
+        } catch (err: any) {
+          setVerificationStatus("error");
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      verifyWithToken();
     } else {
-      setVerificationStatus("expired");
+      // Nếu không có token, hiển thị form nhập OTP
+      setVerificationStatus("idle");
     }
-  }, [token]);
+  }, [token, displayEmail, router]);
 
   useEffect(() => {
     if (countdown > 0) {
@@ -100,6 +162,13 @@ export default function VerifyEmailPage() {
       return () => clearTimeout(timer);
     }
   }, [countdown]);
+
+  // Auto-send verification email when page loads and no token
+  useEffect(() => {
+    if (displayEmail && !token && verificationStatus === "idle") {
+      handleResendOtp();
+    }
+  }, [displayEmail, token, verificationStatus]);
 
   const renderContent = () => {
     switch (verificationStatus) {
@@ -116,30 +185,27 @@ export default function VerifyEmailPage() {
 
       case "success":
         return (
-          <div className="success-container">
-            <CheckCircle className="success-icon" />
-            <h2 className="success-title">Xác minh thành công!</h2>
-            <p className="success-description">
+          <div className="text-center">
+            <CheckCircle className="mx-auto mb-4 w-12 h-12 text-green-500" />
+            <h2 className="auth-title text-green-600">Xác minh thành công!</h2>
+            <p className="text-gray-600 mb-6">
               Email của bạn đã được xác minh. Bây giờ bạn có thể đăng nhập vào tài khoản.
             </p>
-            <Link href="/auth/login">
-              <Button className="auth-btn">
-                Đăng nhập ngay
-              </Button>
-            </Link>
+            <div className="loading-spinner mx-auto mb-4 w-8 h-8"></div>
+            <p className="text-sm text-gray-500">Đang chuyển hướng...</p>
           </div>
         );
 
       case "error":
         return (
-          <div className="error-container">
-            <XCircle className="error-icon" />
-            <h2 className="error-title">Xác minh thất bại</h2>
-            <p className="error-description">
-              Link xác minh không hợp lệ hoặc đã hết hạn. Vui lòng yêu cầu gửi lại email xác minh.
+          <div className="text-center">
+            <XCircle className="mx-auto mb-4 w-12 h-12 text-red-500" />
+            <h2 className="auth-title text-red-600">Xác minh thất bại</h2>
+            <p className="text-gray-600 mb-6">
+              Mã OTP không đúng hoặc đã hết hạn. Vui lòng thử lại.
             </p>
             <Button
-              onClick={resendVerificationEmail}
+              onClick={handleResendOtp}
               disabled={isResending || countdown > 0}
               className="auth-btn"
             >
@@ -153,7 +219,7 @@ export default function VerifyEmailPage() {
               ) : (
                 <>
                   <Mail className="w-4 h-4 mr-2" />
-                  Gửi lại email xác minh
+                  Gửi lại mã OTP
                 </>
               )}
             </Button>
@@ -162,37 +228,87 @@ export default function VerifyEmailPage() {
 
       case "expired":
         return (
-          <div className="error-container">
-            <XCircle className="error-icon text-orange-500" />
-            <h2 className="error-title text-orange-600">Link đã hết hạn</h2>
-            <p className="error-description">
-              Link xác minh này đã hết hạn. Vui lòng yêu cầu gửi lại email xác minh mới.
+          <div className="text-center">
+            <XCircle className="mx-auto mb-4 w-12 h-12 text-orange-500" />
+            <h2 className="auth-title text-orange-600">Link đã hết hạn</h2>
+            <p className="text-gray-600 mb-6">
+              Link xác minh này đã hết hạn. Vui lòng sử dụng form bên dưới để nhập mã OTP.
             </p>
-            <div className="space-y-3">
-              <Button
-                onClick={resendVerificationEmail}
-                disabled={isResending || countdown > 0}
-                className="auth-btn"
-              >
-                {isResending ? (
-                  <>
-                    <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                    Đang gửi...
-                  </>
-                ) : countdown > 0 ? (
-                  `Gửi lại sau ${countdown}s`
-                ) : (
-                  <>
-                    <Mail className="w-4 h-4 mr-2" />
-                    Gửi lại email xác minh
-                  </>
+          </div>
+        );
+
+      default:
+        return (
+          <div className="space-y-6">
+            <div className="text-center">
+              <Mail className="mx-auto mb-4 w-12 h-12 text-blue-500" />
+              <h2 className="auth-title">Xác minh Email</h2>
+              <p className="text-gray-600">
+                Chúng tôi đã gửi mã OTP 6 số đến email:
+              </p>
+              <p className="font-semibold text-blue-600 mt-2">{displayEmail}</p>
+            </div>
+
+            <form onSubmit={handleVerifyOtp} className="space-y-4">
+              <div className="otp-container">
+                <KeyRound className="otp-icon" />
+                <div className="otp-inputs">
+                  {otpFields.map((value, i) => (
+                    <input
+                      key={i}
+                      id={`otp-${i}`}
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={1}
+                      value={value}
+                      onChange={e => handleOtpChange(i, e.target.value)}
+                      className="otp-input"
+                    />
+                  ))}
+                </div>
+
+                {otpError && (
+                  <div className="alert error">
+                    <XCircle className="w-5 h-5" />
+                    {otpError}
+                  </div>
                 )}
-              </Button>
-              <div>
-                <Link href="/auth/login" className="auth-link">
-                  Quay lại đăng nhập
-                </Link>
+
+                <Button
+                  type="submit"
+                  className="auth-btn"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <div className="loading-spinner" />
+                  ) : (
+                    "Xác minh Email"
+                  )}
+                </Button>
+
+                <Button
+                  type="button"
+                  className="auth-btn variant-ghost"
+                  onClick={handleResendOtp}
+                  disabled={isResending || countdown > 0}
+                >
+                  {isResending ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : countdown > 0 ? (
+                    `Gửi lại sau ${countdown}s`
+                  ) : (
+                    <Mail className="w-4 h-4 mr-2" />
+                  )}
+                  Gửi lại mã OTP
+                </Button>
               </div>
+            </form>
+
+            <div className="text-center">
+              <Link href="/auth/login" className="auth-link">
+                <ArrowLeft className="w-4 h-4 mr-2 inline" />
+                Quay lại đăng nhập
+              </Link>
             </div>
           </div>
         );
@@ -212,25 +328,28 @@ export default function VerifyEmailPage() {
       </div>
 
       <div className="auth-card">
-        <div className="text-center mb-8">
-          <h1 className="auth-title">
-            Xác minh email
-          </h1>
-          {email && (
-            <div className="mt-4">
-              <p className="text-gray-600 mb-2">Email cần xác thực:</p>
-              <input
-                type="email"
-                value={displayEmail}
-                onChange={(e) => setDisplayEmail(e.target.value)}
-                className="w-full max-w-md px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Nhập email của bạn"
-              />
+        {!displayEmail ? (
+          <div className="text-center">
+            <XCircle className="mx-auto mb-4 w-12 h-12 text-red-500" />
+            <h2 className="auth-title text-red-600">Không tìm thấy email</h2>
+            <p className="text-gray-600 mb-6">
+              Vui lòng quay lại trang đăng nhập và thử lại.
+            </p>
+            <Link href="/auth/login">
+              <Button className="auth-btn">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Quay lại đăng nhập
+              </Button>
+            </Link>
+          </div>
+        ) : (
+          <>
+            <div className="text-center mb-8">
+              <NavbarLogo isScrolled={false} onLogoClick={() => {}} />
             </div>
-          )}
-        </div>
-
-        {renderContent()}
+            {renderContent()}
+          </>
+        )}
       </div>
     </div>
   );

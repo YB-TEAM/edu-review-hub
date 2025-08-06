@@ -28,14 +28,7 @@ const baseQuery = fetchBaseQuery({
     // Add auth token if available
     const token = localStorage.getItem("accessToken");
     if (token) {
-      console.log("Token found:", token.substring(0, 50) + "...");
       headers.set("authorization", `Bearer ${token}`);
-      console.log(
-        "Authorization header set:",
-        `Bearer ${token.substring(0, 50)}...`
-      );
-    } else {
-      console.log("No token found in localStorage");
     }
 
     // Add content type
@@ -51,30 +44,19 @@ export const baseQueryWithErrorHandling: BaseQueryFn<
   FetchBaseQueryError
 > = async (args: any, api: any, extraOptions: any) => {
   const result = await baseQuery(args, api, extraOptions);
-  
+
   // Chỉ chạy trên client side và khi có data
   if (typeof window !== "undefined" && result.data) {
     const token = localStorage.getItem("accessToken");
-    
-    if (token) {
-      // Thêm token vào headers nếu cần
-      console.log("Adding token to request");
-    }
   }
 
   if (result.error) {
     const { status } = result.error;
-    
+
     // Handle authentication errors
     if (status === 401) {
       // Don't clear tokens immediately, let the component handle it
-      console.log("401 error - token may be expired, but not clearing immediately");
       return result;
-    }
-    
-    // Handle other errors
-    if (status === 403) {
-      console.log("403 error - forbidden");
     }
   }
 

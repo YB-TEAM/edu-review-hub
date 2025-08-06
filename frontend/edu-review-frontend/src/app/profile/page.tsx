@@ -1,6 +1,6 @@
 "use client";
 import { useAuth } from "@/hooks/useAuth";
-import { useUpdateProfileMutation } from "@/lib/services/profileApi";
+import { useUpdateProfileMutation, useGetCurrentUserQuery } from "@/lib/services/authApi";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/sonner";
@@ -42,6 +42,9 @@ export default function ProfilePage() {
   const { user: profile, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
   const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation();
+  const { refetch: refetchUser } = useGetCurrentUserQuery(undefined, {
+    skip: !isAuthenticated,
+  });
   const [edit, setEdit] = useState(false);
   const [form, setForm] = useState({
     firstName: profile?.firstName || "",
@@ -73,6 +76,28 @@ export default function ProfilePage() {
     }
   }, [isAuthenticated, isLoading, router]);
 
+  // Hàm chuyển đổi gender từ backend sang frontend
+  const convertGenderFromBackend = (gender: string | null | undefined): string => {
+    switch (gender) {
+      case "male": return "Nam";
+      case "female": return "Nữ";
+      case "other": return "Khác";
+      case "prefer_not_to_say": return "Không muốn nói";
+      default: return "";
+    }
+  };
+
+  // Hàm chuyển đổi gender từ frontend sang backend
+  const convertGenderToBackend = (gender: string): string => {
+    switch (gender) {
+      case "Nam": return "male";
+      case "Nữ": return "female";
+      case "Khác": return "other";
+      case "Không muốn nói": return "prefer_not_to_say";
+      default: return "";
+    }
+  };
+
   // Cập nhật form khi profile thay đổi
   React.useEffect(() => {
     if (profile) {
@@ -84,7 +109,7 @@ export default function ProfilePage() {
         coverImageUrl: profile.coverImageUrl || "",
         bio: profile.bio || "",
         dateOfBirth: profile.dateOfBirth || "",
-        gender: profile.gender || "",
+        gender: convertGenderFromBackend(profile.gender),
         city: profile.city || "",
         address: profile.address || "",
         universityName: profile.universityName || "",
@@ -144,7 +169,7 @@ export default function ProfilePage() {
 
   const handleNotificationChange = (setting: string, value: boolean) => {
     // TODO: Implement notification settings
-    console.log(`Notification ${setting} changed to ${value}`);
+
   };
 
   const handleImageUpload = (type: 'avatar' | 'cover') => {
@@ -176,15 +201,42 @@ export default function ProfilePage() {
 
     try {
       const updateData = {
-        ...form,
+        firstName: form.firstName || undefined,
+        lastName: form.lastName || undefined,
+        displayName: form.displayName || undefined,
+        avatarUrl: form.avatarUrl || undefined,
+        coverImageUrl: form.coverImageUrl || undefined,
+        bio: form.bio || undefined,
+        dateOfBirth: form.dateOfBirth && form.dateOfBirth !== '' ? form.dateOfBirth : undefined,
+        gender: form.gender ? convertGenderToBackend(form.gender) : undefined,
+        city: form.city || undefined,
+        address: form.address || undefined,
+        universityName: form.universityName || undefined,
+        major: form.major || undefined,
         graduationYear: form.graduationYear ? Number(form.graduationYear) : undefined,
+        studentId: form.studentId || undefined,
       };
+      
+      // Remove undefined and empty values to avoid validation issues
+      Object.keys(updateData).forEach(key => {
+        const value = (updateData as any)[key];
+        if (value === undefined || value === '' || value === null) {
+          delete (updateData as any)[key];
+        }
+      });
+      console.log("Sending update data:", updateData);
       await updateProfile(updateData).unwrap();
+      // Refetch user data to update UI
+      await refetchUser();
       setSuccess("Cập nhật hồ sơ thành công!");
       setEdit(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Update failed:", error);
-      setSuccess("Có lỗi xảy ra khi cập nhật hồ sơ.");
+      if (error?.data?.message) {
+        setSuccess(`Có lỗi xảy ra: ${error.data.message}`);
+      } else {
+        setSuccess("Có lỗi xảy ra khi cập nhật hồ sơ.");
+      }
     } finally {
       setActionLoading(false);
     }
@@ -395,6 +447,7 @@ export default function ProfilePage() {
                               <SelectItem value="Nam" className="hover:bg-blue-400/20">Nam</SelectItem>
                               <SelectItem value="Nữ" className="hover:bg-purple-400/20">Nữ</SelectItem>
                               <SelectItem value="Khác" className="hover:bg-orange-400/20">Khác</SelectItem>
+                              <SelectItem value="Không muốn nói" className="hover:bg-gray-400/20">Không muốn nói</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
@@ -562,7 +615,7 @@ export default function ProfilePage() {
                         <BadgeCheck className="w-6 h-6 text-pink-400" />
                         <div>
                           <div className="text-xs text-blue-200">Giới tính</div>
-                          <div className="text-lg text-white font-medium">{profile.gender || <span className="text-blue-200 flex items-center gap-1"><XCircle className="w-4 h-4 inline-block text-blue-200" />Chưa cập nhật</span>}</div>
+                          <div className="text-lg text-white font-medium">{profile.gender ? convertGenderFromBackend(profile.gender) : <span className="text-blue-200 flex items-center gap-1"><XCircle className="w-4 h-4 inline-block text-blue-200" />Chưa cập nhật</span>}</div>
                         </div>
                       </div>
                     </div>

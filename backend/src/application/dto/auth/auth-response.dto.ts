@@ -130,3 +130,17 @@ export class AuthResponseDto {
     ipAddress?: string;
   };
 }
+
+export class EmailNotVerifiedResponseDto {
+  @ApiProperty({ description: "Error message" })
+  message: string;
+
+  @ApiProperty({ description: "User's email address" })
+  email: string;
+
+  @ApiProperty({ description: "User's username" })
+  username: string;
+
+  @ApiProperty({ description: "Indicates that email verification is required" })
+  requiresVerification: boolean = true;
+}

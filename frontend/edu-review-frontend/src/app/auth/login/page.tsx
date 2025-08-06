@@ -54,7 +54,7 @@ export default function LoginPage() {
       dispatch(setAuth(result));
       
       // Debug: Log Redux state
-      console.log("Login successful, Redux state:", result);
+
       
       setSuccess("Đăng nhập thành công!");
       toast.success("Đăng nhập thành công!");
@@ -63,27 +63,24 @@ export default function LoginPage() {
       let errorMessage = "Đăng nhập thất bại";
       
       // Xử lý lỗi 403 - Email chưa xác thực
-      if (err?.status === 403 || err?.data?.message?.includes("email")) {
-        errorMessage = "Email chưa được xác thực. Vui lòng kiểm tra email và xác thực tài khoản.";
-        
-        // Lưu username và tạo email tự động
-        const username = formData.username;
-        let email = username;
-        
-        // Nếu username không có @, thêm @gmail.com
-        if (!email.includes("@")) {
-          email = `${username}@gmail.com`;
+      if (err?.status === 403) {
+        // Kiểm tra xem có phải lỗi email chưa verify không
+        const errorData = err?.data;
+        if (errorData?.requiresVerification && errorData?.email) {
+          errorMessage = "Email chưa được xác thực. Vui lòng kiểm tra email và xác thực tài khoản.";
+          
+          // Lưu email thực từ server
+          if (typeof window !== "undefined") {
+            localStorage.setItem("pendingVerificationEmail", errorData.email);
+          }
+          
+          toast.error(errorMessage, {
+            description: "Chuyển hướng đến trang xác thực email...",
+          });
+          setTimeout(() => router.push("/auth/verify-email"), 2000);
+        } else {
+          errorMessage = "Email chưa được xác thực. Vui lòng kiểm tra email và xác thực tài khoản.";
         }
-        
-        // Lưu email vào localStorage
-        if (typeof window !== "undefined") {
-          localStorage.setItem("pendingVerificationEmail", email);
-        }
-        
-        toast.error(errorMessage, {
-          description: "Chuyển hướng đến trang xác thực email...",
-        });
-        setTimeout(() => router.push("/auth/verify-email"), 2000);
       } else if (err?.data?.message) {
         errorMessage = err.data.message;
       } else if (err?.message) {

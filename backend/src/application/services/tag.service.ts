@@ -52,7 +52,6 @@ export class TagService implements ITagService {
         ipAddress: ip,
         userAgent: userAgent,
       });
-      console.log("✅ Activity tracked: TAG_CREATED for user", userId);
     } catch (error) {
       console.error("❌ Failed to track activity:", error);
     }
@@ -110,7 +109,6 @@ export class TagService implements ITagService {
         ipAddress: ip,
         userAgent: userAgent,
       });
-      console.log("✅ Activity tracked: TAG_UPDATED for user", userId);
     } catch (error) {
       console.error("❌ Failed to track activity:", error);
     }
@@ -153,7 +151,6 @@ export class TagService implements ITagService {
         ipAddress: ip,
         userAgent: userAgent,
       });
-      console.log("✅ Activity tracked: TAG_DELETED for user", userId);
     } catch (error) {
       console.error("❌ Failed to track activity:", error);
     }

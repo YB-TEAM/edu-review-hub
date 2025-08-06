@@ -312,10 +312,7 @@ function DesktopNavigation({
 function DesktopCTAButtons({ isScrolled, onStartClick }: { isScrolled: boolean; onStartClick: () => void; }) {
   const { user, isAuthenticated, isLoading } = useAuth();
 
-  // Debug logs
-  console.log("Navbar - isAuthenticated:", isAuthenticated);
-  console.log("Navbar - user:", user);
-  console.log("Navbar - isLoading:", isLoading);
+
 
   return (
     <div className="hidden lg:flex items-center space-x-3">

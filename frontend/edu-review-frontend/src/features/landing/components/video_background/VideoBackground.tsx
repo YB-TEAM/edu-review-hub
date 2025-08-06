@@ -54,7 +54,7 @@ export function VideoBackground({ className, children }: VideoBackgroundProps) {
   useEffect(() => {
     if (hasError && loadAttempts < 3) {
       const retryTimeout = setTimeout(() => {
-        console.log(`Retrying video load, attempt ${loadAttempts + 1}`);
+
         setLoadAttempts((prev) => prev + 1);
         setHasError(false);
         if (videoRef.current) {
@@ -89,10 +89,8 @@ export function VideoBackground({ className, children }: VideoBackgroundProps) {
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
-            console.log("Video playing for 5 seconds");
             // After 5 seconds, start smooth fade out
             stopTimer = setTimeout(() => {
-              console.log("Starting smooth fade out");
               setIsPlaying(false);
 
               // Smooth fade out over 1 second
@@ -111,20 +109,18 @@ export function VideoBackground({ className, children }: VideoBackgroundProps) {
                   video.pause();
                   setHasFinished(true);
                   setFadeOutProgress(1);
-                  console.log("Video fade out completed");
+
                 }
               }, fadeInterval);
             }, 5000);
           })
           .catch((error) => {
-            console.log("Video autoplay failed:", error);
             // Try to play without sound
             video.muted = true;
             video
               .play()
               .then(() => {
                 stopTimer = setTimeout(() => {
-                  console.log("Starting smooth fade out (muted)");
                   setIsPlaying(false);
 
                   // Smooth fade out over 1 second
@@ -143,20 +139,19 @@ export function VideoBackground({ className, children }: VideoBackgroundProps) {
                       video.pause();
                       setHasFinished(true);
                       setFadeOutProgress(1);
-                      console.log("Video fade out completed (muted)");
+    
                     }
                   }, fadeInterval);
                 }, 5000);
               })
               .catch(() => {
-                console.log("Muted autoplay also failed");
+                // Muted autoplay failed silently
               });
           });
       }
     };
 
     const handleLoadedData = () => {
-      console.log("Video loaded successfully");
       setIsLoaded(true);
       setHasError(false);
       setLoadAttempts(0);
@@ -166,7 +161,6 @@ export function VideoBackground({ className, children }: VideoBackgroundProps) {
     };
 
     const handleCanPlay = () => {
-      console.log("Video can play");
       if (!isLoaded) {
         setIsLoaded(true);
         setHasError(false);
@@ -177,13 +171,12 @@ export function VideoBackground({ className, children }: VideoBackgroundProps) {
     };
 
     const handleError = (e: Event) => {
-      console.error("Video error:", e);
       setHasError(true);
       setIsLoaded(false);
     };
 
     const handleLoadStart = () => {
-      console.log("Video load started");
+      // Video load started
     };
 
     // Add event listeners

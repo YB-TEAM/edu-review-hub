@@ -102,7 +102,6 @@ export class BlogService implements IBlogService {
         ipAddress: ip,
         userAgent: userAgent,
       });
-      console.log("✅ Activity tracked: BLOG_CREATED for user", userId);
     } catch (error) {
       console.error("❌ Failed to track activity:", error);
     }
@@ -256,10 +255,6 @@ export class BlogService implements IBlogService {
         if (oldFeaturedImage && oldFeaturedImage !== dto.featuredImage) {
           try {
             await this.cloudinaryService.deleteImage(oldFeaturedImage);
-            console.log(
-              "✅ Deleted old featured image from Cloudinary:",
-              oldFeaturedImage
-            );
 
             // Mark old image as deleted in uploaded_files table
             const oldUploadedFile =
@@ -268,13 +263,8 @@ export class BlogService implements IBlogService {
               );
             if (oldUploadedFile) {
               await this.uploadedFileRepository.delete(oldUploadedFile.id);
-              console.log(
-                "✅ Marked old uploaded file as deleted:",
-                oldUploadedFile.id
-              );
             }
           } catch (error) {
-            console.error("❌ Failed to delete old featured image:", error);
             // Don't throw error, continue with update
           }
         }
@@ -283,10 +273,6 @@ export class BlogService implements IBlogService {
         if (oldFeaturedImage) {
           try {
             await this.cloudinaryService.deleteImage(oldFeaturedImage);
-            console.log(
-              "✅ Deleted featured image from Cloudinary:",
-              oldFeaturedImage
-            );
 
             // Mark old image as deleted in uploaded_files table
             const oldUploadedFile =
@@ -295,13 +281,8 @@ export class BlogService implements IBlogService {
               );
             if (oldUploadedFile) {
               await this.uploadedFileRepository.delete(oldUploadedFile.id);
-              console.log(
-                "✅ Marked uploaded file as deleted:",
-                oldUploadedFile.id
-              );
             }
           } catch (error) {
-            console.error("❌ Failed to delete featured image:", error);
             // Don't throw error, continue with update
           }
         }
@@ -330,10 +311,6 @@ export class BlogService implements IBlogService {
     if (blog.featuredImage) {
       try {
         await this.cloudinaryService.deleteImage(blog.featuredImage);
-        console.log(
-          "✅ Deleted featured image from Cloudinary:",
-          blog.featuredImage
-        );
 
         // Mark image as deleted in uploaded_files table
         const uploadedFile = await this.uploadedFileRepository.findByPublicId(
@@ -341,13 +318,8 @@ export class BlogService implements IBlogService {
         );
         if (uploadedFile) {
           await this.uploadedFileRepository.delete(uploadedFile.id);
-          console.log("✅ Marked uploaded file as deleted:", uploadedFile.id);
         }
       } catch (error) {
-        console.error(
-          "❌ Failed to delete featured image from Cloudinary:",
-          error
-        );
         // Don't throw error, continue with blog deletion
       }
     }
@@ -558,7 +530,6 @@ export class BlogService implements IBlogService {
           ipAddress: ip,
           userAgent: userAgent,
         });
-        console.log("✅ Activity tracked: BLOG_UNLIKED for user", userId);
       } catch (error) {
         console.error("❌ Failed to track activity:", error);
       }
@@ -581,7 +552,6 @@ export class BlogService implements IBlogService {
           ipAddress: ip,
           userAgent: userAgent,
         });
-        console.log("✅ Activity tracked: BLOG_LIKED for user", userId);
       } catch (error) {
         console.error("❌ Failed to track activity:", error);
       }
@@ -645,9 +615,9 @@ export class BlogService implements IBlogService {
     const [blogs, total] = await this.blogRepository.findAll({
       page,
       limit,
-      filters: { 
+      filters: {
         authorId: userId,
-        status: BlogStatus.DRAFT 
+        status: BlogStatus.DRAFT,
       },
     });
 
