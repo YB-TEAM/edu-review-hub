@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/lib/store";
+import { useGetCurrentUserQuery } from "@/lib/services/authApi";
 
 export interface UserProfile {
   id: string;
@@ -29,50 +32,65 @@ export interface UserProfile {
   notificationSettings?: any;
 }
 
-const MOCK_PROFILE: UserProfile = {
-  id: "u123",
-  userId: "u123",
-  displayName: "Nguyễn Văn A",
-  avatarUrl: "https://i.pravatar.cc/150?img=3",
-  coverImageUrl: null,
-  bio: "Sinh viên năm 3 ngành CNTT.",
-  dateOfBirth: "2002-05-10",
-  gender: "Nam",
-  country: "Việt Nam",
-  city: "Hà Nội",
-  address: "123 Đường ABC",
-  phone: "0123456789",
-  universityName: "Đại học Quốc gia Hà Nội",
-  major: "Công nghệ thông tin",
-  graduationYear: "2025",
-  studentId: "SV123456",
-  isStudentVerified: true,
-  status: "active",
-  createdAt: "2023-01-01T12:00:00Z",
-  updatedAt: "2023-01-01T12:00:00Z",
-  firstName: "Nguyễn",
-  lastName: "A",
-  timezone: "Asia/Ho_Chi_Minh",
-  language: "vi",
-  privacySettings: { showEmail: false },
-  notificationSettings: { email: true },
-};
-
 export function useUserProfile() {
-  // Sau này thay bằng fetch API
-  const [profile, setProfile] = useState<UserProfile | null>(MOCK_PROFILE);
+  const dispatch = useDispatch();
+  const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
+  
+  // Fetch current user data if authenticated
+  const { data: currentUser, isLoading, error } = useGetCurrentUserQuery(undefined, {
+    skip: !isAuthenticated,
+  });
+
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [profileError, setProfileError] = useState<string | null>(null);
+
+  // Update profile when user data changes
+  useEffect(() => {
+    if (currentUser) {
+      // Convert user data to profile format
+      setProfile({
+        id: currentUser.id.toString(),
+        userId: currentUser.id.toString(),
+        displayName: currentUser.username, // Fallback to username
+        avatarUrl: null,
+        coverImageUrl: null,
+        bio: null,
+        dateOfBirth: null,
+        gender: null,
+        country: null,
+        city: null,
+        address: null,
+        phone: null,
+        universityName: null,
+        major: null,
+        graduationYear: null,
+        studentId: null,
+        isStudentVerified: false,
+        status: currentUser.status as "active" | "inactive",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        firstName: null,
+        lastName: null,
+        timezone: "UTC",
+        language: "vi",
+        privacySettings: null,
+        notificationSettings: null,
+      });
+    } else if (!isAuthenticated) {
+      setProfile(null);
+    }
+  }, [currentUser, isAuthenticated]);
 
   // Hàm cập nhật profile (mock)
   const updateProfile = async (data: Partial<UserProfile>) => {
     setLoading(true);
-    setError(null);
+    setProfileError(null);
     try {
       await new Promise((r) => setTimeout(r, 1000));
       setProfile((prev) => (prev ? { ...prev, ...data } : prev));
     } catch {
-      setError("Có lỗi xảy ra");
+      setProfileError("Có lỗi xảy ra");
     } finally {
       setLoading(false);
     }
@@ -81,12 +99,12 @@ export function useUserProfile() {
   // Hàm vô hiệu hóa tài khoản (mock)
   const deactivateAccount = async () => {
     setLoading(true);
-    setError(null);
+    setProfileError(null);
     try {
       await new Promise((r) => setTimeout(r, 1000));
       setProfile((prev) => (prev ? { ...prev, status: "inactive" } : prev));
     } catch {
-      setError("Có lỗi xảy ra");
+      setProfileError("Có lỗi xảy ra");
     } finally {
       setLoading(false);
     }
@@ -95,12 +113,12 @@ export function useUserProfile() {
   // Hàm xóa tài khoản (mock)
   const deleteAccount = async () => {
     setLoading(true);
-    setError(null);
+    setProfileError(null);
     try {
       await new Promise((r) => setTimeout(r, 1000));
       setProfile(null);
     } catch {
-      setError("Có lỗi xảy ra");
+      setProfileError("Có lỗi xảy ra");
     } finally {
       setLoading(false);
     }
@@ -108,8 +126,8 @@ export function useUserProfile() {
 
   return {
     profile,
-    loading,
-    error,
+    loading: loading || isLoading,
+    error: profileError || (error as string),
     updateProfile,
     deactivateAccount,
     deleteAccount,

@@ -171,7 +171,6 @@ export const createLoadingState = () => ({
 // Success/Error toast utilities
 export const showSuccessToast = (message: string) => {
   // You can integrate with your preferred toast library here
-  console.log("Success:", message);
 };
 
 export const showErrorToast = (message: string) => {

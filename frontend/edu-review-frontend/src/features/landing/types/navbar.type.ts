@@ -9,7 +9,7 @@ export interface NavItem {
 export const NAV_ITEMS: NavItem[] = [
   {
     label: "Trang chủ",
-    href: "#home",
+    href: "/",
     isActive: true,
     icon: "home",
   },

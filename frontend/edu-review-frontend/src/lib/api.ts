@@ -26,59 +26,36 @@ const baseQuery = fetchBaseQuery({
   baseUrl: "http://localhost:3001/api/v1",
   prepareHeaders: (headers) => {
     // Add auth token if available
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("accessToken");
     if (token) {
       headers.set("authorization", `Bearer ${token}`);
     }
 
     // Add content type
     headers.set("Content-Type", "application/json");
-
     return headers;
   },
 });
 
 // Custom base query with error handling
-const baseQueryWithErrorHandling: BaseQueryFn<
+export const baseQueryWithErrorHandling: BaseQueryFn<
   string | FetchArgs,
   unknown,
   FetchBaseQueryError
-> = async (args, api, extraOptions) => {
+> = async (args: any, api: any, extraOptions: any) => {
   const result = await baseQuery(args, api, extraOptions);
 
-  // Handle different error scenarios
+  // Chỉ chạy trên client side và khi có data
+  if (typeof window !== "undefined" && result.data) {
+    const token = localStorage.getItem("accessToken");
+  }
+
   if (result.error) {
-    const { status, data } = result.error;
+    const { status } = result.error;
 
     // Handle authentication errors
     if (status === 401) {
-      // Clear auth token and redirect to login
-      localStorage.removeItem("authToken");
-      window.location.href = "/login";
-      return result;
-    }
-
-    // Handle forbidden errors
-    if (status === 403) {
-      console.error("Access forbidden:", data);
-      return result;
-    }
-
-    // Handle server errors
-    if (typeof status === "number" && status >= 500) {
-      console.error("Server error:", data);
-      return result;
-    }
-
-    // Handle validation errors
-    if (status === 422) {
-      console.error("Validation error:", data);
-      return result;
-    }
-
-    // Handle not found errors
-    if (status === 404) {
-      console.error("Resource not found:", data);
+      // Don't clear tokens immediately, let the component handle it
       return result;
     }
   }
@@ -90,7 +67,7 @@ const baseQueryWithErrorHandling: BaseQueryFn<
 export const api = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithErrorHandling,
-  tagTypes: ["User", "Review", "Course", "Institution", "Blog"],
+  tagTypes: ["User", "Profile", "Review", "Course", "Institution", "Blog"],
   endpoints: () => ({}),
 });
 

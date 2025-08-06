@@ -8,6 +8,8 @@ import { toast } from "@/components/ui/sonner";
 import { Loader2, Lock, User, CheckCircle, XCircle } from "lucide-react";
 import { NavbarLogo } from "@/features/landing/components/navbar/Navbar";
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { setAuth } from "@/lib/slices/authSlice";
 import "../auth.scss";
 import { useLoginMutation } from "@/lib/services/authApi";
 
@@ -22,6 +24,7 @@ export default function LoginPage() {
   const [success, setSuccess] = useState("");
 
   const router = useRouter();
+  const dispatch = useDispatch();
   const [login, { isLoading: isLoginLoading }] = useLoginMutation();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,12 +49,46 @@ export default function LoginPage() {
         identifier: formData.username,
         password: formData.password,
       }).unwrap();
+      
+      // Lưu token vào Redux store
+      dispatch(setAuth(result));
+      
+      // Debug: Log Redux state
+
+      
       setSuccess("Đăng nhập thành công!");
       toast.success("Đăng nhập thành công!");
-      setTimeout(() => window.location.href = "/", 1200);
+      setTimeout(() => router.push("/"), 1200);
     } catch (err: any) {
-      setError(err?.data?.message || err.message || "Đăng nhập thất bại");
-      toast.error(err?.data?.message || err.message || "Đăng nhập thất bại");
+      let errorMessage = "Đăng nhập thất bại";
+      
+      // Xử lý lỗi 403 - Email chưa xác thực
+      if (err?.status === 403) {
+        // Kiểm tra xem có phải lỗi email chưa verify không
+        const errorData = err?.data;
+        if (errorData?.requiresVerification && errorData?.email) {
+          errorMessage = "Email chưa được xác thực. Vui lòng kiểm tra email và xác thực tài khoản.";
+          
+          // Lưu email thực từ server
+          if (typeof window !== "undefined") {
+            localStorage.setItem("pendingVerificationEmail", errorData.email);
+          }
+          
+          toast.error(errorMessage, {
+            description: "Chuyển hướng đến trang xác thực email...",
+          });
+          setTimeout(() => router.push("/auth/verify-email"), 2000);
+        } else {
+          errorMessage = "Email chưa được xác thực. Vui lòng kiểm tra email và xác thực tài khoản.";
+        }
+      } else if (err?.data?.message) {
+        errorMessage = err.data.message;
+      } else if (err?.message) {
+        errorMessage = err.message;
+      }
+      
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

@@ -29,6 +29,7 @@ import {
   BanBlogDto,
 } from "../dto/blog/moderate-blog.dto";
 import { IUploadedFileRepository } from "@/domain/repositories/uploaded-file.repository.interface";
+import { PublishBlogDto } from "../dto/blog/publish-blog.dto";
 
 @Injectable()
 export class BlogService implements IBlogService {
@@ -101,7 +102,6 @@ export class BlogService implements IBlogService {
         ipAddress: ip,
         userAgent: userAgent,
       });
-      console.log("✅ Activity tracked: BLOG_CREATED for user", userId);
     } catch (error) {
       console.error("❌ Failed to track activity:", error);
     }
@@ -255,10 +255,6 @@ export class BlogService implements IBlogService {
         if (oldFeaturedImage && oldFeaturedImage !== dto.featuredImage) {
           try {
             await this.cloudinaryService.deleteImage(oldFeaturedImage);
-            console.log(
-              "✅ Deleted old featured image from Cloudinary:",
-              oldFeaturedImage
-            );
 
             // Mark old image as deleted in uploaded_files table
             const oldUploadedFile =
@@ -267,13 +263,8 @@ export class BlogService implements IBlogService {
               );
             if (oldUploadedFile) {
               await this.uploadedFileRepository.delete(oldUploadedFile.id);
-              console.log(
-                "✅ Marked old uploaded file as deleted:",
-                oldUploadedFile.id
-              );
             }
           } catch (error) {
-            console.error("❌ Failed to delete old featured image:", error);
             // Don't throw error, continue with update
           }
         }
@@ -282,10 +273,6 @@ export class BlogService implements IBlogService {
         if (oldFeaturedImage) {
           try {
             await this.cloudinaryService.deleteImage(oldFeaturedImage);
-            console.log(
-              "✅ Deleted featured image from Cloudinary:",
-              oldFeaturedImage
-            );
 
             // Mark old image as deleted in uploaded_files table
             const oldUploadedFile =
@@ -294,13 +281,8 @@ export class BlogService implements IBlogService {
               );
             if (oldUploadedFile) {
               await this.uploadedFileRepository.delete(oldUploadedFile.id);
-              console.log(
-                "✅ Marked uploaded file as deleted:",
-                oldUploadedFile.id
-              );
             }
           } catch (error) {
-            console.error("❌ Failed to delete featured image:", error);
             // Don't throw error, continue with update
           }
         }
@@ -329,10 +311,6 @@ export class BlogService implements IBlogService {
     if (blog.featuredImage) {
       try {
         await this.cloudinaryService.deleteImage(blog.featuredImage);
-        console.log(
-          "✅ Deleted featured image from Cloudinary:",
-          blog.featuredImage
-        );
 
         // Mark image as deleted in uploaded_files table
         const uploadedFile = await this.uploadedFileRepository.findByPublicId(
@@ -340,13 +318,8 @@ export class BlogService implements IBlogService {
         );
         if (uploadedFile) {
           await this.uploadedFileRepository.delete(uploadedFile.id);
-          console.log("✅ Marked uploaded file as deleted:", uploadedFile.id);
         }
       } catch (error) {
-        console.error(
-          "❌ Failed to delete featured image from Cloudinary:",
-          error
-        );
         // Don't throw error, continue with blog deletion
       }
     }
@@ -485,6 +458,44 @@ export class BlogService implements IBlogService {
     return this.toResponseDto(updated);
   }
 
+  async publishBlog(
+    id: number,
+    userId: number,
+    dto: PublishBlogDto
+  ): Promise<BlogResponseDto> {
+    const blog = await this.blogRepository.findById(id);
+    if (!blog) throw new NotFoundException("Blog not found");
+
+    // Check if user is the author
+    if (blog.authorId !== userId) {
+      throw new ForbiddenException("You can only publish your own blogs");
+    }
+
+    // Only draft blogs can be published
+    if (blog.status !== BlogStatus.DRAFT) {
+      throw new BadRequestException("Only draft blogs can be published");
+    }
+
+    const updateData = {
+      title: dto.title,
+      content: dto.content,
+      excerpt: dto.excerpt,
+      featuredImage: dto.featuredImage,
+      category: dto.category as BlogCategory,
+      status: BlogStatus.PUBLISHED,
+      publishedAt: new Date(),
+    };
+
+    const updated = await this.blogRepository.update(id, updateData);
+
+    // Handle tags if provided
+    if (dto.tagIds && dto.tagIds.length > 0) {
+      await this.blogRepository.updateTags(id, dto.tagIds);
+    }
+
+    return this.toResponseDto(updated);
+  }
+
   async like(
     id: number,
     userId: number,
@@ -519,7 +530,6 @@ export class BlogService implements IBlogService {
           ipAddress: ip,
           userAgent: userAgent,
         });
-        console.log("✅ Activity tracked: BLOG_UNLIKED for user", userId);
       } catch (error) {
         console.error("❌ Failed to track activity:", error);
       }
@@ -542,7 +552,6 @@ export class BlogService implements IBlogService {
           ipAddress: ip,
           userAgent: userAgent,
         });
-        console.log("✅ Activity tracked: BLOG_LIKED for user", userId);
       } catch (error) {
         console.error("❌ Failed to track activity:", error);
       }
@@ -579,6 +588,50 @@ export class BlogService implements IBlogService {
   }
 
   async getPendingModeration(
+    pagination: PaginationDto
+  ): Promise<{ data: BlogResponseDto[]; metadata: any }> {
+    const { page = 1, limit = 10 } = pagination;
+    const [blogs, total] = await this.blogRepository.findAll({
+      page,
+      limit,
+      filters: { status: BlogStatus.PUBLISHED },
+    });
+
+    const data = blogs.map(this.toResponseDto);
+    const metadata = {
+      totalItems: total,
+      pageSize: limit,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+    };
+    return { data, metadata };
+  }
+
+  async findMyDrafts(
+    userId: number,
+    pagination: PaginationDto
+  ): Promise<{ data: BlogResponseDto[]; metadata: any }> {
+    const { page = 1, limit = 10 } = pagination;
+    const [blogs, total] = await this.blogRepository.findAll({
+      page,
+      limit,
+      filters: {
+        authorId: userId,
+        status: BlogStatus.DRAFT,
+      },
+    });
+
+    const data = blogs.map(this.toResponseDto);
+    const metadata = {
+      totalItems: total,
+      pageSize: limit,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+    };
+    return { data, metadata };
+  }
+
+  async findForModeration(
     pagination: PaginationDto
   ): Promise<{ data: BlogResponseDto[]; metadata: any }> {
     const { page = 1, limit = 10 } = pagination;

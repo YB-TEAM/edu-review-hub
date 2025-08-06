@@ -1,6 +1,9 @@
 "use client";
-import { useUserProfile } from "@/hooks/useUserProfile";
-import { useState, useRef } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { useUpdateProfileMutation, useGetCurrentUserQuery } from "@/lib/services/authApi";
+import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "@/components/ui/sonner";
 import { CheckCircle, XCircle, Loader2, Camera, Upload, User, UserCircle, Calendar as CalendarIconLucide, BadgeCheck, GraduationCap, School, MapPin, Landmark, Mail } from "lucide-react";
 import { Navbar } from "@/features/landing/components/navbar/Navbar";
 import { Footer } from "@/features/landing/components/footer/Footer";
@@ -18,6 +21,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import React from "react";
 
 // Danh sách tỉnh thành Việt Nam
 const VIETNAM_PROVINCES = [
@@ -35,8 +39,12 @@ const VIETNAM_PROVINCES = [
 ];
 
 export default function ProfilePage() {
-  const { profile, error, updateProfile, deactivateAccount, deleteAccount } =
-    useUserProfile();
+  const { user: profile, isAuthenticated, isLoading } = useAuth();
+  const router = useRouter();
+  const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation();
+  const { refetch: refetchUser } = useGetCurrentUserQuery(undefined, {
+    skip: !isAuthenticated,
+  });
   const [edit, setEdit] = useState(false);
   const [form, setForm] = useState({
     firstName: profile?.firstName || "",
@@ -53,11 +61,6 @@ export default function ProfilePage() {
     major: profile?.major || "",
     graduationYear: profile?.graduationYear || "",
     studentId: profile?.studentId || "",
-    notificationSettings: {
-      email: profile?.notificationSettings?.email || false,
-      push: profile?.notificationSettings?.push || false,
-      sms: profile?.notificationSettings?.sms || false,
-    },
   });
   const [success, setSuccess] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
@@ -65,6 +68,82 @@ export default function ProfilePage() {
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
 
+  // Bảo vệ route - redirect nếu chưa đăng nhập
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      toast.error("Vui lòng đăng nhập để xem hồ sơ.");
+      router.push("/auth/login");
+    }
+  }, [isAuthenticated, isLoading, router]);
+
+  // Hàm chuyển đổi gender từ backend sang frontend
+  const convertGenderFromBackend = (gender: string | null | undefined): string => {
+    switch (gender) {
+      case "male": return "Nam";
+      case "female": return "Nữ";
+      case "other": return "Khác";
+      case "prefer_not_to_say": return "Không muốn nói";
+      default: return "";
+    }
+  };
+
+  // Hàm chuyển đổi gender từ frontend sang backend
+  const convertGenderToBackend = (gender: string): string => {
+    switch (gender) {
+      case "Nam": return "male";
+      case "Nữ": return "female";
+      case "Khác": return "other";
+      case "Không muốn nói": return "prefer_not_to_say";
+      default: return "";
+    }
+  };
+
+  // Cập nhật form khi profile thay đổi
+  React.useEffect(() => {
+    if (profile) {
+      setForm({
+        firstName: profile.firstName || "",
+        lastName: profile.lastName || "",
+        displayName: profile.displayName || "",
+        avatarUrl: profile.avatarUrl || "",
+        coverImageUrl: profile.coverImageUrl || "",
+        bio: profile.bio || "",
+        dateOfBirth: profile.dateOfBirth || "",
+        gender: convertGenderFromBackend(profile.gender),
+        city: profile.city || "",
+        address: profile.address || "",
+        universityName: profile.universityName || "",
+        major: profile.major || "",
+        graduationYear: profile.graduationYear || "",
+        studentId: profile.studentId || "",
+      });
+    }
+  }, [profile]);
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-gray-900 dark:via-gray-950 dark:to-slate-900">
+          <Card className="text-center p-8 max-w-md">
+            <CardContent className="pt-6">
+              <Loader2 className="h-12 w-12 text-blue-400 mx-auto mb-4 animate-spin" />
+              <h2 className="text-xl font-bold mb-2">Đang tải...</h2>
+            </CardContent>
+          </Card>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Redirect nếu chưa đăng nhập
+  if (!isAuthenticated) {
+    return null; // Sẽ redirect trong useEffect
+  }
+
+  // Không có profile data
   if (!profile) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -74,7 +153,7 @@ export default function ProfilePage() {
             <CardContent className="pt-6">
               <XCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
               <h2 className="text-xl font-bold mb-2">
-                Tài khoản đã bị xóa hoặc không tồn tại.
+                Không tìm thấy thông tin hồ sơ.
               </h2>
             </CardContent>
           </Card>
@@ -89,13 +168,8 @@ export default function ProfilePage() {
   };
 
   const handleNotificationChange = (setting: string, value: boolean) => {
-    setForm({
-      ...form,
-      notificationSettings: {
-        ...form.notificationSettings,
-        [setting]: value,
-      },
-    });
+    // TODO: Implement notification settings
+
   };
 
   const handleImageUpload = (type: 'avatar' | 'cover') => {
@@ -123,33 +197,62 @@ export default function ProfilePage() {
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setActionLoading(true);
-    const submitData = {
-      ...form,
-      dateOfBirth: form.dateOfBirth
-        ? (typeof form.dateOfBirth === "string"
-            ? form.dateOfBirth
-            : (form.dateOfBirth as Date).toISOString().slice(0, 10))
-        : "",
-    };
-    await updateProfile(submitData);
-    setSuccess("Cập nhật thành công!");
-    setEdit(false);
-    setActionLoading(false);
-    setTimeout(() => setSuccess(""), 3000);
+    setSuccess("");
+
+    try {
+      const updateData = {
+        firstName: form.firstName || undefined,
+        lastName: form.lastName || undefined,
+        displayName: form.displayName || undefined,
+        avatarUrl: form.avatarUrl || undefined,
+        coverImageUrl: form.coverImageUrl || undefined,
+        bio: form.bio || undefined,
+        dateOfBirth: form.dateOfBirth && form.dateOfBirth !== '' ? form.dateOfBirth : undefined,
+        gender: form.gender ? convertGenderToBackend(form.gender) : undefined,
+        city: form.city || undefined,
+        address: form.address || undefined,
+        universityName: form.universityName || undefined,
+        major: form.major || undefined,
+        graduationYear: form.graduationYear ? Number(form.graduationYear) : undefined,
+        studentId: form.studentId || undefined,
+      };
+      
+      // Remove undefined and empty values to avoid validation issues
+      Object.keys(updateData).forEach(key => {
+        const value = (updateData as any)[key];
+        if (value === undefined || value === '' || value === null) {
+          delete (updateData as any)[key];
+        }
+      });
+      console.log("Sending update data:", updateData);
+      await updateProfile(updateData).unwrap();
+      // Refetch user data to update UI
+      await refetchUser();
+      setSuccess("Cập nhật hồ sơ thành công!");
+      setEdit(false);
+    } catch (error: any) {
+      console.error("Update failed:", error);
+      if (error?.data?.message) {
+        setSuccess(`Có lỗi xảy ra: ${error.data.message}`);
+      } else {
+        setSuccess("Có lỗi xảy ra khi cập nhật hồ sơ.");
+      }
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   const handleDeactivate = async () => {
+    if (!confirm("Bạn có chắc chắn muốn vô hiệu hóa tài khoản?")) return;
     setActionLoading(true);
-    await deactivateAccount();
-    setSuccess("Tài khoản đã bị vô hiệu hóa.");
+    // TODO: Implement deactivate account
     setActionLoading(false);
-    setTimeout(() => setSuccess(""), 3000);
   };
 
   const handleDelete = async () => {
-    if (!window.confirm("Bạn chắc chắn muốn xóa tài khoản?")) return;
+    if (!confirm("Bạn có chắc chắn muốn xóa tài khoản? Hành động này không thể hoàn tác.")) return;
     setActionLoading(true);
-    await deleteAccount();
+    // TODO: Implement delete account
     setActionLoading(false);
   };
 
@@ -230,12 +333,12 @@ export default function ProfilePage() {
                     <svg width='20' height='20' fill='none' viewBox='0 0 24 24'><path stroke='#a5b4fc' strokeWidth='2' d='M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.418 0-8 2.239-8 5v1a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1c0-2.761-3.582-5-8-5Z'/></svg>
                     {profile.firstName} {profile.lastName}
                   </span>
-                  <Badge 
-                    variant={profile.status === "active" ? "default" : "destructive"}
-                    className={profile.status === "active" ? "bg-gradient-to-r from-blue-400 to-purple-400 text-white px-2 py-0.5 text-xs font-semibold" : "bg-red-500 text-white px-2 py-0.5 text-xs font-semibold"}
-                  >
-                    {profile.status === "active" ? "Đang hoạt động" : "Đã vô hiệu hóa"}
-                  </Badge>
+                                          <Badge
+                          variant="default"
+                          className="bg-gradient-to-r from-blue-400 to-purple-400 text-white px-2 py-0.5 text-xs font-semibold"
+                        >
+                          Đang hoạt động
+                        </Badge>
                 </div>
                 {profile.bio && (
                   <p className="text-blue-100 dark:text-blue-200 italic mt-4 max-w-2xl mx-auto text-lg flex items-center gap-2 justify-center">
@@ -344,6 +447,7 @@ export default function ProfilePage() {
                               <SelectItem value="Nam" className="hover:bg-blue-400/20">Nam</SelectItem>
                               <SelectItem value="Nữ" className="hover:bg-purple-400/20">Nữ</SelectItem>
                               <SelectItem value="Khác" className="hover:bg-orange-400/20">Khác</SelectItem>
+                              <SelectItem value="Không muốn nói" className="hover:bg-gray-400/20">Không muốn nói</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
@@ -454,7 +558,7 @@ export default function ProfilePage() {
                           <Label className="text-blue-100">Thông báo Email</Label>
                         </div>
                         <Switch
-                          checked={form.notificationSettings.email}
+                          checked={false}
                           onCheckedChange={(value) => handleNotificationChange("email", value)}
                           className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-blue-500 data-[state=checked]:to-purple-500 data-[state=unchecked]:bg-white/10 border border-blue-400/40"
                         />
@@ -511,7 +615,7 @@ export default function ProfilePage() {
                         <BadgeCheck className="w-6 h-6 text-pink-400" />
                         <div>
                           <div className="text-xs text-blue-200">Giới tính</div>
-                          <div className="text-lg text-white font-medium">{profile.gender || <span className="text-blue-200 flex items-center gap-1"><XCircle className="w-4 h-4 inline-block text-blue-200" />Chưa cập nhật</span>}</div>
+                          <div className="text-lg text-white font-medium">{profile.gender ? convertGenderFromBackend(profile.gender) : <span className="text-blue-200 flex items-center gap-1"><XCircle className="w-4 h-4 inline-block text-blue-200" />Chưa cập nhật</span>}</div>
                         </div>
                       </div>
                     </div>
@@ -578,7 +682,7 @@ export default function ProfilePage() {
                 <Button
                   variant="secondary"
                   onClick={handleDeactivate}
-                  disabled={actionLoading || profile.status === "inactive"}
+                                      disabled={actionLoading}
                   className="min-w-[120px] bg-white/10 text-blue-100 border border-blue-300 hover:bg-blue-200/20 hover:text-white"
                 >
                   {actionLoading && (

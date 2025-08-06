@@ -1,105 +1,154 @@
-import { api } from "../api";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import type {
+  AuthResponse,
+  LoginRequest,
+  RegisterRequest,
+  RefreshTokenRequest,
+  User,
+  UserProfile,
+  UpdateProfileRequest,
+  ChangePasswordRequest,
+  ForgotPasswordRequest,
+  ResetPasswordRequest,
+} from "@/types";
+import { baseQueryWithErrorHandling } from "../api";
 
-export interface LoginRequest {
-  identifier: string;
-  password: string;
-}
-
-export interface RegisterRequest {
-  username: string;
-  email: string;
-  password: string;
-  phone?: string;
-}
-
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-  email_verified_at?: string;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface AuthResponse {
-  user: User;
-  token: string;
-  message: string;
-}
-
-export const authApi = api.injectEndpoints({
+export const authApi = createApi({
+  reducerPath: "authApi",
+  baseQuery: baseQueryWithErrorHandling,
+  tagTypes: ["Auth", "User", "Profile"],
   endpoints: (builder) => ({
+    // Authentication
     login: builder.mutation<AuthResponse, LoginRequest>({
       query: (credentials) => ({
         url: "/auth/login",
         method: "POST",
         body: credentials,
       }),
-      invalidatesTags: ["User"],
+      invalidatesTags: ["Auth"],
     }),
+
     register: builder.mutation<AuthResponse, RegisterRequest>({
       query: (userData) => ({
         url: "/auth/register",
         method: "POST",
         body: userData,
       }),
-      invalidatesTags: ["User"],
+      invalidatesTags: ["Auth"],
     }),
+
+    refreshToken: builder.mutation<AuthResponse, RefreshTokenRequest>({
+      query: (refreshData) => ({
+        url: "/auth/refresh",
+        method: "POST",
+        body: refreshData,
+      }),
+      invalidatesTags: ["Auth"],
+    }),
+
     logout: builder.mutation<void, void>({
       query: () => ({
         url: "/auth/logout",
         method: "POST",
       }),
-      invalidatesTags: ["User"],
+      invalidatesTags: ["Auth", "User", "Profile"],
     }),
-    getProfile: builder.query<User, void>({
-      query: () => "/auth/profile",
+
+    // Password Management
+    forgotPassword: builder.mutation<void, ForgotPasswordRequest>({
+      query: (data) => ({
+        url: "/auth/forgot-password",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    resetPassword: builder.mutation<void, ResetPasswordRequest>({
+      query: (data) => ({
+        url: "/auth/reset-password",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    changePassword: builder.mutation<void, ChangePasswordRequest>({
+      query: (data) => ({
+        url: "/auth/change-password",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    // User Profile
+    getCurrentUser: builder.query<User, void>({
+      query: () => "/profile/me",
       providesTags: ["User"],
     }),
-    updateProfile: builder.mutation<User, Partial<User>>({
-      query: (userData) => ({
-        url: "/auth/profile",
-        method: "PUT",
-        body: userData,
+
+    updateProfile: builder.mutation<User, UpdateProfileRequest>({
+      query: (profileData) => ({
+        url: "/profile/me",
+        method: "PATCH",
+        body: profileData,
       }),
-      invalidatesTags: ["User"],
+      invalidatesTags: ["User", "Profile"],
     }),
-    forgotPassword: builder.mutation<{ message: string }, { email: string }>({
-      query: (data) => ({
-        url: "/email-verification/forgot-password",
+
+    uploadAvatar: builder.mutation<{ avatarUrl: string }, FormData>({
+      query: (formData) => ({
+        url: "/profile/me/avatar",
         method: "POST",
-        body: data,
+        body: formData,
       }),
+      invalidatesTags: ["User", "Profile"],
     }),
-    resetPassword: builder.mutation<
-      { message: string },
-      { email: string; otp: string; newPassword: string }
-    >({
-      query: (data) => ({
-        url: "/email-verification/reset-password",
-        method: "POST",
-        body: data,
-      }),
-    }),
-    verifyEmail: builder.mutation<
-      { message: string },
-      { email: string; otp: string }
-    >({
+
+    // Email Verification
+    verifyEmail: builder.mutation<void, { token: string; email?: string }>({
       query: (data) => ({
         url: "/email-verification/verify-email",
         method: "POST",
-        body: data,
+        body: {
+          otp: data.token,
+          email: data.email || "",
+        },
       }),
+      invalidatesTags: ["User"],
     }),
-    resendVerification: builder.mutation<
-      { message: string },
-      { email: string }
-    >({
+
+    resendVerificationEmail: builder.mutation<void, { email?: string }>({
       query: (data) => ({
         url: "/email-verification/resend-verification",
         method: "POST",
-        body: data,
+        body: {
+          email: data.email || "",
+        },
       }),
+    }),
+
+    // Admin User Management
+    getAllUsers: builder.query<User[], void>({
+      query: () => "/profile/admin/users",
+      providesTags: ["User"],
+    }),
+
+    updateUser: builder.mutation<User, { userId: number; data: Partial<User> }>(
+      {
+        query: ({ userId, data }) => ({
+          url: `/profile/admin/user/${userId}`,
+          method: "PATCH",
+          body: data,
+        }),
+        invalidatesTags: ["User"],
+      }
+    ),
+
+    deleteUser: builder.mutation<void, number>({
+      query: (userId) => ({
+        url: `/profile/admin/user/${userId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["User"],
     }),
   }),
 });
@@ -107,11 +156,17 @@ export const authApi = api.injectEndpoints({
 export const {
   useLoginMutation,
   useRegisterMutation,
+  useRefreshTokenMutation,
   useLogoutMutation,
-  useGetProfileQuery,
-  useUpdateProfileMutation,
   useForgotPasswordMutation,
   useResetPasswordMutation,
+  useChangePasswordMutation,
+  useGetCurrentUserQuery,
+  useUpdateProfileMutation,
+  useUploadAvatarMutation,
   useVerifyEmailMutation,
-  useResendVerificationMutation,
+  useResendVerificationEmailMutation,
+  useGetAllUsersQuery,
+  useUpdateUserMutation,
+  useDeleteUserMutation,
 } = authApi;

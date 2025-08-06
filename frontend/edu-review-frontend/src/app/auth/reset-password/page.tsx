@@ -122,11 +122,12 @@ export default function ResetPasswordPage() {
     }
 
     try {
-      await resetPasswordApi({ email, otp: token, newPassword: password }).unwrap();
+      await resetPasswordApi({ token, password }).unwrap();
       setStep("success");
       toast.success("Đặt lại mật khẩu thành công!");
-    } catch (err: any) {
-      setError(err?.data?.message || err.message || "Có lỗi xảy ra. Vui lòng thử lại sau.");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Có lỗi xảy ra. Vui lòng thử lại sau.";
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

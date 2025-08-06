@@ -9,7 +9,7 @@ import { Loader2, Mail, Lock, User, Phone, KeyRound, CheckCircle, XCircle } from
 import { NavbarLogo } from "@/features/landing/components/navbar/Navbar";
 import { useRouter } from "next/navigation";
 import "../auth.scss";
-import { useRegisterMutation, useVerifyEmailMutation, useResendVerificationMutation } from "@/lib/services/authApi";
+import { useRegisterMutation, useVerifyEmailMutation, useResendVerificationEmailMutation } from "@/lib/services/authApi";
 
 export default function RegisterPage() {
   const [step, setStep] = useState<1 | 2>(1);
@@ -29,7 +29,7 @@ export default function RegisterPage() {
   const router = useRouter();
   const [register, { isLoading: isRegisterLoading }] = useRegisterMutation();
   const [verifyEmail, { isLoading: isVerifyLoading }] = useVerifyEmailMutation();
-  const [resendVerification, { isLoading: isResendLoading }] = useResendVerificationMutation();
+  const [resendVerification, { isLoading: isResendLoading }] = useResendVerificationEmailMutation();
 
   const validateStep1 = () => {
     if (!formData.username || !formData.email || !formData.password || !formData.phone) {
@@ -61,16 +61,35 @@ export default function RegisterPage() {
     setSuccess("");
 
     try {
-      await register({
+      const result = await register({
         username: formData.username,
         email: formData.email,
         password: formData.password,
         phone: formData.phone,
       }).unwrap();
+      
+      // Lưu email vào localStorage để dùng cho verify
+      if (typeof window !== "undefined") {
+        localStorage.setItem("pendingVerificationEmail", formData.email);
+      }
+      
+      // Register thành công, không có token - chỉ thông báo cần xác thực
       setStep(2);
-      setSuccess("Mã OTP đã được gửi về email của bạn.");
+      setSuccess("Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.");
+      toast.success("Đăng ký thành công!", { 
+        description: "Vui lòng kiểm tra email để xác thực tài khoản." 
+      });
     } catch (err: any) {
-      setError(err?.data?.message || err.message || "Email hoặc tên đăng nhập đã tồn tại");
+      let errorMessage = "Đăng ký thất bại";
+      
+      if (err?.data?.message) {
+        errorMessage = err.data.message;
+      } else if (err?.message) {
+        errorMessage = err.message;
+      }
+      
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -87,12 +106,21 @@ export default function RegisterPage() {
     try {
       if (!/^[0-9]{6}$/.test(otp)) throw new Error("OTP phải gồm 6 số.");
 
-      await verifyEmail({ email: formData.email, otp }).unwrap();
+      await verifyEmail({ token: otp, email: formData.email }).unwrap();
       setSuccess("Xác thực thành công! Bạn có thể đăng nhập.");
-      toast.success("Đăng ký thành công!", { description: "Bạn có thể đăng nhập." });
-      setTimeout(() => window.location.href = "/auth/login", 1500);
+      toast.success("Xác thực thành công!", { description: "Bạn có thể đăng nhập." });
+      setTimeout(() => router.push("/auth/login"), 1500);
     } catch (err: any) {
-      setOtpError(err?.data?.message || err.message || "OTP không đúng hoặc đã hết hạn.");
+      let errorMessage = "OTP không đúng hoặc đã hết hạn.";
+      
+      if (err?.data?.message) {
+        errorMessage = err.data.message;
+      } else if (err?.message) {
+        errorMessage = err.message;
+      }
+      
+      setOtpError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -105,8 +133,9 @@ export default function RegisterPage() {
     try {
       await resendVerification({ email: formData.email }).unwrap();
       toast.success("Đã gửi lại OTP về email!");
-    } catch (err: any) {
-      setOtpError(err?.data?.message || err.message || "Không thể gửi lại OTP");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Không thể gửi lại OTP";
+      setOtpError(errorMessage);
     } finally {
       setResendLoading(false);
     }

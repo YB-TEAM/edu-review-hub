@@ -24,6 +24,10 @@ import { LoginDto, LoginDtoWithIp } from "@/application/dto/auth/login.dto";
 import { RefreshTokenDto } from "@/application/dto/auth/refresh-token.dto";
 import { AuthResponseDto } from "@/application/dto/auth/auth-response.dto";
 import { RegisterResponseDto } from "@/application/dto/auth/register-response.dto";
+import {
+  ErrorResponseDto,
+  ValidationErrorResponseDto,
+} from "@/application/dto/common/error-response.dto";
 import { LocalAuthGuard } from "@/presentation/guards/local-auth.guard";
 import { JwtAuthGuard } from "@/presentation/guards/jwt-auth.guard";
 
@@ -49,6 +53,7 @@ export class AuthController {
   @ApiResponse({
     status: 409,
     description: "Email or username already exists",
+    type: ErrorResponseDto,
   })
   async register(
     @Body() registerDto: RegisterDto,
@@ -86,37 +91,12 @@ export class AuthController {
   @ApiResponse({
     status: 401,
     description: "Account not found or invalid password",
-    schema: {
-      type: "object",
-      properties: {
-        message: {
-          type: "string",
-          examples: [
-            "Account not found. Please check your email/username and try again.",
-            "Invalid password. Please check your password and try again.",
-            "Account is not active. Please contact support.",
-          ],
-        },
-        error: { type: "string", example: "Unauthorized" },
-        statusCode: { type: "number", example: 401 },
-      },
-    },
+    type: ErrorResponseDto,
   })
   @ApiResponse({
     status: 403,
     description: "Email not verified",
-    schema: {
-      type: "object",
-      properties: {
-        message: {
-          type: "string",
-          example:
-            "Email not verified. Please check your email and verify your account.",
-        },
-        error: { type: "string", example: "Forbidden" },
-        statusCode: { type: "number", example: 403 },
-      },
-    },
+    type: ErrorResponseDto,
   })
   async login(
     @Body() loginDto: LoginDto,
@@ -154,6 +134,7 @@ export class AuthController {
   @ApiResponse({
     status: 401,
     description: "Invalid refresh token",
+    type: ErrorResponseDto,
   })
   async refreshToken(
     @Body() refreshTokenDto: RefreshTokenDto
@@ -179,11 +160,10 @@ export class AuthController {
   @ApiResponse({
     status: 401,
     description: "Unauthorized",
+    type: ErrorResponseDto,
   })
   async logout(@Request() req): Promise<void> {
     try {
-      console.log("Logout request - User:", req.user);
-
       if (!req.user || !req.user.id) {
         throw new Error("Invalid user in request");
       }
