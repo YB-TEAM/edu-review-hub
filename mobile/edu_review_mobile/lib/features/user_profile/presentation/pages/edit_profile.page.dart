@@ -150,18 +150,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     child: Column(
                       children: [
                         const SizedBox(height: 32),
-
                         // Edit Form
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Avatar Image
-                              const Text(
+                              Text(
                                 'Avatar',
-                                style: TextStyle(
-                                  fontSize: 16,
+                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -181,11 +178,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                     children: [
                                       ClipOval(
                                         child: Image.network(
-                                          state
-                                                      .profileEntity
-                                                      .avatarUrl
-                                                      ?.isNotEmpty ==
-                                                  true
+                                          state.profileEntity.avatarUrl?.isNotEmpty == true
                                               ? state.profileEntity.avatarUrl!
                                               : AppDefaultImages.defaultAvatar,
                                           width: 120,
@@ -219,10 +212,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               const SizedBox(height: 16),
 
                               // Cover Image
-                              const Text(
+                              Text(
                                 'Cover Image',
-                                style: TextStyle(
-                                  fontSize: 16,
+                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -278,10 +270,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               const SizedBox(height: 24),
 
                               // Display Name
-                              const Text(
+                              Text(
                                 'Display Name',
-                                style: TextStyle(
-                                  fontSize: 16,
+                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -293,10 +284,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               const SizedBox(height: 16),
 
                               // Bio
-                              const Text(
+                              Text(
                                 'Bio',
-                                style: TextStyle(
-                                  fontSize: 16,
+                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -308,10 +298,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               const SizedBox(height: 16),
 
                               // City
-                              const Text(
+                              Text(
                                 'City',
-                                style: TextStyle(
-                                  fontSize: 16,
+                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -323,10 +312,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               const SizedBox(height: 16),
 
                               // University
-                              const Text(
+                              Text(
                                 'University',
-                                style: TextStyle(
-                                  fontSize: 16,
+                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -337,11 +325,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               ),
                               const SizedBox(height: 16),
 
-                              // Major
-                              const Text(
+                              Text(
                                 'Major',
-                                style: TextStyle(
-                                  fontSize: 16,
+                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),

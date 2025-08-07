@@ -1,10 +1,13 @@
 // ignore_for_file: depend_on_referenced_packages
 
 import 'package:edu_review_mobile/common/widgets/appbar/custom_appbar.dart';
+import 'package:edu_review_mobile/common/widgets/dialog/custom_dialog.dart';
+import 'package:edu_review_mobile/common/widgets/text_field/custom_text_field.dart';
 import 'package:edu_review_mobile/common_libs.dart';
 import 'package:edu_review_mobile/features/blog/data/models/blog_params.dart';
 import 'package:edu_review_mobile/features/blog/presentation/bloc/create_blog_cubit.dart';
 import 'package:edu_review_mobile/features/blog/presentation/bloc/create_blog_state.dart';
+import 'package:edu_review_mobile/features/blog/presentation/widgets/richtext_editor.widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:markdown_quill/markdown_quill.dart';
 import 'package:flutter_quill/flutter_quill.dart';
@@ -21,15 +24,18 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
   final _excerptController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   late QuillController _quillController;
+  late final FocusNode _editorFocusNode;
 
   @override
   void initState() {
     super.initState();
     _quillController = QuillController.basic();
+    _editorFocusNode = FocusNode();
   }
 
   @override
   void dispose() {
+    _editorFocusNode.dispose();
     _titleController.dispose();
     _excerptController.dispose();
     _quillController.dispose();
@@ -61,20 +67,39 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
       child: BlocListener<CreateBlogCubit, CreateBlogState>(
         listener: (context, state) {
           if (state is CreateBlogSuccess) {
-            Navigator.pop(context);
-          } else if (state is CreateBlogFailure) {
-            showDialog(
+             showAppDialog(
               context: context,
-              builder: (_) => AlertDialog(
-                title: const Text('Error'),
-                content: Text(state.errorMessage),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('OK'),
-                  ),
-                ],
-              ),
+              title: 'Success',
+              content: 'Create Blog successfully!',
+              icon: Icons.check_circle,
+              iconColor: Colors.green,
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); 
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (mounted) {
+                        Navigator.of(context).pop();
+                      }
+                    });
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          } else if (state is CreateBlogFailure) {
+             showAppDialog(
+              context: context,
+              title: 'Create Blog Failed',
+              content: 'Error: ${state.errorMessage}',
+              icon: Icons.error,
+              iconColor: Colors.red,
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Close'),
+                ),
+              ],
             );
           }
         },
@@ -89,22 +114,49 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
                   title: 'Create Blog',
                   onBackPressed: () => Navigator.of(context).maybePop(),
                 ),
-                backgroundColor: const Color(0xFFF7F8FA),
+                backgroundColor: AppColors.primaryWhite,
                 body: SingleChildScrollView(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(12),
                   child: Form(
                     key: _formKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        _buildSectionTitle('Title'),
-                        _buildTextField(_titleController, 'Enter blog title'),
-                        const SizedBox(height: 20),
-                        _buildSectionTitle('Excerpt'),
-                        _buildTextField(_excerptController, 'Short summary (optional)', maxLines: 3, required: false),
-                        const SizedBox(height: 20),
-                        _buildSectionTitle('Content'),
-                        _buildRichEditor(),
+                        Text(
+                          'Title', 
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        CustomTextField(
+                          controller: _excerptController,
+                          placeholder: 'Enter title',
+                        ),
+                        const SizedBox(height: 16),
+
+                        Text(
+                          'Excerpt', 
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        CustomTextField(
+                          controller: _titleController,
+                          placeholder: 'Short summary (optional)',
+                          maxLines: 3,
+                        ),
+                        const SizedBox(height: 16),
+
+                        Text(
+                          'Content', 
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        CustomRichTextField(controller: _quillController, focusNode: _editorFocusNode,),
                         const SizedBox(height: 32),
                         ElevatedButton(
                           onPressed: state is CreateBlogLoading ? null : () => _submitBlog(context.read<CreateBlogCubit>()),
@@ -135,90 +187,6 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
           )
         ),
       ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w700,
-        color: Colors.black87,
-      ),
-    );
-  }
-
-  Widget _buildTextField(TextEditingController controller, String hint,
-    {int maxLines = 1, bool required = true}) {
-    return TextFormField(
-      controller: controller,
-      maxLines: maxLines,
-      decoration: InputDecoration(
-        hintText: hint,
-        filled: true,
-        fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.shade300),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.shade300),
-        ),
-      ),
-      validator: (value) {
-        if (required && (value == null || value.trim().isEmpty)) {
-          return 'This field is required';
-        }
-        return null;
-      },
-    );
-  }
-
-
-  Widget _buildRichEditor() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: QuillSimpleToolbar(
-            controller: _quillController,
-            config: const QuillSimpleToolbarConfig(
-              showUndo: true,
-              showRedo: true,
-              multiRowsDisplay: false,
-              toolbarIconAlignment: WrapAlignment.start,
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          height: 300,
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: QuillEditor.basic(
-            controller: _quillController,
-            config: const QuillEditorConfig(
-              placeholder: 'Write your blog content here...',
-              autoFocus: false,
-              expands: false,
-              scrollable: true,
-              padding: EdgeInsets.zero,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
