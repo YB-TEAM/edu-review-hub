@@ -12,6 +12,7 @@ class BlogCardHorizontal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('Rendering BlogCardVertical $index');
     return GestureDetector(
       onTap: onTap,
       child: Container(

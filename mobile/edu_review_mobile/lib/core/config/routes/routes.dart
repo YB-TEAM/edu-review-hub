@@ -1,4 +1,5 @@
 import 'package:edu_review_mobile/features/auth/presentation/pages/verify_email.dart';
+import 'package:edu_review_mobile/features/blog/presentation/pages/create_blog.page.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/pages/profile.page.dart';
 import 'package:edu_review_mobile/features/main_screen.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/pages/profile_detail.page.dart';
@@ -78,6 +79,12 @@ class AppRouter {
         return MaterialPageRoute(
           settings: settings,
           builder: (_) => const EditProfilePage(),
+        );
+      
+      case RouteConstant.createBlog:
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => const CreateBlogPage(),
         );
 
       case RouteConstant.verifyEmail:

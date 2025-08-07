@@ -6,7 +6,7 @@ import 'package:edu_review_mobile/common_libs.dart';
 import 'package:edu_review_mobile/features/auth/data/models/verify_email_params.dart';
 import 'package:edu_review_mobile/features/auth/domain/usecases/resend_verification.dart';
 import 'package:edu_review_mobile/features/auth/domain/usecases/verify_email.dart';
-import 'package:edu_review_mobile/features/auth/presentation/bloc/resend_verification.dart';
+import 'package:edu_review_mobile/features/auth/presentation/bloc/resend_verification_cubit.dart';
 import 'package:edu_review_mobile/features/auth/presentation/bloc/verify_email_cubit.dart';
 import 'package:edu_review_mobile/service_locator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

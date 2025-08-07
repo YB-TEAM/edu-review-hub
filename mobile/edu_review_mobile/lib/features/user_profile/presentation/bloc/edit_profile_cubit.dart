@@ -27,7 +27,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     var result = await sl<EditProfileUseCase>().call(editModel);
     result.fold(
       (error) {
-        emit(EditProfileFailure(errorMessage: error));
+        emit(EditProfileFailure(errorMessage: error.message));
       },
       (data) {
         emit(EditProfileSuccess(profileEntity: data));

@@ -22,6 +22,11 @@ class _BlogPageState extends State<BlogPage> {
     super.dispose();
   }
 
+  void _navigateToCreateBlog() {
+    Navigator.of(context, rootNavigator: true).pushNamed(RouteConstant.createBlog);
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final statusBarHeight = MediaQuery.of(context).padding.top;
@@ -41,8 +46,14 @@ class _BlogPageState extends State<BlogPage> {
               statusBarHeight: statusBarHeight,
             ),
           ),
-          _buildBlogContent(),
+          _buildBlogContent()
         ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'create_blog_fab',
+        onPressed: _navigateToCreateBlog,
+        icon: const Icon(Icons.edit),
+        label: const Text('Create Blog'),
       ),
     );
   }
