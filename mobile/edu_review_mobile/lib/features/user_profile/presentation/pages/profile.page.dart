@@ -7,6 +7,8 @@ import 'package:edu_review_mobile/common_libs.dart';
 import 'package:edu_review_mobile/core/utils/date_formatted.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user_display_cubit.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user_display_state.dart';
+import 'package:edu_review_mobile/features/user_profile/presentation/pages/blog_detail.page.dart';
+import 'package:edu_review_mobile/features/user_profile/presentation/widgets/blog_card.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/widgets/cover_photo.widget.dart';
@@ -180,7 +182,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               ],
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 8),
                           Column(
                             children: [
                               AccountInfoWidget(
@@ -192,7 +194,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     state.profileEntity.graduationYear,
                                 onSeeMorePressed: () => _navigateToDetailProfile(context, state.profileEntity),
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 8),
                               AchievementsWidget(
                                 posts: 25,
                                 likes: 150,
@@ -201,6 +203,42 @@ class _ProfilePageState extends State<ProfilePage> {
                                 totalPoints: 1000,
                               ),
                               const SizedBox(height: 24),
+                              if (state.blogs.isNotEmpty) ...[
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      "My Blogs",
+                                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: state.blogs.length,
+                                  itemBuilder: (context, index) {
+                                    final blog = state.blogs[index];
+                                    return BlogCard(
+                                      blog: blog,
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => BlogDetailPage(blog: blog),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                              ] else ...[
+                                const Text("No blog posts available."),
+                              ],
                             ],
                           ),
                         ],

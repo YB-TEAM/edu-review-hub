@@ -16,4 +16,5 @@ class ApiUrls {
 
   //Blog URLs
   static const createBlog = "${baseURL}blogs";
+  static const getMyBlog = "${baseURL}blogs/my";
 }
