@@ -1,12 +1,12 @@
 import 'package:edu_review_mobile/common/bloc/button/button_state.dart';
 import 'package:edu_review_mobile/common/bloc/button/button_state_cubit.dart';
-import 'package:edu_review_mobile/common/constants/app_default_images.dart';
 import 'package:edu_review_mobile/common/widgets/button/primary_button.dart';
 import 'package:edu_review_mobile/common/widgets/loading/custom_loading_indicator.dart';
 import 'package:edu_review_mobile/common_libs.dart';
 import 'package:edu_review_mobile/core/utils/date_formatted.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user_display_cubit.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user_display_state.dart';
+import 'package:edu_review_mobile/features/user_profile/presentation/widgets/blog_list.widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/widgets/cover_photo.widget.dart';
@@ -63,7 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
       child: BlocListener<ButtonStateCubit, ButtonState>(
         listener: (context, state) {},
         child: Scaffold(
-          backgroundColor: AppColors.backgroundGrey,
+          backgroundColor: AppColors.backgroundDarkGrey,
           body: Stack(
             children: [
               BlocBuilder<UserDisplayCubit, UserDisplayState>(
@@ -180,7 +180,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               ],
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 4),
                           Column(
                             children: [
                               AccountInfoWidget(
@@ -192,7 +192,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     state.profileEntity.graduationYear,
                                 onSeeMorePressed: () => _navigateToDetailProfile(context, state.profileEntity),
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 4),
                               AchievementsWidget(
                                 posts: 25,
                                 likes: 150,
@@ -200,7 +200,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                 level: 5,
                                 totalPoints: 1000,
                               ),
-                              const SizedBox(height: 24),
+                              const SizedBox(height: 4),
+                              if (state.blogs.isNotEmpty) ...[
+                                MyBlogList(blogs: state.blogs),
+                              ] else ...[
+                                const Text("No blog posts available."),
+                              ],
                             ],
                           ),
                         ],

@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:edu_review_mobile/core/error/failures.dart';
 import 'package:edu_review_mobile/core/usecases/usecase.dart';
 import 'package:edu_review_mobile/features/user_profile/data/models/edit_profile.dart';
 import 'package:edu_review_mobile/features/user_profile/domain/entities/profile.dart';
@@ -6,17 +7,17 @@ import 'package:edu_review_mobile/features/user_profile/domain/repository/profil
 import 'package:edu_review_mobile/service_locator.dart';
 
 class EditProfileUseCase
-    implements UseCase<Either<String, ProfileEntity>, EditProfileModel> {
+    implements UseCase<Either<Failure, ProfileEntity>, EditProfileModel> {
   @override
-  Future<Either<String, ProfileEntity>> call(EditProfileModel editModel) async {
+  Future<Either<Failure, ProfileEntity>> call(EditProfileModel editModel) async {
     try {
       final result = await sl<ProfileRepository>().editProfile(editModel);
       return result.fold(
-        (failure) => Left(failure.toString()),
+        (failure) => Left(failure),
         (profile) => Right(profile),
       );
     } catch (e) {
-      return Left(e.toString());
+      return Left(ServerFailure(message: e.toString()));
     }
   }
 }

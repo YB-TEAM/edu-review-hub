@@ -84,20 +84,17 @@ class _AchievementsWidgetState extends State<AchievementsWidget>
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 20,
-                  horizontal: 16,
-                ),
-                child: Column(
-                  children: [
-                    _buildTabBar(context),
-                    const SizedBox(height: 20),
-                    _buildTabContent(context),
-                  ],
-                ),
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                vertical: 20,
+                horizontal: 16,
+              ),
+              child: Column(
+                children: [
+                  _buildTabBar(context),
+                  const SizedBox(height: 20),
+                  _buildTabContent(context),
+                ],
               ),
             ),
           ),
