@@ -1,5 +1,6 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:edu_review_mobile/core/network/dio_client.dart';
+import 'package:edu_review_mobile/core/services/image_uploader_service.dart';
 import 'package:edu_review_mobile/features/auth/data/data_sources/local/auth_local_service.dart';
 import 'package:edu_review_mobile/features/auth/data/data_sources/remote/auth_api_service.dart';
 import 'package:edu_review_mobile/features/auth/data/repository/auth_repository_imp.dart';
@@ -41,6 +42,7 @@ void setUpServiceLocator() {
   sl.registerSingleton<SettingsLocalService>(SettingsLocalServiceImpl());
   sl.registerSingleton<SettingsApiService>(SettingsApiServiceImpl());
   sl.registerSingleton<BlogApiService>(BlogApiServiceImpl());
+   sl.registerLazySingleton<UploadImageApiService>(() => UploadImageApiServiceImpl());
 
 
   // Repositories
