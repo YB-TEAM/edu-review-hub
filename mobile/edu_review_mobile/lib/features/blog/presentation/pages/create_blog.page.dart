@@ -37,9 +37,6 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
   String? _uploadedImageUrl;
   bool _isUploadingImage = false;
 
-  String? _uploadedImageUrl;
-  bool _isUploadingImage = false;
-
   @override
   void initState() {
     super.initState();
@@ -244,6 +241,14 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
                               return 'Title cannot exceed 255 characters';
                             }
                             return null; // hợp lệ
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        _buildLabel('Tags', context),
+                        const SizedBox(height: 8),
+                        CustomTagMultiSelect(
+                          onTagsSelected: (ids) {
+                            _selectedTagIds = ids;
                           },
                         ),
                         const SizedBox(height: 16),
