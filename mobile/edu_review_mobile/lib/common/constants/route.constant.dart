@@ -9,4 +9,5 @@ class RouteConstant {
   static const String verifyEmail = '/verify_email';
 
   static const String createBlog = '/create_blog';
+  static const String myBlogDetail = '/my_blog_detail';
 }

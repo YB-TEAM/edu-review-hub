@@ -9,6 +9,7 @@ import 'package:edu_review_mobile/features/blog/presentation/bloc/create_blog_cu
 import 'package:edu_review_mobile/features/blog/presentation/bloc/create_blog_state.dart';
 import 'package:edu_review_mobile/features/blog/presentation/widgets/richtext_editor.widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markdown_quill/markdown_quill.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 
@@ -157,26 +158,59 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
                         ),
                         const SizedBox(height: 8),
                         CustomRichTextField(controller: _quillController, focusNode: _editorFocusNode,),
-                        const SizedBox(height: 32),
-                        ElevatedButton(
-                          onPressed: state is CreateBlogLoading ? null : () => _submitBlog(context.read<CreateBlogCubit>()),
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            backgroundColor: Colors.blueAccent,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: state is CreateBlogLoading
-                              ? const SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          width: double.infinity,
+                          child: BlocBuilder<CreateBlogCubit, CreateBlogState>(
+                            builder: (context, state) {
+                              final isLoading = state is CreateBlogLoading;
+                              return ElevatedButton(
+                                onPressed: isLoading
+                                        ? null
+                                        : () => _submitBlog(context.read<CreateBlogCubit>()),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primaryBlue,
+                                  minimumSize: const Size(double.infinity, 48),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
-                                )
-                              : const Text('Publish Blog', style: TextStyle(fontSize: 16)),
+                                ),
+                                child:
+                                    isLoading
+                                        ? const SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<
+                                                  Color
+                                                >(Colors.white),
+                                          ),
+                                        )
+                                        : Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              'Save',
+                                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                              color:AppColors.primaryWhite,
+                                              fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            SvgPicture.asset("assets/icons/ic_send.svg",
+                                              colorBlendMode: BlendMode.srcIn,
+                                              color: AppColors.primaryWhite,
+                                              width: 20,
+                                              height: 20,
+                                            ),
+                                          ],
+                                        ),
+                              );
+                            }
+                          ),
                         ),
                       ],
                     ),

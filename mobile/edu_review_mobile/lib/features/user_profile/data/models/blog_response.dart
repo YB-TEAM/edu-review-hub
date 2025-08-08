@@ -14,14 +14,14 @@ class BlogResponse {
   final bool? isLiked;
   final int commentCount;
   final List<BlogTag>? tags;
-  final DateTime? publishedAt;
-  final DateTime? moderatedAt;
+  final String? publishedAt;
+  final String? moderatedAt;
   final int authorId;
   final String? authorName;
   final int? moderatorId;
   final String? moderatorName;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String createdAt;
+  final String updatedAt;
 
   BlogResponse({
     required this.id,
@@ -70,18 +70,14 @@ class BlogResponse {
       tags: json['tags'] != null
           ? (json['tags'] as List).map((e) => BlogTag.fromJson(e)).toList()
           : null,
-      publishedAt: json['publishedAt'] != null
-          ? DateTime.parse(json['publishedAt'])
-          : null,
-      moderatedAt: json['moderatedAt'] != null
-          ? DateTime.parse(json['moderatedAt'])
-          : null,
+      publishedAt: json['publishedAt'],
+      moderatedAt: json['moderatedAt'],
       authorId: json['authorId'],
       authorName: json['authorName'],
       moderatorId: json['moderatorId'],
       moderatorName: json['moderatorName'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
     );
   }
 }
