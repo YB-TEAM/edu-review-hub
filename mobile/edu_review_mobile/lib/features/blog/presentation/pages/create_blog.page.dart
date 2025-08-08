@@ -37,6 +37,9 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
   String? _uploadedImageUrl;
   bool _isUploadingImage = false;
 
+  String? _uploadedImageUrl;
+  bool _isUploadingImage = false;
+
   @override
   void initState() {
     super.initState();
@@ -63,7 +66,6 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
       _showSnackBar('Content must be at least 10 characters');
       return;
     }
-
 
     final markdownContent =
         DeltaToMarkdown().convert(_quillController.document.toDelta());
