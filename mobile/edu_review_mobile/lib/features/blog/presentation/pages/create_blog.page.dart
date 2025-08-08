@@ -9,6 +9,7 @@ import 'package:edu_review_mobile/core/services/image_uploader_service.dart';
 import 'package:edu_review_mobile/features/blog/data/models/blog_params.dart';
 import 'package:edu_review_mobile/features/blog/presentation/bloc/create_blog_cubit.dart';
 import 'package:edu_review_mobile/features/blog/presentation/bloc/create_blog_state.dart';
+import 'package:edu_review_mobile/features/blog/presentation/widgets/custom_tag_multi_select.widget.dart';
 import 'package:edu_review_mobile/features/blog/presentation/widgets/richtext_editor.widget.dart';
 import 'package:edu_review_mobile/service_locator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,6 +31,7 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
   final _formKey = GlobalKey<FormState>();
   late QuillController _quillController;
   late final FocusNode _editorFocusNode;
+  List<int> _selectedTagIds = [];
 
   String? _uploadedImageUrl;
   bool _isUploadingImage = false;
@@ -52,6 +54,11 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
 
   void _submitBlog(CreateBlogCubit cubit) {
     if (!_formKey.currentState!.validate()) return;
+    if (_selectedTagIds.isEmpty) {
+      _showSnackBar("Please select at least one tag");
+      return;
+    }
+
 
     final markdownContent =
         DeltaToMarkdown().convert(_quillController.document.toDelta());
@@ -63,6 +70,7 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
       content: markdownContent,
       category: 'other',
       excerpt: excerptText.isEmpty ? null : excerptText,
+      tagIds: _selectedTagIds,
     );
 
     cubit.createBlog(blogParams);
@@ -169,6 +177,14 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
                         CustomTextField(
                           controller: _titleController,
                           placeholder: 'Enter title',
+                        ),
+                        const SizedBox(height: 16),
+                        _buildLabel('Tags', context),
+                        const SizedBox(height: 8),
+                        CustomTagMultiSelect(
+                          onTagsSelected: (ids) {
+                            _selectedTagIds = ids;
+                          },
                         ),
                         const SizedBox(height: 16),
                         _buildLabel('Excerpt', context),

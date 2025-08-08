@@ -20,4 +20,7 @@ class ApiUrls {
 
   //Upload
   static const uploadImage = "${baseURL}upload/image";
+
+  //Tag
+  static const getTags = "${baseURL}tags";
 }

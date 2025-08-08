@@ -6,7 +6,7 @@ class UploadImageResponse {
   final int height;
   final String format;
   final int bytes;
-  final DateTime createdAt;
+  final String createdAt;
 
   UploadImageResponse({
     required this.publicId,
@@ -28,7 +28,7 @@ class UploadImageResponse {
       height: map['height'] ?? 0,
       format: map['format'] ?? '',
       bytes: map['bytes'] ?? 0,
-      createdAt: DateTime.parse(map['createdAt']),
+      createdAt: map['createdAt'],
     );
   }
 }

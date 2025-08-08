@@ -203,9 +203,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               const SizedBox(height: 4),
                               if (state.blogs.isNotEmpty) ...[
                                 MyBlogList(blogs: state.blogs),
-                              ] else ...[
-                                const Text("No blog posts available."),
-                              ],
+                              ]
                             ],
                           ),
                         ],
