@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/lib/store";
-import { useGetCurrentUserQuery } from "@/lib/services/authApi";
+import { useGetCurrentUserQuery } from "@/lib/services";
 
 export interface UserProfile {
   id: string;
@@ -34,10 +34,16 @@ export interface UserProfile {
 
 export function useUserProfile() {
   const dispatch = useDispatch();
-  const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
-  
+  const { isAuthenticated, user } = useSelector(
+    (state: RootState) => state.auth
+  );
+
   // Fetch current user data if authenticated
-  const { data: currentUser, isLoading, error } = useGetCurrentUserQuery(undefined, {
+  const {
+    data: currentUser,
+    isLoading,
+    error,
+  } = useGetCurrentUserQuery(undefined, {
     skip: !isAuthenticated,
   });
 

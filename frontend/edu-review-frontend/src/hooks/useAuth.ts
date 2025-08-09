@@ -4,7 +4,7 @@ import {
   useRegisterMutation,
   useLogoutMutation,
   useGetCurrentUserQuery,
-} from "@/lib/services/authApi";
+} from "@/lib/services";
 import {
   setAuth,
   logout as logoutAction,
@@ -29,7 +29,9 @@ export const useAuth = () => {
     isLoading: isUserLoading,
     error: userError,
   } = useGetCurrentUserQuery(undefined, {
-    skip: !isAuthenticated && !localStorage.getItem("accessToken"),
+    skip:
+      !isAuthenticated &&
+      !(typeof window !== "undefined" && localStorage.getItem("accessToken")),
   });
 
   // Khôi phục authentication state từ localStorage khi component mount
@@ -111,6 +113,7 @@ export const useAuth = () => {
     isAuthenticated:
       isAuthenticated ||
       !!(
+        typeof window !== "undefined" &&
         localStorage.getItem("accessToken") &&
         localStorage.getItem("refreshToken")
       ),

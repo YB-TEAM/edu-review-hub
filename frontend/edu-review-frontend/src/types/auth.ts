@@ -68,7 +68,7 @@ export interface AuthResponse {
 }
 
 export interface LoginRequest {
-  identifier: string; // email or username
+  identifier: string;
   password: string;
   deviceId?: string;
 }

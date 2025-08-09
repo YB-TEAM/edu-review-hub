@@ -1,6 +1,7 @@
 "use client";
 import { useAuth } from "@/hooks/useAuth";
-import { useUpdateProfileMutation, useGetCurrentUserQuery } from "@/lib/services/authApi";
+import { useUpdateProfileMutation, useGetCurrentUserQuery } from "@/lib/services";
+import type { UserProfile } from "@/types/profile";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/sonner";
