@@ -17,7 +17,6 @@ import { UserRole } from "@/infrastructure/database/entities/user.entity";
 import { IUniversityReviewCriterionService } from "@/application/services/university-review-criterion.service.interface";
 import { ApiTags, ApiBearerAuth, ApiBody } from "@nestjs/swagger";
 
-@ApiTags("University Review Criterion")
 @Controller("university-review-criteria")
 export class UniversityReviewCriterionController {
   constructor(
@@ -26,11 +25,13 @@ export class UniversityReviewCriterionController {
   ) {}
 
   @Get()
+  @ApiTags("Review - Public")
   async getAll() {
     return this.criterionService.findAll();
   }
 
   @Post()
+  @ApiTags("Review - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.SUPER_ADMIN)
   @ApiBearerAuth("JWT-auth")
@@ -47,6 +48,7 @@ export class UniversityReviewCriterionController {
   }
 
   @Patch(":id")
+  @ApiTags("Review - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.SUPER_ADMIN)
   @ApiBearerAuth("JWT-auth")
@@ -64,6 +66,7 @@ export class UniversityReviewCriterionController {
   }
 
   @Delete(":id")
+  @ApiTags("Review - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.SUPER_ADMIN)
   @ApiBearerAuth("JWT-auth")

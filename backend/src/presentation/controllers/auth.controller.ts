@@ -28,13 +28,13 @@ import { LocalAuthGuard } from "@/presentation/guards/local-auth.guard";
 import { JwtAuthGuard } from "@/presentation/guards/jwt-auth.guard";
 
 @Controller("auth")
-@ApiTags("Authentication")
 export class AuthController {
   constructor(
     @Inject("IAuthService") private readonly authService: IAuthService
   ) {}
 
   @Post("register")
+  @ApiTags("Auth - Public")
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: "Register new user",
@@ -72,6 +72,7 @@ export class AuthController {
   }
 
   @Post("login")
+  @ApiTags("Auth - Public")
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: "Login user",
@@ -140,6 +141,7 @@ export class AuthController {
   }
 
   @Post("refresh")
+  @ApiTags("Auth - Public")
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: "Refresh access token",
@@ -165,6 +167,7 @@ export class AuthController {
   }
 
   @Post("logout")
+  @ApiTags("Auth - User")
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth("JWT-auth")

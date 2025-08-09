@@ -1,199 +1,441 @@
-# University Data Crawler System
+# 🎓 University Review Hub - Hệ thống Đánh giá và Gợi ý Trường Đại học
 
-Hệ thống crawl thông tin các trường đại học tại Việt Nam từ nhiều nguồn khác nhau.
+Một nền tảng toàn diện giúp học sinh, sinh viên đánh giá, chia sẻ kinh nghiệm và nhận gợi ý trường đại học phù hợp tại Việt Nam.
 
-## 🎯 Tính năng chính
+## 🌟 Tổng quan Dự án
 
-### 1. Crawler Cơ bản (`crawl_data.py`)
-- ✅ Crawl từ Wikipedia (TP.HCM và Hà Nội)
-- ✅ Crawl từ website Bộ GD&ĐT
-- ✅ Crawl từ education.vn
-- ✅ Lưu dữ liệu dạng JSON và CSV
-- ✅ Loại bỏ trùng lặp tự động
+**University Review Hub** là một hệ sinh thái hoàn chỉnh bao gồm:
+- **Backend API**: NestJS với TypeORM và PostgreSQL
+- **Frontend Web**: Next.js với React và TypeScript  
+- **Mobile App**: Flutter đa nền tảng (iOS, Android, Web)
+- **Data Crawler**: Python scripts thu thập dữ liệu trường đại học
+- **Database**: PostgreSQL với schema tối ưu cho review và recommendation
 
-### 2. Crawler Nâng cao (`advanced_crawler.py`)
-- ✅ Tất cả tính năng của crawler cơ bản
-- ✅ Crawl từ nhiều nguồn bổ sung
-- ✅ Làm giàu dữ liệu tự động:
-  - Phân loại trường theo ngành
-  - Chuẩn hóa tên trường
-  - Thêm timestamp
-- ✅ Tạo báo cáo chi tiết
-- ✅ Lưu dữ liệu có timestamp
+## 🏗️ Kiến trúc Hệ thống
 
-### 3. Crawler Tổng hợp (`combined_crawler.py`)
-- ✅ Kết hợp dữ liệu từ nhiều nguồn
-- ✅ Phân loại trường chi tiết hơn
-- ✅ Thống kê toàn diện
-- ✅ Xuất dữ liệu đa định dạng
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Frontend Web  │    │   Mobile App    │    │   Admin Panel   │
+│    (Next.js)    │    │   (Flutter)     │    │    (React)      │
+└─────────┬───────┘    └─────────┬───────┘    └─────────┬───────┘
+          │                      │                      │
+          └──────────────────────┼──────────────────────┘
+                                 │
+                    ┌─────────────┴───────────┐
+                    │      Backend API        │
+                    │      (NestJS)           │
+                    │                         │
+                    │  ┌─────────────────┐   │
+                    │  │   Domain Layer  │   │
+                    │  │ ┌─────────────┐ │   │
+                    │  │ │ Application │ │   │
+                    │  │ │   Services  │ │   │
+                    │  │ └─────────────┘ │   │
+                    │  └─────────────────┘   │
+                    │                         │
+                    │  ┌─────────────────┐   │
+                    │  │Infrastructure  │   │
+                    │  │    Layer       │   │
+                    │  └─────────────────┘   │
+                    └─────────┬───────────────┘
+                              │
+                    ┌─────────┴───────────┐
+                    │   PostgreSQL DB     │
+                    │                     │
+                    │  ┌─────────────┐   │
+                    │  │ Universities│   │
+                    │  │   Reviews   │   │
+                    │  │    Users    │   │
+                    │  │ Personality │   │
+                    │  │ Assessments │   │
+                    │  └─────────────┘   │
+                    └─────────────────────┘
+```
 
-## 📊 Kết quả đạt được
+## ✨ Tính năng Chính
 
-### Dữ liệu đã crawl được:
-- **108 trường đại học** từ nhiều nguồn
-- **Phân loại theo ngành**: Kỹ thuật, Kinh tế, Y tế, Sư phạm, Luật, Ngoại ngữ, Đa ngành
-- **Phân bố địa lý**: Hà Nội (105 trường), TP.HCM (3 trường)
+### 👥 Quản lý Người dùng
+- ✅ Đăng ký, xác thực và quản lý hồ sơ
+- ✅ Xác minh email và bảo mật 2FA
+- ✅ Phân quyền: Student, University Rep, Admin, Moderator
+- ✅ Social login (Google, Facebook)
 
-### Thống kê chi tiết:
-- **Kỹ thuật**: 6 trường
-- **Kinh tế**: 2 trường  
-- **Y tế**: 11 trường
-- **Luật**: 2 trường
-- **Sư phạm**: 1 trường
-- **Đa ngành**: 86 trường
+### 🏫 Hệ thống Đánh giá Trường Đại học
+- ✅ Đánh giá đa tiêu chí (1-5 sao)
+- ✅ Review chi tiết với hình ảnh
+- ✅ Xác minh tình trạng sinh viên
+- ✅ Báo cáo nội dung không phù hợp
+- ✅ Lọc và tìm kiếm review
 
-## 🚀 Cài đặt và sử dụng
+### 📝 Nền tảng Blog & Tâm sự
+- ✅ Blog chia sẻ trải nghiệm đại học
+- ✅ Tâm sự ẩn danh
+- ✅ Hệ thống bình luận và phản ứng
+- ✅ Chia sẻ mạng xã hội
+- ✅ Phân loại nội dung
 
-### 1. Cài đặt dependencies
+### 🧠 Đánh giá Tính cách & Gợi ý
+- ✅ Bài trắc nghiệm tính cách MBTI
+- ✅ Đánh giá phong cách học tập
+- ✅ Gợi ý trường phù hợp với tính cách
+- ✅ So sánh và xếp hạng đề xuất
+- ✅ Báo cáo hồ sơ cá nhân
+
+### 🔍 Tìm kiếm & Khám phá
+- ✅ Tìm kiếm nâng cao với bộ lọc
+- ✅ So sánh trường đại học
+- ✅ Bản đồ tương tác
+- ✅ Thông tin chi tiết trường
+
+### 🤖 Thu thập Dữ liệu Tự động
+- ✅ Crawler đa nguồn (Wikipedia, MOET, education.vn)
+- ✅ Làm giàu dữ liệu tự động
+- ✅ Phân loại và chuẩn hóa
+- ✅ Báo cáo chi tiết
+
+## 🚀 Cài đặt và Chạy Dự án
+
+### Yêu cầu Hệ thống
+- **Node.js**: >= 18.x
+- **Python**: >= 3.8
+- **PostgreSQL**: >= 13
+- **Flutter**: >= 3.0 (cho mobile)
+- **Docker**: (tùy chọn)
+
+### 1. Setup Database
 ```bash
-pip install requests beautifulsoup4 pandas lxml
+# Tạo database PostgreSQL
+createdb university_review_hub
+
+# Hoặc sử dụng Docker
+docker run --name postgres-db -e POSTGRES_DB=university_review_hub -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres:13
 ```
 
-### 2. Chạy các script
-
-#### Crawler cơ bản:
+### 2. Backend Setup (NestJS)
 ```bash
-python crawl_data.py
+cd backend
+
+# Cài đặt dependencies
+npm install
+
+# Copy environment file
+cp env.example .env
+# Cấu hình database connection trong .env
+
+# Chạy migrations
+npm run migration:run
+
+# Seed dữ liệu mẫu
+npm run seed
+
+# Chạy development server
+npm run start:dev
 ```
 
-#### Crawler nâng cao:
+Backend API sẽ chạy tại: `http://localhost:3000`
+Swagger Documentation: `http://localhost:3000/api`
+
+### 3. Frontend Setup (Next.js)
 ```bash
-python advanced_crawler.py
+cd frontend/edu-review-frontend
+
+# Cài đặt dependencies
+npm install
+
+# Copy environment file
+cp .env.example .env.local
+# Cấu hình API endpoint
+
+# Chạy development server
+npm run dev
 ```
 
-#### Crawler tổng hợp:
+Frontend sẽ chạy tại: `http://localhost:3001`
+
+### 4. Mobile App Setup (Flutter)
 ```bash
-python combined_crawler.py
+cd mobile/edu_review_mobile
+
+# Cài đặt dependencies
+flutter pub get
+
+# Chạy trên emulator/device
+flutter run
+
+# Build cho production
+flutter build apk  # Android
+flutter build ios  # iOS
 ```
 
-## 📁 Cấu trúc dữ liệu
+### 5. Data Crawler Setup (Python)
+```bash
+# Cài đặt Python dependencies
+pip install -r requirements.txt
 
-Mỗi trường đại học có thông tin:
+# Chạy enhanced crawler
+python enhanced_crawler.py
 
-```json
-{
-  "name": "Tên trường đại học",
-  "address": "Địa chỉ (nếu có)",
-  "website": "Website (nếu có)",
-  "type": "Loại trường",
-  "location": "Địa điểm",
-  "source": "Nguồn dữ liệu",
-  "category": "Phân loại ngành",
-  "normalized_name": "Tên đã chuẩn hóa",
-  "crawled_at": "Thời gian crawl"
-}
+# Chạy comprehensive crawler
+python comprehensive_crawler.py
+
+# Validate dữ liệu
+python schema_validator.py
 ```
 
-## 📂 Output Files
+## 📊 Cơ sở Dữ liệu
 
-### Crawler Cơ bản
-- `universities.json` - Dữ liệu JSON
-- `universities.csv` - Dữ liệu CSV
+### Schema Chính
+- **Users**: Quản lý người dùng và xác thực
+- **Universities**: Thông tin trường đại học
+- **Reviews**: Đánh giá và nhận xét
+- **Personality Assessments**: Kết quả trắc nghiệm tính cách
+- **Blog Posts**: Bài viết và tâm sự
+- **Recommendations**: Gợi ý trường phù hợp
 
-### Crawler Nâng cao
-- `crawled_data/universities_[timestamp].json`
-- `crawled_data/universities_[timestamp].csv`
-- `crawled_data/report_[timestamp].json`
+### Migrations và Seeding
+```bash
+# Tạo migration mới
+npm run migration:generate -- MigrationName
 
-### Crawler Tổng hợp
-- `combined_universities_[timestamp].json`
-- `combined_universities_[timestamp].csv`
+# Chạy migrations
+npm run migration:run
 
-## 🔍 Nguồn dữ liệu
+# Rollback migration
+npm run migration:revert
 
-### Đã crawl thành công:
-1. **Wikipedia Hà Nội**: 104 trường đại học
-2. **Dữ liệu thủ công**: 5 trường đại học lớn
+# Seed dữ liệu
+npm run seed
+```
 
-### Đang phát triển:
-- Website Bộ GD&ĐT
-- Các portal tuyển sinh
-- Website giáo dục khác
+## 🛠️ API Documentation
 
-## 🛠️ Tính năng kỹ thuật
+### Authentication Endpoints
+```
+POST /auth/register          # Đăng ký
+POST /auth/login            # Đăng nhập
+POST /auth/refresh          # Refresh token
+POST /auth/forgot-password  # Quên mật khẩu
+```
 
-### Error Handling
-- Xử lý lỗi cho từng nguồn riêng biệt
-- Logging chi tiết
-- Graceful degradation
+### University Endpoints
+```
+GET    /universities         # Lấy danh sách trường
+GET    /universities/:id     # Chi tiết trường
+POST   /universities/:id/reviews  # Tạo review
+GET    /universities/:id/reviews  # Lấy reviews
+```
 
-### Data Processing
-- Loại bỏ trùng lặp tự động
-- Chuẩn hóa dữ liệu
-- Phân loại thông minh
+### Personality Assessment
+```
+POST /assessments/personality     # Nộp bài trắc nghiệm
+GET  /assessments/personality/:id # Lấy kết quả
+POST /recommendations/generate    # Tạo gợi ý
+```
 
-### Performance
-- Rate limiting để tránh spam
-- Session management
-- Efficient data structures
+Chi tiết đầy đủ tại: `http://localhost:3000/api`
 
-## 📈 Phân loại trường
+## 🧪 Testing
 
-Hệ thống tự động phân loại trường theo:
+### Backend Testing
+```bash
+cd backend
 
-- **Kỹ thuật**: Bách khoa, Kỹ thuật, Công nghệ
-- **Kinh tế**: Kinh tế, Thương mại, Quản trị
-- **Y tế**: Y, Dược, Y tế
-- **Sư phạm**: Sư phạm, Giáo dục
-- **Luật**: Luật, Pháp
-- **Ngoại ngữ**: Ngoại ngữ, Ngôn ngữ
-- **Đa ngành**: Các trường khác
+# Unit tests
+npm run test
 
-## 🔧 Tùy chỉnh
+# E2E tests
+npm run test:e2e
 
-### Thêm nguồn mới
-1. Tạo method crawl mới trong class
-2. Thêm vào danh sách sources
-3. Test và validate
+# Coverage report
+npm run test:cov
+```
 
-### Thay đổi phân loại
-- Sửa logic trong `enrich_university_data()`
-- Thêm keywords mới
+### Frontend Testing
+```bash
+cd frontend/edu-review-frontend
 
-### Thay đổi output
-- Sửa các method save
-- Thêm format mới
+# Run tests
+npm run test
 
-## 🐛 Troubleshooting
+# E2E tests với Playwright
+npm run test:e2e
+```
 
-### Lỗi kết nối
-- Kiểm tra internet
-- Thử lại sau vài phút
-- Kiểm tra URL
+### Mobile Testing
+```bash
+cd mobile/edu_review_mobile
 
-### Lỗi parsing
-- Kiểm tra cấu trúc HTML
-- Cập nhật selector
-- Validate dữ liệu
+# Unit tests
+flutter test
 
-### Dữ liệu không đầy đủ
-- Website có thể thay đổi
-- Cần cập nhật script
-- Thêm nguồn mới
+# Integration tests
+flutter drive --target=test_driver/app.dart
+```
 
-## 📝 Lưu ý
+## 📱 Mobile App Features
 
-1. **Rate Limiting**: Script có delay giữa các request
-2. **Data Validation**: Loại bỏ dữ liệu không hợp lệ
-3. **Duplicate Removal**: Loại bỏ trùng lặp dựa trên tên
-4. **Error Recovery**: Xử lý lỗi cho từng nguồn
+### Đa nền tảng
+- **Android**: Hỗ trợ Android 6.0+
+- **iOS**: Hỗ trợ iOS 12.0+
+- **Web**: Progressive Web App (PWA)
+
+### Tính năng Mobile
+- 📱 Giao diện responsive và thân thiện
+- 🔔 Push notifications
+- 📷 Upload hình ảnh từ camera/gallery
+- 🗺️ Tích hợp bản đồ
+- 💾 Offline caching
+- 🔐 Biometric authentication
+
+## 🐳 Docker Deployment
+
+### Development với Docker Compose
+```bash
+# Build và chạy tất cả services
+docker-compose up -d
+
+# Chỉ chạy database
+docker-compose up -d postgres
+
+# View logs
+docker-compose logs -f backend
+```
+
+### Production Deployment
+```bash
+# Build production images
+docker build -t university-review-backend ./backend
+docker build -t university-review-frontend ./frontend
+
+# Deploy với docker-compose.prod.yml
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+## 📈 Performance & Monitoring
+
+### Backend Performance
+- **Response Time**: < 200ms average
+- **Database**: Connection pooling và query optimization
+- **Caching**: Redis cho session và frequently accessed data
+- **Rate Limiting**: API throttling
+
+### Monitoring Tools
+- **Health Checks**: `/health` endpoint
+- **Metrics**: Prometheus integration
+- **Logging**: Structured logging với Winston
+- **Error Tracking**: Sentry integration
+
+## 🔒 Security
+
+### Authentication & Authorization
+- JWT tokens với refresh mechanism
+- Role-based access control (RBAC)
+- Password hashing với bcrypt
+- Two-factor authentication (2FA)
+
+### Data Protection
+- Input validation và sanitization
+- SQL injection prevention
+- XSS protection
+- CORS configuration
+- Rate limiting
+
+## 🌐 Deployment
+
+### Backend (NestJS)
+```bash
+# Build production
+npm run build
+
+# Start production server
+npm run start:prod
+```
+
+### Frontend (Next.js)
+```bash
+# Build static export
+npm run build
+npm run export
+
+# Deploy to Vercel/Netlify
+vercel deploy
+```
+
+### Mobile App
+```bash
+# Android Release
+flutter build apk --release
+flutter build appbundle --release
+
+# iOS Release  
+flutter build ios --release
+```
 
 ## 🤝 Đóng góp
 
-Để cải thiện hệ thống:
-
+### Quy trình Development
 1. Fork repository
-2. Tạo branch mới
-3. Thêm tính năng
-4. Test kỹ lưỡng
-5. Submit pull request
+2. Tạo feature branch: `git checkout -b feature/new-feature`
+3. Commit changes: `git commit -m 'Add new feature'`
+4. Push to branch: `git push origin feature/new-feature`
+5. Tạo Pull Request
+
+### Code Standards
+- **Backend**: ESLint + Prettier
+- **Frontend**: ESLint + Prettier + TypeScript strict mode
+- **Mobile**: Dart analysis + Flutter lints
+- **Python**: Black + Flake8
+
+### Git Workflow
+```bash
+# Feature development
+git flow feature start new-feature
+git flow feature finish new-feature
+
+# Release
+git flow release start v1.1.0
+git flow release finish v1.1.0
+```
+
+## 📋 Roadmap
+
+### Phase 1 (Completed) ✅
+- [x] Hệ thống authentication cơ bản
+- [x] CRUD operations cho universities và reviews
+- [x] Data crawler và seeding
+- [x] Basic frontend UI
+
+### Phase 2 (In Progress) 🚧
+- [ ] Personality assessment system
+- [ ] Recommendation engine
+- [ ] Mobile app MVP
+- [ ] Advanced search và filtering
+
+### Phase 3 (Planned) 📅
+- [ ] AI-powered recommendations
+- [ ] Real-time notifications
+- [ ] Social features enhancement
+- [ ] Analytics dashboard
+
+## 📞 Liên hệ & Hỗ trợ
+
+- **Email**: support@universityhub.vn
+- **Documentation**: [Wiki](./docs/)
+- **Issues**: [GitHub Issues](https://github.com/your-repo/issues)
+- **Discord**: [Community Server](https://discord.gg/universityhub)
 
 ## 📄 License
 
-MIT License - Sử dụng tự do cho mục đích giáo dục và nghiên cứu.
+MIT License - Xem [LICENSE](./LICENSE) để biết thêm chi tiết.
 
 ---
 
-**Tác giả**: AI Assistant  
-**Ngày tạo**: 2025-08-03  
-**Phiên bản**: 1.0.0
+**Phiên bản**: 2.0.0  
+**Cập nhật cuối**: Tháng 1, 2025  
+**Tác giả**: University Review Hub Team
+
+### 🙏 Acknowledgments
+
+- Cảm ơn cộng đồng open source
+- Wikipedia và các nguồn dữ liệu công khai
+- Các contributor và beta testers

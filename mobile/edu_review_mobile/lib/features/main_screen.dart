@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:edu_review_mobile/features/blog/presentation/pages/blog.page.dart';
+import 'package:edu_review_mobile/features/chat/presentation/pages/chat.page.dart';
 import 'package:edu_review_mobile/features/settings/presentation/pages/settings.page.dart';
 import 'package:flutter/material.dart';
 import 'package:edu_review_mobile/features/dashboard/presentation/pages/dashboard.page.dart';
@@ -27,14 +28,6 @@ class NewsPage extends StatelessWidget {
   }
 }
 
-class ExplorePage extends StatelessWidget {
-  const ExplorePage({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text('Explore Page'));
-  }
-}
-
 class _MainScreenState extends State<MainScreen> {
   final List<PersistentTabConfig> _tabs = [
     PersistentTabConfig(
@@ -56,7 +49,7 @@ class _MainScreenState extends State<MainScreen> {
     PersistentTabConfig(
       screen: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light.copyWith(
-          statusBarColor: AppColors.primaryBlue,
+          statusBarColor: Colors.transparent,
           statusBarIconBrightness: Brightness.light,
           statusBarBrightness: Brightness.light,
         ),
@@ -92,7 +85,7 @@ class _MainScreenState extends State<MainScreen> {
           statusBarIconBrightness: Brightness.dark,
           statusBarBrightness: Brightness.light,
         ),
-        child: const ExplorePage(),
+        child: const SearchScreen(),
       ),
       item: ItemConfig(
         icon: const Icon(Icons.explore),

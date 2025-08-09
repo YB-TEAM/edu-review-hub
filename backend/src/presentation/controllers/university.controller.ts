@@ -41,7 +41,6 @@ import {
 } from "../../infrastructure/database/entities/university.entity";
 import { ReviewStatus } from "../../infrastructure/database/entities/university-review.entity";
 
-@ApiTags("Universities")
 @Controller("universities")
 export class UniversityController {
   constructor(
@@ -51,6 +50,7 @@ export class UniversityController {
 
   // Public APIs
   @Get()
+  @ApiTags("University - Public")
   @ApiOperation({ summary: "Get all universities with pagination" })
   @ApiQuery({
     name: "type",
@@ -104,6 +104,7 @@ export class UniversityController {
   }
 
   @Get("featured")
+  @ApiTags("University - Public")
   @ApiOperation({ summary: "Get featured universities" })
   @ApiResponse({ status: 200, description: "List of featured universities" })
   async getFeaturedUniversities() {
@@ -111,6 +112,7 @@ export class UniversityController {
   }
 
   @Get("top-rated")
+  @ApiTags("University - Public")
   @ApiOperation({ summary: "Get top rated universities" })
   @ApiQuery({ name: "limit", type: Number, required: false })
   @ApiResponse({ status: 200, description: "List of top rated universities" })
@@ -119,6 +121,7 @@ export class UniversityController {
   }
 
   @Get("search")
+  @ApiTags("University - Public")
   @ApiOperation({ summary: "Search universities" })
   @ApiQuery({ name: "q", type: String, required: true })
   @ApiResponse({ status: 200, description: "Search results" })
@@ -127,6 +130,7 @@ export class UniversityController {
   }
 
   @Get("statistics")
+  @ApiTags("University - Public")
   @ApiOperation({ summary: "Get university statistics" })
   @ApiResponse({ status: 200, description: "University statistics" })
   async getUniversityStatistics() {
@@ -134,6 +138,7 @@ export class UniversityController {
   }
 
   @Get(":id")
+  @ApiTags("University - Public")
   @ApiOperation({ summary: "Get university by ID" })
   @ApiParam({ name: "id", type: Number })
   @ApiResponse({ status: 200, description: "University details" })
@@ -143,6 +148,7 @@ export class UniversityController {
   }
 
   @Get(":id/reviews")
+  @ApiTags("University - Public")
   @ApiOperation({ summary: "Get university reviews" })
   @ApiParam({ name: "id", type: Number })
   @ApiQuery({ name: "status", enum: ReviewStatus, required: false })
@@ -157,6 +163,7 @@ export class UniversityController {
   }
 
   @Get(":id/statistics")
+  @ApiTags("University - Public")
   @ApiOperation({ summary: "Get university review statistics" })
   @ApiParam({ name: "id", type: Number })
   @ApiResponse({ status: 200, description: "Review statistics" })
@@ -165,6 +172,7 @@ export class UniversityController {
   }
 
   @Get(":id/analytics")
+  @ApiTags("University - Public")
   @ApiOperation({ summary: "Get university analytics" })
   @ApiParam({ name: "id", type: Number })
   @ApiResponse({ status: 200, description: "University analytics" })
@@ -174,6 +182,7 @@ export class UniversityController {
 
   // Protected APIs (require authentication)
   @Post(":id/reviews")
+  @ApiTags("University - User")
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: "Create university review" })
@@ -194,6 +203,7 @@ export class UniversityController {
   }
 
   @Put("reviews/:id")
+  @ApiTags("University - User")
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: "Update university review" })
@@ -210,6 +220,7 @@ export class UniversityController {
   }
 
   @Delete("reviews/:id")
+  @ApiTags("University - User")
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: "Delete university review" })
@@ -221,6 +232,7 @@ export class UniversityController {
   }
 
   @Get("recommendations")
+  @ApiTags("University - User")
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: "Get recommended universities" })
@@ -231,6 +243,7 @@ export class UniversityController {
 
   // Admin APIs
   @Post()
+  @ApiTags("University - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @RequirePermissions("university:create")
@@ -244,6 +257,7 @@ export class UniversityController {
   }
 
   @Put(":id")
+  @ApiTags("University - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @RequirePermissions("university:update")
@@ -261,6 +275,7 @@ export class UniversityController {
   }
 
   @Delete(":id")
+  @ApiTags("University - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @RequirePermissions("university:delete")
@@ -274,6 +289,7 @@ export class UniversityController {
   }
 
   @Put(":id/status")
+  @ApiTags("University - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @RequirePermissions("university:update")
@@ -290,6 +306,7 @@ export class UniversityController {
   }
 
   @Put(":id/feature")
+  @ApiTags("University - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @RequirePermissions("university:update")
@@ -306,6 +323,7 @@ export class UniversityController {
   }
 
   @Put(":id/verify")
+  @ApiTags("University - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @RequirePermissions("university:update")
@@ -322,6 +340,7 @@ export class UniversityController {
   }
 
   @Post("reviews/:id/moderate")
+  @ApiTags("University - Moderator", "University - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.MODERATOR, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @RequirePermissions("review:moderate")
@@ -339,6 +358,7 @@ export class UniversityController {
   }
 
   @Post(":id/upload-image")
+  @ApiTags("University - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @RequirePermissions("university:update")
@@ -364,6 +384,7 @@ export class UniversityController {
   }
 
   @Get(":id/report/:type")
+  @ApiTags("University - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @RequirePermissions("university:read")
@@ -380,6 +401,7 @@ export class UniversityController {
   }
 
   @Get(":id/insights")
+  @ApiTags("University - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @RequirePermissions("university:read")

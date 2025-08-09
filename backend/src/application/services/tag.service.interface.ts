@@ -10,6 +10,10 @@ export interface ITagService {
     userAgent?: string
   ): Promise<TagResponseDto>;
   findAll(): Promise<TagResponseDto[]>;
+  findAllPaginated(
+    pagination: { page?: number; limit?: number },
+    filters?: { search?: string }
+  ): Promise<{ data: TagResponseDto[]; metadata: any }>;
   findById(id: number): Promise<TagResponseDto>;
   update(
     id: number,

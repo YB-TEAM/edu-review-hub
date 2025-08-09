@@ -1,12 +1,7 @@
 import { CreateBlogDto } from "../dto/blog/create-blog.dto";
 import { UpdateBlogDto } from "../dto/blog/update-blog.dto";
 import { BlogResponseDto } from "@/application/dto/blog/blog-response.dto";
-import {
-  ModerateBlogDto,
-  ApproveBlogDto,
-  RejectBlogDto,
-  BanBlogDto,
-} from "../dto/blog/moderate-blog.dto";
+import { ApproveBlogDto, RejectBlogDto, BanBlogDto, UnbanBlogDto } from "../dto/blog/moderate-blog.dto";
 import { PaginationDto } from "../dto/pagination/pagination.dto";
 import {
   BlogStatus,
@@ -37,11 +32,6 @@ export interface IBlogService {
     userId: number
   ): Promise<BlogResponseDto>;
   delete(id: number, userId: number): Promise<void>;
-  moderate(
-    id: number,
-    moderatorId: number,
-    dto: ModerateBlogDto
-  ): Promise<BlogResponseDto>;
   // New specific moderation methods
   approve(
     id: number,
@@ -57,6 +47,11 @@ export interface IBlogService {
     id: number,
     moderatorId: number,
     dto: BanBlogDto
+  ): Promise<BlogResponseDto>;
+  unban(
+    id: number,
+    moderatorId: number,
+    dto: UnbanBlogDto
   ): Promise<BlogResponseDto>;
   publish(id: number, userId: number): Promise<BlogResponseDto>;
   like(

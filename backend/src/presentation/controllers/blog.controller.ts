@@ -24,13 +24,9 @@ import { IBlogService } from "@/application/services/blog.service.interface";
 import { CreateBlogDto } from "@/application/dto/blog/create-blog.dto";
 import { UpdateBlogDto } from "@/application/dto/blog/update-blog.dto";
 import { BlogResponseDto } from "@/application/dto/blog/blog-response.dto";
-import {
-  ModerateBlogDto,
-  ApproveBlogDto,
-  RejectBlogDto,
-  BanBlogDto,
-} from "@/application/dto/blog/moderate-blog.dto";
+import { ApproveBlogDto, RejectBlogDto, BanBlogDto, UnbanBlogDto } from "@/application/dto/blog/moderate-blog.dto";
 import { BlogQueryDto } from "@/application/dto/blog/blog-query.dto";
+import { BlogPublicQueryDto } from "@/application/dto/blog/blog-public-query.dto";
 import { PaginationDto } from "@/application/dto/pagination/pagination.dto";
 import {
   ApiBearerAuth,
@@ -52,7 +48,6 @@ import {
   BlogCategory,
 } from "@/infrastructure/database/entities/blog.entity";
 
-@ApiTags("Blog")
 @Controller("blogs")
 export class BlogController {
   constructor(
@@ -61,37 +56,18 @@ export class BlogController {
   ) {}
 
   @Get()
+  @ApiTags("Blog - Public")
   @UseGuards(OptionalJwtAuthGuard)
   @ApiBearerAuth("JWT-auth")
   @ApiOperation({
-    summary: "Get all published blogs",
+    summary: "Get all approved blogs",
     description:
-      "Retrieve all published blogs. Authentication is optional - if provided, includes like status for the user.",
+      "Retrieve all approved blogs. Authentication is optional - if provided, includes like status for the user.",
   })
-  @ApiQuery({
-    name: "page",
-    required: false,
-    type: Number,
-    description: "Page number (default: 1)",
-  })
-  @ApiQuery({
-    name: "limit",
-    required: false,
-    type: Number,
-    description: "Items per page (default: 10)",
-  })
-  @ApiQuery({
-    name: "search",
-    required: false,
-    type: String,
-    description: "Search in title, content, and excerpt",
-  })
-  @ApiQuery({
-    name: "authorId",
-    required: false,
-    type: Number,
-    description: "Filter by author ID",
-  })
+  @ApiQuery({ name: "page", required: true, type: Number, description: "Page number (>= 1)" })
+  @ApiQuery({ name: "limit", required: true, type: Number, description: "Items per page (>= 1)" })
+  @ApiQuery({ name: "search", required: false, type: String, description: "Search in title, content, and excerpt" })
+  @ApiQuery({ name: "authorId", required: false, type: Number, description: "Filter by author ID" })
   @ApiOkResponse({
     description: "Blogs retrieved successfully",
     type: [BlogResponseDto],
@@ -105,7 +81,7 @@ export class BlogController {
     description:
       "Invalid JWT token (optional - request continues without authentication)",
   })
-  async findAll(@Request() req: any, @Query() query: BlogQueryDto) {
+  async findAll(@Request() req: any, @Query() query: BlogPublicQueryDto) {
     const { page, limit, authorId, search, tagIds } = query;
     const pagination = { page, limit };
     const filters = { authorId, search, tagIds };
@@ -113,6 +89,7 @@ export class BlogController {
   }
 
   @Get("public/:id")
+  @ApiTags("Blog - Public")
   @ApiOperation({
     summary: "Get public blog by ID",
     description:
@@ -135,6 +112,7 @@ export class BlogController {
   }
 
   @Get("my")
+  @ApiTags("Blog - User")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.SUPER_ADMIN, UserRole.UNIVERSITY_REP, UserRole.STUDENT)
   @ApiBearerAuth("JWT-auth")
@@ -164,6 +142,7 @@ export class BlogController {
   }
 
   @Get("pending")
+  @ApiTags("Blog - Moderator", "Blog - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.MODERATOR)
   @ApiBearerAuth("JWT-auth")
@@ -193,6 +172,7 @@ export class BlogController {
   }
 
   @Get("admin/all")
+  @ApiTags("Blog - Admin", "Blog - Moderator")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.MODERATOR, UserRole.SUPER_ADMIN)
   @ApiBearerAuth("JWT-auth")
@@ -260,7 +240,9 @@ export class BlogController {
   }
 
   @Get(":id")
+  @ApiTags("Blog - User")
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth("JWT-auth")
   @ApiOperation({
     summary: "Get blog by ID",
     description:
@@ -288,6 +270,7 @@ export class BlogController {
   }
 
   @Post()
+  @ApiTags("Blog - User")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.SUPER_ADMIN, UserRole.UNIVERSITY_REP, UserRole.STUDENT)
   @ApiBearerAuth("JWT-auth")
@@ -318,6 +301,7 @@ export class BlogController {
   }
 
   @Patch(":id")
+  @ApiTags("Blog - User")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.SUPER_ADMIN, UserRole.UNIVERSITY_REP, UserRole.STUDENT)
   @ApiBearerAuth("JWT-auth")
@@ -346,6 +330,7 @@ export class BlogController {
   }
 
   @Post(":id/publish")
+  @ApiTags("Blog - User")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.SUPER_ADMIN, UserRole.UNIVERSITY_REP, UserRole.STUDENT)
   @ApiBearerAuth("JWT-auth")
@@ -371,6 +356,7 @@ export class BlogController {
   }
 
   @Post(":id/like")
+  @ApiTags("Blog - User")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.SUPER_ADMIN, UserRole.UNIVERSITY_REP, UserRole.STUDENT)
   @ApiBearerAuth("JWT-auth")
@@ -398,6 +384,7 @@ export class BlogController {
   }
 
   @Delete(":id")
+  @ApiTags("Blog - User")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.SUPER_ADMIN, UserRole.UNIVERSITY_REP, UserRole.STUDENT)
   @ApiBearerAuth("JWT-auth")
@@ -420,33 +407,9 @@ export class BlogController {
     return this.blogService.delete(id, req.user.id);
   }
 
-  @Patch(":id/moderate")
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.MODERATOR)
-  @ApiBearerAuth("JWT-auth")
-  @ApiOperation({
-    summary: "Moderate blog",
-    description: "Moderate a blog (admin/moderator only)",
-  })
-  @ApiParam({ name: "id", type: Number, description: "Blog ID" })
-  @ApiBody({ type: ModerateBlogDto, description: "Moderation data" })
-  @ApiOkResponse({
-    description: "Blog moderated successfully",
-    type: BlogResponseDto,
-  })
-  @ApiBadRequestResponse({ description: "Invalid moderation data" })
-  @ApiUnauthorizedResponse({ description: "Unauthorized" })
-  @ApiForbiddenResponse({ description: "Insufficient permissions" })
-  @ApiNotFoundResponse({ description: "Blog not found" })
-  async moderate(
-    @Request() req,
-    @Param("id", ParseIntPipe) id: number,
-    @Body() dto: ModerateBlogDto
-  ): Promise<BlogResponseDto> {
-    return this.blogService.moderate(id, req.user.id, dto);
-  }
 
   @Patch(":id/approve")
+  @ApiTags("Blog - Moderator", "Blog - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.MODERATOR)
   @ApiBearerAuth("JWT-auth")
@@ -473,6 +436,7 @@ export class BlogController {
   }
 
   @Patch(":id/reject")
+  @ApiTags("Blog - Moderator", "Blog - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.MODERATOR)
   @ApiBearerAuth("JWT-auth")
@@ -499,6 +463,7 @@ export class BlogController {
   }
 
   @Patch(":id/ban")
+  @ApiTags("Blog - Moderator", "Blog - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.MODERATOR)
   @ApiBearerAuth("JWT-auth")
@@ -522,5 +487,29 @@ export class BlogController {
     @Body() dto: BanBlogDto
   ): Promise<BlogResponseDto> {
     return this.blogService.ban(id, req.user.id, dto);
+  }
+
+  @Patch(":id/unban")
+  @ApiTags("Blog - Moderator", "Blog - Admin")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.MODERATOR)
+  @ApiBearerAuth("JWT-auth")
+  @ApiOperation({
+    summary: "Unban blog",
+    description: "Lift ban from a blog and move it back to published state for re-moderation/approval",
+  })
+  @ApiParam({ name: "id", type: Number, description: "Blog ID" })
+  @ApiBody({ type: UnbanBlogDto, description: "Unban data (optional reason)" })
+  @ApiOkResponse({ description: "Blog unbanned successfully", type: BlogResponseDto })
+  @ApiBadRequestResponse({ description: "Invalid unban request" })
+  @ApiUnauthorizedResponse({ description: "Unauthorized" })
+  @ApiForbiddenResponse({ description: "Insufficient permissions" })
+  @ApiNotFoundResponse({ description: "Blog not found" })
+  async unban(
+    @Request() req,
+    @Param("id", ParseIntPipe) id: number,
+    @Body() dto: UnbanBlogDto
+  ): Promise<BlogResponseDto> {
+    return this.blogService.unban(id, req.user.id, dto);
   }
 }

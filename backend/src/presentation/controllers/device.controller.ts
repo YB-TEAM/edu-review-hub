@@ -23,7 +23,6 @@ import {
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 
-@ApiTags("Device")
 @Controller("devices")
 export class DeviceController {
   constructor(
@@ -32,6 +31,7 @@ export class DeviceController {
   ) {}
 
   @Get("my")
+  @ApiTags("Device - User")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(
     UserRole.SUPER_ADMIN,
@@ -115,6 +115,7 @@ export class DeviceController {
   }
 
   @Get("all")
+  @ApiTags("Device - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
   @ApiBearerAuth("JWT-auth")

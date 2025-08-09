@@ -5,6 +5,11 @@ export interface ITagRepository {
   findById(id: number): Promise<Tag | undefined>;
   findByName(name: string): Promise<Tag | undefined>;
   findAll(): Promise<Tag[]>;
+  findAllPaginated(
+    limit: number,
+    offset: number,
+    filters?: { search?: string }
+  ): Promise<{ data: Tag[]; total: number }>;
   update(id: number, data: Partial<Tag>): Promise<Tag>;
   delete(id: number): Promise<void>;
   incrementUsageCount(id: number): Promise<void>;

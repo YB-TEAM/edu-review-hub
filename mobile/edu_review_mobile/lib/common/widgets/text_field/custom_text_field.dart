@@ -11,6 +11,7 @@ class CustomTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
   final void Function(String)? onChanged;
+  final int? maxLines; // ✅ Thêm dòng này
 
   const CustomTextField({
     super.key,
@@ -24,6 +25,7 @@ class CustomTextField extends StatelessWidget {
     this.prefixIconData,
     this.keyboardType,
     this.onChanged,
+    this.maxLines, 
   });
 
   @override
@@ -49,6 +51,7 @@ class CustomTextField extends StatelessWidget {
         child: Icon(prefixIconData, color: AppColors.primaryGrey, size: 20),
       );
     }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -56,9 +59,9 @@ class CustomTextField extends StatelessWidget {
           Text(
             label!,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontFamily: 'Roboto-Bold',
-              color: AppColors.textBlack,
-            ),
+                  fontFamily: 'Roboto-Bold',
+                  color: AppColors.textBlack,
+                ),
           ),
           const SizedBox(height: 6),
         ],
@@ -69,43 +72,27 @@ class CustomTextField extends StatelessWidget {
           onChanged: onChanged,
           validator: validator,
           style: Theme.of(context).textTheme.bodyMedium,
+          maxLines: maxLines ?? 1,
           decoration: InputDecoration(
             hintText: placeholder,
-            hintStyle: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(color: AppColors.textGrey),
+            hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.textGrey),
             filled: true,
             fillColor: AppColors.primaryWhite,
-            contentPadding: const EdgeInsets.symmetric(
-              vertical: 10,
-              horizontal: 12,
-            ),
+            contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
             enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: AppColors.secondaryGrey,
-                width: 1.0,
-              ),
+              borderSide: BorderSide(color: AppColors.secondaryGrey, width: 1.0),
               borderRadius: BorderRadius.circular(8.0),
             ),
             focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(
-                color: AppColors.primaryBlue,
-                width: 2.0,
-              ),
+              borderSide: const BorderSide(color: AppColors.primaryBlue, width: 2.0),
               borderRadius: BorderRadius.circular(8.0),
             ),
             errorBorder: OutlineInputBorder(
-              borderSide: const BorderSide(
-                color: AppColors.primaryRed,
-                width: 2.0,
-              ),
+              borderSide: const BorderSide(color: AppColors.primaryRed, width: 2.0),
               borderRadius: BorderRadius.circular(8.0),
             ),
             focusedErrorBorder: OutlineInputBorder(
-              borderSide: const BorderSide(
-                color: AppColors.primaryRed,
-                width: 2.0,
-              ),
+              borderSide: const BorderSide(color: AppColors.primaryRed, width: 2.0),
               borderRadius: BorderRadius.circular(8.0),
             ),
             suffixIcon: suffixIcon,
@@ -117,3 +104,4 @@ class CustomTextField extends StatelessWidget {
     );
   }
 }
+

@@ -13,6 +13,7 @@ class BlogCardVertical extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('Rendering BlogCardVertical $index');
     return AnimatedContainer(
       duration: Duration(milliseconds: 300 + (index * 50)),
       curve: Curves.easeOutBack,

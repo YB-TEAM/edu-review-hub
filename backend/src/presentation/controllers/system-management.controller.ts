@@ -27,7 +27,6 @@ import {
 } from "@nestjs/swagger";
 import { ISystemManagementService } from "@/application/services/system-management.service.interface";
 
-@ApiTags("System Management")
 @Controller("system")
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth("JWT-auth")
@@ -38,6 +37,7 @@ export class SystemManagementController {
   ) {}
 
   @Get("settings")
+  @ApiTags("System - Admin")
   @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({
     summary: "Get system settings",
@@ -78,6 +78,7 @@ export class SystemManagementController {
   }
 
   @Patch("settings")
+  @ApiTags("System - Admin")
   @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({
     summary: "Update system settings",
@@ -120,6 +121,7 @@ export class SystemManagementController {
   }
 
   @Post("backup")
+  @ApiTags("System - Admin")
   @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({
     summary: "Create system backup",
@@ -145,6 +147,7 @@ export class SystemManagementController {
   }
 
   @Get("backups")
+  @ApiTags("System - Admin")
   @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({
     summary: "Get system backups",
@@ -180,6 +183,7 @@ export class SystemManagementController {
   }
 
   @Post("backup/:backupId/restore")
+  @ApiTags("System - Admin")
   @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({
     summary: "Restore system backup",
@@ -198,6 +202,7 @@ export class SystemManagementController {
   }
 
   @Delete("backup/:backupId")
+  @ApiTags("System - Admin")
   @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({
     summary: "Delete system backup",
@@ -216,6 +221,7 @@ export class SystemManagementController {
   }
 
   @Post("maintenance")
+  @ApiTags("System - Admin")
   @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({
     summary: "Set maintenance mode",
@@ -239,6 +245,7 @@ export class SystemManagementController {
   }
 
   @Get("maintenance")
+  @ApiTags("System - Admin")
   @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({
     summary: "Get maintenance status",
@@ -262,6 +269,7 @@ export class SystemManagementController {
   }
 
   @Post("cache/clear")
+  @ApiTags("System - Admin")
   @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({
     summary: "Clear system cache",
@@ -281,6 +289,7 @@ export class SystemManagementController {
   }
 
   @Get("logs")
+  @ApiTags("System - Admin")
   @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({
     summary: "Get system logs",
@@ -336,6 +345,7 @@ export class SystemManagementController {
   }
 
   @Post("users/:userId/ban")
+  @ApiTags("System - Admin")
   @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({
     summary: "Ban user",
@@ -367,6 +377,7 @@ export class SystemManagementController {
   }
 
   @Post("users/:userId/unban")
+  @ApiTags("System - Admin")
   @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({
     summary: "Unban user",
@@ -385,6 +396,7 @@ export class SystemManagementController {
   }
 
   @Get("banned-users")
+  @ApiTags("System - Admin")
   @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({
     summary: "Get banned users",
@@ -418,6 +430,7 @@ export class SystemManagementController {
   }
 
   @Post("system/restart")
+  @ApiTags("System - Admin")
   @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({
     summary: "Restart system",
@@ -432,6 +445,7 @@ export class SystemManagementController {
   }
 
   @Get("database/status")
+  @ApiTags("System - Admin")
   @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({
     summary: "Get database status",
@@ -457,6 +471,7 @@ export class SystemManagementController {
   }
 
   @Post("database/optimize")
+  @ApiTags("System - Admin")
   @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({
     summary: "Optimize database",

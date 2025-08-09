@@ -10,6 +10,7 @@ import {
   ParseIntPipe,
   Inject,
   Request,
+  Query,
 } from "@nestjs/common";
 import { JwtAuthGuard } from "@/presentation/guards/jwt-auth.guard";
 import { RolesGuard } from "@/presentation/guards/role.guard";
@@ -20,6 +21,7 @@ import { ITagService } from "@/application/services/tag.service.interface";
 import { CreateTagDto } from "@/application/dto/tag/create-tag.dto";
 import { UpdateTagDto } from "@/application/dto/tag/update-tag.dto";
 import { TagResponseDto } from "@/application/dto/tag/tag-response.dto";
+import { TagQueryDto } from "@/application/dto/tag/tag-query.dto";
 import {
   ApiBearerAuth,
   ApiTags,
@@ -33,9 +35,10 @@ import {
   ApiNotFoundResponse,
   ApiBadRequestResponse,
   ApiConflictResponse,
+  ApiQuery,
+  getSchemaPath,
 } from "@nestjs/swagger";
 
-@ApiTags("Tag")
 @Controller("tags")
 export class TagController {
   constructor(
@@ -44,21 +47,41 @@ export class TagController {
   ) {}
 
   @Get()
+  @ApiTags("Tag - Public")
   @RequirePermissions("tag:read")
   @ApiOperation({
-    summary: "Get all tags",
-    description: "Retrieve all active tags",
+    summary: "Get tags (paginated)",
+    description: "Retrieve active tags with pagination and optional search",
   })
+  @ApiQuery({ name: "page", required: false, type: Number, description: "Page number (default: 1)" })
+  @ApiQuery({ name: "limit", required: false, type: Number, description: "Items per page (default: 20)" })
+  @ApiQuery({ name: "search", required: false, type: String, description: "Search by tag name" })
   @ApiOkResponse({
     description: "Tags retrieved successfully",
-    type: [TagResponseDto],
+    schema: {
+      type: "object",
+      properties: {
+        data: { type: "array", items: { $ref: getSchemaPath(TagResponseDto) } },
+        metadata: {
+          type: "object",
+          properties: {
+            totalItems: { type: "number" },
+            pageSize: { type: "number" },
+            currentPage: { type: "number" },
+            totalPages: { type: "number" },
+          },
+        },
+      },
+    },
   })
   @ApiForbiddenResponse({ description: "Insufficient permissions" })
-  async findAll(): Promise<TagResponseDto[]> {
-    return this.tagService.findAll();
+  async findAll(@Query() query: TagQueryDto): Promise<{ data: TagResponseDto[]; metadata: any }> {
+    const { page, limit, search } = query;
+    return this.tagService.findAllPaginated({ page, limit }, { search });
   }
 
   @Get(":id")
+  @ApiTags("Tag - Public")
   @RequirePermissions("tag:read")
   @ApiOperation({
     summary: "Get tag by ID",
@@ -78,6 +101,7 @@ export class TagController {
   }
 
   @Post()
+  @ApiTags("Tag - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
   @ApiBearerAuth("JWT-auth")
@@ -109,6 +133,7 @@ export class TagController {
   }
 
   @Patch(":id")
+  @ApiTags("Tag - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
   @ApiBearerAuth("JWT-auth")
@@ -143,6 +168,7 @@ export class TagController {
   }
 
   @Delete(":id")
+  @ApiTags("Tag - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
   @ApiBearerAuth("JWT-auth")

@@ -7,6 +7,9 @@ import 'package:flutter/foundation.dart';
 import 'package:edu_review_mobile/common_libs.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:edu_review_mobile/features/main_screen.dart';
+import 'package:flutter_quill/flutter_quill.dart' as quill;
+import 'package:flutter_localizations/flutter_localizations.dart';
+
 
 void main() {
   
@@ -84,6 +87,15 @@ class MyApp extends StatelessWidget {
         theme: AppTheme.lightTheme,
         onGenerateRoute: AppRouter.generateRoute,
         debugShowCheckedModeBanner: false,
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          quill.FlutterQuillLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en'),
+        ],
         home: BlocListener<AuthStateCubit, AuthState>(
           listener: (context, state) {
             if (state is Authenticated) {
