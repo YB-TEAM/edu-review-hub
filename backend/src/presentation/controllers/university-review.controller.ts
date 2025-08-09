@@ -23,7 +23,6 @@ import { UniversityReviewResponseDto } from "@/application/dto/university/univer
 import { ModerateUniversityReviewDto } from "@/application/dto/university/moderate-university-review.dto";
 import { ApiBearerAuth, ApiTags, ApiBody, ApiOperation, ApiResponse } from "@nestjs/swagger";
 
-@ApiTags("University Review")
 @Controller("university-reviews")
 export class UniversityReviewController {
   constructor(
@@ -32,6 +31,7 @@ export class UniversityReviewController {
   ) {}
 
   @Get(":id")
+  @ApiTags("Review - Public")
   async getById(
     @Param("id", ParseIntPipe) id: number
   ): Promise<UniversityReviewResponseDto> {
@@ -39,6 +39,7 @@ export class UniversityReviewController {
   }
 
   @Get("/university/:universityId")
+  @ApiTags("Review - Public")
   async getByUniversity(
     @Param("universityId", ParseIntPipe) universityId: number
   ): Promise<UniversityReviewResponseDto[]> {
@@ -46,6 +47,7 @@ export class UniversityReviewController {
   }
 
   @Get("/user/:userId")
+  @ApiTags("Review - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.SUPER_ADMIN)
   async getByUser(
@@ -55,6 +57,7 @@ export class UniversityReviewController {
   }
 
   @Post()
+  @ApiTags("Review - User")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.STUDENT)
   @ApiBearerAuth("JWT-auth")
@@ -67,6 +70,7 @@ export class UniversityReviewController {
   }
 
   @Patch(":id")
+  @ApiTags("Review - User")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.STUDENT)
   @ApiBearerAuth("JWT-auth")
@@ -80,6 +84,7 @@ export class UniversityReviewController {
   }
 
   @Delete(":id")
+  @ApiTags("Review - User")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.STUDENT)
   @ApiBearerAuth("JWT-auth")
@@ -92,6 +97,7 @@ export class UniversityReviewController {
 
   // Moderate endpoint for admin, moderator, super_admin
   @Patch(":id/moderate")
+  @ApiTags("Review - Moderator", "Review - Admin")
   @ApiOperation({ summary: "Moderate a university review (admin/moderator)" })
   @ApiBody({ type: ModerateUniversityReviewDto })
   @ApiResponse({ status: 200, description: "Review moderated", type: UniversityReviewResponseDto })

@@ -19,15 +19,11 @@ import {
   BlogStatus,
   BlogCategory,
 } from "@/infrastructure/database/entities/blog.entity";
-import { ModerateBlogDto } from "../dto/blog/moderate-blog.dto";
+// Removed generic ModerateBlogDto usage. Use specific approve/reject/ban endpoints instead.
 import { PaginationDto } from "../dto/pagination/pagination.dto";
 import { UserRole } from "@/infrastructure/database/entities/user.entity";
 import { CloudinaryService } from "@/infrastructure/services/cloudinary.service";
-import {
-  ApproveBlogDto,
-  RejectBlogDto,
-  BanBlogDto,
-} from "../dto/blog/moderate-blog.dto";
+import { ApproveBlogDto, RejectBlogDto, BanBlogDto, UnbanBlogDto } from "../dto/blog/moderate-blog.dto";
 import { IUploadedFileRepository } from "@/domain/repositories/uploaded-file.repository.interface";
 
 @Injectable()
@@ -354,39 +350,6 @@ export class BlogService implements IBlogService {
     await this.blogRepository.delete(id);
   }
 
-  async moderate(
-    id: number,
-    moderatorId: number,
-    dto: ModerateBlogDto
-  ): Promise<BlogResponseDto> {
-    const blog = await this.blogRepository.findById(id);
-    if (!blog) throw new NotFoundException("Blog not found");
-
-    // Validate moderation reason for rejected blogs
-    if (dto.status === BlogStatus.REJECTED && !dto.moderationReason) {
-      throw new BadRequestException(
-        "Moderation reason is required when rejecting a blog"
-      );
-    }
-
-    const updateData: any = {
-      status: dto.status,
-      moderatorId: moderatorId,
-      moderatedAt: new Date(),
-    };
-
-    if (dto.moderationReason) {
-      updateData.moderationReason = dto.moderationReason;
-    }
-
-    // Set publishedAt if status is APPROVED
-    if (dto.status === BlogStatus.APPROVED && !blog.publishedAt) {
-      updateData.publishedAt = new Date();
-    }
-
-    const updated = await this.blogRepository.update(id, updateData);
-    return this.toResponseDto(updated);
-  }
 
   async approve(
     id: number,
@@ -458,6 +421,30 @@ export class BlogService implements IBlogService {
       moderatorId: moderatorId,
       moderatedAt: new Date(),
       moderationReason: dto.banReason,
+    };
+
+    const updated = await this.blogRepository.update(id, updateData);
+    return this.toResponseDto(updated);
+  }
+
+  async unban(
+    id: number,
+    moderatorId: number,
+    dto: UnbanBlogDto
+  ): Promise<BlogResponseDto> {
+    const blog = await this.blogRepository.findById(id);
+    if (!blog) throw new NotFoundException("Blog not found");
+
+    if (blog.status !== BlogStatus.BANNED) {
+      throw new BadRequestException("Only banned blogs can be unbanned");
+    }
+
+    // After unban, blog should return to PUBLISHED state to be re-moderated or approved explicitly
+    const updateData: any = {
+      status: BlogStatus.PUBLISHED,
+      moderatorId: moderatorId,
+      moderatedAt: new Date(),
+      moderationReason: dto.reason || null,
     };
 
     const updated = await this.blogRepository.update(id, updateData);

@@ -34,7 +34,6 @@ import { Roles } from "@/presentation/decorators/roles.decorator";
 import { RequirePermissions } from "@/presentation/decorators/permissions.decorator";
 import { UserRole } from "@/infrastructure/database/entities/user.entity";
 
-@ApiTags("Upload")
 @Controller("upload")
 @UseGuards(JwtAuthGuard, PermissionGuard)
 @ApiBearerAuth("JWT-auth")
@@ -45,6 +44,7 @@ export class UploadController {
   ) {}
 
   @Post("image")
+  @ApiTags("Upload - User")
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(FileInterceptor("image"))
   @ApiOperation({
@@ -111,6 +111,7 @@ export class UploadController {
   }
 
   @Put("image/:publicId")
+  @ApiTags("Upload - User")
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(FileInterceptor("image"))
   @ApiOperation({
@@ -181,6 +182,7 @@ export class UploadController {
   }
 
   @Delete("image/:publicId")
+  @ApiTags("Upload - User")
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
     summary: "Delete image",
@@ -223,6 +225,7 @@ export class UploadController {
   }
 
   @Get("files")
+  @ApiTags("Upload - User")
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: "Get uploaded files",

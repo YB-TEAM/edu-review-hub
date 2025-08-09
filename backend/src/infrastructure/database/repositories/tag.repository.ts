@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Like, Repository } from "typeorm";
 import { Tag } from "../entities/tag.entity";
 
 @Injectable()
@@ -28,6 +28,25 @@ export class TagRepository {
       where: { isActive: true },
       order: { usageCount: "DESC", name: "ASC" },
     });
+  }
+
+  async findAllPaginated(
+    limit: number,
+    offset: number,
+    filters?: { search?: string }
+  ): Promise<{ data: Tag[]; total: number }> {
+    const where: any = { isActive: true };
+    if (filters?.search) {
+      where.name = Like(`%${filters.search}%`);
+    }
+
+    const [data, total] = await this.repository.findAndCount({
+      where,
+      order: { usageCount: "DESC", name: "ASC" },
+      take: limit,
+      skip: offset,
+    });
+    return { data, total };
   }
 
   async update(id: number, data: Partial<Tag>): Promise<Tag> {

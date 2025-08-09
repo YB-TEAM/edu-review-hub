@@ -18,7 +18,6 @@ import { JwtAuthGuard } from "@/presentation/guards/jwt-auth.guard";
 import { IUserActivityService } from "@/application/services/user-activity.service.interface";
 import { Inject } from "@nestjs/common";
 
-@ApiTags("User Activity")
 @Controller("activity")
 export class UserActivityController {
   constructor(
@@ -27,6 +26,7 @@ export class UserActivityController {
   ) {}
 
   @Get("me")
+  @ApiTags("Activity - User")
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth("JWT-auth")
   @ApiOperation({ summary: "Get current user activity history" })
@@ -93,6 +93,7 @@ export class UserActivityController {
   }
 
   @Get("me/count")
+  @ApiTags("Activity - User")
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth("JWT-auth")
   @ApiOperation({ summary: "Get current user activity count" })

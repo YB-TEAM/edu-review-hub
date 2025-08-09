@@ -24,7 +24,6 @@ import {
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 
-@ApiTags("Activity")
 @Controller("activities")
 export class ActivityController {
   constructor(
@@ -33,6 +32,7 @@ export class ActivityController {
   ) {}
 
   @Get("my")
+  @ApiTags("Activity - User")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(
     UserRole.SUPER_ADMIN,
@@ -128,6 +128,7 @@ export class ActivityController {
   }
 
   @Get("all")
+  @ApiTags("Activity - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
   @ApiBearerAuth("JWT-auth")

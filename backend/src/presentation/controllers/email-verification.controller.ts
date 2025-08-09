@@ -71,7 +71,6 @@ export class ResetPasswordWithOtpDto {
   newPassword: string;
 }
 
-@ApiTags("Email Verification")
 @Controller("email-verification")
 export class EmailVerificationController {
   constructor(
@@ -80,6 +79,7 @@ export class EmailVerificationController {
   ) {}
 
   @Post("verify-email")
+  @ApiTags("Auth - Public")
   @ApiOperation({
     summary: "Verify email address with OTP",
     description: "Xác thực email bằng mã OTP 6 số được gửi qua email",
@@ -108,6 +108,7 @@ export class EmailVerificationController {
   }
 
   @Post("resend-verification")
+  @ApiTags("Auth - Public")
   @ApiOperation({
     summary: "Resend email verification",
     description:
@@ -136,6 +137,7 @@ export class EmailVerificationController {
   }
 
   @Post("forgot-password")
+  @ApiTags("Auth - Public")
   @ApiOperation({ summary: "Send password reset email" })
   @ApiBody({ type: ForgotPasswordDto })
   @ApiResponse({
@@ -152,6 +154,7 @@ export class EmailVerificationController {
   }
 
   @Post("reset-password")
+  @ApiTags("Auth - Public")
   @ApiOperation({ summary: "Reset password with OTP" })
   @ApiBody({ type: ResetPasswordWithOtpDto })
   @ApiResponse({
@@ -178,6 +181,7 @@ export class EmailVerificationController {
   }
 
   @Post("change-email")
+  @ApiTags("Auth - User")
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth("JWT-auth")
   @ApiOperation({ summary: "Request email change" })
@@ -199,6 +203,7 @@ export class EmailVerificationController {
   }
 
   @Post("confirm-email-change")
+  @ApiTags("Auth - Public")
   @ApiOperation({ summary: "Confirm email change with OTP" })
   @ApiBody({ type: VerifyOtpDto })
   @ApiResponse({

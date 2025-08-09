@@ -32,7 +32,6 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { CloudinaryService } from "@/infrastructure/services/cloudinary.service";
 import { UserRole } from "@/infrastructure/database/entities/user.entity";
 
-@ApiTags("User Profile")
 @Controller("profile")
 export class ProfileController {
   constructor(
@@ -42,6 +41,7 @@ export class ProfileController {
   ) {}
 
   @Get("me")
+  @ApiTags("Profile - User")
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth("JWT-auth")
   @ApiOperation({ summary: "Get current user profile" })
@@ -51,6 +51,7 @@ export class ProfileController {
   }
 
   @Patch("me")
+  @ApiTags("Profile - User")
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth("JWT-auth")
   @ApiOperation({ summary: "Update current user profile" })
@@ -69,6 +70,7 @@ export class ProfileController {
   }
 
   @Post("me/avatar")
+  @ApiTags("Profile - User")
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth("JWT-auth")
   @ApiOperation({ summary: "Upload avatar for current user (Cloudinary)" })
@@ -112,6 +114,7 @@ export class ProfileController {
   }
 
   @Patch("admin/user/:userId")
+  @ApiTags("Profile - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
   // @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiBearerAuth("JWT-auth")
@@ -134,6 +137,7 @@ export class ProfileController {
   }
 
   @Get("admin/user/:userId")
+  @ApiTags("Profile - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
   // @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiBearerAuth("JWT-auth")
@@ -149,6 +153,7 @@ export class ProfileController {
   }
 
   @Get("admin/users")
+  @ApiTags("Profile - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
   // @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiBearerAuth("JWT-auth")

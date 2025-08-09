@@ -65,6 +65,31 @@ export class TagService implements ITagService {
     return tags.map(this.toResponseDto);
   }
 
+  async findAllPaginated(
+    pagination: { page?: number; limit?: number },
+    filters?: { search?: string }
+  ): Promise<{ data: TagResponseDto[]; metadata: any }> {
+    const page = Math.max(1, pagination.page || 1);
+    const limit = Math.max(1, pagination.limit || 20);
+    const offset = (page - 1) * limit;
+
+    const { data, total } = await this.tagRepository.findAllPaginated(
+      limit,
+      offset,
+      filters
+    );
+
+    return {
+      data: data.map(this.toResponseDto),
+      metadata: {
+        totalItems: total,
+        pageSize: limit,
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
   async findById(id: number): Promise<TagResponseDto> {
     const tag = await this.tagRepository.findById(id);
     if (!tag) {

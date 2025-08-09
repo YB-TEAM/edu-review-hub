@@ -21,7 +21,6 @@ import { DeleteAccountDto } from "@/application/dto/auth/delete-account.dto";
 import { ReactivateAccountDto } from "@/application/dto/auth/reactivate-account.dto";
 import { JwtAuthGuard } from "@/presentation/guards/jwt-auth.guard";
 
-@ApiTags("Account Deactivation")
 @Controller("account")
 export class AccountDeactivationController {
   constructor(
@@ -30,6 +29,7 @@ export class AccountDeactivationController {
   ) {}
 
   @Post("deactivate")
+  @ApiTags("Account - User")
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth("JWT-auth")
   @ApiOperation({ summary: "Deactivate account (user-initiated)" })
@@ -49,6 +49,7 @@ export class AccountDeactivationController {
   }
 
   @Post("delete")
+  @ApiTags("Account - User")
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth("JWT-auth")
   @ApiOperation({ summary: "Delete account (user-initiated)" })
@@ -68,6 +69,7 @@ export class AccountDeactivationController {
   }
 
   @Post("reactivate")
+  @ApiTags("Account - Public")
   @ApiOperation({ summary: "Reactivate account (user-initiated)" })
   @ApiBody({ type: ReactivateAccountDto })
   @ApiResponse({ status: 200, description: "Account reactivated successfully" })

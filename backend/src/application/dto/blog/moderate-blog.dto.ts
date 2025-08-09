@@ -51,3 +51,13 @@ export class BanBlogDto {
   @IsString()
   banReason: string;
 }
+
+export class UnbanBlogDto {
+  @ApiPropertyOptional({
+    example: "Re-evaluated content after appeal",
+    description: "Optional reason for unbanning the blog",
+  })
+  @IsOptional()
+  @IsString()
+  reason?: string;
+}

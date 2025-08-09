@@ -2,6 +2,7 @@ import { DataSource } from "typeorm";
 import { User } from "../entities/user.entity";
 import { Role } from "../entities/role.entity";
 import { UserRole } from "../entities/user-role.entity";
+import { UserProfile, Gender } from "../entities/user-profile.entity";
 import * as bcrypt from "bcryptjs";
 
 export class UserAccountSeeder {
@@ -11,6 +12,7 @@ export class UserAccountSeeder {
     const userRepository = this.dataSource.getRepository(User);
     const roleRepository = this.dataSource.getRepository(Role);
     const userRoleRepository = this.dataSource.getRepository(UserRole);
+    const userProfileRepository = this.dataSource.getRepository(UserProfile);
 
     // Check if super admin already exists
     const existingSuperAdmin = await userRepository.findOne({
@@ -24,7 +26,8 @@ export class UserAccountSeeder {
       await this.createSuperAdmin(
         userRepository,
         roleRepository,
-        userRoleRepository
+        userRoleRepository,
+        userProfileRepository
       );
     }
 
@@ -32,14 +35,16 @@ export class UserAccountSeeder {
     await this.createTestAccounts(
       userRepository,
       roleRepository,
-      userRoleRepository
+      userRoleRepository,
+      userProfileRepository
     );
   }
 
   private async createSuperAdmin(
     userRepository: any,
     roleRepository: any,
-    userRoleRepository: any
+    userRoleRepository: any,
+    userProfileRepository: any
   ) {
     console.log("👑 Creating super admin account...");
 
@@ -59,6 +64,37 @@ export class UserAccountSeeder {
     });
 
     await userRepository.save(superAdmin);
+
+    // Create profile for super admin if not exists
+    const existingProfile = await userProfileRepository.findOne({
+      where: { userId: superAdmin.id },
+    });
+    if (!existingProfile) {
+      const profile = userProfileRepository.create({
+        userId: superAdmin.id,
+        firstName: "Super",
+        lastName: "Admin",
+        displayName: "Super Admin",
+        bio: "System Super Admin",
+        gender: Gender.OTHER,
+        country: "Vietnam",
+        city: "Hanoi",
+        timezone: "UTC",
+        language: "vi",
+        privacySettings: {
+          profileVisibility: "private",
+          showEmail: false,
+          showActivity: false,
+        },
+        notificationSettings: {
+          email: true,
+          push: false,
+          marketing: false,
+        },
+      });
+      await userProfileRepository.save(profile);
+      console.log("🧩 Super admin profile created");
+    }
 
     // Get super_admin role
     const superAdminRole = await roleRepository.findOne({
@@ -82,7 +118,8 @@ export class UserAccountSeeder {
   private async createTestAccounts(
     userRepository: any,
     roleRepository: any,
-    userRoleRepository: any
+    userRoleRepository: any,
+    userProfileRepository: any
   ) {
     const testAccounts = [
       {
@@ -147,6 +184,46 @@ export class UserAccountSeeder {
       });
 
       await userRepository.save(user);
+
+      // Create profile if not exists
+      const existingProfile = await userProfileRepository.findOne({
+        where: { userId: user.id },
+      });
+      if (!existingProfile) {
+        // Derive display name from role
+        const roleDisplayMap: Record<string, string> = {
+          admin: "Admin",
+          moderator: "Moderator",
+          university_representative: "University Representative",
+          student: "Student",
+        };
+        const roleDisplay = roleDisplayMap[accountData.roleName] || "User";
+
+        const profile = userProfileRepository.create({
+          userId: user.id,
+          firstName: roleDisplay.split(" ")[0],
+          lastName: roleDisplay.split(" ").slice(1).join(" ") || roleDisplay,
+          displayName: `${roleDisplay} Test`,
+          bio: `Test account for ${roleDisplay.toLowerCase()}`,
+          gender: Gender.OTHER,
+          country: "Vietnam",
+          city: "Hanoi",
+          timezone: "UTC",
+          language: "vi",
+          privacySettings: {
+            profileVisibility: "private",
+            showEmail: false,
+            showActivity: false,
+          },
+          notificationSettings: {
+            email: true,
+            push: false,
+            marketing: false,
+          },
+        });
+        await userProfileRepository.save(profile);
+        console.log(`🧩 Created profile for ${accountData.username}`);
+      }
 
       // Get role
       const role = await roleRepository.findOne({

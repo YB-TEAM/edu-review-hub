@@ -25,7 +25,6 @@ import {
 } from "@nestjs/swagger";
 import { IDashboardService } from "@/application/services/dashboard.service.interface";
 
-@ApiTags("Dashboard")
 @Controller("dashboard")
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth("JWT-auth")
@@ -36,6 +35,7 @@ export class DashboardController {
   ) {}
 
   @Get("overview")
+  @ApiTags("Dashboard - Admin")
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiOperation({
     summary: "Get dashboard overview statistics",
@@ -70,6 +70,7 @@ export class DashboardController {
   }
 
   @Get("statistics")
+  @ApiTags("Dashboard - Admin")
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiOperation({
     summary: "Get detailed system statistics",
@@ -95,6 +96,7 @@ export class DashboardController {
   }
 
   @Get("users/analytics")
+  @ApiTags("Dashboard - Admin")
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiOperation({
     summary: "Get user analytics and demographics",
@@ -120,6 +122,7 @@ export class DashboardController {
   }
 
   @Get("content/analytics")
+  @ApiTags("Dashboard - Admin")
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiOperation({
     summary: "Get content analytics",
@@ -145,6 +148,7 @@ export class DashboardController {
   }
 
   @Get("system/health")
+  @ApiTags("Dashboard - Admin")
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiOperation({
     summary: "Get system health status",
@@ -171,6 +175,7 @@ export class DashboardController {
   }
 
   @Get("reports/:type")
+  @ApiTags("Dashboard - Admin")
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiOperation({
     summary: "Generate system reports",
@@ -200,6 +205,7 @@ export class DashboardController {
   }
 
   @Get("alerts")
+  @ApiTags("Dashboard - Admin")
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiOperation({
     summary: "Get system alerts",
@@ -224,6 +230,7 @@ export class DashboardController {
   }
 
   @Get("performance")
+  @ApiTags("Dashboard - Admin")
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @ApiOperation({
     summary: "Get performance metrics",
