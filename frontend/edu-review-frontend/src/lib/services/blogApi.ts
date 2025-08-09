@@ -1,4 +1,5 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { baseQueryWithErrorHandling } from "../api";
 import type {
   Blog,
   CreateBlogRequest,
@@ -9,25 +10,16 @@ import type {
   UpdateTagRequest,
   BlogLike,
   BlogComment,
-  PaginatedResponse,
-} from "@/types";
+  BlogListResponse,
+} from "@/types/blog";
 
 export const blogApi = createApi({
   reducerPath: "blogApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: "/api/v1",
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as any).auth.accessToken;
-      if (token) {
-        headers.set("authorization", `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithErrorHandling,
   tagTypes: ["Blog", "Tag", "BlogLike", "BlogComment"],
   endpoints: (builder) => ({
     // Get all blogs with pagination and filters
-    getBlogs: builder.query<PaginatedResponse<Blog>, BlogFilters>({
+    getBlogs: builder.query<BlogListResponse, BlogFilters>({
       query: (filters) => ({
         url: "/blogs",
         params: filters,
@@ -48,7 +40,10 @@ export const blogApi = createApi({
     }),
 
     // Get my drafts
-    getMyDrafts: builder.query<PaginatedResponse<Blog>, { page?: number; limit?: number }>({
+    getMyDrafts: builder.query<
+      BlogListResponse,
+      { page?: number; limit?: number }
+    >({
       query: (params) => ({
         url: "/blogs/my-drafts",
         params,
@@ -57,7 +52,10 @@ export const blogApi = createApi({
     }),
 
     // Get blogs for moderation (admin/moderator only)
-    getModerationBlogs: builder.query<PaginatedResponse<Blog>, { page?: number; limit?: number }>({
+    getModerationBlogs: builder.query<
+      BlogListResponse,
+      { page?: number; limit?: number }
+    >({
       query: (params) => ({
         url: "/blogs/moderation",
         params,
@@ -112,11 +110,17 @@ export const blogApi = createApi({
         url: `/blogs/${id}/like`,
         method: "POST",
       }),
-      invalidatesTags: (result, error, id) => [{ type: "Blog", id }, "BlogLike"],
+      invalidatesTags: (result, error, id) => [
+        { type: "Blog", id },
+        "BlogLike",
+      ],
     }),
 
     // Approve blog (admin/moderator only)
-    approveBlog: builder.mutation<Blog, { id: number; data: { moderationReason?: string } }>({
+    approveBlog: builder.mutation<
+      Blog,
+      { id: number; data: { moderationReason?: string } }
+    >({
       query: ({ id, data }) => ({
         url: `/blogs/${id}/approve`,
         method: "PATCH",
@@ -126,7 +130,10 @@ export const blogApi = createApi({
     }),
 
     // Reject blog (admin/moderator only)
-    rejectBlog: builder.mutation<Blog, { id: number; data: { moderationReason: string } }>({
+    rejectBlog: builder.mutation<
+      Blog,
+      { id: number; data: { moderationReason: string } }
+    >({
       query: ({ id, data }) => ({
         url: `/blogs/${id}/reject`,
         method: "PATCH",
@@ -136,7 +143,10 @@ export const blogApi = createApi({
     }),
 
     // Ban blog (admin/moderator only)
-    banBlog: builder.mutation<Blog, { id: number; data: { moderationReason: string } }>({
+    banBlog: builder.mutation<
+      Blog,
+      { id: number; data: { moderationReason: string } }
+    >({
       query: ({ id, data }) => ({
         url: `/blogs/${id}/ban`,
         method: "PATCH",
@@ -183,26 +193,38 @@ export const blogApi = createApi({
     // Get blog comments
     getBlogComments: builder.query<BlogComment[], number>({
       query: (blogId) => `/blogs/${blogId}/comments`,
-      providesTags: (result, error, blogId) => [{ type: "BlogComment", id: blogId }],
+      providesTags: (result, error, blogId) => [
+        { type: "BlogComment", id: blogId },
+      ],
     }),
 
     // Add comment to blog
-    addBlogComment: builder.mutation<BlogComment, { blogId: number; content: string }>({
+    addBlogComment: builder.mutation<
+      BlogComment,
+      { blogId: number; content: string }
+    >({
       query: ({ blogId, content }) => ({
         url: `/blogs/${blogId}/comments`,
         method: "POST",
         body: { content },
       }),
-      invalidatesTags: (result, error, { blogId }) => [{ type: "BlogComment", id: blogId }],
+      invalidatesTags: (result, error, { blogId }) => [
+        { type: "BlogComment", id: blogId },
+      ],
     }),
 
     // Delete comment
-    deleteBlogComment: builder.mutation<void, { blogId: number; commentId: number }>({
+    deleteBlogComment: builder.mutation<
+      void,
+      { blogId: number; commentId: number }
+    >({
       query: ({ blogId, commentId }) => ({
         url: `/blogs/${blogId}/comments/${commentId}`,
         method: "DELETE",
       }),
-      invalidatesTags: (result, error, { blogId }) => [{ type: "BlogComment", id: blogId }],
+      invalidatesTags: (result, error, { blogId }) => [
+        { type: "BlogComment", id: blogId },
+      ],
     }),
   }),
 });

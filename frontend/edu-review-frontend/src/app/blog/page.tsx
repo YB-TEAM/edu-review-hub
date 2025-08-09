@@ -117,7 +117,7 @@ export default function BlogPage() {
     limit 
   });
 
-  const totalPages = data?.meta?.totalPages || 1;
+  const totalPages = data?.metadata?.totalPages || 1;
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -183,7 +183,7 @@ export default function BlogPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
             <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-              {data?.meta?.totalItems || 0}
+              {data?.metadata?.totalItems || 0}
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-400">Bài viết</div>
           </div>
@@ -234,10 +234,10 @@ export default function BlogPage() {
                   {/* This logic needs to be adjusted if we want to show a featured badge for the first blog on each page */}
                   {/* For now, it's removed as per the new grid structure */}
                   
-                  <div className={`relative ${blog.featuredImage ? 'h-64' : 'h-64'} overflow-hidden`}>
-                    {blog.featuredImage ? (
+                  <div className={`relative ${blog.featuredImageUrl ? 'h-64' : 'h-64'} overflow-hidden`}>
+                    {blog.featuredImageUrl ? (
                       <img
-                        src={blog.featuredImage}
+                        src={blog.featuredImageUrl}
                         alt={blog.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       />
@@ -262,10 +262,10 @@ export default function BlogPage() {
                         <Calendar className="w-4 h-4" />
                         {formatDate(blog.createdAt)}
                       </span>
-                      <span className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 px-3 py-1 rounded-full">
+                      {/* <span className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 px-3 py-1 rounded-full">
                         <Clock className="w-4 h-4" />
                         5 phút đọc
-                      </span>
+                      </span> */}
                       <span className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 px-3 py-1 rounded-full">
                         <Eye className="w-4 h-4" />
                         {Math.floor(Math.random() * 500) + 100}
@@ -286,13 +286,13 @@ export default function BlogPage() {
                           👤
                         </div>
                         <div>
-                          <div className="font-semibold text-gray-900 dark:text-white">Ẩn danh</div>
+                          <div className="font-semibold text-gray-900 dark:text-white"> {blog.authorName}</div>
                           <div className="text-sm text-gray-500 dark:text-gray-400">Tác giả</div>
                         </div>
                       </div>
                       
                       <Link
-                        href={`/blog/${blog.id}`}
+                        href={`/blog/public/${blog.id}`}
                         className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105"
                       >
                         Đọc tiếp
@@ -349,16 +349,6 @@ export default function BlogPage() {
 
           {/* Enhanced Sidebar */}
           <div className="lg:w-1/3 space-y-8">
-            {/* Write Blog Button */}
-            <Link
-              href="/blog/new"
-              className="flex items-center justify-center gap-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-4 px-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-            >
-              <PenSquare className="h-5 w-5" />
-              Viết bài chia sẻ
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-green-400/20 to-emerald-400/20 blur-xl -z-10"></div>
-            </Link>
-
             {/* Popular Categories */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-100 dark:border-gray-700">
               <h3 className="text-xl font-bold mb-6 text-gray-900 dark:text-white flex items-center gap-2">

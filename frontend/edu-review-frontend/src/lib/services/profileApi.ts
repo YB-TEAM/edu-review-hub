@@ -1,56 +1,15 @@
-import { api } from "../api";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { baseQueryWithErrorHandling } from "../api";
+import type {
+  UserProfile,
+  UpdateProfileRequest,
+  UploadAvatarResponse,
+} from "@/types/profile";
 
-export interface UserProfile {
-  id: number;
-  userId: string;
-  firstName: string;
-  lastName: string;
-  displayName: string;
-  avatarUrl: string | null;
-  coverImageUrl: string | null;
-  bio: string | null;
-  dateOfBirth: string | null;
-  gender: string | null;
-  country: string | null;
-  city: string | null;
-  address: string | null;
-  timezone: string;
-  language: string;
-  universityName: string | null;
-  major: string | null;
-  graduationYear: number | null;
-  studentId: string | null;
-  isStudentVerified: boolean;
-  privacySettings: any | null;
-  notificationSettings: any | null;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface UpdateProfileRequest {
-  firstName?: string;
-  lastName?: string;
-  displayName?: string;
-  avatarUrl?: string;
-  coverImageUrl?: string;
-  bio?: string;
-  dateOfBirth?: string;
-  gender?: string;
-  country?: string;
-  city?: string;
-  address?: string;
-  timezone?: string;
-  language?: string;
-  universityName?: string;
-  major?: string;
-  graduationYear?: number;
-  studentId?: string;
-  isStudentVerified?: boolean;
-  privacySettings?: any;
-  notificationSettings?: any;
-}
-
-export const profileApi = api.injectEndpoints({
+export const profileApi = createApi({
+  reducerPath: "profileApi",
+  baseQuery: baseQueryWithErrorHandling,
+  tagTypes: ["Profile"],
   endpoints: (builder) => ({
     getProfile: builder.query<UserProfile, void>({
       query: () => "/profile/me",
@@ -65,15 +24,17 @@ export const profileApi = api.injectEndpoints({
       }),
       invalidatesTags: ["Profile"],
     }),
-    uploadAvatar: builder.mutation<{ avatarUrl: string }, FormData>({
+    uploadAvatar: builder.mutation<UploadAvatarResponse, FormData>({
       query: (formData) => ({
         url: "/profile/me/avatar",
         method: "POST",
         body: formData,
         prepareHeaders: (headers: Headers) => {
-          const token = localStorage.getItem("token");
-          if (token) {
-            headers.set("authorization", `Bearer ${token}`);
+          if (typeof window !== "undefined") {
+            const token = localStorage.getItem("token");
+            if (token) {
+              headers.set("authorization", `Bearer ${token}`);
+            }
           }
           return headers;
         },

@@ -26,9 +26,11 @@ const baseQuery = fetchBaseQuery({
   baseUrl: "http://localhost:3000/api/v1",
   prepareHeaders: (headers) => {
     // Add auth token if available
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      headers.set("authorization", `Bearer ${token}`);
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("accessToken");
+      if (token) {
+        headers.set("authorization", `Bearer ${token}`);
+      }
     }
 
     // Add content type
