@@ -55,9 +55,8 @@ export interface CreateBlogRequest {
   content: string;
   excerpt?: string;
   featuredImage?: string;
-  tags?: number[];
+  tagIds?: number[];
   category?: BlogCategory;
-  keywords?: string[];
 }
 
 export interface UpdateBlogRequest {
@@ -65,7 +64,7 @@ export interface UpdateBlogRequest {
   content?: string;
   excerpt?: string;
   featuredImage?: string;
-  tags?: number[];
+  tagIds?: number[];
 }
 
 export interface BlogFilters {
