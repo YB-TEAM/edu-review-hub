@@ -1,35 +1,39 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { Navbar } from "@/features/landing/components/navbar/Navbar";
 import { Footer } from "@/features/landing/components/footer/Footer";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { blogApi, useCreateBlogMutation } from "@/lib/services/blogApi";
 import { BlogCategory } from "@/types/blog";
-import { ArrowLeft, Send, Save, Plus, Tag, Image as ImageIcon, X, Sparkles, Camera } from "lucide-react";
-import dynamic from "next/dynamic";
-import { ImageUpload } from "@/components/ui/image-upload";
+import { ArrowLeft, Send, Save, Sparkles, Camera, Upload, X, Tag, Plus } from "lucide-react";
+import { MarkdownEditor } from "@/components/ui/markdown-editor";
 
-const MDEditor = dynamic(() => import("@uiw/react-md-editor"), {
-  ssr: false,
-  loading: () => <div className="h-64 bg-gray-100 dark:bg-gray-800 animate-pulse rounded-lg" />
-});
+interface Tag {
+  id: number;
+  name: string;
+  description: string;
+  color: string;
+  isActive: boolean;
+  usageCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export default function NewBlogPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [uploadedImage, setUploadedImage] = useState<string>("");
-  const [keywords, setKeywords] = useState<string[]>([]);
-  const [newKeyword, setNewKeyword] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
 
   const [createBlog] = useCreateBlogMutation();
 
@@ -41,6 +45,215 @@ export default function NewBlogPage() {
     featuredImage: "",
     tagIds: [] as number[],
   });
+
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState("");
+
+  // Check authentication on component mount
+  useEffect(() => {
+    if (!isAuthenticated) {
+      toast.error('Vui lòng đăng nhập để tạo bài viết');
+      router.push('/auth/login');
+      return;
+    }
+    
+    // Check if user has upload permission
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) {
+      toast.error('Token không hợp lệ. Vui lòng đăng nhập lại.');
+      router.push('/auth/login');
+      return;
+    }
+  }, [isAuthenticated, router]);
+
+  // Fetch tags on component mount
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchTags();
+    }
+  }, [isAuthenticated]);
+
+  // Check if token is valid
+  const isTokenValid = (token: string): boolean => {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const currentTime = Date.now() / 1000;
+      return payload.exp > currentTime;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const fetchTags = async () => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      if (!accessToken || !isTokenValid(accessToken)) {
+        toast.error('Token không hợp lệ. Vui lòng đăng nhập lại.');
+        router.push('/auth/login');
+        return;
+      }
+
+      const response = await fetch('http://localhost:3000/api/v1/tags', {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          toast.error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+          router.push('/auth/login');
+          return;
+        }
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      setTags(data.data || []);
+    } catch (error) {
+      console.error('Error fetching tags:', error);
+      toast.error('Không thể tải danh sách tags');
+    }
+  };
+
+  // Memoized content change handler
+  const handleContentChange = useCallback((value?: string) => {
+    setFormData(prev => ({ ...prev, content: value || "" }));
+  }, []);
+
+  const handleImageUpload = async (file: File) => {
+    if (!file) return;
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('Kích thước file không được vượt quá 10MB');
+      return;
+    }
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('Chỉ hỗ trợ file JPEG, PNG, GIF, WebP');
+      return;
+    }
+
+    // Check authentication
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) {
+      toast.error('Vui lòng đăng nhập để upload ảnh');
+      router.push('/auth/login');
+      return;
+    }
+
+    // Check if token is valid
+    if (!isTokenValid(accessToken)) {
+      toast.error('Token đã hết hạn. Vui lòng đăng nhập lại.');
+      router.push('/auth/login');
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      // Try both possible API endpoints
+      let response;
+      try {
+        // First try the standard endpoint
+        response = await fetch('http://localhost:3000/api/v1/upload/image', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+          },
+          body: formData,
+        });
+      } catch (error) {
+        // If that fails, try the alternative endpoint
+        response = await fetch('http://localhost:3001/api/v1/upload/image', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+          },
+          body: formData,
+        });
+      }
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        
+        if (response.status === 401) {
+          if (errorData.message === 'Session has been invalidated') {
+            toast.error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+            // Redirect to login
+            router.push('/auth/login');
+            return;
+          } else {
+            toast.error('Không có quyền upload ảnh. Vui lòng kiểm tra quyền của bạn.');
+          }
+        } else if (response.status === 403) {
+          toast.error('Không có quyền upload ảnh. Vui lòng liên hệ admin.');
+        } else {
+          toast.error(`Lỗi upload: ${errorData.message || 'Không thể upload ảnh'}`);
+        }
+        return;
+      }
+
+      const result = await response.json();
+      
+      // Check if response has the expected structure
+      if (!result.publicId || !result.secureUrl) {
+        console.error('Unexpected response structure:', result);
+        toast.error('Phản hồi từ server không đúng định dạng');
+        return;
+      }
+      
+      // Sử dụng publicId cho featuredImage
+      setFormData(prev => ({ ...prev, featuredImage: result.publicId }));
+      setUploadedImageUrl(result.secureUrl);
+      
+      toast.success('Upload ảnh thành công!');
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error('Không thể upload ảnh. Vui lòng thử lại.');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleImageUpload(file);
+    }
+  };
+
+  const removeImage = () => {
+    setFormData(prev => ({ ...prev, featuredImage: "" }));
+    setUploadedImageUrl("");
+  };
+
+  const handleTagToggle = (tag: Tag) => {
+    setSelectedTags(prev => {
+      const isSelected = prev.find(t => t.id === tag.id);
+      if (isSelected) {
+        // Remove tag
+        setFormData(prevForm => ({
+          ...prevForm,
+          tagIds: prevForm.tagIds.filter(id => id !== tag.id)
+        }));
+        return prev.filter(t => t.id !== tag.id);
+      } else {
+        // Add tag
+        setFormData(prevForm => ({
+          ...prevForm,
+          tagIds: [...prevForm.tagIds, tag.id]
+        }));
+        return [...prev, tag];
+      }
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,8 +273,8 @@ export default function NewBlogPage() {
         content: formData.content,
         excerpt: formData.excerpt,
         category: formData.category,
-        featuredImage: uploadedImage || formData.featuredImage,
-        keywords: keywords,
+        featuredImage: formData.featuredImage,
+        tagIds: formData.tagIds,
       }).unwrap();
       
       toast.success("Tạo bài viết thành công!");
@@ -81,8 +294,8 @@ export default function NewBlogPage() {
         content: formData.content,
         excerpt: formData.excerpt,
         category: formData.category,
-        featuredImage: uploadedImage || formData.featuredImage,
-        keywords: keywords,
+        featuredImage: formData.featuredImage,
+        tagIds: formData.tagIds,
       }).unwrap();
       
       toast.success("Đã lưu nháp thành công!");
@@ -94,257 +307,282 @@ export default function NewBlogPage() {
     }
   };
 
-  const handleContentChange = (value?: string) => {
-    setFormData(prev => ({ ...prev, content: value || "" }));
-  };
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // Simulate upload - in real app, upload to cloudinary
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setUploadedImage(e.target?.result as string);
-        toast.success("Tải ảnh thành công!");
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const removeImage = () => {
-    setUploadedImage("");
-    setFormData(prev => ({ ...prev, featuredImage: "" }));
-  };
-
-  const addKeyword = () => {
-    if (newKeyword.trim() && !keywords.includes(newKeyword.trim())) {
-      setKeywords([...keywords, newKeyword.trim()]);
-      setNewKeyword("");
-    }
-  };
-
-  const removeKeyword = (index: number) => {
-    setKeywords(keywords.filter((_, i) => i !== index));
-  };
-
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-gray-900 dark:via-gray-950 dark:to-slate-900">
       <Navbar />
       
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-8 pt-20 md:pt-24">
-        {/* Header */}
-        <div className="mb-8">
-          <Button
-            variant="ghost"
-            onClick={() => router.back()}
-            className="mb-4 hover:bg-white/10 transition-all duration-200"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Quay lại
-          </Button>
-          
-          <div className="text-center space-y-4">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Sparkles className="h-8 w-8 text-purple-500" />
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 bg-clip-text text-transparent">
-                Tạo Bài Viết Mới
-              </h1>
-              <Sparkles className="h-8 w-8 text-purple-500" />
+        {/* Show loading or redirect if not authenticated */}
+        {!isAuthenticated ? (
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+              <p className="text-gray-600 dark:text-gray-400">Đang kiểm tra xác thực...</p>
             </div>
-            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Chia sẻ kinh nghiệm và kiến thức của bạn với cộng đồng
-            </p>
           </div>
-        </div>
-
-        <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            {/* Main Content - 2/3 width */}
-            <div className="lg:col-span-2 space-y-4">
-              {/* Title */}
-              <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-2xl overflow-hidden">
-                <CardContent className="p-6">
-                  <Label htmlFor="title" className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4 block">
-                    Tiêu đề bài viết
-                  </Label>
-                  <Input
-                    id="title"
-                    placeholder="Nhập tiêu đề bài viết..."
-                    value={formData.title}
-                    onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                    className="text-2xl font-semibold border-0 bg-transparent focus:ring-0 focus:border-0 p-0 placeholder:text-gray-400 dark:placeholder:text-gray-500 mt-2"
-                  />
-                </CardContent>
-              </Card>
-
-              {/* Content Editor */}
-              <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-2xl overflow-hidden">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                    <Camera className="h-5 w-5 text-blue-500" />
-                    Nội dung bài viết
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-6 pt-2">
-                  <div data-color-mode="dark">
-                    <MDEditor
-                      value={formData.content}
-                      onChange={handleContentChange}
-                      height={600}
-                      preview="edit"
-                      textareaProps={{ placeholder: "Viết nội dung bài viết của bạn..." }}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Excerpt */}
-              <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-2xl overflow-hidden">
-                <CardHeader className="pb-1">
-                  <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                    <Sparkles className="h-5 w-5 text-purple-500" />
-                    Tóm tắt bài viết
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-6 pt-1">
-                  <textarea
-                    placeholder="Viết tóm tắt ngắn gọn về bài viết..."
-                    value={formData.excerpt}
-                    onChange={(e) => setFormData(prev => ({ ...prev, excerpt: e.target.value }))}
-                    className="w-full h-32 p-4 border border-gray-200 dark:border-gray-700 rounded-xl bg-transparent resize-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-700 dark:text-gray-300 placeholder:text-gray-400 dark:placeholder:text-gray-500 text-base"
-                  />
-                </CardContent>
-              </Card>
+        ) : (
+          <>
+            {/* Header */}
+            <div className="mb-8">
+              <Button
+                variant="ghost"
+                onClick={() => router.back()}
+                className="mb-4 hover:bg-white/10 transition-all duration-200"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Quay lại
+              </Button>
+              
+              <div className="text-center space-y-4">
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <Sparkles className="h-8 w-8 text-purple-500" />
+                  <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 bg-clip-text text-transparent">
+                    Tạo Bài Viết Mới
+                  </h1>
+                  <Sparkles className="h-8 w-8 text-purple-500" />
+                </div>
+                <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                  Chia sẻ kinh nghiệm và kiến thức của bạn với cộng đồng
+                </p>
+              </div>
             </div>
 
-            {/* Sidebar - 1/3 width */}
-            <div className="space-y-4">
-              {/* Featured Image Upload */}
-              <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-2xl overflow-hidden">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                    <ImageIcon className="h-5 w-5 text-green-500" />
-                    Ảnh đại diện
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-6 pt-2">
-                  <ImageUpload
-                    onImageUpload={setUploadedImage}
-                    onImageRemove={removeImage}
-                    currentImage={uploadedImage}
-                  />
-                </CardContent>
-              </Card>
+            <form onSubmit={handleSubmit}>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                {/* Main Content - 2/3 width */}
+                <div className="lg:col-span-2 space-y-4">
+                  {/* Title */}
+                  <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-2xl overflow-hidden">
+                    <CardContent className="p-6">
+                      <Label htmlFor="title" className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4 block">
+                        Tiêu đề bài viết
+                      </Label>
+                      <Input
+                        id="title"
+                        placeholder="Nhập tiêu đề bài viết..."
+                        value={formData.title}
+                        onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                        className="text-2xl font-semibold border-0 bg-transparent focus:ring-0 focus:border-0 p-0 placeholder:text-gray-400 dark:placeholder:text-gray-500 mt-2"
+                      />
+                    </CardContent>
+                  </Card>
 
-              {/* Category */}
-              <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-2xl overflow-hidden">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                    <Tag className="h-5 w-5 text-orange-500" />
-                    Danh mục
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-6 pt-2">
-                  <Select
-                    value={formData.category}
-                    onValueChange={(value) => setFormData(prev => ({ ...prev, category: value as BlogCategory }))}
-                  >
-                    <SelectTrigger className="h-12 text-base">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value={BlogCategory.GUIDE}>Hướng dẫn</SelectItem>
-                      <SelectItem value={BlogCategory.REVIEW}>Đánh giá</SelectItem>
-                      <SelectItem value={BlogCategory.NEWS}>Tin tức</SelectItem>
-                      <SelectItem value={BlogCategory.TUTORIAL}>Tutorial</SelectItem>
-                      <SelectItem value={BlogCategory.INTERVIEW}>Phỏng vấn</SelectItem>
-                      <SelectItem value={BlogCategory.CASE_STUDY}>Case study</SelectItem>
-                      <SelectItem value={BlogCategory.OTHER}>Khác</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </CardContent>
-              </Card>
-
-              {/* Keywords */}
-              <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-2xl overflow-hidden">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                    <Tag className="h-5 w-5 text-blue-500" />
-                    Từ khóa
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-6 pt-2 space-y-4">
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="Thêm từ khóa..."
-                      value={newKeyword}
-                      onChange={(e) => setNewKeyword(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addKeyword())}
-                      className="h-12 text-base"
-                    />
-                    <Button type="button" onClick={addKeyword} size="sm" className="h-12 px-4">
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  
-                  {keywords.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {keywords.map((keyword, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center gap-2 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-800 dark:text-blue-200 px-3 py-2 rounded-full text-sm font-medium shadow-sm"
-                        >
-                          {keyword}
-                          <button
-                            type="button"
-                            onClick={() => removeKeyword(index)}
-                            className="hover:text-red-500 transition-colors"
+                  {/* Featured Image Upload */}
+                  <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-2xl overflow-hidden">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                        <Camera className="h-5 w-5 text-blue-500" />
+                        Ảnh nổi bật
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-6 pt-2">
+                      {!uploadedImageUrl ? (
+                        <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center hover:border-blue-400 dark:hover:border-blue-500 transition-colors duration-200">
+                          <input
+                            type="file"
+                            id="image-upload"
+                            accept="image/*"
+                            onChange={handleFileSelect}
+                            className="hidden"
+                          />
+                          <label
+                            htmlFor="image-upload"
+                            className="cursor-pointer flex flex-col items-center gap-4"
                           >
-                            <X className="h-3 w-3" />
-                          </button>
+                            <Upload className="h-12 w-12 text-gray-400" />
+                            <div>
+                              <p className="text-lg font-medium text-gray-700 dark:text-gray-300">
+                                {isUploading ? 'Đang upload...' : 'Click để chọn ảnh'}
+                              </p>
+                              <p className="text-sm text-gray-500 dark:text-gray-400">
+                                JPEG, PNG, GIF, WebP (tối đa 10MB)
+                              </p>
+                            </div>
+                          </label>
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                      ) : (
+                        <div className="relative">
+                          <img
+                            src={uploadedImageUrl}
+                            alt="Featured"
+                            className="w-full h-64 object-cover rounded-xl"
+                          />
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="sm"
+                            onClick={removeImage}
+                            className="absolute top-2 right-2 h-8 w-8 p-0 rounded-full"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
 
-              {/* Action Buttons */}
-              <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-2xl overflow-hidden">
-                <CardContent className="p-6">
-                  <div className="space-y-4">
-                    <Button 
-                      type="submit" 
-                      className="w-full h-12 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200" 
-                      disabled={isLoading}
-                    >
-                      <Send className="h-5 w-5 mr-2" />
-                      {isLoading ? "Đang tạo..." : "Tạo bài viết"}
-                    </Button>
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      className="w-full h-12 text-lg font-semibold border-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200" 
-                      onClick={handleSaveDraft} 
-                      disabled={isSaving}
-                    >
-                      <Save className="h-5 w-5 mr-2" />
-                      {isSaving ? "Đang lưu..." : "Lưu nháp"}
-                    </Button>
-                    <Button 
-                      type="button" 
-                      variant="ghost" 
-                      className="w-full h-12 text-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200" 
-                      onClick={() => router.back()}
-                    >
-                      Hủy
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </form>
+                  {/* Content Editor */}
+                  <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-2xl overflow-hidden">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                        <Camera className="h-5 w-5 text-blue-500" />
+                        Nội dung bài viết
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-6 pt-2">
+                      <MarkdownEditor
+                        value={formData.content}
+                        onChange={handleContentChange}
+                        placeholder="Viết nội dung bài viết của bạn..."
+                        height={500}
+                        className="w-full"
+                      />
+                    </CardContent>
+                  </Card>
+
+                  {/* Excerpt */}
+                  <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-2xl overflow-hidden">
+                    <CardHeader className="pb-1">
+                      <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                        <Sparkles className="h-5 w-5 text-purple-500" />
+                        Tóm tắt bài viết
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-6 pt-1">
+                      <textarea
+                        placeholder="Viết tóm tắt ngắn gọn về bài viết..."
+                        value={formData.excerpt}
+                        onChange={(e) => setFormData(prev => ({ ...prev, excerpt: e.target.value }))}
+                        className="w-full h-32 p-4 border border-gray-200 dark:border-gray-700 rounded-xl bg-transparent resize-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-700 dark:text-gray-300 placeholder:text-gray-400 dark:placeholder:text-gray-500 text-base"
+                      />
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Sidebar - 1/3 width */}
+                <div className="space-y-4">
+                  {/* Category */}
+                  <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-2xl overflow-hidden">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                        <Sparkles className="h-5 w-5 text-orange-500" />
+                        Danh mục
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-6 pt-2">
+                      <Select
+                        value={formData.category}
+                        onValueChange={(value) => setFormData(prev => ({ ...prev, category: value as BlogCategory }))}
+                      >
+                        <SelectTrigger className="h-12 text-base">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value={BlogCategory.GUIDE}>Hướng dẫn</SelectItem>
+                          <SelectItem value={BlogCategory.REVIEW}>Đánh giá</SelectItem>
+                          <SelectItem value={BlogCategory.NEWS}>Tin tức</SelectItem>
+                          <SelectItem value={BlogCategory.TUTORIAL}>Tutorial</SelectItem>
+                          <SelectItem value={BlogCategory.INTERVIEW}>Phỏng vấn</SelectItem>
+                          <SelectItem value={BlogCategory.CASE_STUDY}>Case study</SelectItem>
+                          <SelectItem value={BlogCategory.OTHER}>Khác</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </CardContent>
+                  </Card>
+
+                  {/* Tags */}
+                  <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-2xl overflow-hidden">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                        <Tag className="h-5 w-5 text-green-500" />
+                        Tags
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-6 pt-2">
+                      <div className="space-y-3">
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Chọn tags liên quan đến bài viết
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {tags.map((tag) => (
+                            <Badge
+                              key={tag.id}
+                              variant={selectedTags.find(t => t.id === tag.id) ? "default" : "outline"}
+                              className={`cursor-pointer transition-all duration-200 ${
+                                selectedTags.find(t => t.id === tag.id)
+                                  ? 'bg-blue-500 hover:bg-blue-600 text-white'
+                                  : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                              }`}
+                              onClick={() => handleTagToggle(tag)}
+                            >
+                              {tag.name}
+                            </Badge>
+                          ))}
+                        </div>
+                        {selectedTags.length > 0 && (
+                          <div className="pt-2">
+                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                              Tags đã chọn:
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                              {selectedTags.map((tag) => (
+                                <Badge
+                                  key={tag.id}
+                                  variant="default"
+                                  className="bg-green-500 hover:bg-green-600 text-white"
+                                >
+                                  {tag.name}
+                                  <X
+                                    className="h-3 w-3 ml-1 cursor-pointer"
+                                    onClick={() => handleTagToggle(tag)}
+                                  />
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Action Buttons */}
+                  <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-2xl overflow-hidden">
+                    <CardContent className="p-6">
+                      <div className="space-y-4">
+                        <Button 
+                          type="submit" 
+                          className="w-full h-12 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200" 
+                          disabled={isLoading}
+                        >
+                          <Send className="h-5 w-5 mr-2" />
+                          {isLoading ? "Đang tạo..." : "Tạo bài viết"}
+                        </Button>
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          className="w-full h-12 text-lg font-semibold border-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200" 
+                          onClick={handleSaveDraft} 
+                          disabled={isSaving}
+                        >
+                          <Save className="h-5 w-5 mr-2" />
+                          {isSaving ? "Đang lưu..." : "Lưu nháp"}
+                        </Button>
+                        <Button 
+                          type="button" 
+                          variant="ghost" 
+                          className="w-full h-12 text-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200" 
+                          onClick={() => router.back()}
+                        >
+                          Hủy
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            </form>
+          </>
+        )}
       </main>
       
       <Footer />
