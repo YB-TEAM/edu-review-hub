@@ -12,23 +12,24 @@ import { Navbar } from "@/features/landing/components/navbar/Navbar";
 import { Footer } from "@/features/landing/components/footer/Footer";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
-import { blogApi, useCreateBlogMutation } from "@/lib/services/blogApi";
-import { BlogCategory } from "@/types/blog";
-import { ArrowLeft, Send, Save, Sparkles, Camera, Upload, X, Tag, Plus } from "lucide-react";
+import { useCreateBlogMutation, useGetTagsQuery } from "@/lib/services/blogApi";
+import { useUploadImageMutation } from "@/lib/services/uploadApi";
+import { BlogCategory, Tag } from "@/types/blog";
+import { ArrowLeft, Send, Save, Sparkles, Camera, Upload, X, Plus, Tag as TagIcon } from "lucide-react";
 import { MarkdownEditor } from "@/components/ui/markdown-editor";
+import { BlogCreateGuard } from "@/components/auth/PermissionGuard";
 
-interface Tag {
-  id: number;
-  name: string;
-  description: string;
-  color: string;
-  isActive: boolean;
-  usageCount: number;
-  createdAt: string;
-  updatedAt: string;
-}
+
 
 export default function NewBlogPage() {
+  return (
+    <BlogCreateGuard>
+      <NewBlogPageContent />
+    </BlogCreateGuard>
+  );
+}
+
+function NewBlogPageContent() {
   const router = useRouter();
   const { user, isAuthenticated } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
@@ -46,33 +47,13 @@ export default function NewBlogPage() {
     tagIds: [] as number[],
   });
 
-  const [tags, setTags] = useState<Tag[]>([]);
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
 
-  // Check authentication on component mount
-  useEffect(() => {
-    if (!isAuthenticated) {
-      toast.error('Vui lòng đăng nhập để tạo bài viết');
-      router.push('/auth/login');
-      return;
-    }
-    
-    // Check if user has upload permission
-    const accessToken = localStorage.getItem('accessToken');
-    if (!accessToken) {
-      toast.error('Token không hợp lệ. Vui lòng đăng nhập lại.');
-      router.push('/auth/login');
-      return;
-    }
-  }, [isAuthenticated, router]);
-
-  // Fetch tags on component mount
-  useEffect(() => {
-    if (isAuthenticated) {
-      fetchTags();
-    }
-  }, [isAuthenticated]);
+  // Use RTK Query hooks
+  const { data: tagsData, isLoading: isTagsLoading } = useGetTagsQuery();
+  const tags = Array.isArray(tagsData) ? tagsData : [];
+  const [uploadImage] = useUploadImageMutation();
 
   // Check if token is valid
   const isTokenValid = (token: string): boolean => {
@@ -85,37 +66,7 @@ export default function NewBlogPage() {
     }
   };
 
-  const fetchTags = async () => {
-    try {
-      const accessToken = localStorage.getItem('accessToken');
-      if (!accessToken || !isTokenValid(accessToken)) {
-        toast.error('Token không hợp lệ. Vui lòng đăng nhập lại.');
-        router.push('/auth/login');
-        return;
-      }
-
-      const response = await fetch('http://localhost:3000/api/v1/tags', {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-        },
-      });
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          toast.error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
-          router.push('/auth/login');
-          return;
-        }
-        throw new Error(`HTTP ${response.status}`);
-      }
-
-      const data = await response.json();
-      setTags(data.data || []);
-    } catch (error) {
-      console.error('Error fetching tags:', error);
-      toast.error('Không thể tải danh sách tags');
-    }
-  };
+  // Tags are now fetched using RTK Query hook
 
   // Memoized content change handler
   const handleContentChange = useCallback((value?: string) => {
@@ -158,49 +109,8 @@ export default function NewBlogPage() {
       const formData = new FormData();
       formData.append('image', file);
 
-      // Try both possible API endpoints
-      let response;
-      try {
-        // First try the standard endpoint
-        response = await fetch('http://localhost:3000/api/v1/upload/image', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-          },
-          body: formData,
-        });
-      } catch (error) {
-        // If that fails, try the alternative endpoint
-        response = await fetch('http://localhost:3001/api/v1/upload/image', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-          },
-          body: formData,
-        });
-      }
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        
-        if (response.status === 401) {
-          if (errorData.message === 'Session has been invalidated') {
-            toast.error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
-            // Redirect to login
-            router.push('/auth/login');
-            return;
-          } else {
-            toast.error('Không có quyền upload ảnh. Vui lòng kiểm tra quyền của bạn.');
-          }
-        } else if (response.status === 403) {
-          toast.error('Không có quyền upload ảnh. Vui lòng liên hệ admin.');
-        } else {
-          toast.error(`Lỗi upload: ${errorData.message || 'Không thể upload ảnh'}`);
-        }
-        return;
-      }
-
-      const result = await response.json();
+      // Use RTK Query upload service
+      const result = await uploadImage(formData).unwrap();
       
       // Check if response has the expected structure
       if (!result.publicId || !result.secureUrl) {
@@ -494,7 +404,7 @@ export default function NewBlogPage() {
                   <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-2xl overflow-hidden">
                     <CardHeader className="pb-2">
                       <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                        <Tag className="h-5 w-5 text-green-500" />
+                        <TagIcon className="h-5 w-5 text-green-500" />
                         Tags
                       </CardTitle>
                     </CardHeader>
@@ -504,20 +414,30 @@ export default function NewBlogPage() {
                           Chọn tags liên quan đến bài viết
                         </p>
                         <div className="flex flex-wrap gap-2">
-                          {tags.map((tag) => (
-                            <Badge
-                              key={tag.id}
-                              variant={selectedTags.find(t => t.id === tag.id) ? "default" : "outline"}
-                              className={`cursor-pointer transition-all duration-200 ${
-                                selectedTags.find(t => t.id === tag.id)
-                                  ? 'bg-blue-500 hover:bg-blue-600 text-white'
-                                  : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-                              }`}
-                              onClick={() => handleTagToggle(tag)}
-                            >
-                              {tag.name}
-                            </Badge>
-                          ))}
+                          {isTagsLoading ? (
+                            <div className="flex gap-2">
+                              {[1, 2, 3, 4, 5].map((i) => (
+                                <div key={i} className="h-8 w-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                              ))}
+                            </div>
+                          ) : tags.length > 0 ? (
+                            tags.map((tag) => (
+                              <Badge
+                                key={tag.id}
+                                variant={selectedTags.find(t => t.id === tag.id) ? "default" : "outline"}
+                                className={`cursor-pointer transition-all duration-200 ${
+                                  selectedTags.find(t => t.id === tag.id)
+                                    ? 'bg-blue-500 hover:bg-blue-600 text-white'
+                                    : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                                }`}
+                                onClick={() => handleTagToggle(tag)}
+                              >
+                                {tag.name}
+                              </Badge>
+                            ))
+                          ) : (
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Không có tags nào</p>
+                          )}
                         </div>
                         {selectedTags.length > 0 && (
                           <div className="pt-2">

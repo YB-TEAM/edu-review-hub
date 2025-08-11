@@ -2,6 +2,8 @@
 import { Navbar } from "@/features/landing/components/navbar/Navbar";
 import { Footer } from "@/features/landing/components/footer/Footer";
 import { useGetBlogsQuery } from "@/lib/services/blogApi";
+import { usePermissions } from "@/hooks/usePermissions";
+import { IfCanCreateBlog, IfCanViewOwnDrafts, IfCanModerateBlog } from "@/components/auth/ConditionalRender";
 import {
   Pagination,
   PaginationContent,
@@ -93,6 +95,7 @@ const popularTags = [
 ];
 
 export default function BlogPage() {
+  const { canCreateBlog, canViewOwnDrafts, canModerateBlog } = usePermissions();
   const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
   const [currentPage, setCurrentPage] = useState(() => {
     if (searchParams && searchParams.get('page')) return Number(searchParams.get('page'));
@@ -162,20 +165,24 @@ export default function BlogPage() {
           
           {/* Create Blog Button */}
           <div className="flex justify-center gap-4">
-            <Button 
-              onClick={() => router.push('/blog/new')}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-            >
-              <PenSquare className="h-5 w-5 mr-2" />
-              Tạo bài viết mới
-            </Button>
-            <Button 
-              variant="outline"
-              onClick={() => router.push('/blog/my-drafts')}
-              className="border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 px-6 py-3 rounded-full"
-            >
-              Bài viết của tôi
-            </Button>
+            <IfCanCreateBlog>
+              <Button 
+                onClick={() => router.push('/blog/new')}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              >
+                <PenSquare className="h-5 w-5 mr-2" />
+                Tạo bài viết mới
+              </Button>
+            </IfCanCreateBlog>
+            <IfCanViewOwnDrafts>
+              <Button 
+                variant="outline"
+                onClick={() => router.push('/blog/my-drafts')}
+                className="border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 px-6 py-3 rounded-full"
+              >
+                Bài viết của tôi
+              </Button>
+            </IfCanViewOwnDrafts>
           </div>
         </div>
 

@@ -13,13 +13,7 @@ export interface Blog {
     original: string;
   };
   category?: BlogCategory;
-  status:
-    | "draft"
-    | "published"
-    | "pending"
-    | "rejected"
-    | "banned"
-    | "approved";
+  status: BlogStatus;
   moderationReason?: string | null;
   moderatorId?: number | null;
   moderatedAt?: string | null;
@@ -69,13 +63,7 @@ export interface UpdateBlogRequest {
 
 export interface BlogFilters {
   search?: string;
-  status?:
-    | "draft"
-    | "published"
-    | "pending"
-    | "rejected"
-    | "banned"
-    | "approved";
+  status?: BlogStatus;
   authorId?: number;
   tags?: number[];
   page?: number;
@@ -135,4 +123,13 @@ export enum BlogCategory {
   INTERVIEW = "interview",
   CASE_STUDY = "case_study",
   OTHER = "other",
+}
+
+export enum BlogStatus {
+  DRAFT = "draft",
+  PUBLISHED = "published",
+  PENDING = "pending",
+  REJECTED = "rejected",
+  BANNED = "banned",
+  APPROVED = "approved",
 }

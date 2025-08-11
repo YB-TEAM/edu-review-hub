@@ -5,6 +5,7 @@ export { courseApi } from "./courseApi";
 export { reviewApi } from "./reviewApi";
 export { blogApi } from "./blogApi";
 export { institutionApi } from "./institutionApi";
+export { uploadApi } from "./uploadApi";
 
 // Export hooks from authApi
 export {
@@ -93,3 +94,8 @@ export {
   useGetInstitutionReviewsQuery,
   useGetInstitutionCoursesQuery,
 } from "./institutionApi";
+
+// Export hooks from uploadApi
+export {
+  useUploadImageMutation,
+} from "./uploadApi";
