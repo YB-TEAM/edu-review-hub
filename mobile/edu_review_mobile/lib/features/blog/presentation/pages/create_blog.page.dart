@@ -30,6 +30,7 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
   final _excerptController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   late QuillController _quillController;
+  String get _contentPlainText => _quillController.document.toPlainText().trim();
   late final FocusNode _editorFocusNode;
   List<int> _selectedTagIds = [];
 
@@ -54,8 +55,12 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
 
   void _submitBlog(CreateBlogCubit cubit) {
     if (!_formKey.currentState!.validate()) return;
-    if (_selectedTagIds.isEmpty) {
-      _showSnackBar("Please select at least one tag");
+    // if (_selectedTagIds.isEmpty) {
+    //   _showSnackBar("Please select at least one tag");
+    //   return;
+    // }
+    if (_contentPlainText.length < 10) {
+      _showSnackBar('Content must be at least 10 characters');
       return;
     }
 
@@ -73,8 +78,56 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
       tagIds: _selectedTagIds,
     );
 
-    cubit.createBlog(blogParams);
+    cubit.saveBlog(blogParams);
   }
+
+  Future<void> _publishBlog(CreateBlogCubit cubit) async {
+    if (!_formKey.currentState!.validate()) return;
+    // if (_selectedTagIds.isEmpty) {
+    //   _showSnackBar("Please select at least one tag");
+    //   return;
+    // }
+    if (_contentPlainText.length < 10) {
+      _showSnackBar('Content must be at least 10 characters');
+      return;
+    }
+
+    final markdownContent =
+        DeltaToMarkdown().convert(_quillController.document.toDelta());
+
+    final excerptText = _excerptController.text.trim();
+
+    final blogParams = BlogParams(
+      title: _titleController.text.trim(),
+      content: markdownContent,
+      category: 'other',
+      excerpt: excerptText.isEmpty ? null : excerptText,
+      tagIds: _selectedTagIds,
+    );
+    final saveResult = await cubit.saveBlog(blogParams);
+
+    saveResult.fold(
+      (failure) {
+        _showSnackBar('Save blog failed: ${failure.message}');
+      },
+      (blogResponse) async {
+        final blogId = blogResponse.id;
+
+        // 2. Publish blog
+        final publishResult = await cubit.publishBlog(blogId);
+
+        publishResult.fold(
+          (failure) {
+            _showSnackBar('Publish blog failed: ${failure.message}');
+          },
+          (_) {
+            _showSnackBar('Blog published successfully!');
+          },
+        );
+      },
+    );
+  }
+
 
   Future<void> _pickAndUploadImage() async {
     final picker = ImagePicker();
@@ -158,7 +211,8 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
           onTap: () => FocusScope.of(context).unfocus(),
           child: BlocBuilder<CreateBlogCubit, CreateBlogState>(
             builder: (context, state) {
-              final isLoading = state is CreateBlogLoading;
+              final isLoading1 = state is CreateBlogLoading;
+              final isLoading2 = state is PublishBlogLoading;
               return Scaffold(
                 appBar: CustomAppBar(
                   title: 'Create Blog',
@@ -177,6 +231,18 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
                         CustomTextField(
                           controller: _titleController,
                           placeholder: 'Enter title',
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Title is required';
+                            }
+                            if (value.trim().length < 5) {
+                              return 'Title must be at least 5 characters';
+                            }
+                            if (value.trim().length > 255) {
+                              return 'Title cannot exceed 255 characters';
+                            }
+                            return null; // hợp lệ
+                          },
                         ),
                         const SizedBox(height: 16),
                         _buildLabel('Tags', context),
@@ -210,57 +276,106 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
                           focusNode: _editorFocusNode,
                         ),
                         const SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: isLoading
-                              ? null
-                              : () => _submitBlog(
-                                    context.read<CreateBlogCubit>(),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: isLoading1
+                                    ? null
+                                    : () => _submitBlog(
+                                          context.read<CreateBlogCubit>(),
+                                        ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.secondaryGrey,
+                                  minimumSize: const Size(double.infinity, 48),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryBlue,
-                            minimumSize:
-                                const Size(double.infinity, 48),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: isLoading1
+                                    ? const SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          valueColor: AlwaysStoppedAnimation<Color>(
+                                            Colors.white,
+                                          ),
+                                        ),
+                                      )
+                                    : Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          SvgPicture.asset(
+                                            "assets/icons/ic_save.svg",
+                                            color: AppColors.primaryBlack,
+                                            width: 20,
+                                            height: 20,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            'Save Blog',
+                                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                              color: AppColors.textBlack,
+                                              fontWeight: FontWeight.w900,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                              ),
                             ),
-                          ),
-                          child: isLoading
-                              ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor:
-                                        AlwaysStoppedAnimation<Color>(
-                                            Colors.white),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: isLoading2
+                                    ? null
+                                    : () => _publishBlog(
+                                          context.read<CreateBlogCubit>(),
+                                        ), 
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primaryBlue,
+                                  minimumSize: const Size(double.infinity, 48),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
-                                )
-                              : Row(
+                                ),
+                                child: isLoading2
+                                    ? const SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          valueColor: AlwaysStoppedAnimation<Color>(
+                                            Colors.white,
+                                          ),
+                                        ),
+                                      )
+                                    : Row(
                                   mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      'Save',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge
-                                          ?.copyWith(
-                                            color:
-                                                AppColors.primaryWhite,
-                                            fontWeight: FontWeight.w600,
-                                          ),
+                                      'Publish', 
+                                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                        color: AppColors.primaryWhite,
+                                        fontWeight: FontWeight.w900,
+                                      ),
                                     ),
                                     const SizedBox(width: 8),
                                     SvgPicture.asset(
-                                      "assets/icons/ic_send.svg",
+                                      "assets/icons/ic_publish.svg",
                                       color: AppColors.primaryWhite,
                                       width: 20,
                                       height: 20,
                                     ),
                                   ],
                                 ),
+                              ),
+                            ),
+                          ],
                         ),
+                        SizedBox(height: 12)
                       ],
                     ),
                   ),

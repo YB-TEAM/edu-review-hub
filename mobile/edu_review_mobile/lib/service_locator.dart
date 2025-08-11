@@ -13,11 +13,13 @@ import 'package:edu_review_mobile/features/blog/data/data_sources/remote/blog_ap
 import 'package:edu_review_mobile/features/blog/data/repository/blog_repository_impl.dart';
 import 'package:edu_review_mobile/features/blog/domain/repository/blog_repository.dart';
 import 'package:edu_review_mobile/features/blog/domain/usecases/create_blog.dart';
+import 'package:edu_review_mobile/features/blog/domain/usecases/publish_blog.dart';
 import 'package:edu_review_mobile/features/settings/data/data_sources/remote/settings_api_service.dart';
 import 'package:edu_review_mobile/features/settings/data/repository/settings_repository_impl.dart';
 import 'package:edu_review_mobile/features/settings/domain/repository/settings_repository.dart';
 import 'package:edu_review_mobile/features/user_profile/data/repository/profile_repository_impl.dart';
 import 'package:edu_review_mobile/features/user_profile/domain/repository/profile_repository.dart';
+import 'package:edu_review_mobile/features/user_profile/domain/usecases/delete_blog.dart';
 import 'package:edu_review_mobile/features/user_profile/domain/usecases/edit_profile.dart';
 import 'package:edu_review_mobile/features/user_profile/domain/usecases/get_blog.dart';
 import 'package:edu_review_mobile/features/user_profile/domain/usecases/get_user.dart';
@@ -67,4 +69,6 @@ void setUpServiceLocator() {
 
   sl.registerSingleton<CreateBlogUseCase>(CreateBlogUseCase());
   sl.registerSingleton<GetMyBlogUseCase>(GetMyBlogUseCase());
+  sl.registerSingleton<PublishBlogUseCase>(PublishBlogUseCase());
+  sl.registerSingleton<DeleteBlogUseCase>(DeleteBlogUseCase());
 }
