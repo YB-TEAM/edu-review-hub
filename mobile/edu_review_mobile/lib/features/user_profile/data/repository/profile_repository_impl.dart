@@ -19,6 +19,11 @@ class ProfileRepositoryImpl extends ProfileRepository {
   Future<Either<Failure, List<BlogResponse>>> getBlogs() async {
     return await sl<ProfileApiService>().getBlogs();
   }
+
+  @override
+  Future<Either<Failure, void>> deleteBlog(int blogId) async {
+    return await sl<ProfileApiService>().deleteBlog(blogId);
+  }
   
   @override
   Future<Either<Failure, ProfileEntity>> editProfile(EditProfileModel editModel) async {

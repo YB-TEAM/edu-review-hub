@@ -25,4 +25,20 @@ class BlogRepositoryImpl extends BlogRepository {
       return Left(ServerFailure(message: e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, BlogResponse>> publishBlog(int blogId) async {
+    try {
+      return await _apiService.publishBlog(blogId);
+    } on DioException catch (e) {
+      return Left(
+        ServerFailure(
+          message: e.response?.data['message'] ?? 'Failed to publish blog',
+          statusCode: e.response?.statusCode,
+        ),
+      );
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
 }

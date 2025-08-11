@@ -12,8 +12,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class ProfileApiService {
   Future<Either<Failure, ProfileEntity>> getUser();
-  Future<Either<Failure, List<BlogResponse>>> getBlogs();
   Future<Either<Failure, ProfileEntity>> editProfile(EditProfileModel profileData);
+  Future<Either<Failure, List<BlogResponse>>> getBlogs();
+  Future<Either<Failure, void>> deleteBlog(int blogId);
 }
 
 class ProfileApiServiceImpl extends ProfileApiService {
@@ -49,6 +50,26 @@ class ProfileApiServiceImpl extends ProfileApiService {
       return Right(blogs);
     } on DioException catch (e) {
       return Left(ServerFailure(message: e.response?.data['message'] ?? 'Some errors occur when fetching user profile', statusCode: e.response?.statusCode));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteBlog(int blogId) async {
+    try {
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      var token = sharedPreferences.getString('accessToken');
+
+      await sl<DioClient>().delete(
+        ApiUrls.blog(blogId),
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+
+      return const Right(null); 
+    } on DioException catch (e) {
+      return Left(ServerFailure(
+        message: e.response?.data['message'] ?? 'Failed to delete blog',
+        statusCode: e.response?.statusCode,
+      ));
     }
   }
 
