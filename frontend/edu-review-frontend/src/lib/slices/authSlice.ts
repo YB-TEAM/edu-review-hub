@@ -116,6 +116,7 @@ const authSlice = createSlice({
           state.accessToken = accessToken;
           state.refreshToken = refreshToken;
           state.isAuthenticated = true;
+          // Note: user data will be fetched by useGetCurrentUserQuery
         }
       }
     },

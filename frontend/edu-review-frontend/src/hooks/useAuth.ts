@@ -29,9 +29,10 @@ export const useAuth = () => {
     isLoading: isUserLoading,
     error: userError,
   } = useGetCurrentUserQuery(undefined, {
-    skip:
-      !isAuthenticated &&
-      !(typeof window !== "undefined" && localStorage.getItem("accessToken")),
+    skip: !(
+      isAuthenticated ||
+      (typeof window !== "undefined" && localStorage.getItem("accessToken"))
+    ),
   });
 
   // Khôi phục authentication state từ localStorage khi component mount
@@ -45,7 +46,7 @@ export const useAuth = () => {
         dispatch(restoreAuth());
       }
     }
-  }, [isAuthenticated, dispatch]);
+  }, []); // Chỉ chạy một lần khi component mount
 
   // Cập nhật user data khi có currentUser
   useEffect(() => {
@@ -110,13 +111,7 @@ export const useAuth = () => {
   return {
     // State
     user: currentUser || user,
-    isAuthenticated:
-      isAuthenticated ||
-      !!(
-        typeof window !== "undefined" &&
-        localStorage.getItem("accessToken") &&
-        localStorage.getItem("refreshToken")
-      ),
+    isAuthenticated: isAuthenticated,
     isLoading:
       isLoading ||
       isLoginLoading ||

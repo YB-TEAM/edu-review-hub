@@ -5,6 +5,7 @@ import {
   reviewApi,
   blogApi,
   institutionApi,
+  uploadApi,
 } from "./services";
 
 // Auth slice for managing authentication state
@@ -21,6 +22,7 @@ export const store = configureStore({
     [reviewApi.reducerPath]: reviewApi.reducer,
     [blogApi.reducerPath]: blogApi.reducer,
     [institutionApi.reducerPath]: institutionApi.reducer,
+    [uploadApi.reducerPath]: uploadApi.reducer,
   },
 
   middleware: (getDefaultMiddleware) =>
@@ -33,7 +35,8 @@ export const store = configureStore({
       profileApi.middleware,
       reviewApi.middleware,
       blogApi.middleware,
-      institutionApi.middleware
+      institutionApi.middleware,
+      uploadApi.middleware
     ),
 });
 
