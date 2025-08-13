@@ -18,7 +18,7 @@ class GetTagApiServiceImpl extends GetTagApiService {
         ApiUrls.getTags, 
       );
 
-      var tags = (response.data as List)
+      var tags = (response.data['data'] as List)
           .map((tag) => TagResponse.fromMap(tag))
           .toList();
 

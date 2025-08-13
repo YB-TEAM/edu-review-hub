@@ -8,5 +8,6 @@ abstract class ProfileRepository {
   Future<Either<Failure, ProfileEntity>> getUser();
   Future<Either<Failure, void>> deleteBlog(int blogId);
   Future<Either<Failure, List<BlogResponse>>> getBlogs();
+  Future<Either<Failure, BlogResponse>> publishBlog(int blogId);
   Future<Either<Failure, ProfileEntity>> editProfile(EditProfileModel editModel);
 }

@@ -1,3 +1,4 @@
+import 'package:edu_review_mobile/common_libs.dart';
 import 'package:edu_review_mobile/core/models/tag_response.dart';
 import 'package:edu_review_mobile/core/services/get_tag_service.dart';
 import 'package:edu_review_mobile/service_locator.dart';
@@ -94,10 +95,19 @@ class _CustomTagMultiSelectState extends State<CustomTagMultiSelect> {
       children: _tags.map((tag) {
         final isSelected = _selectedTagIds.contains(tag.id);
         return ChoiceChip(
-          label: Text(tag.name),
+          label: Text(
+            tag.name,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.normal,
+              color: isSelected
+                ? AppColors.primaryWhite
+                : AppColors.primaryBlack,
+              )
+          ),
           selected: isSelected,
           onSelected: (_) => _toggleTag(tag.id),
-          selectedColor: Colors.blue.shade100,
+          selectedColor: AppColors.primaryBlue,
+          checkmarkColor: AppColors.primaryWhite,
         );
       }).toList(),
     );

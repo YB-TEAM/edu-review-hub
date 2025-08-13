@@ -28,6 +28,7 @@ import 'package:edu_review_mobile/features/settings/domain/usecases/logout.dart'
 import 'package:edu_review_mobile/features/auth/domain/usecases/sign_up.dart';
 import 'package:edu_review_mobile/features/settings/data/data_sources/local/settings_local_service.dart';
 import 'package:edu_review_mobile/features/user_profile/data/data_souces/remote/profile_api_service.dart';
+import 'package:edu_review_mobile/features/user_profile/domain/usecases/publish_blog.dart';
 import 'package:get_it/get_it.dart';
 
 final sl = GetIt.instance;
@@ -70,5 +71,6 @@ void setUpServiceLocator() {
   sl.registerSingleton<CreateBlogUseCase>(CreateBlogUseCase());
   sl.registerSingleton<GetMyBlogUseCase>(GetMyBlogUseCase());
   sl.registerSingleton<PublishBlogUseCase>(PublishBlogUseCase());
+  sl.registerSingleton<UserPublishBlogUseCase>(UserPublishBlogUseCase());
   sl.registerSingleton<DeleteBlogUseCase>(DeleteBlogUseCase());
 }

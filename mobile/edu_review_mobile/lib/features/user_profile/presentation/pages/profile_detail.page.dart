@@ -177,7 +177,7 @@ class ProfileDetailPage extends StatelessWidget {
               ),
             ),
             SvgPicture.asset(
-              'assets/icons/ic_pencil.svg',
+              AppIcons.pencil,
               width: 20,
               height: 20,
               color: AppColors.primaryBlack,
