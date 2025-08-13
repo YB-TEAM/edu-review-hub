@@ -2,7 +2,6 @@ import 'package:edu_review_mobile/common_libs.dart';
 import 'package:edu_review_mobile/core/models/tag_response.dart';
 import 'package:edu_review_mobile/core/services/get_tag_service.dart';
 import 'package:edu_review_mobile/service_locator.dart';
-import 'package:flutter/material.dart';
 
 class CustomTagMultiSelect extends StatefulWidget {
   final ValueChanged<List<int>> onTagsSelected; 

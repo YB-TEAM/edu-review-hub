@@ -3,6 +3,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:edu_review_mobile/core/error/failures.dart';
 import 'package:edu_review_mobile/features/user_profile/data/data_souces/remote/profile_api_service.dart';
+import 'package:edu_review_mobile/features/user_profile/data/models/blog_edit_params.dart';
 import 'package:edu_review_mobile/features/user_profile/data/models/blog_response.dart';
 import 'package:edu_review_mobile/features/user_profile/data/models/edit_profile.dart';
 import 'package:edu_review_mobile/features/user_profile/domain/entities/profile.dart';
@@ -28,6 +29,11 @@ class ProfileRepositoryImpl extends ProfileRepository {
   @override
   Future<Either<Failure, BlogResponse>> publishBlog(int blogId) async {
     return await sl<ProfileApiService>().publishBlog(blogId);
+  }
+
+  @override
+  Future<Either<Failure, BlogResponse>> editBlog(EditBlogParams editBlogParams) async {
+    return await sl<ProfileApiService>().editBlog(editBlogParams);
   }
   
   @override
