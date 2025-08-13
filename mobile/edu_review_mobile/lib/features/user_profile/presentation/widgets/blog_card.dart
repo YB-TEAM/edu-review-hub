@@ -88,7 +88,7 @@ class BlogCard extends StatelessWidget {
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      SvgPicture.asset('assets/icons/ic_user_active.svg', width: 24, height: 24, color: AppColors.primaryGrey),
+                      SvgPicture.asset(AppIcons.userActive, width: 24, height: 24, color: AppColors.primaryGrey),
                       const SizedBox(width: 8),
                       Container(
                         constraints: const BoxConstraints(maxWidth: 80),

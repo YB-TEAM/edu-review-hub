@@ -1,6 +1,7 @@
-import 'package:edu_review_mobile/common/constants/app_default_images.dart';
+import 'package:edu_review_mobile/common/constants/app_default_images.constant.dart';
 import 'package:edu_review_mobile/common/widgets/appbar/custom_appbar.dart';
 import 'package:edu_review_mobile/common/widgets/dialog/custom_dialog.dart';
+import 'package:edu_review_mobile/common_libs.dart';
 import 'package:edu_review_mobile/core/config/theme/color.dart';
 import 'package:edu_review_mobile/core/utils/date_formatted.dart';
 import 'package:edu_review_mobile/core/utils/hex_color.dart';
@@ -77,7 +78,6 @@ class MyBlogDetailPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // --- Tags ---
                       if (blog.tags != null && blog.tags!.isNotEmpty)
                         Column(
                           children: [
@@ -116,7 +116,7 @@ class MyBlogDetailPage extends StatelessWidget {
                       Row(
                         children: [
                           SvgPicture.asset(
-                            'assets/icons/ic_user_active.svg',
+                            AppIcons.userActive,
                             width: 24,
                             height: 24,
                             color: AppColors.primaryGrey,
@@ -241,7 +241,7 @@ class MyBlogDetailPage extends StatelessWidget {
                                       ),
                                       const SizedBox(width: 8),
                                       SvgPicture.asset(
-                                        "assets/icons/ic_delete.svg",
+                                        AppIcons.delete,
                                         color: AppColors.primaryBlack,
                                         width: 20,
                                         height: 20,
@@ -293,7 +293,7 @@ class MyBlogDetailPage extends StatelessWidget {
                                         ),
                                         const SizedBox(width: 8),
                                         SvgPicture.asset(
-                                          "assets/icons/ic_publish.svg",
+                                          AppIcons.publish,
                                           color: AppColors.primaryWhite,
                                           width: 20,
                                           height: 20,

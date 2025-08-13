@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:edu_review_mobile/common/constants/app_icon.constant.dart';
 import 'package:edu_review_mobile/features/blog/presentation/pages/blog.page.dart';
 import 'package:edu_review_mobile/features/chat/presentation/pages/chat.page.dart';
 import 'package:edu_review_mobile/features/settings/presentation/pages/settings.page.dart';
@@ -135,82 +136,77 @@ class _MainScreenState extends State<MainScreen> {
       child: PersistentTabView(
         tabs: _tabs,
         navBarBuilder: (navBarConfig) {
-          final selectedIndex = navBarConfig.selectedIndex;
-          return Container(
-            height: 55,
-            decoration: BoxDecoration(
-              color: AppColors.primaryWhite,
-              border: Border(
-                top: BorderSide(color: AppColors.secondaryGrey, width: 0.4),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: List.generate(navBarConfig.items.length, (index) {
-                final isSelected = index == selectedIndex;
-                String svgName;
-                switch (index) {
-                  case 0:
-                    svgName = 'ic_home';
-                    break;
-                  case 1:
-                    svgName = 'ic_community';
-                    break;
-                  case 2:
-                    svgName = 'ic_notifications';
-                    break;
-                  case 3:
-                    svgName = 'ic_chat';
-                    break;
-                  case 4:
-                    svgName = 'ic_user';
-                    break;
-                  case 5:
-                    svgName = 'ic_bar';
-                    break;
-                  default:///...
-                    svgName = 'ic_home';
-                }
-                final svgPath =
-                    isSelected
-                        ? 'assets/icons/${svgName}_active.svg'
-                        : 'assets/icons/${svgName}_inactive.svg';
-                final svgColor = isSelected ? AppColors.primaryBlue : null;
-                return Expanded(
-                  child: GestureDetector(
-                    onTap: () => navBarConfig.onItemSelected(index),
-                    behavior: HitTestBehavior.opaque,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          height: 3,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color:
-                                isSelected
-                                    ? AppColors.primaryBlue
-                                    : Colors.transparent,
-                            borderRadius: BorderRadius.circular(2),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        SvgPicture.asset(
-                          svgPath,
-                          width: 28,
-                          height: 28,
-                          color: svgColor,
-                        ),
-                      ],
-                    ),
+  final selectedIndex = navBarConfig.selectedIndex;
+  return Container(
+    height: 55,
+    decoration: BoxDecoration(
+      color: AppColors.primaryWhite,
+      border: Border(
+        top: BorderSide(color: AppColors.secondaryGrey, width: 0.4),
+      ),
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: List.generate(navBarConfig.items.length, (index) {
+        final isSelected = index == selectedIndex;
+
+        String svgPath;
+        switch (index) {
+          case 0:
+            svgPath = isSelected ? AppIcons.homeActive : AppIcons.homeInactive;
+            break;
+          case 1:
+            svgPath = isSelected ? AppIcons.communityActive : AppIcons.communityInactive;
+            break;
+          case 2:
+            svgPath = isSelected ? AppIcons.notificationsActive : AppIcons.notificationsInactive;
+            break;
+          case 3:
+            svgPath = isSelected ? AppIcons.chatActive : AppIcons.chatInactive;
+            break;
+          case 4:
+            svgPath = isSelected ? AppIcons.userActive : AppIcons.userInactive;
+            break;
+          case 5:
+            svgPath = isSelected ? AppIcons.barActive : AppIcons.barInactive;
+            break;
+          default:
+            svgPath = AppIcons.homeInactive;
+        }
+
+        return Expanded(
+          child: GestureDetector(
+            onTap: () => navBarConfig.onItemSelected(index),
+            behavior: HitTestBehavior.opaque,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  height: 3,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: isSelected ? AppColors.primaryBlue : Colors.transparent,
+                    borderRadius: BorderRadius.circular(2),
                   ),
-                );
-              }),
+                ),
+                const SizedBox(height: 10),
+                SvgPicture.asset(
+                  svgPath,
+                  width: 28,
+                  height: 28,
+                  color: isSelected ? AppColors.primaryBlue : AppColors.primaryBlack,
+                ),
+              ],
             ),
-          );
-        },
+          ),
+        );
+      }),
+    ),
+  );
+},
+
       ),
     );
   }

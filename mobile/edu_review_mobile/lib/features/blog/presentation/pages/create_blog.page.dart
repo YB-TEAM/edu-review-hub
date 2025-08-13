@@ -333,7 +333,7 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
                                               ),
                                               const SizedBox(width: 8),
                                               SvgPicture.asset(
-                                                "assets/icons/ic_save.svg",
+                                                AppIcons.save,
                                                 color: AppColors.primaryBlack,
                                                 width: 20,
                                                 height: 20,
@@ -386,7 +386,7 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
                                               ),
                                               const SizedBox(width: 8),
                                               SvgPicture.asset(
-                                                "assets/icons/ic_publish.svg",
+                                                AppIcons.publish,
                                                 color: AppColors.primaryWhite,
                                                 width: 20,
                                                 height: 20,
