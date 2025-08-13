@@ -4,6 +4,8 @@ class CreateBlogInitial extends CreateBlogState {}
 
 class CreateBlogLoading extends CreateBlogState {}
 
+class PublishBlogLoading extends CreateBlogState {}
+
 class CreateBlogSuccess extends CreateBlogState {}
 
 class CreateBlogFailure extends CreateBlogState {

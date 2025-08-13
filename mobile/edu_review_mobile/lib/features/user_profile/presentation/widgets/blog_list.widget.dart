@@ -4,6 +4,7 @@ import 'package:edu_review_mobile/features/user_profile/presentation/widgets/blo
 
 class MyBlogList extends StatelessWidget {
   final List<BlogResponse> blogs;
+  
 
   const MyBlogList({super.key, required this.blogs});
 
