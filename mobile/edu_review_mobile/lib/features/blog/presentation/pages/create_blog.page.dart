@@ -19,6 +19,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:markdown_quill/markdown_quill.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:path/path.dart' as path;
 
 class CreateBlogPage extends StatefulWidget {
   const CreateBlogPage({super.key});
@@ -37,6 +39,7 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
   List<int> _selectedTagIds = [];
 
   String? _uploadedImageUrl;
+  String? _featuredImage;
   bool _isUploadingImage = false;
 
   @override
@@ -76,6 +79,7 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
       content: markdownContent,
       category: 'other',
       excerpt: excerptText.isEmpty ? null : excerptText,
+      featuredImage: _featuredImage,
       tagIds: _selectedTagIds,
     );
 
@@ -103,6 +107,7 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
       content: markdownContent,
       category: 'other',
       excerpt: excerptText.isEmpty ? null : excerptText,
+      featuredImage: _featuredImage,
       tagIds: _selectedTagIds,
     );
 
@@ -117,20 +122,26 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
     setState(() => _isUploadingImage = true);
 
     try {
+      final ext = path.extension(pickedFile.path).toLowerCase();
+      final mimeType = ext == '.png'
+          ? MediaType('image', 'png')
+          : MediaType('image', 'jpeg');
+
       final formData = FormData.fromMap({
         'image': await MultipartFile.fromFile(
           pickedFile.path,
-          filename: pickedFile.name,
+          filename: path.basename(pickedFile.path),
+          contentType: mimeType,
         ),
       });
 
-      final result =
-          await sl<UploadImageApiService>().uploadImage(formData);
+      final result = await sl<UploadImageApiService>().uploadImage(formData);
 
       result.fold(
         (failure) => _showSnackBar(failure.message),
         (success) {
           setState(() => _uploadedImageUrl = success.secureUrl);
+          setState(() => _featuredImage = success.publicId);
           _showSnackBar('Image uploaded successfully!');
         },
       );
@@ -140,6 +151,7 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
 
     setState(() => _isUploadingImage = false);
   }
+
 
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context)
@@ -322,9 +334,9 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
                                               Text(
                                                 'Save Blog',
                                                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                                      color: AppColors.textBlack,
-                                                      fontWeight: FontWeight.w900,
-                                                    ),
+                                                  color: AppColors.textBlack,
+                                                  fontWeight: FontWeight.w900,
+                                                ),
                                               ),
                                             ],
                                           ),

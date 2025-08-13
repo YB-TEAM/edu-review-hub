@@ -3,6 +3,7 @@ import 'package:edu_review_mobile/core/utils/date_formatted.dart';
 import 'package:edu_review_mobile/core/utils/hex_color.dart';
 import 'package:edu_review_mobile/features/user_profile/data/models/blog_response.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:markdown_widget/config/all.dart';
 
 class BlogCard extends StatelessWidget {
   final BlogResponse blog;
@@ -44,27 +45,27 @@ class BlogCard extends StatelessWidget {
                 Column(
                   children: [
                     Wrap(
-                      spacing: 6,
-                      runSpacing: 6,
+                      spacing: 8,
+                      runSpacing: 12,
                       children: blog.tags!.map((tag) {
                         final Color bgColor = HexToColor(tag.color);
                         return Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                           decoration: BoxDecoration(
-                            color: bgColor,
+                            color: bgColor.toOpacity(0.2),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
                             tag.name,
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                              color: bgColor,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         );
                       }).toList(),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 12),
                   ],
                 ),
               Column(
