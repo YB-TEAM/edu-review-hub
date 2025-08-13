@@ -11,7 +11,7 @@ import 'package:edu_review_mobile/features/blog/presentation/bloc/create_blog_cu
 import 'package:edu_review_mobile/features/blog/presentation/bloc/create_blog_state.dart';
 import 'package:edu_review_mobile/features/blog/presentation/bloc/publish_blog_cubit.dart';
 import 'package:edu_review_mobile/features/blog/presentation/bloc/publish_blog_state.dart';
-import 'package:edu_review_mobile/features/blog/presentation/widgets/custom_tag_multi_select.widget.dart';
+import 'package:edu_review_mobile/common/widgets/selector/custom_tag_multi_select.widget.dart';
 import 'package:edu_review_mobile/features/blog/presentation/widgets/richtext_editor.widget.dart';
 import 'package:edu_review_mobile/service_locator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
