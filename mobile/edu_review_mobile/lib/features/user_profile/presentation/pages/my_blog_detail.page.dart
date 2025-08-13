@@ -1,12 +1,15 @@
 import 'package:edu_review_mobile/common/constants/app_default_images.dart';
 import 'package:edu_review_mobile/common/widgets/appbar/custom_appbar.dart';
+import 'package:edu_review_mobile/core/config/theme/color.dart';
+import 'package:edu_review_mobile/core/utils/date_formatted.dart';
+import 'package:edu_review_mobile/core/utils/hex_color.dart';
 import 'package:edu_review_mobile/features/user_profile/data/models/blog_response.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/delete_blog_cubit.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/delete_blog_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-// ... các import khác
+import 'package:flutter_svg/svg.dart';
 
 class MyBlogDetailPage extends StatelessWidget {
   final BlogResponse blog;
@@ -19,7 +22,7 @@ class MyBlogDetailPage extends StatelessWidget {
       create: (_) => DeleteBlogCubit(),
       child: Scaffold(
         appBar: CustomAppBar(
-          title: blog.title,
+          title: "Blog Detail",
           onBackPressed: () => Navigator.of(context).maybePop(),
         ),
         body: Padding(
@@ -31,15 +34,73 @@ class MyBlogDetailPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Image.network(
-                        blog.featuredImageUrl ?? AppDefaultImages.defaultImage,
-                        fit: BoxFit.cover,
+                      if (blog.tags != null && blog.tags!.isNotEmpty)
+                        Column(
+                          children: [
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 12,
+                              children: blog.tags!.map((tag) {
+                                final Color bgColor = HexToColor(tag.color);
+                                return Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: bgColor,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    tag.name,
+                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: AppColors.primaryWhite,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                        ),
+                      Text(blog.title, style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                        wordSpacing: 2.0
+                      )),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          SvgPicture.asset('assets/icons/ic_user_active.svg', width: 24, height: 24, color: AppColors.primaryGrey),
+                          const SizedBox(width: 8),
+                          Container(
+                            constraints: const BoxConstraints(maxWidth: 150), 
+                            child: Text(
+                              blog.authorName ?? "Unknow Author",
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textGrey,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Text(
+                              formatDate(blog.createdAt),
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.textGrey,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 16),
-                      Text(blog.title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700)),
-                      const SizedBox(height: 8),
-                      Text("By ${blog.authorName} • ${blog.publishedAt?.toString().split(' ')[0]}"),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 20),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          blog.featuredImageUrl ?? AppDefaultImages.defaultImage,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
                       MarkdownBody(data: blog.content),
                     ],
                   ),
@@ -72,7 +133,7 @@ class MyBlogDetailPage extends StatelessWidget {
                         onPressed: isLoading
                           ? null
                           : () {
-                              final deleteCubit = context.read<DeleteBlogCubit>(); // lấy cubit trước khi gọi dialog
+                              final deleteCubit = context.read<DeleteBlogCubit>(); 
                               showDialog(
                                 context: context,
                                 builder: (dialogContext) => AlertDialog(
@@ -86,7 +147,7 @@ class MyBlogDetailPage extends StatelessWidget {
                                     TextButton(
                                       onPressed: () {
                                         Navigator.of(dialogContext).pop();
-                                        deleteCubit.deleteBlog(blog.id); // dùng cubit lấy được bên ngoài
+                                        deleteCubit.deleteBlog(blog.id); 
                                       },
                                       child: const Text('Delete'),
                                     ),
@@ -94,7 +155,6 @@ class MyBlogDetailPage extends StatelessWidget {
                                 ),
                               );
                             },
-
                         child: isLoading
                             ? const SizedBox(
                                 width: 20,

@@ -73,7 +73,7 @@ class BlogCard extends StatelessWidget {
                 children: [
                   Text(
                     blog.title,
-                    style: Theme.of(context).textTheme.headlineMedium
+                    style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 6),
                   if (blog.excerpt != null && blog.excerpt!.isNotEmpty)
@@ -85,16 +85,16 @@ class BlogCard extends StatelessWidget {
                         color: AppColors.textGrey,
                       ),
                     ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                   Row(
                     children: [
-                      SvgPicture.asset('assets/icons/ic_user_active.svg', width: 36, height: 36, color: AppColors.primaryGrey),
+                      SvgPicture.asset('assets/icons/ic_user_active.svg', width: 24, height: 24, color: AppColors.primaryGrey),
                       const SizedBox(width: 8),
                       Container(
-                        constraints: const BoxConstraints(maxWidth: 150),
+                        constraints: const BoxConstraints(maxWidth: 80),
                         child: Text(
-                          blog.authorName ?? 'Unknown Author',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          blog.authorName ?? 'Unknown Author', 
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                             color: AppColors.textGrey,
                           ),
@@ -102,11 +102,28 @@ class BlogCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 16),
-                      Text(
-                        formatDate(blog.createdAt),
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.textGrey,
+                      Expanded(
+                        child: Text(
+                          formatDate(blog.createdAt),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.textGrey,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryBlue,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          blog.status,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: AppColors.textWhite,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     ],
