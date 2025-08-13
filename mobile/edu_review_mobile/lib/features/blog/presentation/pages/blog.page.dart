@@ -49,11 +49,12 @@ class _BlogPageState extends State<BlogPage> {
           _buildBlogContent()
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: FloatingActionButton(
         heroTag: 'create_blog_fab',
         onPressed: _navigateToCreateBlog,
-        icon: const Icon(Icons.edit),
-        label: const Text('Create Blog'),
+        backgroundColor: AppColors.primaryBlue,
+        elevation: 8,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

@@ -70,30 +70,30 @@ class MyBlogDetailPage extends StatelessWidget {
                           ),
                         ),
                         onPressed: isLoading
-    ? null
-    : () {
-        final deleteCubit = context.read<DeleteBlogCubit>(); // lấy cubit trước khi gọi dialog
-        showDialog(
-          context: context,
-          builder: (dialogContext) => AlertDialog(
-            title: const Text('Confirm Delete'),
-            content: const Text('Are you sure you want to delete this blog?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(dialogContext).pop(),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(dialogContext).pop();
-                  deleteCubit.deleteBlog(blog.id); // dùng cubit lấy được bên ngoài
-                },
-                child: const Text('Delete'),
-              ),
-            ],
-          ),
-        );
-      },
+                          ? null
+                          : () {
+                              final deleteCubit = context.read<DeleteBlogCubit>(); // lấy cubit trước khi gọi dialog
+                              showDialog(
+                                context: context,
+                                builder: (dialogContext) => AlertDialog(
+                                  title: const Text('Confirm Delete'),
+                                  content: const Text('Are you sure you want to delete this blog?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.of(dialogContext).pop(),
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(dialogContext).pop();
+                                        deleteCubit.deleteBlog(blog.id); // dùng cubit lấy được bên ngoài
+                                      },
+                                      child: const Text('Delete'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
 
                         child: isLoading
                             ? const SizedBox(
