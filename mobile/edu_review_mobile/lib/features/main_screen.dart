@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:edu_review_mobile/features/dashboard/presentation/pages/dashboard.page.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/pages/profile.page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user_display_cubit.dart';
+import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user/user_display_cubit.dart';
 import 'package:edu_review_mobile/core/config/theme/color.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:flutter_svg/flutter_svg.dart';

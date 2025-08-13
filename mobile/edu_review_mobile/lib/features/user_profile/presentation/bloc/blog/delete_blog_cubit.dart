@@ -1,4 +1,4 @@
-import 'package:edu_review_mobile/features/user_profile/presentation/bloc/delete_blog_state.dart';
+import 'package:edu_review_mobile/features/user_profile/presentation/bloc/blog/delete_blog_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:edu_review_mobile/features/user_profile/domain/usecases/delete_blog.dart';
 import 'package:edu_review_mobile/service_locator.dart';

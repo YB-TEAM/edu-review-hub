@@ -324,19 +324,19 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
                                             mainAxisSize: MainAxisSize.min,
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
-                                              SvgPicture.asset(
-                                                "assets/icons/ic_save.svg",
-                                                color: AppColors.primaryBlack,
-                                                width: 20,
-                                                height: 20,
-                                              ),
-                                              const SizedBox(width: 8),
                                               Text(
                                                 'Save Blog',
                                                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                                   color: AppColors.textBlack,
                                                   fontWeight: FontWeight.w900,
                                                 ),
+                                              ),
+                                              const SizedBox(width: 8),
+                                              SvgPicture.asset(
+                                                "assets/icons/ic_save.svg",
+                                                color: AppColors.primaryBlack,
+                                                width: 20,
+                                                height: 20,
                                               ),
                                             ],
                                           ),
