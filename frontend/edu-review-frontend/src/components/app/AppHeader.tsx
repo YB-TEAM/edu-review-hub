@@ -34,7 +34,7 @@ export function AppHeader() {
       <div className="max-w-6xl mx-auto px-4 flex items-center h-16 justify-between">
         {/* Logo */}
         <Link
-          href="/dashboard"
+          href="/"
           className="flex items-center gap-2 font-bold text-xl text-primary"
         >
           <span className="bg-gradient-to-br from-blue-600 to-orange-500 w-8 h-8 rounded-lg flex items-center justify-center text-white">
