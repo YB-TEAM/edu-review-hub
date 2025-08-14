@@ -38,6 +38,9 @@ export const store = configureStore({
       institutionApi.middleware,
       uploadApi.middleware
     ),
+
+  // Enable Redux DevTools in development
+  devTools: process.env.NODE_ENV !== "production",
 });
 
 export type RootState = ReturnType<typeof store.getState>;

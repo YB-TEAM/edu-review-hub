@@ -10,7 +10,19 @@ export const usePermissions = () => {
   const { user } = useAuth();
   const userRole = user?.accountType || null;
 
-  return {
+  // Debug logging
+  console.log("🔐 usePermissions: Debug info", {
+    user: user ? {
+      id: user.id,
+      username: user.username,
+      accountType: user.accountType
+    } : null,
+    userRole,
+    hasUser: !!user,
+    hasUserRole: !!userRole
+  });
+
+  const permissions = {
     // Basic permission checks
     canViewPublicBlogs: hasPermission(userRole, BLOG_PERMISSIONS.VIEW_PUBLIC_BLOGS),
     canViewPublicBlogDetail: hasPermission(userRole, BLOG_PERMISSIONS.VIEW_PUBLIC_BLOG_DETAIL),
@@ -53,4 +65,14 @@ export const usePermissions = () => {
     userRole,
     isAuthenticated: !!user,
   };
+
+  // Debug logging for key permissions
+  console.log("🔐 usePermissions: Key permissions", {
+    canCreateBlog: permissions.canCreateBlog,
+    canViewOwnDrafts: permissions.canViewOwnDrafts,
+    isStudent: permissions.isStudent,
+    userRole: permissions.userRole
+  });
+
+  return permissions;
 };

@@ -7,6 +7,7 @@ import { NAV_ITEMS } from "@/features/landing/types/navbar.type";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { AvatarDropdown } from "@/components/ui/avatar-dropdown";
 import { useAuth } from "@/hooks/useAuth";
@@ -16,6 +17,7 @@ export function Navbar({ rightSlot }: { rightSlot?: React.ReactNode } = {}) {
   const { isMobileMenuOpen, toggleMobileMenu, closeMobileMenu } =
     useMobileMenu();
   const [activeSection, setActiveSection] = useState("home");
+  const router = useRouter();
 
   // Track active section based on scroll position
   useEffect(() => {
@@ -76,6 +78,11 @@ export function Navbar({ rightSlot }: { rightSlot?: React.ReactNode } = {}) {
     }
   };
 
+  const handleLogoClick = () => {
+    // Navigate to home page instead of just scrolling
+    router.push("/");
+  };
+
   // Update NAV_ITEMS with active states
   const navItemsWithActive = NAV_ITEMS.map((item) => ({
     ...item,
@@ -98,7 +105,7 @@ export function Navbar({ rightSlot }: { rightSlot?: React.ReactNode } = {}) {
             {/* Logo */}
             <NavbarLogo
               isScrolled={isScrolled}
-              onLogoClick={() => handleNavClick("#home")}
+              onLogoClick={handleLogoClick}
             />
 
             {/* Desktop Navigation */}
@@ -131,6 +138,7 @@ export function Navbar({ rightSlot }: { rightSlot?: React.ReactNode } = {}) {
           isOpen={isMobileMenuOpen}
           onNavClick={handleNavClick}
           navItems={navItemsWithActive}
+          onLogoClick={handleLogoClick}
         />
       </nav>
     </>
@@ -312,7 +320,29 @@ function DesktopNavigation({
 function DesktopCTAButtons({ isScrolled, onStartClick }: { isScrolled: boolean; onStartClick: () => void; }) {
   const { user, isAuthenticated, isLoading } = useAuth();
 
-
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div className="hidden lg:flex items-center space-x-3">
+        <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
+        <Button
+          variant="default"
+          size="sm"
+          className={cn(
+            "font-semibold shadow-md hover:shadow-lg transition-all duration-300",
+            {
+              "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700": isScrolled,
+              "bg-gradient-to-r from-blue-500 via-purple-500 to-orange-400 hover:from-blue-600 hover:via-purple-600 hover:to-orange-500": !isScrolled,
+            }
+          )}
+          onClick={onStartClick}
+        >
+          Bắt đầu
+        </Button>
+        <ModeToggle />
+      </div>
+    );
+  }
 
   return (
     <div className="hidden lg:flex items-center space-x-3">
@@ -399,6 +429,7 @@ function MobileMenu({
   isOpen,
   onNavClick,
   navItems,
+  onLogoClick,
 }: {
   isOpen: boolean;
   onNavClick: (href: string) => void;
@@ -408,7 +439,10 @@ function MobileMenu({
     isActive: boolean;
     badge?: string;
   }>;
+  onLogoClick: () => void;
 }) {
+  const { user, isAuthenticated, isLoading } = useAuth();
+
   if (!isOpen) return null;
 
   return (
@@ -430,10 +464,42 @@ function MobileMenu({
         <div className="flex items-center justify-between mb-4">
           <NavbarLogo
             isScrolled={true}
-            onLogoClick={() => onNavClick("#home")}
+            onLogoClick={onLogoClick}
           />
           <ModeToggle />
         </div>
+        
+        {/* Authentication Section */}
+        <div className="border-b border-gray-200 pb-4">
+          {isLoading ? (
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
+              <span className="text-gray-500">Loading...</span>
+            </div>
+          ) : isAuthenticated && user ? (
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                {user.username.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <div className="font-medium text-gray-900">{user.username}</div>
+                <div className="text-sm text-gray-500">{user.accountType}</div>
+              </div>
+            </div>
+          ) : (
+            <Link 
+              href="/auth/login"
+              className="flex items-center space-x-3 text-blue-600 hover:text-blue-700 font-medium"
+              onClick={() => onNavClick("#home")}
+            >
+              <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                <span className="text-gray-600">👤</span>
+              </div>
+              <span>Đăng nhập</span>
+            </Link>
+          )}
+        </div>
+        
         <div className="flex flex-col gap-2">
           {navItems.map((item) => (
             <button
