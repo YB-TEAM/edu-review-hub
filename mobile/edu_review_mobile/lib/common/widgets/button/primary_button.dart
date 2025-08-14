@@ -4,7 +4,7 @@ import 'package:edu_review_mobile/common_libs.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PrimaryButton extends StatefulWidget {
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final String title;
   final Widget? icon;
   final Color? backgroundColor;

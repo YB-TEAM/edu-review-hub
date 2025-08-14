@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  DeleteDateColumn,
   ManyToOne,
   ManyToMany,
   OneToMany,
@@ -86,6 +87,9 @@ export class Blog {
 
   @UpdateDateColumn({ name: "updated_at" })
   updatedAt: Date;
+
+  @DeleteDateColumn({ name: "deleted_at" })
+  deletedAt?: Date;
 
   // Relations
   @ManyToOne(() => User, (user) => user.blogs)

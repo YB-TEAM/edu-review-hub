@@ -15,6 +15,10 @@ class AppIcons {
   static const String users = 'assets/icons/ic_users.svg';
   static const String comment = 'assets/icons/ic_comment.svg';
   static const String share = 'assets/icons/ic_share.svg';
+  static const String delete = 'assets/icons/ic_delete.svg';
+  static const String publish = 'assets/icons/ic_publish.svg';
+  static const String save = 'assets/icons/ic_save.svg';
+  static const String send = 'assets/icons/ic_send.svg';
 
   // Bottom navigation bar icons
   static const String homeActive = 'assets/icons/ic_home_active.svg';

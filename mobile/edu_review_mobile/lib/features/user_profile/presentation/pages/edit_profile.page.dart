@@ -6,8 +6,8 @@ import 'package:edu_review_mobile/common/widgets/text_field/custom_text_field.da
 import 'package:edu_review_mobile/common_libs.dart';
 import 'package:edu_review_mobile/features/user_profile/data/models/edit_profile.dart';
 import 'package:edu_review_mobile/features/user_profile/domain/entities/profile.dart';
-import 'package:edu_review_mobile/features/user_profile/presentation/bloc/edit_profile_cubit.dart';
-import 'package:edu_review_mobile/features/user_profile/presentation/bloc/edit_profile_state.dart';
+import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user/edit_profile_cubit.dart';
+import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user/edit_profile_state.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/widgets/image_picker.widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';

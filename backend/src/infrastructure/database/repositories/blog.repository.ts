@@ -32,6 +32,7 @@ export class BlogRepository implements IBlogRepository {
     return this.repo.findOne({
       where: { id },
       relations: ["author", "moderator", "tags"],
+      withDeleted: false,
     });
   }
 
@@ -50,7 +51,8 @@ export class BlogRepository implements IBlogRepository {
       .createQueryBuilder("blog")
       .leftJoinAndSelect("blog.author", "author")
       .leftJoinAndSelect("blog.moderator", "moderator")
-      .leftJoinAndSelect("blog.tags", "tags");
+      .leftJoinAndSelect("blog.tags", "tags")
+      .where("blog.deletedAt IS NULL"); // Ensure soft deleted blogs are not returned
 
     // Apply filters
     if (params?.filters) {
@@ -100,6 +102,77 @@ export class BlogRepository implements IBlogRepository {
 
   async delete(id: number): Promise<void> {
     await this.repo.softDelete(id);
+  }
+
+  async restore(id: number): Promise<void> {
+    await this.repo.restore(id);
+  }
+
+  async findByIdWithDeleted(id: number): Promise<Blog | null> {
+    return this.repo.findOne({
+      where: { id },
+      relations: ["author", "moderator", "tags"],
+      withDeleted: true,
+    });
+  }
+
+  async findAllWithDeleted(params?: {
+    page?: number;
+    limit?: number;
+    filters?: {
+      status?: BlogStatus;
+      category?: BlogCategory;
+      authorId?: number;
+      search?: string;
+      tagIds?: string;
+    };
+  }): Promise<[Blog[], number]> {
+    const queryBuilder = this.repo
+      .createQueryBuilder("blog")
+      .leftJoinAndSelect("blog.author", "author")
+      .leftJoinAndSelect("blog.moderator", "moderator")
+      .leftJoinAndSelect("blog.tags", "tags")
+      .withDeleted(); // Include soft deleted blogs
+
+    // Apply filters
+    if (params?.filters) {
+      const { status, category, authorId, search, tagIds } = params.filters;
+
+      if (status) {
+        queryBuilder.andWhere("blog.status = :status", { status });
+      }
+
+      if (category) {
+        queryBuilder.andWhere("blog.category = :category", { category });
+      }
+
+      if (authorId) {
+        queryBuilder.andWhere("blog.authorId = :authorId", { authorId });
+      }
+
+      if (search) {
+        queryBuilder.andWhere(
+          "(blog.title ILIKE :search OR blog.content ILIKE :search OR blog.excerpt ILIKE :search)",
+          { search: `%${search}%` }
+        );
+      }
+
+      if (tagIds) {
+        const tagIdArray = tagIds.split(",").map((id) => parseInt(id.trim()));
+        queryBuilder.andWhere("tags.id IN (:...tagIds)", {
+          tagIds: tagIdArray,
+        });
+      }
+    }
+
+    queryBuilder.orderBy("blog.createdAt", "DESC");
+
+    if (params?.page && params?.limit) {
+      const { page, limit } = params;
+      queryBuilder.skip((page - 1) * limit).take(limit);
+    }
+
+    return queryBuilder.getManyAndCount();
   }
 
   async incrementViewCount(id: number): Promise<void> {

@@ -23,7 +23,12 @@ import {
 import { PaginationDto } from "../dto/pagination/pagination.dto";
 import { UserRole } from "@/infrastructure/database/entities/user.entity";
 import { CloudinaryService } from "@/infrastructure/services/cloudinary.service";
-import { ApproveBlogDto, RejectBlogDto, BanBlogDto, UnbanBlogDto } from "../dto/blog/moderate-blog.dto";
+import {
+  ApproveBlogDto,
+  RejectBlogDto,
+  BanBlogDto,
+  UnbanBlogDto,
+} from "../dto/blog/moderate-blog.dto";
 import { IUploadedFileRepository } from "@/domain/repositories/uploaded-file.repository.interface";
 
 @Injectable()
@@ -109,29 +114,84 @@ export class BlogService implements IBlogService {
     const blog = await this.blogRepository.findById(id);
     if (!blog) throw new NotFoundException("Blog not found");
 
-    // Check if user is admin/moderator
-    const isAdmin = user?.roles?.some(
-      (role: any) =>
-        role.name === "admin" ||
-        role.name === "moderator" ||
-        role.name === "super_admin"
-    );
+    // Check if user can view this blog
+    if (user) {
+      // Admin/moderator can see all blogs
+      const isAdmin = user.roles?.some(
+        (role: any) =>
+          role.name === "admin" ||
+          role.name === "moderator" ||
+          role.name === "super_admin"
+      );
 
-    // Check if user is the author of the blog
-    const isAuthor = user && blog.authorId === user.id;
+      if (!isAdmin) {
+        // Regular users can only see approved blogs or their own blogs
+        if (blog.status !== BlogStatus.APPROVED && blog.authorId !== user.id) {
+          throw new ForbiddenException("Blog not accessible");
+        }
+      }
+    } else {
+      // Public access - only approved blogs
+      if (blog.status !== BlogStatus.APPROVED) {
+        throw new ForbiddenException("Blog not accessible");
+      }
+    }
 
-    // Access control logic:
-    // - Admin/Moderator: can see all blogs
-    // - Author: can see their own blogs (any status)
-    // - Regular users: can only see APPROVED blogs
-    if (!isAdmin && !isAuthor && blog.status !== BlogStatus.APPROVED) {
+    // Check if user has liked this blog
+    let isLiked = false;
+    if (user && user.id) {
+      const existingLike = await this.blogLikeRepository.findByUserAndBlog(
+        user.id,
+        id
+      );
+      isLiked = !!existingLike;
+    }
+
+    const blogDto = this.toResponseDto(blog);
+    blogDto.isLiked = isLiked;
+
+    return blogDto;
+  }
+
+  async findByIdWithDeleted(id: number, user?: any): Promise<BlogResponseDto> {
+    const blog = await this.blogRepository.findByIdWithDeleted(id);
+    if (!blog) throw new NotFoundException("Blog not found");
+
+    // Check if user can view this blog (including soft deleted ones)
+    if (user) {
+      // Admin/moderator can see all blogs including soft deleted
+      const isAdmin = user.roles?.some(
+        (role: any) =>
+          role.name === "admin" ||
+          role.name === "moderator" ||
+          role.name === "super_admin"
+      );
+
+      if (!isAdmin) {
+        // Regular users can only see their own blogs
+        if (blog.authorId !== user.id) {
+          throw new ForbiddenException("Blog not accessible");
+        }
+      }
+    } else {
+      // Public access not allowed for soft deleted blogs
       throw new ForbiddenException("Blog not accessible");
     }
 
-    // Increment view count
-    await this.blogRepository.incrementViewCount(id);
+    // Check if user has liked this blog
+    let isLiked = false;
+    if (user && user.id) {
+      const existingLike = await this.blogLikeRepository.findByUserAndBlog(
+        user.id,
+        id
+      );
+      isLiked = !!existingLike;
+    }
 
-    return await this.toResponseDtoWithUser(blog, user);
+    const blogDto = this.toResponseDto(blog);
+    blogDto.isLiked = isLiked;
+
+    return blogDto;
   }
 
   async findAll(
@@ -188,6 +248,40 @@ export class BlogService implements IBlogService {
       totalPages: Math.ceil(total / limit),
     };
     return { data, metadata };
+  }
+
+  async findAllWithDeleted(
+    user: any,
+    pagination: PaginationDto,
+    filters?: {
+      status?: BlogStatus;
+      category?: BlogCategory;
+      authorId?: number;
+      search?: string;
+      tagIds?: string;
+    }
+  ): Promise<{ data: BlogResponseDto[]; metadata: any }> {
+    const { page = 1, limit = 10 } = pagination;
+    const [blogs, total] = await this.blogRepository.findAllWithDeleted({
+      page,
+      limit,
+      filters,
+    });
+
+    const data = blogs.map((blog) => this.toResponseDto(blog));
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      data,
+      metadata: {
+        total,
+        page,
+        limit,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1,
+      },
+    };
   }
 
   // Helper method to check like status for multiple blogs
@@ -350,6 +444,19 @@ export class BlogService implements IBlogService {
     await this.blogRepository.delete(id);
   }
 
+  async restore(id: number, userId: number): Promise<void> {
+    const blog = await this.blogRepository.findById(id);
+    if (!blog) throw new NotFoundException("Blog not found");
+
+    // Check if user has admin privileges
+    // Note: Only admin/moderator should be able to restore blogs
+    // This is a basic check - you might want to add role-based authorization
+    if (blog.authorId !== userId) {
+      throw new ForbiddenException("You can only restore your own blogs");
+    }
+
+    await this.blogRepository.restore(id);
+  }
 
   async approve(
     id: number,

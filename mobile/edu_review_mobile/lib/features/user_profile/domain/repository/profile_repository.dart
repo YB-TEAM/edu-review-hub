@@ -6,6 +6,8 @@ import 'package:edu_review_mobile/features/user_profile/domain/entities/profile.
 
 abstract class ProfileRepository {
   Future<Either<Failure, ProfileEntity>> getUser();
+  Future<Either<Failure, void>> deleteBlog(int blogId);
   Future<Either<Failure, List<BlogResponse>>> getBlogs();
+  Future<Either<Failure, BlogResponse>> publishBlog(int blogId);
   Future<Either<Failure, ProfileEntity>> editProfile(EditProfileModel editModel);
 }
