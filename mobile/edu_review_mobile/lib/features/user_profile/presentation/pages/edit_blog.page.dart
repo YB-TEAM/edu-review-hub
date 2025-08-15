@@ -1,18 +1,25 @@
+import 'package:dio/dio.dart';
 import 'package:edu_review_mobile/common/widgets/appbar/custom_appbar.dart';
 import 'package:edu_review_mobile/common/widgets/dialog/custom_dialog.dart';
+import 'package:edu_review_mobile/common/widgets/picker/image_picker.dart';
 import 'package:edu_review_mobile/common/widgets/text_field/custom_text_field.dart';
-import 'package:edu_review_mobile/common_libs.dart';
 import 'package:edu_review_mobile/common/widgets/selector/custom_tag_multi_select.widget.dart';
+import 'package:edu_review_mobile/common_libs.dart';
+import 'package:edu_review_mobile/core/services/image_uploader_service.dart';
 import 'package:edu_review_mobile/features/blog/presentation/widgets/richtext_editor.widget.dart';
 import 'package:edu_review_mobile/features/user_profile/data/models/blog_edit_params.dart';
 import 'package:edu_review_mobile/features/user_profile/data/models/blog_response.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/blog/edit_blog_cubit.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/blog/edit_blog_state.dart';
+import 'package:edu_review_mobile/service_locator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:flutter_svg/svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:markdown_quill/markdown_quill.dart';
 import 'package:markdown/markdown.dart' as md;
+import 'package:http_parser/http_parser.dart';
+import 'package:path/path.dart' as path;
 
 class EditBlogPage extends StatefulWidget {
   final BlogResponse blog;
@@ -28,7 +35,10 @@ class _EditBlogPageState extends State<EditBlogPage> {
   late quill.QuillController _quillController;
   late FocusNode _editorFocusNode;
   List<int> _selectedTagIds = [];
-  String? _featuredImage;
+
+  String? _featuredImagePublicId; 
+  String? _featuredImageURL;
+  bool _isUploadingImage = false;
 
   @override
   void initState() {
@@ -37,15 +47,14 @@ class _EditBlogPageState extends State<EditBlogPage> {
     _excerptController = TextEditingController(text: widget.blog.excerpt ?? '');
     _editorFocusNode = FocusNode();
     _selectedTagIds = widget.blog.tags?.map((e) => e.id).toList() ?? [];
-    _featuredImage = widget.blog.featuredImageUrl;
+    _featuredImagePublicId = null;
+    _featuredImageURL = widget.blog.featuredImageUrl;
 
-    // Sau đó sử dụng:
+    // Chuyển markdown sang Delta cho Quill
     final markdownContent = widget.blog.content;
-
-    // Tạo markdown Document (từ markdown package)
-    final markdownDocument = md.Document(); // Hoặc cách khác tùy theo API
-
-    final delta = MarkdownToDelta(markdownDocument: markdownDocument).convert(markdownContent);
+    final markdownDocument = md.Document();
+    final delta =
+        MarkdownToDelta(markdownDocument: markdownDocument).convert(markdownContent);
 
     _quillController = quill.QuillController(
       document: quill.Document.fromDelta(delta),
@@ -87,7 +96,7 @@ class _EditBlogPageState extends State<EditBlogPage> {
       excerpt: _excerptController.text.trim().isEmpty
           ? null
           : _excerptController.text.trim(),
-      featuredImage: _featuredImage,
+      featuredImage: _featuredImagePublicId ?? widget.blog.featuredImage,
       tagIds: _selectedTagIds,
     );
     cubit.editBlog(editBlogParams);
@@ -127,6 +136,49 @@ class _EditBlogPageState extends State<EditBlogPage> {
         ),
       ],
     );
+  }
+
+  Future<void> _uploadImage(XFile pickedFile) async {
+    setState(() => _isUploadingImage = true);
+    try {
+      final ext = path.extension(pickedFile.path).toLowerCase();
+      final mimeType = ext == '.png'
+          ? MediaType('image', 'png')
+          : MediaType('image', 'jpeg');
+
+      final formData = FormData.fromMap({
+        'image': await MultipartFile.fromFile(
+          pickedFile.path,
+          filename: path.basename(pickedFile.path),
+          contentType: mimeType,
+        ),
+      });
+
+      final result = await sl<UploadImageApiService>().uploadImage(formData);
+
+      result.fold(
+        (failure) => _showSnackBar(failure.message),
+        (success) {
+          setState(() {
+            _featuredImagePublicId = success.publicId;
+            _featuredImageURL = success.secureUrl;
+          });
+          _showSnackBar('Image uploaded successfully!');
+        },
+      );
+    } catch (e) {
+      _showSnackBar('Error: $e');
+    } finally {
+      setState(() => _isUploadingImage = false);
+    }
+  }
+
+  void _deleteImage() {
+    setState(() {
+      _featuredImagePublicId = null;
+      _featuredImageURL = null;
+    });
+    _showSnackBar('Image deleted');
   }
 
   @override
@@ -173,6 +225,21 @@ class _EditBlogPageState extends State<EditBlogPage> {
                   maxLines: 3,
                 ),
                 const SizedBox(height: 16),
+                _buildLabel('Featured Image'),
+                const SizedBox(height: 8),
+                CustomImagePicker(
+                  imageUrl: _featuredImageURL,
+                  isUploading: _isUploadingImage,
+                  onTap: () async {
+                    final pickedFile =
+                        await ImagePicker().pickImage(source: ImageSource.gallery);
+                    if (pickedFile != null) {
+                      await _uploadImage(pickedFile);
+                    }
+                  },
+                  onDelete: _deleteImage,
+                ),
+                const SizedBox(height: 16),
                 _buildLabel('Content'),
                 const SizedBox(height: 8),
                 CustomRichTextField(
@@ -200,7 +267,8 @@ class _EditBlogPageState extends State<EditBlogPage> {
                               height: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
                               ),
                             )
                           : Row(
@@ -209,7 +277,10 @@ class _EditBlogPageState extends State<EditBlogPage> {
                               children: [
                                 Text(
                                   'Save',
-                                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
                                         color: AppColors.textBlack,
                                         fontWeight: FontWeight.w900,
                                       ),
