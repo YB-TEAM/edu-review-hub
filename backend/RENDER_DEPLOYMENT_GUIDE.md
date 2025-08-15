@@ -80,10 +80,18 @@ npm ci
 npm run build
 ```
 
-- **Start Command**:
+- **Start Command** (chọn một trong hai):
+
+**Option 1 (Recommended)**:
 
 ```bash
-chmod +x deploy.sh && ./deploy.sh
+bash start.sh
+```
+
+**Option 2**:
+
+```bash
+bash -c "chmod +x deploy.sh && ./deploy.sh"
 ```
 
 ### 2.4 Cấu Hình Environment Variables
@@ -108,6 +116,7 @@ PORT=3000
 JWT_SECRET=your-super-secret-jwt-key-here
 JWT_EXPIRES_IN=7d
 RENDER=true
+DB_SSL=true
 ```
 
 #### Optional Configuration:
@@ -231,19 +240,57 @@ Click **"Create Web Service"**
 - Commit và push lại code
 - Redeploy service
 
-#### 4. Database Connection Failed
+#### 4. Start Command Failed - "Command chmod not found"
+
+**Nguyên nhân**: Render sử dụng yarn thay vì bash để chạy start command
+
+**Giải pháp**:
+
+- Sử dụng `bash start.sh` thay vì `chmod +x deploy.sh && ./deploy.sh`
+- Hoặc sử dụng `bash -c "chmod +x deploy.sh && ./deploy.sh"`
+- Đảm bảo file `start.sh` có quyền execute
+- Commit và push lại code
+- Redeploy service
+
+#### 5. Database Connection Failed
 
 - Kiểm tra database credentials
 - Kiểm tra database đã được tạo
 - Kiểm tra network access
 
-#### 5. Migration Failed
+#### 6. SSL/TLS Required Error
+
+**Nguyên nhân**: Render PostgreSQL yêu cầu SSL connection
+
+**Giải pháp**:
+
+- Đảm bảo `DB_SSL=true` trong environment variables
+- Kiểm tra `data-source.ts` có SSL configuration đúng:
+  ```typescript
+  ssl: process.env.NODE_ENV === "production" ? {
+    rejectUnauthorized: false
+  } : false
+  ```
+- **Lưu ý**: Không cần `require: true` - chỉ cần `rejectUnauthorized: false`
+- Commit và push lại code
+- Redeploy service
+
+**Test SSL Configuration**:
+```bash
+# Test local (không SSL)
+NODE_ENV=development node test-db-connection.js
+
+# Test production (với SSL) - sẽ fail trên local nhưng OK trên Render
+NODE_ENV=production node test-db-connection.js
+```
+
+#### 7. Migration Failed
 
 - Kiểm tra database schema
 - Kiểm tra migration files
 - Kiểm tra database permissions
 
-#### 6. Seed Failed
+#### 8. Seed Failed
 
 - Kiểm tra seed data format
 - Kiểm tra database constraints

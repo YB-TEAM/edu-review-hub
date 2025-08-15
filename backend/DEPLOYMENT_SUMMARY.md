@@ -3,21 +3,25 @@
 ## 📁 Files Đã Tạo
 
 ### 1. Core Deployment Files
+
 - `Dockerfile` - Container configuration
 - `deploy.sh` - Main deployment script với migration và seed
 - `healthcheck.js` - Health check cho Docker
 - `.dockerignore` - Loại trừ files không cần thiết
 
 ### 2. Configuration Files
+
 - `render.yaml` - Render configuration (blueprint)
 - `docker-compose.render.yml` - Local testing với Docker
 - `env.example` - Template environment variables
 
 ### 3. Application Files
+
 - `src/presentation/controllers/health.controller.ts` - Health endpoint
 - Updated `src/app.module.ts` - Thêm HealthController
 
 ### 4. Documentation
+
 - `RENDER_DEPLOYMENT_GUIDE.md` - Hướng dẫn chi tiết từng bước
 - `README_RENDER.md` - Quick start guide
 - `test-deploy.sh` - Test deployment locally
@@ -25,6 +29,7 @@
 ## 🔧 Scripts Đã Thêm
 
 ### package.json
+
 ```json
 {
   "scripts": {
@@ -35,6 +40,7 @@
 ```
 
 ### deploy.sh Features
+
 - ✅ Chờ database sẵn sàng
 - ✅ Chạy database migrations
 - ✅ Chạy database seeds
@@ -45,19 +51,22 @@
 ## 🚀 Deployment Process
 
 ### 1. Database Setup
+
 ```bash
 # Tạo PostgreSQL database trên Render
 # Lưu thông tin connection
 ```
 
 ### 2. Service Setup
+
 ```bash
 # Tạo Web Service
 # Build Command: npm ci && npm run build
-# Start Command: chmod +x deploy.sh && ./deploy.sh
+# Start Command: bash -c "chmod +x deploy.sh && ./deploy.sh"
 ```
 
 ### 3. Environment Variables
+
 ```bash
 DB_HOST=your-db-host
 DB_PORT=5432
@@ -68,11 +77,13 @@ JWT_SECRET=your-secret
 NODE_ENV=production
 PORT=3000
 RENDER=true
+DB_SSL=true
 ```
 
-## 🧪 Testing
+## �� Testing
 
 ### Local Test
+
 ```bash
 # Chạy test deployment locally
 chmod +x test-deploy.sh
@@ -80,6 +91,7 @@ chmod +x test-deploy.sh
 ```
 
 ### Health Check
+
 ```bash
 # Test health endpoint
 curl http://localhost:3000/health
@@ -97,6 +109,7 @@ curl http://localhost:3000/health
 ## 🎯 Kết Quả Mong Đợi
 
 Sau khi deploy thành công:
+
 - ✅ Backend service chạy trên Render
 - ✅ Database được migrate và seed tự động
 - ✅ Health endpoint hoạt động
@@ -112,6 +125,7 @@ Sau khi deploy thành công:
 ## 📞 Hỗ Trợ
 
 Nếu gặp vấn đề:
+
 1. Kiểm tra logs trên Render
 2. Chạy `test-deploy.sh` locally
 3. Tham khảo `RENDER_DEPLOYMENT_GUIDE.md`

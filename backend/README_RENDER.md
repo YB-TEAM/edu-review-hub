@@ -3,9 +3,11 @@
 ## Quick Start
 
 ### 1. Deploy to Render
+
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
 
 ### 2. Manual Setup
+
 1. Create PostgreSQL database on Render
 2. Create Web Service pointing to this repository
 3. Set environment variables
@@ -24,6 +26,7 @@ JWT_SECRET=your-jwt-secret
 NODE_ENV=production
 PORT=3000
 RENDER=true
+DB_SSL=true
 
 # Optional
 SMTP_HOST=smtp.gmail.com
@@ -38,7 +41,7 @@ CLOUDINARY_API_SECRET=your-api-secret
 ## Build & Start Commands
 
 - **Build Command**: `npm ci && npm run build`
-- **Start Command**: `chmod +x deploy.sh && ./deploy.sh`
+- **Start Command**: `bash -c "chmod +x deploy.sh && ./deploy.sh"`
 
 ## Health Check
 

@@ -6,7 +6,7 @@ services:
     buildCommand: |
       npm ci
       npm run build
-    startCommand: chmod +x deploy.sh && ./deploy.sh
+    startCommand: bash start.sh
     envVars:
       - key: NODE_ENV
         value: production
@@ -38,6 +38,8 @@ services:
         value: 7d
       - key: RENDER
         value: true
+      - key: DB_SSL
+        value: "true"
     healthCheckPath: /health
     autoDeploy: true
 
