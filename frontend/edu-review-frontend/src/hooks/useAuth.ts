@@ -44,25 +44,6 @@ export const useAuth = () => {
     refetchOnReconnect: true,
   });
 
-  // Debug logging for user state
-  console.log("🔐 useAuth: User state debug", {
-    reduxUser: user ? {
-      id: user.id,
-      username: user.username,
-      accountType: user.accountType
-    } : null,
-    currentUser: currentUser ? {
-      id: currentUser.id,
-      username: currentUser.username,
-      accountType: currentUser.accountType
-    } : null,
-    isAuthenticated,
-    isLoading,
-    isUserLoading,
-    hasUser: !!user,
-    hasCurrentUser: !!currentUser
-  });
-
   // Khôi phục authentication state từ localStorage khi cần thiết
   // CHỈ CHẠY KHI AuthProvider chưa restore auth state
   useEffect(() => {
@@ -77,20 +58,17 @@ export const useAuth = () => {
         const refreshTokenValidation = validateToken(refreshToken);
         
         if (!accessTokenValidation.isValid || !refreshTokenValidation.isValid) {
-          console.log("🔐 useAuth: Invalid tokens, clearing localStorage");
           clearAuthData();
           hasRestoredAuth.current = true;
           return;
         }
         
         if (accessTokenValidation.isExpired && refreshTokenValidation.isExpired) {
-          console.log("🔐 useAuth: All tokens expired, clearing localStorage");
           clearAuthData();
           hasRestoredAuth.current = true;
           return;
         }
         
-        console.log("🔐 useAuth: Tokens valid, restoring auth state");
         dispatch(restoreAuth());
         hasRestoredAuth.current = true;
       } else {
@@ -102,7 +80,6 @@ export const useAuth = () => {
   // Cập nhật user data khi có currentUser - FIXED: Prevent infinite loop
   useEffect(() => {
     if (currentUser && !user && currentUser !== lastProcessedUser.current) {
-      console.log("🔐 useAuth: Setting user data from currentUser");
       lastProcessedUser.current = currentUser;
       dispatch(setUser(currentUser as User));
       hasFetchedUser.current = true;
@@ -112,7 +89,6 @@ export const useAuth = () => {
   // Force fetch user data when authentication is restored
   useEffect(() => {
     if (isAuthenticated && !user && !currentUser && !isUserLoading && refetchUser && !hasFetchedUser.current) {
-      console.log("🔐 useAuth: Authentication restored, fetching user data");
       refetchUser();
       hasFetchedUser.current = true;
     }
@@ -121,26 +97,12 @@ export const useAuth = () => {
   // Handle 401 errors from user query
   useEffect(() => {
     if (userError && "status" in userError && userError.status === 401) {
-      console.log("🔐 useAuth: 401 error, logging out");
       dispatch(logoutAction());
       hasRestoredAuth.current = false;
       hasFetchedUser.current = false;
       lastProcessedUser.current = null;
     }
   }, [userError, dispatch]);
-
-  // Add debug logging for authentication state
-  useEffect(() => {
-    console.log("🔐 useAuth: Auth state", {
-      isAuthenticated,
-      hasUser: !!user,
-      hasCurrentUser: !!currentUser,
-      isUserLoading,
-      hasRestoredAuth: hasRestoredAuth.current,
-      hasFetchedUser: hasFetchedUser.current,
-      lastProcessedUser: lastProcessedUser.current?.id
-    });
-  }, [isAuthenticated, user, currentUser, isUserLoading]);
 
   const [login, { isLoading: isLoginLoading }] = useLoginMutation();
   const [register, { isLoading: isRegisterLoading }] = useRegisterMutation();
@@ -178,15 +140,12 @@ export const useAuth = () => {
 
   const handleLogout = async (redirectTo?: string) => {
     try {
-      console.log("🔐 useAuth: Calling logout API...");
       // Call logout API first to invalidate tokens on backend
       await logout().unwrap();
-      console.log("🔐 useAuth: Logout API successful");
     } catch (error) {
       console.error("🔐 useAuth: Logout API failed", error);
       // Continue with local logout even if API fails
     } finally {
-      console.log("🔐 useAuth: Clearing local auth state");
       // Clear local auth state
       dispatch(logoutAction());
       hasRestoredAuth.current = false; // Reset for next session
@@ -195,7 +154,6 @@ export const useAuth = () => {
       
       // Return redirect path if specified
       if (redirectTo) {
-        console.log("🔐 useAuth: Logout completed, redirect to:", redirectTo);
         return redirectTo;
       }
     }
@@ -235,17 +193,6 @@ export const useAuth = () => {
     isVerified: user?.isVerified || false,
     isActive: user?.status === "active",
   };
-
-  // Debug logging for return value
-  console.log("🔐 useAuth: Return value", {
-    finalUser: result.user ? {
-      id: result.user.id,
-      username: result.user.username,
-      accountType: result.user.accountType
-    } : null,
-    isAuthenticated: result.isAuthenticated,
-    isStudent: result.isStudent
-  });
 
   return result;
 };

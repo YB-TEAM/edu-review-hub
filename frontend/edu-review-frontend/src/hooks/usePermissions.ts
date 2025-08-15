@@ -3,24 +3,17 @@ import {
   hasPermission, 
   hasAnyPermission, 
   hasAllPermissions,
-  BLOG_PERMISSIONS 
+  BLOG_PERMISSIONS,
+  ROLE_PERMISSIONS
 } from '@/lib/permissions';
 
 export const usePermissions = () => {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const userRole = user?.accountType || null;
 
-  // Debug logging
-  console.log("🔐 usePermissions: Debug info", {
-    user: user ? {
-      id: user.id,
-      username: user.username,
-      accountType: user.accountType
-    } : null,
-    userRole,
-    hasUser: !!user,
-    hasUserRole: !!userRole
-  });
+  // Debug: Check if userRole exists in ROLE_PERMISSIONS
+  const availableRoles = Object.keys(ROLE_PERMISSIONS);
+  const roleExists = userRole ? availableRoles.includes(userRole) : false;
 
   const permissions = {
     // Basic permission checks
@@ -65,14 +58,6 @@ export const usePermissions = () => {
     userRole,
     isAuthenticated: !!user,
   };
-
-  // Debug logging for key permissions
-  console.log("🔐 usePermissions: Key permissions", {
-    canCreateBlog: permissions.canCreateBlog,
-    canViewOwnDrafts: permissions.canViewOwnDrafts,
-    isStudent: permissions.isStudent,
-    userRole: permissions.userRole
-  });
 
   return permissions;
 };
