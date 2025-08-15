@@ -214,23 +214,36 @@ Click **"Create Web Service"**
   - `webpack`
   - `webpack-cli`
   - `webpack-node-externals`
-- Kiểm tra file `.npmrc` có `production=false`
+- Kiểm tra file `.npmrc` có `omit=dev`
 - Commit và push lại code
 - Redeploy service
 
-#### 3. Database Connection Failed
+#### 3. Build Failed - "No matching version found for package@version"
+
+**Nguyên nhân**: Version của package không tồn tại hoặc không tương thích
+
+**Giải pháp**:
+
+- Kiểm tra version của package trên [npmjs.com](https://npmjs.com)
+- Sửa version trong `package.json` về version có sẵn
+- Xóa `node_modules` và `package-lock.json`
+- Chạy `npm install` để tạo lại
+- Commit và push lại code
+- Redeploy service
+
+#### 4. Database Connection Failed
 
 - Kiểm tra database credentials
 - Kiểm tra database đã được tạo
 - Kiểm tra network access
 
-#### 4. Migration Failed
+#### 5. Migration Failed
 
 - Kiểm tra database schema
 - Kiểm tra migration files
 - Kiểm tra database permissions
 
-#### 5. Seed Failed
+#### 6. Seed Failed
 
 - Kiểm tra seed data format
 - Kiểm tra database constraints
