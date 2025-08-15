@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:edu_review_mobile/common/constants/api_urls.dart';
 import 'package:edu_review_mobile/core/error/failures.dart';
 import 'package:edu_review_mobile/core/network/dio_client.dart';
+import 'package:edu_review_mobile/features/user_profile/data/models/blog_edit_params.dart';
 import 'package:edu_review_mobile/features/user_profile/data/models/blog_response.dart';
 import 'package:edu_review_mobile/features/user_profile/data/models/profile.dart';
 import 'package:edu_review_mobile/features/user_profile/data/models/edit_profile.dart';
@@ -15,6 +16,7 @@ abstract class ProfileApiService {
   Future<Either<Failure, ProfileEntity>> editProfile(EditProfileModel profileData);
   Future<Either<Failure, List<BlogResponse>>> getBlogs();
   Future<Either<Failure, BlogResponse>> publishBlog(int blogId);
+  Future<Either<Failure, BlogResponse>> editBlog(EditBlogParams editBlogParams);
   Future<Either<Failure, void>> deleteBlog(int blogId);
 }
 
@@ -105,6 +107,39 @@ class ProfileApiServiceImpl extends ProfileApiService {
       return Left(ServerFailure(message: e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, BlogResponse>> editBlog(EditBlogParams editBlogParams) async {
+    try {
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      var token = sharedPreferences.getString('accessToken');
+
+      final Map<String, dynamic> data = editBlogParams.toJson();
+      data.remove('blogId');
+
+      final response = await sl<DioClient>().patch(
+        ApiUrls.blog(editBlogParams.blogId), 
+        data: data,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      final blogResponse = BlogResponse.fromJson(response.data);
+      return Right(blogResponse);
+    } on DioException catch (e) {
+      return Left(ServerFailure(
+        message: e.response?.data['message'] ?? 'Unknown error',
+        statusCode: e.response?.statusCode,
+      ));
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
+
 
   @override
   Future<Either<Failure, ProfileEntity>> editProfile(EditProfileModel profileData) async {

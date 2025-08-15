@@ -1,8 +1,6 @@
-import 'package:edu_review_mobile/common/constants/app_default_images.constant.dart';
 import 'package:edu_review_mobile/common/widgets/appbar/custom_appbar.dart';
 import 'package:edu_review_mobile/common/widgets/dialog/custom_dialog.dart';
 import 'package:edu_review_mobile/common_libs.dart';
-import 'package:edu_review_mobile/core/config/theme/color.dart';
 import 'package:edu_review_mobile/core/utils/date_formatted.dart';
 import 'package:edu_review_mobile/core/utils/hex_color.dart';
 import 'package:edu_review_mobile/features/user_profile/data/models/blog_response.dart';
@@ -10,7 +8,7 @@ import 'package:edu_review_mobile/features/user_profile/presentation/bloc/blog/d
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/blog/delete_blog_state.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/blog/publish_blog_cubit.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/blog/publish_blog_state.dart';
-import 'package:flutter/material.dart';
+import 'package:edu_review_mobile/features/user_profile/presentation/pages/edit_blog.page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_svg/svg.dart';
@@ -68,6 +66,19 @@ class MyBlogDetailPage extends StatelessWidget {
         appBar: CustomAppBar(
           title: "Blog Detail",
           onBackPressed: () => Navigator.of(context).maybePop(),
+          actions: [
+            if (blog.status == 'draft') 
+              IconButton(
+                icon: const Icon(Icons.edit, color: AppColors.primaryBlack),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => EditBlogPage(blog: blog), 
+                    ),
+                  );
+                },
+              ),
+          ],
         ),
         body: Padding(
           padding: const EdgeInsets.all(12),
