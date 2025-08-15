@@ -10,8 +10,6 @@ README.md
 .env.production
 .nyc_output
 coverage
-.nyc_output
-coverage
 *.log
 .DS_Store
 .vscode
@@ -19,3 +17,6 @@ coverage
 *.swp
 *.swo
 *~
+
+# Keep .npmrc for build configuration
+!.npmrc
