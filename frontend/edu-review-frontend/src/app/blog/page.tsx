@@ -95,7 +95,8 @@ const popularTags = [
 ];
 
 export default function BlogPage() {
-  const { canCreateBlog, canViewOwnDrafts, canModerateBlog } = usePermissions();
+  const { canCreateBlog, canViewOwnDrafts, canModerateBlog, userRole, isAuthenticated } = usePermissions();
+  
   const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
   const [currentPage, setCurrentPage] = useState(() => {
     if (searchParams && searchParams.get('page')) return Number(searchParams.get('page'));
