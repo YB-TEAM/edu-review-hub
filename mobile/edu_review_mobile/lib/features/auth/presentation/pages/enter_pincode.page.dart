@@ -3,69 +3,78 @@ import 'package:edu_review_mobile/common/bloc/button/button_state_cubit.dart';
 import 'package:edu_review_mobile/common/widgets/dialog/custom_dialog.dart';
 import 'package:edu_review_mobile/common/widgets/loading/custom_loading_indicator.dart';
 import 'package:edu_review_mobile/common_libs.dart';
-import 'package:edu_review_mobile/features/auth/data/models/verify_email_params.dart';
+import 'package:edu_review_mobile/features/auth/data/models/reset_password_params.dart';
 import 'package:edu_review_mobile/features/auth/domain/usecases/resend_verification.dart';
-import 'package:edu_review_mobile/features/auth/domain/usecases/verify_email.dart';
+import 'package:edu_review_mobile/features/auth/domain/usecases/reset_password.dart';
 import 'package:edu_review_mobile/features/auth/presentation/bloc/resend_verification_cubit.dart';
-import 'package:edu_review_mobile/features/auth/presentation/bloc/verify_email_cubit.dart';
+import 'package:edu_review_mobile/features/auth/presentation/bloc/reset_password_cubit.dart';
 import 'package:edu_review_mobile/service_locator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
-class VerifyEmailScreen extends StatefulWidget {
+class EnterPinCodePage extends StatefulWidget {
   final String email;
+  final String newPassword;
 
-  const VerifyEmailScreen({Key? key, required this.email}) : super(key: key);
+  const EnterPinCodePage({Key? key, required this.email, required this.newPassword}) : super(key: key);
 
   @override
-  State<VerifyEmailScreen> createState() => _VerifyEmailScreenState();
+  State<EnterPinCodePage> createState() => _EnterPinCodePageState();
 }
 
-class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
+class _EnterPinCodePageState extends State<EnterPinCodePage> {
   final TextEditingController codeController = TextEditingController();
 
   void _resendCode(BuildContext context) {
-    if (mounted) {
-      codeController.clear();
-    }
-
+    if (mounted) codeController.clear();
     context.read<ResendVerificationCubit>().execute(
       usecase: sl<ResendVerificationUseCase>(),
       params: widget.email,
     );
   }
 
-  void _verifyEmail(String otp, BuildContext context) {
-    context.read<VerifyEmailCubit>().execute(
-      usecase: sl<VerifyEmailUseCase>(),
-      params: VerifyEmailParams(email: widget.email, otp: otp),
+  void _resetPassword(String otp, BuildContext context) {
+    context.read<ResetPasswordCubit>().execute(
+      usecase: sl<ResetPasswordUseCase>(),
+      params: ResetPasswordParams(email: widget.email, otp: otp, newPassword: widget.newPassword),
     );
+    if (mounted) codeController.clear();
+  }
 
-    if (mounted) {
-      codeController.clear();
-    }
+  void _handleTapOutside() {
+    FocusScope.of(context).unfocus();
   }
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => VerifyEmailCubit()),
+        BlocProvider(create: (_) => ResetPasswordCubit()),
         BlocProvider(create: (_) => ResendVerificationCubit()),
         BlocProvider(create: (_) => ButtonStateCubit()),
       ],
       child: Scaffold(
-        backgroundColor: Colors.white,
         body: MultiBlocListener(
           listeners: [
-            BlocListener<VerifyEmailCubit, ButtonState>(
-              listener: (context, state) {
+            BlocListener<ResetPasswordCubit, ButtonState>(
+              listener: (context, state) async {
                 if (state is ButtonSuccessState) {
+                   await showAppDialog(
+                    context: context,
+                    title: 'Success',
+                    content: 'Your password has been reset successfully.',
+                    icon: Icons.check_circle_outline,
+                    iconColor: Colors.green,
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  );
                   Navigator.pushReplacementNamed(context, RouteConstant.signIn);
                 } else if (state is ButtonFailureState) {
-                  if (mounted) {
-                    codeController.clear();
-                  }
+                  if (mounted) codeController.clear();
                   showAppDialog(
                     context: context,
                     title: 'Error',
@@ -116,38 +125,88 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
               },
             ),
           ],
-          child: BlocBuilder<VerifyEmailCubit, ButtonState>(
-            builder: (context, state) {
-              final isVerifying = state is ButtonLoadingState;
-              return Stack(
-                children: [
-                  GestureDetector(
-                    onTap: () => FocusScope.of(context).unfocus(),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: GestureDetector(
+            onTap: _handleTapOutside,
+            child: Stack(
+              children: [
+                Container(color: Colors.white),
+                Positioned(
+                  top: -100,
+                  right: -100,
+                  child: Container(
+                    width: 250,
+                    height: 250,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFD1C4E9).withOpacity(0.55),
+                      borderRadius: const BorderRadius.only(
+                        topRight: Radius.circular(250),
+                        bottomLeft: Radius.circular(250),
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: -100,
+                  left: -100,
+                  child: Container(
+                    width: 250,
+                    height: 250,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFB3E5FC).withOpacity(0.45),
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(250),
+                        topRight: Radius.circular(250),
+                      ),
+                    ),
+                  ),
+                ),
+                BlocBuilder<ResetPasswordCubit, ButtonState>(
+                  builder: (context, state) {
+                    final isVerifying = state is ButtonLoadingState;
+                    return SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(30, 60, 30, 0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          const SizedBox(height: 120),
-                          Text('Verification Code', style: Theme.of(context).textTheme.headlineMedium),
-                          const SizedBox(height: 8),
+                          Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF7F7F9),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: IconButton(
+                              icon: const Icon(Icons.chevron_left, size: 24),
+                              color: AppColors.textBlack,
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                          ),
+                          const SizedBox(height: 30),
+                          Text(
+                            'Enter PIN Code',
+                            style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                                  color: AppColors.textBlack,
+                                ),
+                          ),
+                          const SizedBox(height: 10),
                           RichText(
                             text: TextSpan(
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.textGrey),
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: AppColors.textBlack,
+                                  ),
                               children: [
-                                const TextSpan(text: 'We sent you a 6-digit code (OTP) to your email '),
+                                const TextSpan(text: "Enter the 6-digit code sent to your email: "),
                                 TextSpan(
                                   text: widget.email,
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                        color: AppColors.textGrey,
-                                        fontWeight: FontWeight.w700,
-                                      ),
+                                  style: const TextStyle(
+                                    color: AppColors.textBlue,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                          const SizedBox(height: 32),
+                          const SizedBox(height: 40),
                           PinCodeTextField(
                             controller: codeController,
                             appContext: context,
@@ -155,9 +214,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                             enabled: !isVerifying,
                             keyboardType: TextInputType.number,
                             onCompleted: (otp) {
-                              if(mounted) {
-                                _verifyEmail(otp, context);
-                              }
+                              if (mounted) _resetPassword(otp, context);
                             },
                             onChanged: (_) {},
                             pinTheme: PinTheme(
@@ -187,9 +244,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                 builder: (context, state) {
                                   final isLoading = state is ButtonLoadingState;
                                   return TextButton(
-                                    onPressed: isLoading
-                                        ? null
-                                        : () => _resendCode(context),
+                                    onPressed: isLoading ? null : () => _resendCode(context),
                                     style: TextButton.styleFrom(
                                       padding: EdgeInsets.zero,
                                       minimumSize: Size.zero,
@@ -218,22 +273,25 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                           ),
                         ],
                       ),
-                    ),
-                  ),
-                  if (isVerifying)
-                    Positioned.fill(
-                      child: Container(
+                    );
+                  },
+                ),
+                BlocBuilder<ResetPasswordCubit, ButtonState>(
+                  builder: (context, state) {
+                    if (state is ButtonLoadingState) {
+                      return Container(
                         color: Colors.black.withOpacity(0.5),
                         child: const Center(child: CustomLoadingIndicator()),
-                      ),
-                    ),
-                ],
-              );
-            },
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 }
-

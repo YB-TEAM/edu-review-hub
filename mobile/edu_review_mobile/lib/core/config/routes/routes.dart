@@ -1,4 +1,6 @@
-import 'package:edu_review_mobile/features/auth/presentation/pages/verify_email.dart';
+import 'package:edu_review_mobile/features/auth/presentation/pages/enter_pincode.page.dart';
+import 'package:edu_review_mobile/features/auth/presentation/pages/forgot_password.page.dart';
+import 'package:edu_review_mobile/features/auth/presentation/pages/verify_email.page.dart';
 import 'package:edu_review_mobile/features/blog/presentation/pages/create_blog.page.dart';
 import 'package:edu_review_mobile/features/user_profile/data/models/blog_response.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/pages/my_blog_detail.page.dart';
@@ -40,6 +42,22 @@ class AppRouter {
                 },
                 child: const SignUpPage(),
               ),
+        );
+
+      case RouteConstant.forgotPassword:
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => const ForgotPasswordPage(),
+        );
+      
+       case RouteConstant.enterPincode:
+        final args = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => EnterPinCodePage(
+            email: args['email'] as String,
+            newPassword: args['newPassword'] as String,
+          ),
         );
 
       case RouteConstant.mainScreen:
@@ -100,7 +118,7 @@ class AppRouter {
         final email = settings.arguments as String;
         return MaterialPageRoute(
           settings: settings,
-          builder: (_) => VerifyEmailScreen(email: email),
+          builder: (_) => VerifyEmailPage(email: email),
         );
 
       default:

@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:edu_review_mobile/common/constants/api_urls.dart';
 import 'package:edu_review_mobile/core/error/failures.dart';
 import 'package:edu_review_mobile/core/network/dio_client.dart';
+import 'package:edu_review_mobile/features/auth/data/models/reset_password_params.dart';
 import 'package:edu_review_mobile/features/auth/data/models/signin_response.dart';
 import 'package:edu_review_mobile/features/auth/data/models/signin_params.dart';
 import 'package:edu_review_mobile/features/auth/data/models/signup_response.dart';
@@ -15,7 +16,9 @@ abstract class AuthApiService {
   Future<Either<Failure, SignInResponse>> signIn(SignInParams signinParams);
   Future<SignInResponse> refreshToken(String refreshToken);
   Future<Either<Failure, void>> verifyEmail(VerifyEmailParams verifyEmailParams);
-  Future<Either<Failure, void>> resendVerification(String param);
+  Future<Either<Failure, void>> resendVerification(String email);
+  Future<Either<Failure, void>> forgotPassword(String email);
+  Future<Either<Failure, void>> resetPassword(ResetPasswordParams resetPasswordParams);
 }
 
 class AuthApiServiceImpl extends AuthApiService {
@@ -102,6 +105,42 @@ class AuthApiServiceImpl extends AuthApiService {
     } on DioException catch (e) {
       return Left(ServerFailure(
         message: e.response?.data['message'] ?? 'Resend verification failed',
+        statusCode: e.response?.statusCode,
+      ));
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> forgotPassword(String email) async {
+    try {
+      await sl<DioClient>().post(
+        ApiUrls.forgotPassword,
+        data: {'email': email},
+      );
+      return Right(null); 
+    } on DioException catch (e) {
+      return Left(ServerFailure(
+        message: e.response?.data['message'] ?? 'Send email failed',
+        statusCode: e.response?.statusCode,
+      ));
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> resetPassword(ResetPasswordParams resetPasswordParams) async {
+    try {
+      await sl<DioClient>().post(
+        ApiUrls.resetPassword,
+        data: resetPasswordParams.toJson(),
+      );
+      return Right(null); 
+    } on DioException catch (e) {
+      return Left(ServerFailure(
+        message: e.response?.data['message'] ?? 'Send email failed',
         statusCode: e.response?.statusCode,
       ));
     } catch (e) {
