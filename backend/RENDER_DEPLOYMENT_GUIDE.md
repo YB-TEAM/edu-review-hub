@@ -201,19 +201,36 @@ Click **"Create Web Service"**
 - Commit và push lại code
 - Redeploy service
 
-#### 2. Database Connection Failed
+#### 2. Build Failed - "Can't resolve 'ts-loader'"
+
+**Nguyên nhân**: Thiếu webpack và TypeScript build dependencies
+
+**Giải pháp**:
+
+- Đảm bảo các dependencies sau đã được di chuyển từ `devDependencies` sang `dependencies`:
+  - `ts-loader`
+  - `ts-node`
+  - `typescript`
+  - `webpack`
+  - `webpack-cli`
+  - `webpack-node-externals`
+- Kiểm tra file `.npmrc` có `production=false`
+- Commit và push lại code
+- Redeploy service
+
+#### 3. Database Connection Failed
 
 - Kiểm tra database credentials
 - Kiểm tra database đã được tạo
 - Kiểm tra network access
 
-#### 3. Migration Failed
+#### 4. Migration Failed
 
 - Kiểm tra database schema
 - Kiểm tra migration files
 - Kiểm tra database permissions
 
-#### 4. Seed Failed
+#### 5. Seed Failed
 
 - Kiểm tra seed data format
 - Kiểm tra database constraints

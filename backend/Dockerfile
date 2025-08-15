@@ -10,7 +10,7 @@ RUN apk add --no-cache python3 make g++
 # Copy package files
 COPY package*.json ./
 
-# Install ALL dependencies (including dev dependencies for build)
+# Install ALL dependencies (including build dependencies)
 RUN npm ci
 
 # Copy source code
@@ -19,8 +19,9 @@ COPY . .
 # Build the application
 RUN npm run build
 
-# Remove dev dependencies to reduce image size
+# Remove build dependencies and source code to reduce image size
 RUN npm prune --production
+RUN rm -rf src/ test/ .git/ .gitignore README.md *.md
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs
