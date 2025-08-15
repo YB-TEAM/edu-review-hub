@@ -33,8 +33,8 @@ const baseQuery = fetchBaseQuery({
       }
     }
 
-    // Add content type
-    headers.set("Content-Type", "application/json");
+    // Don't set Content-Type here - let individual endpoints handle it
+    // This allows FormData to work properly for file uploads
     return headers;
   },
 });

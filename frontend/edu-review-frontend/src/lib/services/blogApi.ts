@@ -69,6 +69,10 @@ export const blogApi = createApi({
         url: "/blogs",
         method: "POST",
         body: blogData,
+        prepareHeaders: (headers: Headers) => {
+          headers.set("Content-Type", "application/json");
+          return headers;
+        },
       }),
       invalidatesTags: ["Blog"],
     }),
@@ -157,7 +161,7 @@ export const blogApi = createApi({
 
     // Get all tags
     getTags: builder.query<Tag[], void>({
-      query: () => "/tags",
+      query: () => "/tags?page=1&limit=100",
       providesTags: ["Tag"],
     }),
 

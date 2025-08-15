@@ -8,8 +8,8 @@ import {
 } from '@/lib/permissions';
 
 export const usePermissions = () => {
-  const { user, isAuthenticated } = useAuth();
-  const userRole = user?.accountType || null;
+  const { user, isAuthenticated, currentUser } = useAuth();
+  const userRole = currentUser?.accountType || user?.accountType || null;
 
   // Debug: Check if userRole exists in ROLE_PERMISSIONS
   const availableRoles = Object.keys(ROLE_PERMISSIONS);

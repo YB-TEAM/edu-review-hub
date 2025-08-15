@@ -143,7 +143,6 @@ export const useAuth = () => {
       // Call logout API first to invalidate tokens on backend
       await logout().unwrap();
     } catch (error) {
-      console.error("🔐 useAuth: Logout API failed", error);
       // Continue with local logout even if API fails
     } finally {
       // Clear local auth state
@@ -160,14 +159,23 @@ export const useAuth = () => {
   };
 
   const isAdmin =
-    user?.accountType === "admin" || user?.accountType === "super_admin";
-  const isModerator = user?.accountType === "moderator" || isAdmin;
-  const isUniversityRep = user?.accountType === "university_rep";
-  const isStudent = user?.accountType === "student";
+    (currentUser?.accountType === "admin" || currentUser?.accountType === "super_admin") ||
+    (user?.accountType === "admin" || user?.accountType === "super_admin");
+  const isModerator = 
+    currentUser?.accountType === "moderator" || 
+    user?.accountType === "moderator" || 
+    isAdmin;
+  const isUniversityRep = 
+    currentUser?.accountType === "university_rep" || 
+    user?.accountType === "university_rep";
+  const isStudent = 
+    currentUser?.accountType === "student" || 
+    user?.accountType === "student";
 
   const result = {
     // State
     user: currentUser || user,
+    currentUser, // Thêm currentUser vào result
     isAuthenticated: isAuthenticated,
     isLoading:
       isLoading ||

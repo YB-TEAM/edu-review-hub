@@ -4,6 +4,12 @@ import { baseQueryWithErrorHandling } from "../api";
 export interface UploadResponse {
   publicId: string;
   secureUrl: string;
+  url: string;
+  width: number;
+  height: number;
+  format: string;
+  bytes: string;
+  createdAt: string;
   message?: string;
 }
 
@@ -18,9 +24,9 @@ export const uploadApi = createApi({
         url: "/upload/image",
         method: "POST",
         body: formData,
-        // Don't set Content-Type header for FormData, let the browser set it
+        // Let the browser set Content-Type for FormData automatically
         prepareHeaders: (headers: Headers) => {
-          // Remove Content-Type header for FormData
+          // Ensure we don't override the browser's Content-Type for FormData
           headers.delete("Content-Type");
           return headers;
         },

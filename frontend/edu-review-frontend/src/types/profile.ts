@@ -23,6 +23,7 @@ export interface UserProfile {
   notificationSettings: any | null;
   createdAt: string;
   updatedAt: string;
+  accountType: "student" | "university_rep" | "admin" | "moderator" | "super_admin";
 }
 
 export interface UpdateProfileRequest {

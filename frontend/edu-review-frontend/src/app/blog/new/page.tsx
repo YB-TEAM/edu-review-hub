@@ -15,7 +15,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useCreateBlogMutation, useGetTagsQuery } from "@/lib/services/blogApi";
 import { useUploadImageMutation } from "@/lib/services/uploadApi";
 import { BlogCategory, Tag } from "@/types/blog";
-import { ArrowLeft, Send, Save, Sparkles, Camera, Upload, X, Plus, Tag as TagIcon } from "lucide-react";
+import { ArrowLeft, Send, Sparkles, Camera, Upload, X, Plus, Tag as TagIcon } from "lucide-react";
 import { MarkdownEditor } from "@/components/ui/markdown-editor";
 import { BlogCreateGuard } from "@/components/auth/PermissionGuard";
 
@@ -33,7 +33,6 @@ function NewBlogPageContent() {
   const router = useRouter();
   const { user, isAuthenticated } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
   const [createBlog] = useCreateBlogMutation();
@@ -51,9 +50,25 @@ function NewBlogPageContent() {
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
 
   // Use RTK Query hooks
-  const { data: tagsData, isLoading: isTagsLoading } = useGetTagsQuery();
-  const tags = Array.isArray(tagsData) ? tagsData : [];
+  const { data: tagsData, isLoading: isTagsLoading, error: tagsError } = useGetTagsQuery();
+  
+  // Handle different response formats
+  let tags: Tag[] = [];
+  if (tagsData) {
+    if (Array.isArray(tagsData)) {
+      tags = tagsData;
+    } else if (tagsData && typeof tagsData === 'object' && 'data' in (tagsData as any)) {
+      tags = Array.isArray((tagsData as any).data) ? (tagsData as any).data : [];
+    }
+  }
+  
   const [uploadImage] = useUploadImageMutation();
+
+  // Debug tags data
+  console.log('🔖 Tags data:', tagsData);
+  console.log('🔖 Tags array:', tags);
+  console.log('🔖 Tags loading:', isTagsLoading);
+  console.log('🔖 Tags error:', tagsError);
 
   // Check if token is valid
   const isTokenValid = (token: string): boolean => {
@@ -111,7 +126,7 @@ function NewBlogPageContent() {
 
       // Use RTK Query upload service
       const result = await uploadImage(formData).unwrap();
-      
+ 
       // Check if response has the expected structure
       if (!result.publicId || !result.secureUrl) {
         console.error('Unexpected response structure:', result);
@@ -123,10 +138,22 @@ function NewBlogPageContent() {
       setFormData(prev => ({ ...prev, featuredImage: result.publicId }));
       setUploadedImageUrl(result.secureUrl);
       
-      toast.success('Upload ảnh thành công!');
-    } catch (error) {
+      console.log('Updated formData.featuredImage:', result.publicId);
+      console.log('Updated uploadedImageUrl:', result.secureUrl);
+      
+      toast.success(`Upload ảnh thành công! PublicId: ${result.publicId}`);
+    } catch (error: any) {
       console.error('Upload error:', error);
-      toast.error('Không thể upload ảnh. Vui lòng thử lại.');
+      
+      // Handle specific error cases
+      if (error?.status === 401) {
+        toast.error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+        router.push('/auth/login');
+      } else if (error?.status === 400) {
+        toast.error(error?.data?.message || 'File không hợp lệ hoặc quá lớn');
+      } else {
+        toast.error('Không thể upload ảnh. Vui lòng thử lại.');
+      }
     } finally {
       setIsUploading(false);
     }
@@ -176,46 +203,53 @@ function NewBlogPageContent() {
       return;
     }
 
+    // Validate featuredImage if user wants to include it
+    if (uploadedImageUrl && !formData.featuredImage) {
+      toast.error("Ảnh đã được upload nhưng chưa được gắn vào bài viết. Vui lòng thử lại.");
+      return;
+    }
+
     setIsLoading(true);
     try {
-      await createBlog({
+      console.log('Submitting blog with data:', formData);
+      
+      const blogData = {
         title: formData.title,
         content: formData.content,
         excerpt: formData.excerpt,
         category: formData.category,
         featuredImage: formData.featuredImage,
         tagIds: formData.tagIds,
-      }).unwrap();
+      };
+      
+      console.log('Final blog data being sent:', blogData);
+      
+      const result = await createBlog(blogData).unwrap();
+      console.log('Blog created successfully:', result);
       
       toast.success("Tạo bài viết thành công!");
-      router.push("/blog");
+      
+      // Add delay before redirect to ensure toast is shown
+      setTimeout(() => {
+        router.push("/blog");
+      }, 1000);
     } catch (error: any) {
-      toast.error(error?.data?.message || "Có lỗi xảy ra khi tạo bài viết");
+      console.error('Blog creation error:', error);
+      console.error('Error details:', {
+        status: error?.status,
+        data: error?.data,
+        message: error?.message,
+        stack: error?.stack
+      });
+      
+      const errorMessage = error?.data?.message || error?.message || "Có lỗi xảy ra khi tạo bài viết";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleSaveDraft = async () => {
-    setIsSaving(true);
-    try {
-      await createBlog({
-        title: formData.title || "Bài viết nháp",
-        content: formData.content,
-        excerpt: formData.excerpt,
-        category: formData.category,
-        featuredImage: formData.featuredImage,
-        tagIds: formData.tagIds,
-      }).unwrap();
-      
-      toast.success("Đã lưu nháp thành công!");
-      router.push("/blog/my-drafts");
-    } catch (error: any) {
-      toast.error(error?.data?.message || "Có lỗi xảy ra khi lưu nháp");
-    } finally {
-      setIsSaving(false);
-    }
-  };
+
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-gray-900 dark:via-gray-950 dark:to-slate-900">
@@ -317,15 +351,25 @@ function NewBlogPageContent() {
                             alt="Featured"
                             className="w-full h-64 object-cover rounded-xl"
                           />
-                          <Button
-                            type="button"
-                            variant="destructive"
-                            size="sm"
-                            onClick={removeImage}
-                            className="absolute top-2 right-2 h-8 w-8 p-0 rounded-full"
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
+                          <div className="absolute top-2 right-2 flex gap-2">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="h-8 px-2 text-xs bg-white/90 dark:bg-gray-800/90"
+                            >
+                              {formData.featuredImage}
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="sm"
+                              onClick={removeImage}
+                              className="h-8 w-8 p-0 rounded-full"
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                       )}
                     </CardContent>
@@ -420,6 +464,10 @@ function NewBlogPageContent() {
                                 <div key={i} className="h-8 w-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
                               ))}
                             </div>
+                          ) : tagsError ? (
+                            <div className="text-red-500 text-sm">
+                              Lỗi khi tải tags: {'status' in tagsError ? tagsError.status : 'Unknown error'}
+                            </div>
                           ) : tags.length > 0 ? (
                             tags.map((tag) => (
                               <Badge
@@ -436,7 +484,10 @@ function NewBlogPageContent() {
                               </Badge>
                             ))
                           ) : (
-                            <p className="text-sm text-gray-500 dark:text-gray-400">Không có tags nào</p>
+                            <div className="text-sm text-gray-500 dark:text-gray-400">
+                              <p>Không có tags nào</p>
+                              {tagsData && <p className="text-xs mt-1">Tags data: {JSON.stringify(tagsData)}</p>}
+                            </div>
                           )}
                         </div>
                         {selectedTags.length > 0 && (
@@ -469,6 +520,8 @@ function NewBlogPageContent() {
                   <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-2xl overflow-hidden">
                     <CardContent className="p-6">
                       <div className="space-y-4">
+                       
+                        
                         <Button 
                           type="submit" 
                           className="w-full h-12 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200" 
@@ -476,16 +529,6 @@ function NewBlogPageContent() {
                         >
                           <Send className="h-5 w-5 mr-2" />
                           {isLoading ? "Đang tạo..." : "Tạo bài viết"}
-                        </Button>
-                        <Button 
-                          type="button" 
-                          variant="outline" 
-                          className="w-full h-12 text-lg font-semibold border-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200" 
-                          onClick={handleSaveDraft} 
-                          disabled={isSaving}
-                        >
-                          <Save className="h-5 w-5 mr-2" />
-                          {isSaving ? "Đang lưu..." : "Lưu nháp"}
                         </Button>
                         <Button 
                           type="button" 
