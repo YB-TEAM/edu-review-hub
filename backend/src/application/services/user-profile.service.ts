@@ -36,7 +36,18 @@ export class UserProfileService implements IUserProfileService {
   async getProfile(userId: number): Promise<ProfileResponseDto> {
     const profile = await this.userProfileRepository.findByUserId(userId);
     if (!profile) throw new NotFoundException("Profile not found");
-    return profile as unknown as ProfileResponseDto;
+    
+    // Lấy thêm user data để có accountType
+    const user = await this.userRepository.findById(userId);
+    if (!user) throw new NotFoundException("User not found");
+    
+    // Kết hợp profile và user data
+    const profileWithAccountType = {
+      ...profile,
+      accountType: user.accountType
+    };
+    
+    return profileWithAccountType as unknown as ProfileResponseDto;
   }
 
   async updateProfile(
@@ -86,7 +97,16 @@ export class UserProfileService implements IUserProfileService {
       );
     }
 
-    return profile as unknown as ProfileResponseDto;
+    // Lấy thêm user data để có accountType
+    const user = await this.userRepository.findById(userId);
+    
+    // Kết hợp profile và user data
+    const profileWithAccountType = {
+      ...profile,
+      accountType: user?.accountType || 'student'
+    };
+
+    return profileWithAccountType as unknown as ProfileResponseDto;
   }
 
   async adminUpdateUser(
@@ -178,12 +198,32 @@ export class UserProfileService implements IUserProfileService {
       });
     }
 
-    return profile as unknown as ProfileResponseDto;
+    // Lấy thêm user data để có accountType
+    const user = await this.userRepository.findById(targetUserId);
+    
+    // Kết hợp profile và user data
+    const profileWithAccountType = {
+      ...profile,
+      accountType: user?.accountType || 'student'
+    };
+
+    return profileWithAccountType as unknown as ProfileResponseDto;
   }
 
   async getAllUsers(): Promise<ProfileResponseDto[]> {
     const profiles = await this.userProfileRepository.findAll();
-    // Nếu cần, có thể map sang ProfileResponseDto rõ ràng hơn
-    return profiles as unknown as ProfileResponseDto[];
+    
+    // Lấy thêm user data để có accountType cho mỗi profile
+    const profilesWithAccountType = await Promise.all(
+      profiles.map(async (profile) => {
+        const user = await this.userRepository.findById(profile.userId);
+        return {
+          ...profile,
+          accountType: user?.accountType || 'student' // fallback to student if user not found
+        };
+      })
+    );
+    
+    return profilesWithAccountType as unknown as ProfileResponseDto[];
   }
 }

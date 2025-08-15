@@ -231,10 +231,10 @@ export default function BlogDetailPage() {
         </div>
 
         {/* Featured Image */}
-        {blog?.featuredImage && (
+        {blog?.featuredImageUrl && (
         <div className="mb-10 rounded-xl overflow-hidden shadow-xl">
           <Image
-            src={blog.featuredImage.startsWith('http') ? blog.featuredImage : '/default-blog.jpg'}
+            src={blog.featuredImageUrl}
             alt={blog.title || "Blog image"}
             width={1200}
             height={630}
@@ -243,6 +243,9 @@ export default function BlogDetailPage() {
             onError={(e) => {
               e.currentTarget.src = '/default-blog.jpg';
             }}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+            placeholder="blur"
+            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
           />
         </div>
       )}
