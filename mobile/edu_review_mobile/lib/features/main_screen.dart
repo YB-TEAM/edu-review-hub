@@ -2,7 +2,7 @@
 
 import 'package:edu_review_mobile/common/constants/app_icon.constant.dart';
 import 'package:edu_review_mobile/features/blog/presentation/pages/blog.page.dart';
-import 'package:edu_review_mobile/features/chat/presentation/pages/chat.page.dart';
+import 'package:edu_review_mobile/features/university/presentation/pages/university.page.dart';
 import 'package:edu_review_mobile/features/settings/presentation/pages/settings.page.dart';
 import 'package:flutter/material.dart';
 import 'package:edu_review_mobile/features/dashboard/presentation/pages/dashboard.page.dart';
@@ -49,6 +49,22 @@ class _MainScreenState extends State<MainScreen> {
     ),
     PersistentTabConfig(
       screen: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.dark.copyWith(
+          statusBarColor: Colors.white,
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.light,
+        ),
+        child: const NewsPage(),
+      ),
+      item: ItemConfig(
+        icon: const Icon(Icons.newspaper),
+        title: '',
+        activeForegroundColor: AppColors.primaryBlue,
+        inactiveForegroundColor: AppColors.primaryGrey,
+      ),
+    ),
+    PersistentTabConfig(
+      screen: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light.copyWith(
           statusBarColor: Colors.transparent,
           statusBarIconBrightness: Brightness.light,
@@ -66,27 +82,11 @@ class _MainScreenState extends State<MainScreen> {
     PersistentTabConfig(
       screen: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark.copyWith(
-          statusBarColor: Colors.white,
-          statusBarIconBrightness: Brightness.dark,
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
           statusBarBrightness: Brightness.light,
         ),
-        child: const NewsPage(),
-      ),
-      item: ItemConfig(
-        icon: const Icon(Icons.newspaper),
-        title: '',
-        activeForegroundColor: AppColors.primaryBlue,
-        inactiveForegroundColor: AppColors.primaryGrey,
-      ),
-    ),
-    PersistentTabConfig(
-      screen: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.dark.copyWith(
-          statusBarColor: Colors.white,
-          statusBarIconBrightness: Brightness.dark,
-          statusBarBrightness: Brightness.light,
-        ),
-        child: const SearchScreen(),
+        child: const UniversityPage(),
       ),
       item: ItemConfig(
         icon: const Icon(Icons.explore),
@@ -156,13 +156,13 @@ class _MainScreenState extends State<MainScreen> {
             svgPath = isSelected ? AppIcons.homeActive : AppIcons.homeInactive;
             break;
           case 1:
-            svgPath = isSelected ? AppIcons.communityActive : AppIcons.communityInactive;
-            break;
-          case 2:
             svgPath = isSelected ? AppIcons.notificationsActive : AppIcons.notificationsInactive;
             break;
+          case 2:
+            svgPath = isSelected ? AppIcons.communityActive : AppIcons.communityInactive;
+            break;
           case 3:
-            svgPath = isSelected ? AppIcons.chatActive : AppIcons.chatInactive;
+            svgPath = isSelected ? AppIcons.universityActive : AppIcons.universityInactive;
             break;
           case 4:
             svgPath = isSelected ? AppIcons.userActive : AppIcons.userInactive;

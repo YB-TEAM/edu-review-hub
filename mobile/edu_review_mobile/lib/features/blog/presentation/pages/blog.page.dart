@@ -4,7 +4,7 @@ import 'package:edu_review_mobile/common_libs.dart';
 import 'package:edu_review_mobile/features/blog/presentation/pages/blog_detail.page.dart';
 import 'package:edu_review_mobile/features/blog/presentation/widgets/blog_card_horizontal.widget.dart';
 import 'package:edu_review_mobile/features/blog/presentation/widgets/blog_card_vertical.widget.dart';
-import 'package:edu_review_mobile/features/blog/presentation/widgets/custom_appbar_widget.dart';
+import 'package:edu_review_mobile/common/widgets/appbar/custom_appbar_delegate.dart';
 
 class BlogPage extends StatefulWidget {
   const BlogPage({super.key});
@@ -44,6 +44,8 @@ class _BlogPageState extends State<BlogPage> {
             floating: false,
             delegate: CustomAppBar(
               statusBarHeight: statusBarHeight,
+              title: 'Blog – Insightful Reviews & Tips',
+              hintText: 'Search blogs, articles...',
             ),
           ),
           _buildBlogContent()
