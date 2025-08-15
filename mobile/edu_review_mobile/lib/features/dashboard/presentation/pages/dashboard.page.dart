@@ -85,51 +85,54 @@ class _DashboardPageState extends State<DashboardPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.backgroundGrey,
-      body: CustomScrollView(
-        controller: _scrollController,
-        physics: const BouncingScrollPhysics(),
-        slivers: [
-          SliverPersistentHeader(
-            delegate: AnimatedSliverAppBar(
-              statusBarHeight: MediaQuery.of(context).padding.top,
-              title: 'EduReview Hub',
-              subtitle: 'Discover & Review Universities in Viet Nam',
-              hintText: 'Search...'
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        backgroundColor: AppColors.backgroundGrey,
+        body: CustomScrollView(
+          controller: _scrollController,
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            SliverPersistentHeader(
+              delegate: AnimatedSliverAppBar(
+                statusBarHeight: MediaQuery.of(context).padding.top,
+                title: 'EduReview Hub',
+                subtitle: 'Discover & Review Universities in Viet Nam',
+                hintText: 'Search...'
+              ),
+              pinned: true, 
             ),
-            pinned: true, 
-          ),
-          SliverToBoxAdapter(
-            child: HeroSection(
-              fadeAnimation: _fadeAnimation,
-              slideAnimation: _slideAnimation,
+            SliverToBoxAdapter(
+              child: HeroSection(
+                fadeAnimation: _fadeAnimation,
+                slideAnimation: _slideAnimation,
+              ),
             ),
-          ),
-          SliverToBoxAdapter(child: QuickStats()),
-          SliverToBoxAdapter(child: CategorySection()),
-          SliverToBoxAdapter(child: FeaturedSchools()),
-          SliverToBoxAdapter(child: RecentReviews()),
-          const SliverToBoxAdapter(child: SizedBox(height: 80)),
-        ],
-      ),
-      floatingActionButton: AnimatedScale(
-        scale: _showFloatingButton ? 1.0 : 0.0,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.elasticOut,
-        child: FloatingActionButton.extended(
-          onPressed: () {
-            
-          },
-          backgroundColor: AppColors.primaryBlue,
-          elevation: 8,
-          icon: const Icon(Icons.add, color: Colors.white),
-          label: const Text(
-            'Add Review',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'Roboto-SemiBold',
+            SliverToBoxAdapter(child: QuickStats()),
+            SliverToBoxAdapter(child: CategorySection()),
+            SliverToBoxAdapter(child: FeaturedSchools()),
+            SliverToBoxAdapter(child: RecentReviews()),
+            const SliverToBoxAdapter(child: SizedBox(height: 80)),
+          ],
+        ),
+        floatingActionButton: AnimatedScale(
+          scale: _showFloatingButton ? 1.0 : 0.0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.elasticOut,
+          child: FloatingActionButton.extended(
+            onPressed: () {
+              
+            },
+            backgroundColor: AppColors.primaryBlue,
+            elevation: 8,
+            icon: const Icon(Icons.add, color: Colors.white),
+            label: const Text(
+              'Add Review',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontFamily: 'Roboto-SemiBold',
+              ),
             ),
           ),
         ),

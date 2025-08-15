@@ -3,9 +3,6 @@
 import 'package:edu_review_mobile/common_libs.dart';
 import 'dart:async';
 
-import 'package:flutter_svg/svg.dart';
-
-
 class HeroSection extends StatefulWidget {
   final Animation<double> fadeAnimation;
   final Animation<Offset> slideAnimation;
@@ -21,20 +18,30 @@ class HeroSection extends StatefulWidget {
 }
 
 class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStateMixin {
-  final List<String> titles = [
-    'Shape Your Tomorrow',
-    'Find Your Spark',
-    'Design Your Vision',
-    "Step Into Possibility",
+  final List<String> quotes = [
+    'The best way to predict the future is to create it.',
+    'Life is 10% what happens to us and 90% how we react to it.',
+    'Do not wait to strike till the iron is hot; but make it hot by striking.',
+    'Success is not in what you have, but who you are.',
   ];
+
   final List<String> descriptions = [
-    'Let real student stories guide you to the right university fit.',
-    'Let lived journeys illuminate the path meant for you.',
-    'Let unique insights take you to new possibilities.',
-    'Let authentic journeys shape your next decision.',
+    'Take control and shape your destiny.',
+    'Your attitude determines your success.',
+    'Act decisively to create opportunities.',
+    'True success comes from character.',
   ];
-  int _colorIndex = 0;
+
+  final List<String> authors = [
+    'Peter Drucker',
+    'Charles R. Swindoll',
+    'William Butler Yeats',
+    'Bo Bennett',
+  ];
+
+  int _quoteIndex = 0;
   int _circleIndex = 0;
+
   late Timer _timer;
 
   final List<List<Color>> gradients = [
@@ -45,24 +52,24 @@ class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStat
   ];
 
   final List<Offset> circlePositions = [
-    Offset(-20, -20), // topLeft
-    Offset(260, -30), // topRight 
-    Offset(240, 100),  // bottomRight
-    Offset(-20, 100),  // bottomLeft 
+    Offset(-20, -20),
+    Offset(260, -30),
+    Offset(240, 100),
+    Offset(-20, 100),
   ];
   final List<Offset> circlePositions2 = [
-    Offset(260, 110), // bottomRight
-    Offset(-30, 110), // bottomLeft
-    Offset(-30, -30), // topLeft
-    Offset(260, -30), // topRight
+    Offset(260, 110),
+    Offset(-30, 110),
+    Offset(-30, -30),
+    Offset(260, -30),
   ];
 
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
       setState(() {
-        _colorIndex = (_colorIndex + 1) % gradients.length;
+        _quoteIndex = (_quoteIndex + 1) % quotes.length;
         _circleIndex = (_circleIndex + 1) % 4;
       });
     });
@@ -83,17 +90,17 @@ class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStat
         child: FadeTransition(
           opacity: widget.fadeAnimation,
           child: Container(
-            height: 184,
+            height: 210,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: gradients[_colorIndex],
+                colors: gradients[_quoteIndex % gradients.length],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: gradients[_colorIndex][0].withOpacity(0.3),
+                  color: gradients[_quoteIndex % gradients.length][0].withOpacity(0.3),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
                 ),
@@ -133,55 +140,48 @@ class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStat
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      // Quote
                       AnimatedSwitcher(
                         duration: const Duration(milliseconds: 400),
-                        transitionBuilder: (Widget child, Animation<double> animation) {
-                          return FadeTransition(opacity: animation, child: child);
-                        },
+                        transitionBuilder: (child, animation) =>
+                            FadeTransition(opacity: animation, child: child),
                         child: Text(
-                          titles[_colorIndex],
-                          key: ValueKey<String>(titles[_colorIndex]),
-                          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                            color: AppColors.primaryWhite,
-                          ),
+                          quotes[_quoteIndex],
+                          key: ValueKey<String>(quotes[_quoteIndex]),
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                color: AppColors.primaryWhite,
+                                fontWeight: FontWeight.w900,
+                              ),
                         ),
                       ),
                       const SizedBox(height: 8),
+                      // Description
                       AnimatedSwitcher(
                         duration: const Duration(milliseconds: 400),
-                        transitionBuilder: (Widget child, Animation<double> animation) {
-                          return FadeTransition(opacity: animation, child: child);
-                        },
+                        transitionBuilder: (child, animation) =>
+                            FadeTransition(opacity: animation, child: child),
                         child: Text(
-                          descriptions[_colorIndex],
-                          key: ValueKey<String>(descriptions[_colorIndex]),
+                          descriptions[_quoteIndex],
+                          key: ValueKey<String>(descriptions[_quoteIndex]),
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppColors.primaryWhite.withOpacity(0.8),
-                          ),
+                                color: AppColors.primaryWhite.withOpacity(0.8),
+                              ),
                         ),
                       ),
-                      const SizedBox(height: 20),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryWhite.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SvgPicture.asset(AppIcons.search, width: 16, height: 16, color: AppColors.primaryWhite),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Search Universities',
-                              style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                      const SizedBox(height: 16),
+                      // Author
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 400),
+                        transitionBuilder: (child, animation) =>
+                            FadeTransition(opacity: animation, child: child),
+                        child: Text(
+                          '- ${authors[_quoteIndex]} -',
+                          key: ValueKey<String>(authors[_quoteIndex]),
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                 color: AppColors.primaryWhite,
+                                fontWeight: FontWeight.w600,
+                                fontStyle: FontStyle.italic,
                               ),
-                            ),
-                          ],
                         ),
                       ),
                     ],
