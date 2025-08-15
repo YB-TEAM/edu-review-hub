@@ -191,11 +191,15 @@ Click **"Create Web Service"**
 
 ### Lỗi Thường Gặp
 
-#### 1. Build Failed
+#### 1. Build Failed - "nest: not found"
 
-- Kiểm tra `package.json` có đúng dependencies
-- Kiểm tra TypeScript compilation
-- Kiểm tra build logs
+**Nguyên nhân**: `@nestjs/cli` không có trong production dependencies
+
+**Giải pháp**:
+
+- Đảm bảo `@nestjs/cli` đã được di chuyển từ `devDependencies` sang `dependencies` trong `package.json`
+- Commit và push lại code
+- Redeploy service
 
 #### 2. Database Connection Failed
 
