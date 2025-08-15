@@ -22,8 +22,8 @@ class DioClient {
           'Content-Type': 'application/json; charset=UTF-8'
         },
         responseType: ResponseType.json,
-        sendTimeout: const Duration(seconds: 30),
-        receiveTimeout: const Duration(seconds: 30)
+        sendTimeout: const Duration(seconds: 60),
+        receiveTimeout: const Duration(seconds: 60)
       )
     )..interceptors.addAll([LoggerInterceptor()]);
 

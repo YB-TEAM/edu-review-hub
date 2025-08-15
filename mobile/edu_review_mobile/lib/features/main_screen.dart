@@ -34,7 +34,7 @@ class _MainScreenState extends State<MainScreen> {
     PersistentTabConfig(
       screen: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light.copyWith(
-          statusBarColor: AppColors.primaryBlue,
+          statusBarColor: Colors.transparent,
           statusBarIconBrightness: Brightness.light,
           statusBarBrightness: Brightness.light,
         ),
