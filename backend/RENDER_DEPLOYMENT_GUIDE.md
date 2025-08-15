@@ -265,17 +265,19 @@ Click **"Create Web Service"**
 **Giải pháp**:
 
 - Đảm bảo `DB_SSL=true` trong environment variables
-- Kiểm tra `data-source.ts` có SSL configuration đúng:
-  ```typescript
-  ssl: process.env.NODE_ENV === "production" ? {
-    rejectUnauthorized: false
-  } : false
-  ```
-- **Lưu ý**: Không cần `require: true` - chỉ cần `rejectUnauthorized: false`
+- Kiểm tra `data-source.ts` có SSL configuration (cho migrations/seeds)
+- **QUAN TRỌNG**: Kiểm tra `database.config.ts` có SSL configuration (cho TypeORM module)
+- SSL config phải có `rejectUnauthorized: false` cho production
 - Commit và push lại code
 - Redeploy service
 
+**Lưu ý**: Có 2 file cần SSL config:
+
+1. `data-source.ts` - cho migrations và seeds
+2. `database.config.ts` - cho TypeORM module khi ứng dụng chạy
+
 **Test SSL Configuration**:
+
 ```bash
 # Test local (không SSL)
 NODE_ENV=development node test-db-connection.js
