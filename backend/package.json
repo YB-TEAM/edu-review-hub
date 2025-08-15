@@ -20,7 +20,9 @@
     "migration:generate": "npm run typeorm -- migration:generate -d src/infrastructure/database/data-source.ts",
     "migration:run": "npm run typeorm -- migration:run -d src/infrastructure/database/data-source.ts",
     "migration:revert": "npm run typeorm -- migration:revert -d src/infrastructure/database/data-source.ts",
-    "seed": "ts-node src/infrastructure/database/seeds/run-seeds.ts"
+    "seed": "ts-node src/infrastructure/database/seeds/run-seeds.ts",
+    "deploy": "chmod +x deploy.sh && ./deploy.sh",
+    "postinstall": "npm run build"
   },
   "keywords": [
     "nestjs",

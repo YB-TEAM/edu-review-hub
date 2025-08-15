@@ -11,6 +11,8 @@ import { BlogModule } from "@/infrastructure/config/blog.module";
 import { UploadModule } from "@/infrastructure/config/upload.module";
 import { DashboardModule } from "@/infrastructure/config/dashboard.module";
 import { SystemManagementModule } from "@/infrastructure/config/system-management.module";
+import { HealthController } from "@/presentation/controllers/health.controller";
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -27,5 +29,6 @@ import { SystemManagementModule } from "@/infrastructure/config/system-managemen
     DashboardModule,
     SystemManagementModule,
   ],
+  controllers: [HealthController],
 })
 export class AppModule {}
