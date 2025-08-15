@@ -4,9 +4,9 @@ import 'package:edu_review_mobile/common/widgets/dialog/custom_dialog.dart';
 import 'package:edu_review_mobile/common/widgets/loading/custom_loading_indicator.dart';
 import 'package:edu_review_mobile/common_libs.dart';
 import 'package:edu_review_mobile/features/auth/data/models/reset_password_params.dart';
-import 'package:edu_review_mobile/features/auth/domain/usecases/resend_verification.dart';
+import 'package:edu_review_mobile/features/auth/domain/usecases/forgot_password.dart';
 import 'package:edu_review_mobile/features/auth/domain/usecases/reset_password.dart';
-import 'package:edu_review_mobile/features/auth/presentation/bloc/resend_verification_cubit.dart';
+import 'package:edu_review_mobile/features/auth/presentation/bloc/forgot_password_cubit.dart';
 import 'package:edu_review_mobile/features/auth/presentation/bloc/reset_password_cubit.dart';
 import 'package:edu_review_mobile/service_locator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,8 +27,8 @@ class _EnterPinCodePageState extends State<EnterPinCodePage> {
 
   void _resendCode(BuildContext context) {
     if (mounted) codeController.clear();
-    context.read<ResendVerificationCubit>().execute(
-      usecase: sl<ResendVerificationUseCase>(),
+    context.read<ForgotPasswordCubit>().execute(
+      usecase: sl<ForgotPasswordUseCase>(),
       params: widget.email,
     );
   }
@@ -50,7 +50,7 @@ class _EnterPinCodePageState extends State<EnterPinCodePage> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => ResetPasswordCubit()),
-        BlocProvider(create: (_) => ResendVerificationCubit()),
+        BlocProvider(create: (_) => ForgotPasswordCubit()),
         BlocProvider(create: (_) => ButtonStateCubit()),
       ],
       child: Scaffold(
@@ -91,13 +91,13 @@ class _EnterPinCodePageState extends State<EnterPinCodePage> {
                 }
               },
             ),
-            BlocListener<ResendVerificationCubit, ButtonState>(
+            BlocListener<ForgotPasswordCubit, ButtonState>(
               listener: (context, state) {
                 if (state is ButtonSuccessState) {
                   showAppDialog(
                     context: context,
                     title: 'Code Resent',
-                    content: 'Verification code has been resent to ${widget.email}',
+                    content: 'OTP code has been resent to ${widget.email}',
                     icon: Icons.email,
                     iconColor: Colors.green,
                     actions: [
@@ -183,7 +183,7 @@ class _EnterPinCodePageState extends State<EnterPinCodePage> {
                           ),
                           const SizedBox(height: 30),
                           Text(
-                            'Enter PIN Code',
+                            'Enter OTP Code',
                             style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                                   color: AppColors.textBlack,
                                 ),
@@ -240,7 +240,7 @@ class _EnterPinCodePageState extends State<EnterPinCodePage> {
                                 "Didn't Receive the Code? ",
                                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.textGrey),
                               ),
-                              BlocBuilder<ResendVerificationCubit, ButtonState>(
+                              BlocBuilder<ForgotPasswordCubit, ButtonState>(
                                 builder: (context, state) {
                                   final isLoading = state is ButtonLoadingState;
                                   return TextButton(

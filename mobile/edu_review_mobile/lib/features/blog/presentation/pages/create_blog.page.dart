@@ -195,6 +195,14 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
     );
   }
 
+  void _deleteImage() {
+    setState(() {
+      _uploadedImageUrl = null;
+      _featuredImage = null;
+    });
+    _showSnackBar('Image deleted');
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -281,6 +289,7 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
                           imageUrl: _uploadedImageUrl,
                           isUploading: _isUploadingImage,
                           onTap: _pickAndUploadImage,
+                          onDelete: _deleteImage,
                         ),
                         const SizedBox(height: 16),
                         _buildLabel('Content', context),
