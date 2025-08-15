@@ -109,4 +109,7 @@ jspm_packages/
 # Uploads and temporary files
 uploads/
 *.tmp
-*.temp 
+*.temp
+
+# Allow .env.local for local testing
+!.env.local 

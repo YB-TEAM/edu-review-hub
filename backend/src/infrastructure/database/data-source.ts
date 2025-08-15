@@ -15,4 +15,12 @@ export const AppDataSource = new DataSource({
   entities: ["src/infrastructure/database/entities/**/*.entity.ts"],
   migrations: ["src/infrastructure/database/migrations/**/*.ts"],
   subscribers: ["src/infrastructure/database/subscribers/**/*.ts"],
+  ssl: process.env.NODE_ENV === "production" ? {
+    rejectUnauthorized: false
+  } : false,
+  extra: {
+    ssl: process.env.NODE_ENV === "production" ? {
+      rejectUnauthorized: false
+    } : false
+  }
 });
