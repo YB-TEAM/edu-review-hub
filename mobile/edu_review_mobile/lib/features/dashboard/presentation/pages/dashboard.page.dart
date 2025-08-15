@@ -91,7 +91,15 @@ class _DashboardPageState extends State<DashboardPage>
         controller: _scrollController,
         physics: const BouncingScrollPhysics(),
         slivers: [
-          AnimatedAppBar(),
+          SliverPersistentHeader(
+            delegate: AnimatedSliverAppBar(
+              statusBarHeight: MediaQuery.of(context).padding.top,
+              title: 'EduReview Hub',
+              subtitle: 'Discover & Review Universities in Viet Nam',
+              hintText: 'Search...'
+            ),
+            pinned: true, 
+          ),
           SliverToBoxAdapter(
             child: HeroSection(
               fadeAnimation: _fadeAnimation,
