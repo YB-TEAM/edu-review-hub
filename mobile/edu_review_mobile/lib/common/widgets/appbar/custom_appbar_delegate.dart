@@ -6,9 +6,13 @@ class CustomAppBar extends SliverPersistentHeaderDelegate {
   final double statusBarHeight;
   final double appBarHeight;
   final double searchBarHeight;
+  final String title;
+  final String hintText;
 
   CustomAppBar({
     required this.statusBarHeight,
+    required this.title,
+    required this.hintText,
     this.appBarHeight = 40,
     this.searchBarHeight = 56, 
   });
@@ -53,7 +57,7 @@ class CustomAppBar extends SliverPersistentHeaderDelegate {
           child: Opacity(
             opacity: fade,
             child: TypewriterText(
-              text: 'Blog – Insightful Reviews & Tips',
+              text: title,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
@@ -65,7 +69,7 @@ class CustomAppBar extends SliverPersistentHeaderDelegate {
           bottom: 0,
           left: 0,
           right: 0,
-          child: CustomSearchBar(height: searchBarHeight),
+          child: CustomSearchBar(height: searchBarHeight, hintText: hintText,),
         ),
       ],
     );

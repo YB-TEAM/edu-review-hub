@@ -1,5 +1,5 @@
   class ApiUrls {
-    static const baseURL = "http://192.168.1.241:3000/api/v1/";
+    static const baseURL = "http://192.168.99.109:3000/api/v1/";
     // static const baseURL = "http://localhost:3000/api/v1/";
     //Authentication URLs
     static const register = "${baseURL}auth/register";
@@ -19,6 +19,9 @@
     static const getMyBlog = "${baseURL}blogs/my";
     static String blog(int id) => "${baseURL}blogs/$id";
     static String publishBlog(int id) => "${baseURL}blogs/$id/publish";
+
+    //University URLS
+    static const getUniversities = "${baseURL}universities";
 
     //Upload
     static const uploadImage = "${baseURL}upload/image";

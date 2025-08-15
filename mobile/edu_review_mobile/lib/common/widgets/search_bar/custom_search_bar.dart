@@ -3,8 +3,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class CustomSearchBar extends StatelessWidget {
   final double height;
+  final String hintText;
 
-  const CustomSearchBar({super.key, this.height = 56});
+  const CustomSearchBar({super.key, this.height = 56, required this.hintText});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class CustomSearchBar extends StatelessWidget {
           prefixIcon: Padding(
             padding: const EdgeInsets.only(left: 12, right: 8),
             child: SvgPicture.asset(
-              'assets/icons/ic_search.svg',
+              AppIcons.search,
               width: 20,
               height: 20,
               colorFilter: const ColorFilter.mode(
@@ -30,7 +31,7 @@ class CustomSearchBar extends StatelessWidget {
             minWidth: 40,
             minHeight: 40,
           ),
-          hintText: 'Search blogs, articles...',
+          hintText: hintText,
           hintStyle: Theme.of(context)
               .textTheme
               .bodyMedium
