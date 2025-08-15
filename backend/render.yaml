@@ -1,0 +1,48 @@
+services:
+  - type: web
+    name: edu-review-hub-backend
+    env: node
+    plan: free
+    buildCommand: |
+      npm ci
+      npm run build
+    startCommand: chmod +x deploy.sh && ./deploy.sh
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: DB_HOST
+        fromDatabase:
+          name: edu-review-hub-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: edu-review-hub-db
+          property: port
+      - key: DB_USERNAME
+        fromDatabase:
+          name: edu-review-hub-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: edu-review-hub-db
+          property: password
+      - key: DB_DATABASE
+        fromDatabase:
+          name: edu-review-hub-db
+          property: database
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: RENDER
+        value: true
+    healthCheckPath: /health
+    autoDeploy: true
+
+databases:
+  - name: edu-review-hub-db
+    databaseName: edu_review_hub
+    user: edu_review_user
+    plan: free
