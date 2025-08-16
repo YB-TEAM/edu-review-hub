@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:edu_review_mobile/core/error/failures.dart';
 import 'package:edu_review_mobile/features/auth/data/data_sources/local/auth_local_service.dart';
 import 'package:edu_review_mobile/features/auth/data/data_sources/remote/auth_api_service.dart';
+import 'package:edu_review_mobile/features/auth/data/models/reset_password_params.dart';
 import 'package:edu_review_mobile/features/auth/data/models/signin_response.dart';
 import 'package:edu_review_mobile/features/auth/data/models/signin_params.dart';
 import 'package:edu_review_mobile/features/auth/data/models/signup_response.dart';
@@ -54,6 +55,27 @@ class AuthRepositoryImpl extends AuthRepository {
       return result;
     } on DioException catch (e) {
       return Left(ServerFailure(message: e.response?.data['message'] ?? 'Some errors occur when resend verification', statusCode: e.response?.statusCode));
+    }
+  }
+  
+
+  @override
+  Future<Either<Failure, void>> forgotPassword(String email) async {
+    try {
+      final result = await _apiService.forgotPassword(email);
+      return result;
+    } on DioException catch (e) {
+      return Left(ServerFailure(message: e.response?.data['message'] ?? 'Some errors occur when send request', statusCode: e.response?.statusCode));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> resetPassword(ResetPasswordParams params) async {
+    try {
+      final result = await _apiService.resetPassword(params);
+      return result;
+    } on DioException catch (e) {
+      return Left(ServerFailure(message: e.response?.data['message'] ?? 'Some errors occur when reset password', statusCode: e.response?.statusCode));
     }
   }
 }

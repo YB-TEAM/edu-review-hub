@@ -11,6 +11,7 @@ import 'package:edu_review_mobile/common/widgets/text_field/custom_text_field.da
 import 'package:edu_review_mobile/common_libs.dart';
 import 'package:edu_review_mobile/features/auth/data/models/signin_params.dart';
 import 'package:edu_review_mobile/features/auth/domain/usecases/sign_in.dart';
+import 'package:edu_review_mobile/features/auth/presentation/pages/forgot_password.page.dart';
 import 'package:edu_review_mobile/service_locator.dart' show sl;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:edu_review_mobile/features/auth/presentation/pages/sign_up.page.dart';
@@ -126,7 +127,27 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
-  void _handleForgotPassword() {}
+  void _handleForgotPassword () {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder:
+            (context, animation, secondaryAnimation) => const ForgotPasswordPage(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0); 
+          const end = Offset.zero;
+          final tween = Tween(
+            begin: begin,
+            end: end,
+          ).chain(CurveTween(curve: Curves.ease));
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 400),
+      ),
+    );
+  }
 
   void _handleTapOutside() {
     FocusScope.of(context).unfocus();
@@ -213,7 +234,6 @@ class _SignInPageState extends State<SignInPage> {
                           style: Theme.of(
                             context,
                           ).textTheme.headlineLarge?.copyWith(
-                            fontFamily: 'Roboto-Bold',
                             color: AppColors.textBlack,
                           ),
                           textAlign: TextAlign.center,

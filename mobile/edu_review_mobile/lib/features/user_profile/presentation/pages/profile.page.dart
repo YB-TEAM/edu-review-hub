@@ -135,7 +135,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      'Studient',
+                                      'Student',
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyMedium

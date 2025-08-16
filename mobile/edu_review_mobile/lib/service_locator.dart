@@ -6,7 +6,9 @@ import 'package:edu_review_mobile/features/auth/data/data_sources/local/auth_loc
 import 'package:edu_review_mobile/features/auth/data/data_sources/remote/auth_api_service.dart';
 import 'package:edu_review_mobile/features/auth/data/repository/auth_repository_imp.dart';
 import 'package:edu_review_mobile/features/auth/domain/repository/auth_repository.dart';
+import 'package:edu_review_mobile/features/auth/domain/usecases/forgot_password.dart';
 import 'package:edu_review_mobile/features/auth/domain/usecases/resend_verification.dart';
+import 'package:edu_review_mobile/features/auth/domain/usecases/reset_password.dart';
 import 'package:edu_review_mobile/features/auth/domain/usecases/sign_in.dart';
 import 'package:edu_review_mobile/features/auth/domain/usecases/verify_email.dart';
 import 'package:edu_review_mobile/features/blog/data/data_sources/remote/blog_api_service.dart';
@@ -17,6 +19,10 @@ import 'package:edu_review_mobile/features/blog/domain/usecases/publish_blog.dar
 import 'package:edu_review_mobile/features/settings/data/data_sources/remote/settings_api_service.dart';
 import 'package:edu_review_mobile/features/settings/data/repository/settings_repository_impl.dart';
 import 'package:edu_review_mobile/features/settings/domain/repository/settings_repository.dart';
+import 'package:edu_review_mobile/features/university/data/data_sources/remote/university_api_service.dart';
+import 'package:edu_review_mobile/features/university/data/repository/university_repository_impl.dart';
+import 'package:edu_review_mobile/features/university/domain/repository/university_repository.dart';
+import 'package:edu_review_mobile/features/university/domain/usecases/get_universities.dart';
 import 'package:edu_review_mobile/features/user_profile/data/repository/profile_repository_impl.dart';
 import 'package:edu_review_mobile/features/user_profile/domain/repository/profile_repository.dart';
 import 'package:edu_review_mobile/features/user_profile/domain/usecases/delete_blog.dart';
@@ -47,6 +53,7 @@ void setUpServiceLocator() {
   sl.registerSingleton<SettingsLocalService>(SettingsLocalServiceImpl());
   sl.registerSingleton<SettingsApiService>(SettingsApiServiceImpl());
   sl.registerSingleton<BlogApiService>(BlogApiServiceImpl());
+  sl.registerSingleton<UniversityApiService>(UniversityApiServiceImpl());
   sl.registerLazySingleton<UploadImageApiService>(() => UploadImageApiServiceImpl());
   sl.registerLazySingleton<GetTagApiService>(() => GetTagApiServiceImpl());
 
@@ -56,6 +63,7 @@ void setUpServiceLocator() {
   sl.registerSingleton<ProfileRepository>(ProfileRepositoryImpl());
   sl.registerSingleton<SettingsRepository>(SettingsRepositoryImpl());
   sl.registerSingleton<BlogRepository>(BlogRepositoryImpl());
+  sl.registerSingleton<UniversityRepository>(UniversityRepositoryImpl());
 
   // Usecases
   sl.registerSingleton<SignUpUseCase>(SignUpUseCase());
@@ -63,6 +71,8 @@ void setUpServiceLocator() {
   sl.registerSingleton<IsLoggedInUseCase>(IsLoggedInUseCase());
   sl.registerSingleton<VerifyEmailUseCase>(VerifyEmailUseCase());
   sl.registerSingleton<ResendVerificationUseCase>(ResendVerificationUseCase());
+  sl.registerSingleton<ForgotPasswordUseCase>(ForgotPasswordUseCase());
+  sl.registerSingleton<ResetPasswordUseCase>(ResetPasswordUseCase());
 
 
   sl.registerSingleton<GetUserUseCase>(GetUserUseCase());
@@ -75,4 +85,6 @@ void setUpServiceLocator() {
   sl.registerSingleton<UserPublishBlogUseCase>(UserPublishBlogUseCase());
   sl.registerSingleton<DeleteBlogUseCase>(DeleteBlogUseCase());
   sl.registerSingleton<EditBlogUseCase>(EditBlogUseCase());
+
+  sl.registerSingleton<GetUniversityUseCase>(GetUniversityUseCase());
 }

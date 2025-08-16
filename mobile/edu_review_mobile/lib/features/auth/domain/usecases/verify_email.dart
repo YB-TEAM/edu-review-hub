@@ -7,10 +7,10 @@ import 'package:edu_review_mobile/service_locator.dart';
 
 class VerifyEmailUseCase implements UseCase<void, VerifyEmailParams> {
   @override
-  Future<Either<Failure, void>> call(VerifyEmailParams ? param) async{
-    if (param == null) {
+  Future<Either<Failure, void>> call(VerifyEmailParams ? params) async{
+    if (params == null) {
       return Left(ServerFailure(message: "VerifyEmailParams is null"));
     }
-    return await sl<AuthRepository>().verifyEmail(param);
+    return await sl<AuthRepository>().verifyEmail(params);
   }
 }
