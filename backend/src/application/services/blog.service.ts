@@ -444,7 +444,10 @@ export class BlogService implements IBlogService {
     // Track images in updated blog content
     if (dto.content) {
       try {
-        await this.blogImageTrackerService.trackImagesInBlog(id, dto.content);
+        await this.blogImageTrackerService.trackImagesInBlog(
+          id.toString(),
+          dto.content
+        );
         console.log("✅ Blog content images tracked for updated blog", id);
       } catch (error) {
         console.error("❌ Failed to track blog content images:", error);
@@ -492,7 +495,7 @@ export class BlogService implements IBlogService {
 
     // Remove image tracking for this blog
     try {
-      await this.blogImageTrackerService.removeBlogImageTracking(id);
+      await this.blogImageTrackerService.removeBlogImageTracking(id.toString());
       console.log("✅ Blog image tracking removed for blog", id);
     } catch (error) {
       console.error("❌ Failed to remove blog image tracking:", error);
@@ -949,7 +952,7 @@ export class BlogService implements IBlogService {
     ] = await Promise.all([
       this.blogRepository.count({}),
       this.blogRepository.count({ status: BlogStatus.APPROVED }),
-      this.blogRepository.count({ status: BlogStatus.PENDING }),
+      this.blogRepository.count({ status: BlogStatus.PUBLISHED }), // Changed from PENDING to PUBLISHED
       this.blogRepository.sumField("viewCount"),
       this.blogRepository.sumField("likeCount"),
       this.blogRepository.sumField("commentCount"),
