@@ -50,7 +50,7 @@
     "class-validator": "^0.14.0",
     "cloudinary": "^2.7.0",
     "form-data": "^4.0.4",
-    "nest-commander": "^4.0.0",
+    "nest-commander": "^3.0.0",
     "nodemailer": "^7.0.5",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
