@@ -451,14 +451,10 @@ export class BlogService implements IBlogService {
         console.log("✅ Blog content images tracked for updated blog", id);
       } catch (error) {
         console.error("❌ Failed to track blog content images:", error);
-        // Don't throw error, continue with blog update
       }
     }
 
     return this.toResponseDto(updated);
-  }
-
-  async delete(id: number, userId: number): Promise<void> {
     const blog = await this.blogRepository.findById(id);
     if (!blog) throw new NotFoundException("Blog not found");
 
@@ -495,7 +491,7 @@ export class BlogService implements IBlogService {
 
     // Remove image tracking for this blog
     try {
-      await this.blogImageTrackerService.removeBlogImageTracking(id.toString());
+      await this.blogImageTrackerService.removeBlogImageTracking(id);
       console.log("✅ Blog image tracking removed for blog", id);
     } catch (error) {
       console.error("❌ Failed to remove blog image tracking:", error);
@@ -808,10 +804,10 @@ export class BlogService implements IBlogService {
       }
     }
 
+
     // Debug tags mapping
     console.log(`🔖 Blog ${blog.id} tags in toResponseDto:`, {
       hasTags: !!blog.tags,
-      tagsLength: blog.tags?.length || 0,
       tagsData: blog.tags?.map((t) => ({ id: t.id, name: t.name })) || [],
     });
 
@@ -829,9 +825,9 @@ export class BlogService implements IBlogService {
 
     console.log(`🔖 Blog ${blog.id} mapped tags:`, mappedTags.length);
 
-    return {
-      id: blog.id,
-      title: blog.title,
+    // Debug logging to see what's being loaded
+    console.log("🔍 Debug - Blog author:", {
+      authorId: blog.authorId,
       content: blog.content,
       excerpt: blog.excerpt,
       featuredImage: blog.featuredImage,
@@ -897,12 +893,14 @@ export class BlogService implements IBlogService {
     }
 
     // Extract author name - prioritize displayName, fallback to username
-    const authorName =
-      blog.author?.profile?.displayName || blog.author?.username || "Unknown";
+    const authorName = blog.author?.profile?.displayName || 
+                      blog.author?.username || 
+                      'Unknown';
 
     // Extract moderator name - prioritize displayName, fallback to username
-    const moderatorName =
-      blog.moderator?.profile?.displayName || blog.moderator?.username || null;
+    const moderatorName = blog.moderator?.profile?.displayName || 
+                         blog.moderator?.username || 
+                         null;
 
     return {
       id: blog.id,

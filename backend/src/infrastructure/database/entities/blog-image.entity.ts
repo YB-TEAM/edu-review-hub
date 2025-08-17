@@ -17,8 +17,8 @@ export class BlogImage {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({ name: "blog_id", type: "uuid" })
-  blogId: string;
+  @Column({ name: "blog_id", type: "integer" })
+  blogId: number;
 
   @Column({ name: "image_url", type: "text" })
   imageUrl: string;

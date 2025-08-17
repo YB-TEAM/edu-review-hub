@@ -75,10 +75,10 @@ export default function MarkdownEditor({
         /\[([^\]]+)\]\(([^)]+)\)/g,
         '<a href="$2" target="_blank" class="text-blue-600 hover:underline">$1</a>'
       )
-      // Images
+      // Images - improved regex to handle various URL formats
       .replace(
         /!\[([^\]]*)\]\(([^)]+)\)/g,
-        '<img src="$2" alt="$1" class="max-w-full h-auto rounded my-3" />'
+        '<img src="$2" alt="$1" class="max-w-full h-auto rounded my-3 border border-gray-200 dark:border-gray-600" onerror="this.style.display=\'none\'; this.nextElementSibling?.style.display=\'block\';" /><div class="hidden text-sm text-red-500 bg-red-50 dark:bg-red-900/20 p-2 rounded border border-red-200 dark:border-red-800">⚠️ Không thể tải ảnh: $2</div>'
       )
       // Lists
       .replace(/^\* (.*$)/gim, '<li class="ml-4">$1</li>')

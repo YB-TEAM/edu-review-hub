@@ -7,7 +7,7 @@ export interface BlogImageTrackerServiceInterface {
   /**
    * Track images used in blog content
    */
-  trackImagesInBlog(blogId: string, content: string): Promise<void>;
+  trackImagesInBlog(blogId: number, content: string): Promise<void>;
 
   /**
    * Find orphaned images (not used in any blog)
@@ -22,10 +22,10 @@ export interface BlogImageTrackerServiceInterface {
   /**
    * Get all images used in a specific blog
    */
-  getBlogImages(blogId: string): Promise<string[]>;
+  getBlogImages(blogId: number): Promise<string[]>;
 
   /**
    * Remove image tracking for a deleted blog
    */
-  removeBlogImageTracking(blogId: string): Promise<void>;
+  removeBlogImageTracking(blogId: number): Promise<void>;
 }
