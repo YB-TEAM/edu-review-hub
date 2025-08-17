@@ -88,6 +88,20 @@ export const baseQuery: BaseQueryFn<
     url = `${baseUrl}${args.url}`;
     method = args.method || 'GET';
     
+    // Handle query parameters
+    if (args.params && typeof args.params === 'object') {
+      const searchParams = new URLSearchParams();
+      Object.entries(args.params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          searchParams.append(key, String(value));
+        }
+      });
+      const queryString = searchParams.toString();
+      if (queryString) {
+        url += `?${queryString}`;
+      }
+    }
+    
     if (args.body) {
       body = args.body;
     }
@@ -172,7 +186,7 @@ export const baseQuery: BaseQueryFn<
       status: response.status,
       data: errorData,
       error: response.statusText,
-    };
+    } as FetchBaseQueryError;
 
     // Get user-friendly error message
     const errorMessage = getErrorMessage(response.status, errorData);

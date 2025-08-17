@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useGetAllBlogsQuery, useUpdateBlogMutation, useDeleteBlogMutation, useExportBlogsMutation, useImportBlogsMutation } from "@/lib/services/blogApi";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -103,8 +103,8 @@ export default function BlogsPage() {
     });
   }, [currentPage, blogsPerPage, debouncedSearchTerm, statusFilter, sortBy, sortOrder, dateFrom, dateTo, minViews, minLikes]);
 
-  // Prepare query parameters
-  const queryParams: BlogQueryParams = {
+  // Prepare query parameters with useMemo to prevent infinite loops
+  const queryParams = useMemo((): BlogQueryParams => ({
     page: currentPage,
     limit: blogsPerPage,
     search: debouncedSearchTerm || undefined,
@@ -116,7 +116,7 @@ export default function BlogsPage() {
     minViews: minViews ? parseInt(minViews) : undefined,
     minLikes: minLikes ? parseInt(minLikes) : undefined,
     minComments: undefined, // Not implemented in UI yet
-  };
+  }), [currentPage, blogsPerPage, debouncedSearchTerm, statusFilter, sortBy, sortOrder, dateFrom, dateTo, minViews, minLikes]);
 
   // Skip query if no valid parameters
   const shouldSkipQuery = !currentPage || !blogsPerPage;
@@ -135,14 +135,6 @@ export default function BlogsPage() {
   const [deleteBlog] = useDeleteBlogMutation();
   const [exportBlogs] = useExportBlogsMutation();
   const [importBlogs] = useImportBlogsMutation();
-
-  // Force refetch when parameters change
-  useEffect(() => {
-    if (!shouldSkipQuery) {
-      console.log('🔄 Forcing refetch due to parameter change');
-      refetch();
-    }
-  }, [queryParams, refetch, shouldSkipQuery]);
 
   // Extract blogs array from response - handle nested data structure
   // API returns: { data: [...], metadata: {...}, statistics: {...} }
@@ -167,7 +159,7 @@ export default function BlogsPage() {
   // Use statistics from API
   const totalBlogs = statistics?.totalBlogs || 0;
   const approvedBlogs = statistics?.approvedBlogs || 0;
-  const pendingBlogs = statistics?.pendingBlogs || 0;
+  const pendingBlogs = statistics?.pendingBlogs || 0; // Blogs with status "published" (waiting for approval)
   const totalViews = statistics?.totalViews || 0;
 
   const handleStatusChange = async (blogId: number, newStatus: string) => {
@@ -415,7 +407,7 @@ export default function BlogsPage() {
             <div className="text-2xl font-bold text-yellow-600">
               {pendingBlogs}
             </div>
-            <p className="text-xs text-muted-foreground">Cần xử lý</p>
+            <p className="text-xs text-muted-foreground">Blogs đã gửi để kiểm duyệt</p>
           </CardContent>
         </Card>
 
