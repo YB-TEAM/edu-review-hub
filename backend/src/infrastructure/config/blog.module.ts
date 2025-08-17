@@ -47,6 +47,7 @@ import { CloudinaryService } from "@/infrastructure/services/cloudinary.service"
     { provide: "IBlogRepository", useClass: BlogRepository },
     { provide: "ITagService", useClass: TagService },
     { provide: "ITagRepository", useClass: TagRepository },
+    BlogImageTrackerService,
   ],
 })
 export class BlogModule {}
