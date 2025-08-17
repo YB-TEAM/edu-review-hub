@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import { BlogResponse } from "@/types/blog";
 import { BlogStatus } from "@/types/blog";
+import { BlogQueryParams } from "@/types/blog";
 
 // Interface for actual API response structure
 interface BlogApiResponse {
@@ -57,7 +58,7 @@ export default function BlogsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("createdAt");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
   const [selectedBlogs, setSelectedBlogs] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [blogsPerPage] = useState(10);
@@ -94,7 +95,7 @@ export default function BlogsPage() {
       search: debouncedSearchTerm,
       status: statusFilter === "all" ? undefined : statusFilter,
       sortBy,
-      sortOrder: sortOrder === "asc" ? "ASC" : "DESC",
+      sortOrder,
       dateFrom,
       dateTo,
       minViews: minViews ? parseInt(minViews) : undefined,
@@ -102,23 +103,46 @@ export default function BlogsPage() {
     });
   }, [currentPage, blogsPerPage, debouncedSearchTerm, statusFilter, sortBy, sortOrder, dateFrom, dateTo, minViews, minLikes]);
 
-  const { data: blogsResponse, isLoading, error, refetch } = useGetAllBlogsQuery({
+  // Prepare query parameters
+  const queryParams: BlogQueryParams = {
     page: currentPage,
     limit: blogsPerPage,
     search: debouncedSearchTerm || undefined,
     status: statusFilter === "all" ? undefined : (statusFilter as BlogStatus),
     sortBy: sortBy as any,
-    sortOrder: sortOrder === "asc" ? "ASC" : "DESC",
+    sortOrder: sortOrder,
     dateFrom: dateFrom || undefined,
     dateTo: dateTo || undefined,
     minViews: minViews ? parseInt(minViews) : undefined,
     minLikes: minLikes ? parseInt(minLikes) : undefined,
     minComments: undefined, // Not implemented in UI yet
-  });
+  };
+
+  // Skip query if no valid parameters
+  const shouldSkipQuery = !currentPage || !blogsPerPage;
+
+  const { data: blogsResponse, isLoading, error, refetch } = useGetAllBlogsQuery(
+    queryParams,
+    {
+      skip: shouldSkipQuery,
+      // Force refetch when parameters change
+      refetchOnMountOrArgChange: true,
+      // Polling to ensure fresh data
+      pollingInterval: 0, // Disable polling, only refetch on mount/arg change
+    }
+  );
   const [updateBlog] = useUpdateBlogMutation();
   const [deleteBlog] = useDeleteBlogMutation();
   const [exportBlogs] = useExportBlogsMutation();
   const [importBlogs] = useImportBlogsMutation();
+
+  // Force refetch when parameters change
+  useEffect(() => {
+    if (!shouldSkipQuery) {
+      console.log('🔄 Forcing refetch due to parameter change');
+      refetch();
+    }
+  }, [queryParams, refetch, shouldSkipQuery]);
 
   // Extract blogs array from response - handle nested data structure
   // API returns: { data: [...], metadata: {...}, statistics: {...} }
@@ -445,11 +469,11 @@ export default function BlogsPage() {
             </select>
             <select
               value={sortOrder}
-              onChange={(e) => setSortOrder(e.target.value as "asc" | "desc")}
+              onChange={(e) => setSortOrder(e.target.value as "ASC" | "DESC")}
               className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             >
-              <option value="desc" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">Giảm dần</option>
-              <option value="asc" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">Tăng dần</option>
+              <option value="DESC" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">Giảm dần</option>
+              <option value="ASC" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">Tăng dần</option>
             </select>
             <div className="flex space-x-2">
               <Button
@@ -485,7 +509,7 @@ export default function BlogsPage() {
                 setSearchTerm('');
                 setStatusFilter('all');
                 setSortBy('createdAt');
-                setSortOrder('desc');
+                setSortOrder('DESC');
                 setDateFrom('');
                 setDateTo('');
                 setMinViews('');
