@@ -123,10 +123,13 @@ export interface BlogQueryParams {
   authorId?: number;
   tagId?: number;
   search?: string;
-  sortBy?: 'createdAt' | 'updatedAt' | 'publishedAt' | 'viewCount' | 'likeCount';
-  sortOrder?: 'asc' | 'desc';
-  startDate?: string;
-  endDate?: string;
+  sortBy?: 'createdAt' | 'updatedAt' | 'title' | 'viewCount' | 'likeCount' | 'commentCount' | 'publishedAt';
+  sortOrder?: 'ASC' | 'DESC';
+  dateFrom?: string;
+  dateTo?: string;
+  minViews?: number;
+  minLikes?: number;
+  minComments?: number;
 }
 
 // Blog moderation request matching backend ApproveBlogDto
