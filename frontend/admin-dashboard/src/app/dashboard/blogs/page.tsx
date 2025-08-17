@@ -95,7 +95,7 @@ export default function BlogsPage() {
       search: debouncedSearchTerm,
       status: statusFilter === "all" ? undefined : statusFilter,
       sortBy,
-      sortOrder,
+      sortOrder: sortOrder === "asc" ? "ASC" : "DESC",
       dateFrom,
       dateTo,
       minViews: minViews ? parseInt(minViews) : undefined,
@@ -103,8 +103,7 @@ export default function BlogsPage() {
     });
   }, [currentPage, blogsPerPage, debouncedSearchTerm, statusFilter, sortBy, sortOrder, dateFrom, dateTo, minViews, minLikes]);
 
-  // Prepare query parameters with useMemo to prevent infinite loops
-  const queryParams = useMemo((): BlogQueryParams => ({
+  const { data: blogsResponse, isLoading, error, refetch } = useGetAllBlogsQuery({
     page: currentPage,
     limit: blogsPerPage,
     search: debouncedSearchTerm || undefined,
@@ -159,7 +158,7 @@ export default function BlogsPage() {
   // Use statistics from API
   const totalBlogs = statistics?.totalBlogs || 0;
   const approvedBlogs = statistics?.approvedBlogs || 0;
-  const pendingBlogs = statistics?.pendingBlogs || 0; // Blogs with status "published" (waiting for approval)
+  const pendingBlogs = statistics?.pendingBlogs || 0;
   const totalViews = statistics?.totalViews || 0;
 
   const handleStatusChange = async (blogId: number, newStatus: string) => {
@@ -385,18 +384,18 @@ export default function BlogsPage() {
           </CardContent>
         </Card>
 
-                 <Card>
-           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-             <CardTitle className="text-sm font-medium">Đã phê duyệt</CardTitle>
-             <CheckCircle className="h-4 w-4 text-green-500" />
-           </CardHeader>
-           <CardContent>
-             <div className="text-2xl font-bold text-green-600">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Đã phê duyệt</CardTitle>
+            <CheckCircle className="h-4 w-4 text-green-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600">
               {approvedBlogs}
-             </div>
-             <p className="text-xs text-muted-foreground">Bài viết đã phê duyệt</p>
-           </CardContent>
-         </Card>
+            </div>
+            <p className="text-xs text-muted-foreground">Bài viết đã phê duyệt</p>
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

@@ -949,7 +949,7 @@ export class BlogService implements IBlogService {
     ] = await Promise.all([
       this.blogRepository.count({}),
       this.blogRepository.count({ status: BlogStatus.APPROVED }),
-      this.blogRepository.count({ status: BlogStatus.PUBLISHED }), // Changed from PENDING to PUBLISHED
+      this.blogRepository.count({ status: BlogStatus.PENDING }),
       this.blogRepository.sumField("viewCount"),
       this.blogRepository.sumField("likeCount"),
       this.blogRepository.sumField("commentCount"),
