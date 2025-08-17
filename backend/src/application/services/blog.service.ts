@@ -30,6 +30,7 @@ import {
   UnbanBlogDto,
 } from "../dto/blog/moderate-blog.dto";
 import { IUploadedFileRepository } from "@/domain/repositories/uploaded-file.repository.interface";
+import { BlogImageTrackerService } from "@/domain/services/blog-image-tracker.service";
 
 @Injectable()
 export class BlogService implements IBlogService {
@@ -42,7 +43,8 @@ export class BlogService implements IBlogService {
     private readonly userActivityRepository: UserActivityRepository,
     private readonly cloudinaryService: CloudinaryService,
     @Inject("IUploadedFileRepository")
-    private readonly uploadedFileRepository: IUploadedFileRepository
+    private readonly uploadedFileRepository: IUploadedFileRepository,
+    private readonly blogImageTrackerService: BlogImageTrackerService
   ) {}
 
   async create(
@@ -85,6 +87,15 @@ export class BlogService implements IBlogService {
       commentCount: 0,
       tags: tags,
     });
+
+    // Track images in blog content
+    try {
+      await this.blogImageTrackerService.trackImagesInBlog(blog.id.toString(), dto.content);
+      console.log("✅ Blog content images tracked for blog", blog.id);
+    } catch (error) {
+      console.error("❌ Failed to track blog content images:", error);
+      // Don't throw error, continue with blog creation
+    }
 
     // Track activity
     try {
@@ -418,6 +429,18 @@ export class BlogService implements IBlogService {
     }
 
     const updated = await this.blogRepository.update(id, dto);
+    
+    // Track images in updated blog content
+    if (dto.content) {
+      try {
+        await this.blogImageTrackerService.trackImagesInBlog(id.toString(), dto.content);
+        console.log("✅ Blog content images tracked for updated blog", id);
+      } catch (error) {
+        console.error("❌ Failed to track blog content images:", error);
+        // Don't throw error, continue with blog update
+      }
+    }
+    
     return this.toResponseDto(updated);
   }
 
@@ -454,6 +477,15 @@ export class BlogService implements IBlogService {
         );
         // Don't throw error, continue with blog deletion
       }
+    }
+
+    // Remove image tracking for this blog
+    try {
+      await this.blogImageTrackerService.removeBlogImageTracking(id.toString());
+      console.log("✅ Blog image tracking removed for blog", id);
+    } catch (error) {
+      console.error("❌ Failed to remove blog image tracking:", error);
+      // Don't throw error, continue with blog deletion
     }
 
     await this.blogRepository.delete(id);

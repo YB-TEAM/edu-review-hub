@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { CommandModule } from 'nest-commander';
 
 import { AuthModule } from "@/infrastructure/config/auth.module";
 import { databaseConfig } from "@/infrastructure/config/database.config";
@@ -12,6 +13,7 @@ import { UploadModule } from "@/infrastructure/config/upload.module";
 import { DashboardModule } from "@/infrastructure/config/dashboard.module";
 import { SystemManagementModule } from "@/infrastructure/config/system-management.module";
 import { HealthController } from "@/presentation/controllers/health.controller";
+import { CleanupOrphanedImagesCommand } from "@/infrastructure/commands/cleanup-orphaned-images.command";
 
 @Module({
   imports: [
@@ -20,6 +22,7 @@ import { HealthController } from "@/presentation/controllers/health.controller";
       envFilePath: ".env",
     }),
     TypeOrmModule.forRoot(databaseConfig),
+    CommandModule,
     AuthModule,
     UniversityModule,
     UniversityReviewModule,
@@ -30,5 +33,6 @@ import { HealthController } from "@/presentation/controllers/health.controller";
     SystemManagementModule,
   ],
   controllers: [HealthController],
+  providers: [CleanupOrphanedImagesCommand],
 })
 export class AppModule {}
