@@ -240,9 +240,9 @@ export default function BlogsPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const formData = new FormData();
-    formData.append('file', file);
-
+      const formData = new FormData();
+      formData.append('file', file);
+      
     try {
       const result = await importBlogs(formData).unwrap();
       toast.success(`Import thành công: ${result.success} blog, thất bại: ${result.failed}`);
@@ -385,18 +385,18 @@ export default function BlogsPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Đã phê duyệt</CardTitle>
-            <CheckCircle className="h-4 w-4 text-green-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">
+                 <Card>
+           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+             <CardTitle className="text-sm font-medium">Đã phê duyệt</CardTitle>
+             <CheckCircle className="h-4 w-4 text-green-500" />
+           </CardHeader>
+           <CardContent>
+             <div className="text-2xl font-bold text-green-600">
               {approvedBlogs}
-            </div>
-            <p className="text-xs text-muted-foreground">Bài viết đã phê duyệt</p>
-          </CardContent>
-        </Card>
+             </div>
+             <p className="text-xs text-muted-foreground">Bài viết đã phê duyệt</p>
+           </CardContent>
+         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -438,9 +438,9 @@ export default function BlogsPage() {
                 className="pl-10"
               />
             </div>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
+                         <select
+               value={statusFilter}
+               onChange={(e) => setStatusFilter(e.target.value)}
               className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             >
               <option value="all" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">Tất cả trạng thái</option>
@@ -449,8 +449,8 @@ export default function BlogsPage() {
               <option value={BlogStatus.APPROVED} className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">Đã phê duyệt</option>
               <option value={BlogStatus.REJECTED} className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">Bị từ chối</option>
               <option value={BlogStatus.BANNED} className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">Bị cấm</option>
-            </select>
-            <select
+             </select>
+                         <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
               className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
@@ -466,7 +466,7 @@ export default function BlogsPage() {
             >
               <option value="DESC" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">Giảm dần</option>
               <option value="ASC" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">Tăng dần</option>
-            </select>
+             </select>
             <div className="flex space-x-2">
               <Button
                 variant={viewMode === "table" ? "default" : "outline"}
@@ -569,7 +569,7 @@ export default function BlogsPage() {
                 {selectedBlogs.length} blog được chọn
               </span>
               <div className="flex space-x-2">
-                 <Button
+                                 <Button
                    variant="outline"
                    size="sm"
                    onClick={() => handleBulkAction("approve")}
@@ -578,25 +578,25 @@ export default function BlogsPage() {
                    <CheckCircle className="h-4 w-4 mr-2" />
                    Phê duyệt
                  </Button>
-                 <Button
-                   variant="outline"
-                   size="sm"
-                   onClick={() => handleBulkAction("draft")}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleBulkAction("draft")}
                    className="hover:bg-yellow-50 hover:border-yellow-200 hover:text-yellow-600 transition-all duration-200 transform hover:scale-105"
-                 >
-                   <Clock className="h-4 w-4 mr-2" />
-                   Chuyển nháp
-                 </Button>
-                 <Button
-                   variant="destructive"
-                   size="sm"
-                   onClick={() => handleBulkAction("delete")}
+                >
+                  <Clock className="h-4 w-4 mr-2" />
+                  Chuyển nháp
+                </Button>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => handleBulkAction("delete")}
                    className="hover:bg-red-600 hover:scale-105 transition-all duration-200 transform"
-                 >
-                   <Trash2 className="h-4 w-4 mr-2" />
-                   Xóa
-                 </Button>
-               </div>
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Xóa
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -691,9 +691,9 @@ export default function BlogsPage() {
                         </div>
                       </td>
                       <td className="p-3">
-                        <select
-                          value={blog.status}
-                          onChange={(e) => handleStatusChange(blog.id, e.target.value)}
+                                                 <select
+                           value={blog.status}
+                           onChange={(e) => handleStatusChange(blog.id, e.target.value)}
                           className={`border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-800 dark:text-white transition-all duration-200 hover:border-blue-300 dark:hover:border-blue-400 bg-white ${getStatusColor(blog.status)}`}
                         >
                           <option value="draft" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">Bản nháp</option>
@@ -701,7 +701,7 @@ export default function BlogsPage() {
                           <option value="approved" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">Đã phê duyệt</option>
                           <option value="rejected" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">Từ chối</option>
                           <option value="banned" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">Bị cấm</option>
-                        </select>
+                         </select>
                       </td>
                       <td className="p-3">
                         <div className="text-sm space-y-1">

@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Blog, BlogStatus, BlogCategory } from "../entities/blog.entity";
+import { User } from "../entities/user.entity";
 import { IBlogRepository } from "@/domain/repositories/blog.repository.interface";
 
 @Injectable()
@@ -51,7 +52,7 @@ export class BlogRepository implements IBlogRepository {
   async findById(id: number): Promise<Blog | null> {
     return this.repo.findOne({
       where: { id },
-      relations: ["author", "moderator", "tags"],
+      relations: ["author", "author.profile", "moderator", "moderator.profile", "tags"],
       withDeleted: false,
     });
   }
@@ -251,7 +252,7 @@ export class BlogRepository implements IBlogRepository {
   async findByIdWithDeleted(id: number): Promise<Blog | null> {
     return this.repo.findOne({
       where: { id },
-      relations: ["author", "moderator", "tags"],
+      relations: ["author", "author.profile", "moderator", "moderator.profile", "tags"],
       withDeleted: true,
     });
   }
@@ -270,7 +271,9 @@ export class BlogRepository implements IBlogRepository {
     const queryBuilder = this.repo
       .createQueryBuilder("blog")
       .leftJoinAndSelect("blog.author", "author")
+      .leftJoinAndSelect("author.profile", "authorProfile")
       .leftJoinAndSelect("blog.moderator", "moderator")
+      .leftJoinAndSelect("moderator.profile", "moderatorProfile")
       .leftJoinAndSelect("blog.tags", "tags")
       .withDeleted(); // Include soft deleted blogs
 

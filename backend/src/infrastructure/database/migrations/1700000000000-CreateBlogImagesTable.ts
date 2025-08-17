@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table, Index, ForeignKey } from "typeorm";
+import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from "typeorm";
 
 export class CreateBlogImagesTable1700000000000 implements MigrationInterface {
     name = 'CreateBlogImagesTable1700000000000'
@@ -17,7 +17,7 @@ export class CreateBlogImagesTable1700000000000 implements MigrationInterface {
                     },
                     {
                         name: "blog_id",
-                        type: "uuid"
+                        type: "integer"
                     },
                     {
                         name: "image_url",
@@ -50,25 +50,25 @@ export class CreateBlogImagesTable1700000000000 implements MigrationInterface {
         );
 
         // Create indexes
-        await queryRunner.createIndex("blog_images", {
+        await queryRunner.createIndex("blog_images", new TableIndex({
             name: "IDX_blog_images_blog_id_image_url",
             columnNames: ["blog_id", "image_url"],
             isUnique: true
-        });
+        }));
 
-        await queryRunner.createIndex("blog_images", {
+        await queryRunner.createIndex("blog_images", new TableIndex({
             name: "IDX_blog_images_image_url",
             columnNames: ["image_url"]
-        });
+        }));
 
         // Create foreign key
-        await queryRunner.createForeignKey("blog_images", {
+        await queryRunner.createForeignKey("blog_images", new TableForeignKey({
             name: "FK_blog_images_blog_id",
             columnNames: ["blog_id"],
             referencedColumnNames: ["id"],
             referencedTableName: "blogs",
             onDelete: "CASCADE"
-        });
+        }));
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {

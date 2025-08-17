@@ -91,13 +91,19 @@ export class BlogResponseDto {
   @ApiProperty({ example: 1 })
   authorId: number;
 
-  @ApiPropertyOptional({ example: "John Doe" })
+  @ApiPropertyOptional({ 
+    example: "John Doe",
+    description: "Author's display name (falls back to username if display name not set)"
+  })
   authorName?: string;
 
   @ApiPropertyOptional({ example: 2 })
   moderatorId?: number;
 
-  @ApiPropertyOptional({ example: "Jane Smith" })
+  @ApiPropertyOptional({ 
+    example: "Jane Smith",
+    description: "Moderator's display name (falls back to username if display name not set)"
+  })
   moderatorName?: string;
 
   @ApiProperty({ example: "2024-01-15T10:00:00Z" })
