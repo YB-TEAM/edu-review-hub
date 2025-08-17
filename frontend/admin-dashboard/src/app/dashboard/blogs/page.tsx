@@ -73,10 +73,23 @@ export default function BlogsPage() {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
+  // Refetch when filters change
+  useEffect(() => {
+    setCurrentPage(1); // Reset to first page when filters change
+  }, [statusFilter, sortBy, sortOrder, dateFrom, dateTo, minViews, minLikes]);
+
   const { data: blogsResponse, isLoading, error, refetch } = useGetAllBlogsQuery({
-    page: 1,
-    limit: 100, // Get more blogs for better filtering
+    page: currentPage,
+    limit: blogsPerPage,
     search: debouncedSearchTerm || undefined,
+    status: statusFilter === "all" ? undefined : (statusFilter as BlogStatus),
+    sortBy: sortBy as any,
+    sortOrder: sortOrder === "asc" ? "ASC" : "DESC",
+    dateFrom: dateFrom || undefined,
+    dateTo: dateTo || undefined,
+    minViews: minViews ? parseInt(minViews) : undefined,
+    minLikes: minLikes ? parseInt(minLikes) : undefined,
+    minComments: undefined, // Not implemented in UI yet
   });
   const [updateBlog] = useUpdateBlogMutation();
   const [deleteBlog] = useDeleteBlogMutation();
@@ -86,6 +99,7 @@ export default function BlogsPage() {
   // Extract blogs array from response - handle nested data structure
   // API returns: { data: [...], metadata: {...} }
   const blogs = (blogsResponse as unknown as BlogApiResponse)?.data || [];
+  const metadata = (blogsResponse as unknown as BlogApiResponse)?.metadata;
 
   // Get unique authors for filter (for display purposes only)
   const uniqueAuthors = blogs
@@ -96,50 +110,10 @@ export default function BlogsPage() {
     .filter((author, index, arr) => author.id && arr.findIndex(a => a.id === author.id) === index)
     .filter(Boolean);
 
-  // Filter blogs locally (since we're using API search)
-  const filteredBlogs = blogs.filter((blog: BlogResponse) => {
-    const matchesStatus = statusFilter === "all" || blog.status === statusFilter;
-    
-    // Advanced filters
-    const matchesDateFrom = !dateFrom || new Date(blog.createdAt) >= new Date(dateFrom);
-    const matchesDateTo = !dateTo || new Date(blog.createdAt) <= new Date(dateTo);
-    const matchesMinViews = !minViews || (blog.viewCount || 0) >= parseInt(minViews);
-    const matchesMinLikes = !minLikes || (blog.likeCount || 0) >= parseInt(minLikes);
-    
-    return matchesStatus && matchesDateFrom && matchesDateTo && matchesMinViews && matchesMinLikes;
-  }) || [];
-
-  // Sort blogs based on sortBy and sortOrder
-  const sortedBlogs = [...filteredBlogs].sort((a, b) => {
-    let aValue: any, bValue: any;
-    
-    switch (sortBy) {
-      case 'viewCount':
-        aValue = a.viewCount || 0;
-        bValue = b.viewCount || 0;
-        break;
-      case 'likeCount':
-        aValue = a.likeCount || 0;
-        bValue = b.likeCount || 0;
-        break;
-      case 'createdAt':
-      default:
-        aValue = new Date(a.createdAt).getTime();
-        bValue = new Date(b.createdAt).getTime();
-        break;
-    }
-    
-    if (sortOrder === 'asc') {
-      return aValue - bValue;
-    } else {
-      return bValue - aValue;
-    }
-  });
-
-  const indexOfLastBlog = currentPage * blogsPerPage;
-  const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
-  const currentBlogs = sortedBlogs.slice(indexOfFirstBlog, indexOfLastBlog);
-  const totalPages = Math.ceil(sortedBlogs.length / blogsPerPage);
+  // Use blogs directly from API (no more local filtering/sorting needed)
+  const currentBlogs = blogs;
+  const totalPages = metadata?.totalPages || 1;
+  const totalItems = metadata?.totalItems || 0;
 
   const handleStatusChange = async (blogId: number, newStatus: string) => {
     try {
@@ -359,7 +333,7 @@ export default function BlogsPage() {
             <FileText className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{blogs.length}</div>
+            <div className="text-2xl font-bold text-blue-600">{totalItems}</div>
             <p className="text-xs text-muted-foreground">Tất cả bài viết</p>
           </CardContent>
         </Card>
@@ -485,6 +459,7 @@ export default function BlogsPage() {
                 setDateTo('');
                 setMinViews('');
                 setMinLikes('');
+                setCurrentPage(1); // Reset to first page
               }}
               className="hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-all duration-200 transform hover:scale-105"
             >
@@ -586,7 +561,7 @@ export default function BlogsPage() {
           <CardHeader>
             <CardTitle>Danh sách blog</CardTitle>
             <CardDescription>
-              Tổng cộng {filteredBlogs.length} blog
+              Tổng cộng {totalItems} blog
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -736,7 +711,7 @@ export default function BlogsPage() {
             {totalPages > 1 && (
               <div className="flex items-center justify-between mt-6">
                 <div className="text-sm text-gray-600">
-                  Hiển thị {indexOfFirstBlog + 1}-{Math.min(indexOfLastBlog, filteredBlogs.length)} trong tổng số {filteredBlogs.length} blog
+                  Hiển thị {((currentPage - 1) * blogsPerPage) + 1}-{Math.min(currentPage * blogsPerPage, totalItems)} trong tổng số {totalItems} blog
                 </div>
                 <div className="flex space-x-2">
                   <Button
