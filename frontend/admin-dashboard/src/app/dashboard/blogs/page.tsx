@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useGetBlogsQuery, useUpdateBlogMutation, useDeleteBlogMutation } from "@/lib/services/blogApi";
+import { useGetAllBlogsQuery as useGetBlogsQuery, useUpdateBlogMutation, useDeleteBlogMutation } from "@/lib/services/blogApi";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
