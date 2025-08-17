@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useGetUsersQuery, useUpdateUserMutation, useDeleteUserMutation } from "@/lib/services/userApi";
+import { useGetUsersQuery, useUpdateUserStatusMutation as useUpdateUserMutation, useDeactivateUserMutation as useDeleteUserMutation } from "@/lib/services/userApi";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
