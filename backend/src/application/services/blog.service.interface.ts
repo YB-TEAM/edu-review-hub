@@ -41,7 +41,7 @@ export interface IBlogService {
       sortBy?: string;
       sortOrder?: 'ASC' | 'DESC';
     }
-  ): Promise<{ data: BlogResponseDto[]; metadata: any }>;
+  ): Promise<{ data: BlogResponseDto[]; metadata: any; statistics: any }>;
   findAllWithDeleted(
     user: any,
     pagination: PaginationDto,
