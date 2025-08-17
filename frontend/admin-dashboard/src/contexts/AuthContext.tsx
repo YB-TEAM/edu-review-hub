@@ -15,6 +15,7 @@ interface AuthContextType {
   logout: () => void;
   hasPermission: (permission: string) => boolean;
   refreshUser: () => void;
+  updateUser: (userData: any) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -131,6 +132,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const updateUser = (userData: any) => {
+    dispatch(setUser(userData));
+  };
+
   const value: AuthContextType = {
     user: mounted ? user : null,
     isAuthenticated: mounted ? isAuthenticated : false,
@@ -139,6 +144,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     logout: logoutUser,
     hasPermission,
     refreshUser,
+    updateUser,
   };
 
   return (

@@ -22,7 +22,8 @@
     "migration:revert": "npm run typeorm -- migration:revert -d src/infrastructure/database/data-source.ts",
     "seed": "ts-node src/infrastructure/database/seeds/run-seeds.ts",
     "deploy": "chmod +x deploy.sh && ./deploy.sh",
-    "postinstall": "npm run build"
+    "postinstall": "npm run build",
+    "cleanup-images": "nest start --entryFile cleanup-orphaned-images"
   },
   "keywords": [
     "nestjs",
@@ -49,6 +50,7 @@
     "class-validator": "^0.14.0",
     "cloudinary": "^2.7.0",
     "form-data": "^4.0.4",
+    "nest-commander": "^4.0.0",
     "nodemailer": "^7.0.5",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",

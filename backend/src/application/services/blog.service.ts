@@ -90,7 +90,7 @@ export class BlogService implements IBlogService {
 
     // Track images in blog content
     try {
-      await this.blogImageTrackerService.trackImagesInBlog(blog.id.toString(), dto.content);
+      await this.blogImageTrackerService.trackImagesInBlog(blog.id, dto.content);
       console.log("✅ Blog content images tracked for blog", blog.id);
     } catch (error) {
       console.error("❌ Failed to track blog content images:", error);
@@ -433,7 +433,7 @@ export class BlogService implements IBlogService {
     // Track images in updated blog content
     if (dto.content) {
       try {
-        await this.blogImageTrackerService.trackImagesInBlog(id.toString(), dto.content);
+        await this.blogImageTrackerService.trackImagesInBlog(id, dto.content);
         console.log("✅ Blog content images tracked for updated blog", id);
       } catch (error) {
         console.error("❌ Failed to track blog content images:", error);
@@ -481,7 +481,7 @@ export class BlogService implements IBlogService {
 
     // Remove image tracking for this blog
     try {
-      await this.blogImageTrackerService.removeBlogImageTracking(id.toString());
+      await this.blogImageTrackerService.removeBlogImageTracking(id);
       console.log("✅ Blog image tracking removed for blog", id);
     } catch (error) {
       console.error("❌ Failed to remove blog image tracking:", error);
@@ -762,6 +762,33 @@ export class BlogService implements IBlogService {
       }
     }
 
+    // Debug logging to see what's being loaded
+    console.log("🔍 Debug - Blog author:", {
+      authorId: blog.authorId,
+      author: blog.author,
+      authorProfile: blog.author?.profile,
+      displayName: blog.author?.profile?.displayName,
+      username: blog.author?.username
+    });
+
+    console.log("🔍 Debug - Blog moderator:", {
+      moderatorId: blog.moderatorId,
+      moderator: blog.moderator,
+      moderatorProfile: blog.moderator?.profile,
+      displayName: blog.moderator?.profile?.displayName,
+      username: blog.moderator?.username
+    });
+
+    // Extract author name - prioritize displayName, fallback to username
+    const authorName = blog.author?.profile?.displayName || 
+                      blog.author?.username || 
+                      'Unknown';
+
+    // Extract moderator name - prioritize displayName, fallback to username
+    const moderatorName = blog.moderator?.profile?.displayName || 
+                         blog.moderator?.username || 
+                         null;
+
     return {
       id: blog.id,
       title: blog.title,
@@ -789,9 +816,9 @@ export class BlogService implements IBlogService {
       publishedAt: blog.publishedAt,
       moderatedAt: blog.moderatedAt,
       authorId: blog.authorId,
-      authorName: blog.author?.username,
+      authorName: authorName,
       moderatorId: blog.moderatorId,
-      moderatorName: blog.moderator?.username,
+      moderatorName: moderatorName,
       createdAt: blog.createdAt,
       updatedAt: blog.updatedAt,
     };
@@ -838,6 +865,16 @@ export class BlogService implements IBlogService {
       }
     }
 
+    // Extract author name - prioritize displayName, fallback to username
+    const authorName = blog.author?.profile?.displayName || 
+                      blog.author?.username || 
+                      'Unknown';
+
+    // Extract moderator name - prioritize displayName, fallback to username
+    const moderatorName = blog.moderator?.profile?.displayName || 
+                         blog.moderator?.username || 
+                         null;
+
     return {
       id: blog.id,
       title: blog.title,
@@ -866,9 +903,9 @@ export class BlogService implements IBlogService {
       publishedAt: blog.publishedAt,
       moderatedAt: blog.moderatedAt,
       authorId: blog.authorId,
-      authorName: blog.author?.username,
+      authorName: authorName,
       moderatorId: blog.moderatorId,
-      moderatorName: blog.moderator?.username,
+      moderatorName: moderatorName,
       createdAt: blog.createdAt,
       updatedAt: blog.updatedAt,
     };

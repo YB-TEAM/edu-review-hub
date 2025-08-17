@@ -1,344 +1,237 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Settings, 
   Shield, 
-  Mail, 
-  Database, 
-  Globe, 
-  Bell,
+  Bell, 
+  Eye, 
+  Lock, 
   Save,
-  RefreshCw
+  EyeOff,
+  Key
 } from "lucide-react";
 
 export default function SettingsPage() {
+  const { user } = useAuth();
+  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [settings, setSettings] = useState({
-    // General Settings
-    siteName: "Edu Review Hub",
-    siteDescription: "Nền tảng đánh giá và chia sẻ thông tin về giáo dục",
-    siteUrl: "https://edureviewhub.com",
-    adminEmail: "admin@edureviewhub.com",
-    
-    // Security Settings
-    enableTwoFactor: true,
-    sessionTimeout: 30,
-    maxLoginAttempts: 5,
-    passwordMinLength: 8,
-    
-    // Email Settings
-    smtpHost: "smtp.gmail.com",
-    smtpPort: 587,
-    smtpUser: "noreply@edureviewhub.com",
-    smtpPassword: "",
-    enableEmailNotifications: true,
-    
-    // System Settings
-    maintenanceMode: false,
-    debugMode: false,
-    logLevel: "info",
-    maxFileSize: 10,
-    
-    // Notification Settings
-    enableEmailAlerts: true,
-    enableSMSAlerts: false,
-    enablePushNotifications: true,
-    alertFrequency: "immediate"
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
 
-  const handleSettingChange = (key: string, value: any) => {
-    setSettings(prev => ({
+  const [notificationSettings, setNotificationSettings] = useState({
+    emailNotifications: true,
+    pushNotifications: false,
+    marketingEmails: false,
+    securityAlerts: true,
+    blogUpdates: true,
+  });
+
+  const [privacySettings, setPrivacySettings] = useState({
+    profileVisibility: "public",
+    showEmail: false,
+    showPhone: false,
+    allowMessages: true,
+    showOnlineStatus: true,
+  });
+
+  const handlePasswordChange = (field: string, value: string) => {
+    setPasswordData(prev => ({
       ...prev,
-      [key]: value
+      [field]: value
     }));
   };
 
-  const handleSave = async () => {
-    setIsLoading(true);
+  const handleNotificationChange = (field: string, value: boolean) => {
+    setNotificationSettings(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handlePrivacyChange = (field: string, value: string | boolean) => {
+    setPrivacySettings(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handlePasswordUpdate = async () => {
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      toast.error("Mật khẩu mới và xác nhận không khớp");
+      return;
+    }
+
+    if (passwordData.newPassword.length < 8) {
+      toast.error("Mật khẩu mới phải có ít nhất 8 ký tự");
+      return;
+    }
+
     try {
-      // TODO: Implement API call to save settings
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log("Settings saved:", settings);
+      setIsLoading(true);
+      // TODO: Implement password update API call
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
+      
+      toast.success("Cập nhật mật khẩu thành công!");
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
     } catch (error) {
+      toast.error("Không thể cập nhật mật khẩu");
+      console.error("Error updating password:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSaveSettings = async () => {
+    try {
+      setIsLoading(true);
+      // TODO: Implement settings save API call
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
+      
+      toast.success("Lưu cài đặt thành công!");
+    } catch (error) {
+      toast.error("Không thể lưu cài đặt");
       console.error("Error saving settings:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleReset = () => {
-    // TODO: Reset to default values
-    console.log("Reset settings");
-  };
-
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Cài đặt hệ thống</h1>
-          <p className="text-gray-600 mt-2">Quản lý cấu hình và thiết lập hệ thống</p>
-        </div>
-        
-        <div className="flex space-x-3">
-          <Button variant="outline" onClick={handleReset}>
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Khôi phục
-          </Button>
-          <Button onClick={handleSave} disabled={isLoading}>
-            <Save className="h-4 w-4 mr-2" />
-            {isLoading ? "Đang lưu..." : "Lưu thay đổi"}
-          </Button>
-        </div>
+    <div className="container mx-auto py-8 px-6 max-w-4xl">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold">Cài đặt</h1>
+        <p className="text-muted-foreground mt-2">
+          Quản lý cài đặt tài khoản và bảo mật
+        </p>
       </div>
 
-      {/* Settings Sections */}
-      <div className="space-y-6">
-        {/* General Settings */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Settings className="h-5 w-5 mr-2" />
-              Cài đặt chung
-            </CardTitle>
-            <CardDescription>
-              Thông tin cơ bản về website và hệ thống
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="siteName">Tên website</Label>
-                <Input
-                  id="siteName"
-                  value={settings.siteName}
-                  onChange={(e) => handleSettingChange("siteName", e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="siteUrl">URL website</Label>
-                <Input
-                  id="siteUrl"
-                  value={settings.siteUrl}
-                  onChange={(e) => handleSettingChange("siteUrl", e.target.value)}
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="siteDescription">Mô tả website</Label>
-              <Textarea
-                id="siteDescription"
-                value={settings.siteDescription}
-                onChange={(e) => handleSettingChange("siteDescription", e.target.value)}
-                rows={3}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="adminEmail">Email quản trị</Label>
-              <Input
-                id="adminEmail"
-                type="email"
-                value={settings.adminEmail}
-                onChange={(e) => handleSettingChange("adminEmail", e.target.value)}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
+      <div className="grid gap-6">
         {/* Security Settings */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Shield className="h-5 w-5 mr-2" />
-              Cài đặt bảo mật
+              <Shield className="mr-2 h-5 w-5" />
+              Bảo mật
             </CardTitle>
             <CardDescription>
-              Cấu hình bảo mật và xác thực
+              Cập nhật mật khẩu và cài đặt bảo mật
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Bật xác thực 2 yếu tố</Label>
-                <p className="text-sm text-muted-foreground">
-                  Yêu cầu mã xác thực khi đăng nhập
-                </p>
-              </div>
-              <Switch
-                checked={settings.enableTwoFactor}
-                onCheckedChange={(checked) => handleSettingChange("enableTwoFactor", checked)}
-              />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="sessionTimeout">Thời gian phiên (phút)</Label>
+            <div className="space-y-2">
+              <Label htmlFor="currentPassword">Mật khẩu hiện tại</Label>
+              <div className="relative">
                 <Input
-                  id="sessionTimeout"
-                  type="number"
-                  value={settings.sessionTimeout}
-                  onChange={(e) => handleSettingChange("sessionTimeout", parseInt(e.target.value))}
+                  id="currentPassword"
+                  type={showCurrentPassword ? "text" : "password"}
+                  value={passwordData.currentPassword}
+                  onChange={(e) => handlePasswordChange("currentPassword", e.target.value)}
+                  placeholder="Nhập mật khẩu hiện tại"
                 />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="maxLoginAttempts">Số lần đăng nhập tối đa</Label>
-                <Input
-                  id="maxLoginAttempts"
-                  type="number"
-                  value={settings.maxLoginAttempts}
-                  onChange={(e) => handleSettingChange("maxLoginAttempts", parseInt(e.target.value))}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="passwordMinLength">Độ dài mật khẩu tối thiểu</Label>
-                <Input
-                  id="passwordMinLength"
-                  type="number"
-                  value={settings.passwordMinLength}
-                  onChange={(e) => handleSettingChange("passwordMinLength", parseInt(e.target.value))}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Email Settings */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Mail className="h-5 w-5 mr-2" />
-              Cài đặt email
-            </CardTitle>
-            <CardDescription>
-              Cấu hình SMTP và thông báo email
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Bật thông báo email</Label>
-                <p className="text-sm text-muted-foreground">
-                  Gửi email thông báo cho người dùng
-                </p>
-              </div>
-              <Switch
-                checked={settings.enableEmailNotifications}
-                onCheckedChange={(checked) => handleSettingChange("enableEmailNotifications", checked)}
-              />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="smtpHost">SMTP Host</Label>
-                <Input
-                  id="smtpHost"
-                  value={settings.smtpHost}
-                  onChange={(e) => handleSettingChange("smtpHost", e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="smtpPort">SMTP Port</Label>
-                <Input
-                  id="smtpPort"
-                  type="number"
-                  value={settings.smtpPort}
-                  onChange={(e) => handleSettingChange("smtpPort", parseInt(e.target.value))}
-                />
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="smtpUser">SMTP Username</Label>
-                <Input
-                  id="smtpUser"
-                  value={settings.smtpUser}
-                  onChange={(e) => handleSettingChange("smtpUser", e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="smtpPassword">SMTP Password</Label>
-                <Input
-                  id="smtpPassword"
-                  type="password"
-                  value={settings.smtpPassword}
-                  onChange={(e) => handleSettingChange("smtpPassword", e.target.value)}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* System Settings */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Database className="h-5 w-5 mr-2" />
-              Cài đặt hệ thống
-            </CardTitle>
-            <CardDescription>
-              Cấu hình hệ thống và hiệu suất
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Chế độ bảo trì</Label>
-                <p className="text-sm text-muted-foreground">
-                  Tạm thời vô hiệu hóa website
-                </p>
-              </div>
-              <Switch
-                checked={settings.maintenanceMode}
-                onCheckedChange={(checked) => handleSettingChange("maintenanceMode", checked)}
-              />
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Chế độ debug</Label>
-                <p className="text-sm text-muted-foreground">
-                  Hiển thị thông tin debug
-                </p>
-              </div>
-              <Switch
-                checked={settings.debugMode}
-                onCheckedChange={(checked) => handleSettingChange("debugMode", checked)}
-              />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="logLevel">Mức độ log</Label>
-                <select
-                  id="logLevel"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={settings.logLevel}
-                  onChange={(e) => handleSettingChange("logLevel", e.target.value)}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                 >
-                  <option value="error">Error</option>
-                  <option value="warn">Warning</option>
-                  <option value="info">Info</option>
-                  <option value="debug">Debug</option>
-                </select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="maxFileSize">Kích thước file tối đa (MB)</Label>
-                <Input
-                  id="maxFileSize"
-                  type="number"
-                  value={settings.maxFileSize}
-                  onChange={(e) => handleSettingChange("maxFileSize", parseInt(e.target.value))}
-                />
+                  {showCurrentPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </Button>
               </div>
             </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="newPassword">Mật khẩu mới</Label>
+              <div className="relative">
+                <Input
+                  id="newPassword"
+                  type={showNewPassword ? "text" : "password"}
+                  value={passwordData.newPassword}
+                  onChange={(e) => handlePasswordChange("newPassword", e.target.value)}
+                  placeholder="Nhập mật khẩu mới (tối thiểu 8 ký tự)"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                >
+                  {showNewPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Xác nhận mật khẩu mới</Label>
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={passwordData.confirmPassword}
+                  onChange={(e) => handlePasswordChange("confirmPassword", e.target.value)}
+                  placeholder="Nhập lại mật khẩu mới"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            <Button 
+              onClick={handlePasswordUpdate} 
+              disabled={isLoading || !passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword}
+              className="w-full"
+            >
+              {isLoading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Đang cập nhật...
+                </>
+              ) : (
+                <>
+                  <Key className="mr-2 h-4 w-4" />
+                  Cập nhật mật khẩu
+                </>
+              )}
+            </Button>
           </CardContent>
         </Card>
 
@@ -346,69 +239,177 @@ export default function SettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Bell className="h-5 w-5 mr-2" />
-              Cài đặt thông báo
+              <Bell className="mr-2 h-5 w-5" />
+              Thông báo
             </CardTitle>
             <CardDescription>
-              Cấu hình các loại thông báo
+              Quản lý cài đặt thông báo
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Cảnh báo qua email</Label>
+                <Label>Thông báo qua email</Label>
                 <p className="text-sm text-muted-foreground">
-                  Gửi cảnh báo quan trọng qua email
+                  Nhận thông báo quan trọng qua email
                 </p>
               </div>
               <Switch
-                checked={settings.enableEmailAlerts}
-                onCheckedChange={(checked) => handleSettingChange("enableEmailAlerts", checked)}
+                checked={notificationSettings.emailNotifications}
+                onCheckedChange={(checked) => handleNotificationChange("emailNotifications", checked)}
               />
             </div>
-            
+
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Cảnh báo qua SMS</Label>
+                <Label>Thông báo đẩy</Label>
                 <p className="text-sm text-muted-foreground">
-                  Gửi cảnh báo qua tin nhắn SMS
+                  Nhận thông báo đẩy trên trình duyệt
                 </p>
               </div>
               <Switch
-                checked={settings.enableSMSAlerts}
-                onCheckedChange={(checked) => handleSettingChange("enableSMSAlerts", checked)}
+                checked={notificationSettings.pushNotifications}
+                onCheckedChange={(checked) => handleNotificationChange("pushNotifications", checked)}
               />
             </div>
-            
+
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Thông báo push</Label>
+                <Label>Email marketing</Label>
                 <p className="text-sm text-muted-foreground">
-                  Gửi thông báo push đến trình duyệt
+                  Nhận email về sản phẩm và dịch vụ mới
                 </p>
               </div>
               <Switch
-                checked={settings.enablePushNotifications}
-                onCheckedChange={(checked) => handleSettingChange("enablePushNotifications", checked)}
+                checked={notificationSettings.marketingEmails}
+                onCheckedChange={(checked) => handleNotificationChange("marketingEmails", checked)}
               />
             </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="alertFrequency">Tần suất cảnh báo</Label>
-              <select
-                id="alertFrequency"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={settings.alertFrequency}
-                onChange={(e) => handleSettingChange("alertFrequency", e.target.value)}
-              >
-                <option value="immediate">Ngay lập tức</option>
-                <option value="hourly">Hàng giờ</option>
-                <option value="daily">Hàng ngày</option>
-                <option value="weekly">Hàng tuần</option>
-              </select>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Cảnh báo bảo mật</Label>
+                <p className="text-sm text-muted-foreground">
+                  Nhận thông báo về hoạt động bảo mật
+                </p>
+              </div>
+              <Switch
+                checked={notificationSettings.securityAlerts}
+                onCheckedChange={(checked) => handleNotificationChange("securityAlerts", checked)}
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Cập nhật bài viết</Label>
+                <p className="text-sm text-muted-foreground">
+                  Nhận thông báo khi có bài viết mới
+                </p>
+              </div>
+              <Switch
+                checked={notificationSettings.blogUpdates}
+                onCheckedChange={(checked) => handleNotificationChange("blogUpdates", checked)}
+              />
             </div>
           </CardContent>
         </Card>
+
+        {/* Privacy Settings */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Eye className="mr-2 h-5 w-5" />
+              Quyền riêng tư
+            </CardTitle>
+            <CardDescription>
+              Quản lý quyền riêng tư và hiển thị thông tin
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="profileVisibility">Hiển thị hồ sơ</Label>
+              <select
+                id="profileVisibility"
+                value={privacySettings.profileVisibility}
+                onChange={(e) => handlePrivacyChange("profileVisibility", e.target.value)}
+                className="w-full p-3 border border-input rounded-md bg-background text-foreground"
+              >
+                <option value="public">Công khai</option>
+                <option value="friends">Chỉ bạn bè</option>
+                <option value="private">Riêng tư</option>
+              </select>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Hiển thị email</Label>
+                <p className="text-sm text-muted-foreground">
+                  Cho phép người khác xem email của bạn
+                </p>
+              </div>
+              <Switch
+                checked={privacySettings.showEmail}
+                onCheckedChange={(checked) => handlePrivacyChange("showEmail", checked)}
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Hiển thị số điện thoại</Label>
+                <p className="text-sm text-muted-foreground">
+                  Cho phép người khác xem số điện thoại của bạn
+                </p>
+              </div>
+              <Switch
+                checked={privacySettings.showPhone}
+                onCheckedChange={(checked) => handlePrivacyChange("showPhone", checked)}
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Cho phép nhận tin nhắn</Label>
+                <p className="text-sm text-muted-foreground">
+                  Cho phép người khác gửi tin nhắn cho bạn
+                </p>
+              </div>
+              <Switch
+                checked={privacySettings.allowMessages}
+                onCheckedChange={(checked) => handlePrivacyChange("allowMessages", checked)}
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Hiển thị trạng thái online</Label>
+                <p className="text-sm text-muted-foreground">
+                  Cho phép người khác thấy khi bạn online
+                </p>
+              </div>
+              <Switch
+                checked={privacySettings.showOnlineStatus}
+                onCheckedChange={(checked) => handlePrivacyChange("showOnlineStatus", checked)}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Save Button */}
+        <div className="flex justify-end">
+          <Button onClick={handleSaveSettings} disabled={isLoading}>
+            {isLoading ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                Đang lưu...
+              </>
+            ) : (
+              <>
+                <Save className="mr-2 h-4 w-4" />
+                Lưu cài đặt
+              </>
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );

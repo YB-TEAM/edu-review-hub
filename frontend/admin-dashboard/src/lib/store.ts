@@ -6,6 +6,7 @@ import { universityApi } from "./services/universityApi";
 import { tagApi } from "./services/tagApi";
 import { dashboardApi } from "./services/dashboardApi";
 import { uploadApi } from "./services/uploadApi";
+import { userProfileApi } from "./services/userProfileApi";
 import authReducer from "./slices/authSlice";
 
 export const store = configureStore({
@@ -18,6 +19,7 @@ export const store = configureStore({
     [tagApi.reducerPath]: tagApi.reducer,
     [dashboardApi.reducerPath]: dashboardApi.reducer,
     [uploadApi.reducerPath]: uploadApi.reducer,
+    [userProfileApi.reducerPath]: userProfileApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -27,7 +29,8 @@ export const store = configureStore({
       universityApi.middleware,
       tagApi.middleware,
       dashboardApi.middleware,
-      uploadApi.middleware
+      uploadApi.middleware,
+      userProfileApi.middleware
     ),
 });
 

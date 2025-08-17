@@ -38,7 +38,7 @@ export class BlogImageTrackerService implements BlogImageTrackerServiceInterface
    * Track images used in blog content
    * This method should be called when creating or updating a blog
    */
-  async trackImagesInBlog(blogId: string, content: string): Promise<void> {
+  async trackImagesInBlog(blogId: number, content: string): Promise<void> {
     try {
       const imageUrls = this.extractImageUrls(content);
       
@@ -157,7 +157,7 @@ export class BlogImageTrackerService implements BlogImageTrackerServiceInterface
   /**
    * Get all images used in a specific blog
    */
-  async getBlogImages(blogId: string): Promise<string[]> {
+  async getBlogImages(blogId: number): Promise<string[]> {
     try {
       const blogImages = await this.blogImageRepository.find({
         where: { blogId, isActive: true },
@@ -175,7 +175,7 @@ export class BlogImageTrackerService implements BlogImageTrackerServiceInterface
   /**
    * Remove image tracking for a deleted blog
    */
-  async removeBlogImageTracking(blogId: string): Promise<void> {
+  async removeBlogImageTracking(blogId: number): Promise<void> {
     try {
       // Delete all image tracking records for this blog
       await this.blogImageRepository.delete({ blogId });
