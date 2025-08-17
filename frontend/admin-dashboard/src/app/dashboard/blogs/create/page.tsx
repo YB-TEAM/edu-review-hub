@@ -8,19 +8,19 @@ import { useUploadImageMutation } from "@/lib/services/uploadApi";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { 
-  ArrowLeft,
-  Save,
-  X,
-  ChevronDown,
-  Upload,
-  Image as ImageIcon
-} from "lucide-react";
-import { BlogCategory, BlogVisibility, BlogStatus } from "@/types/blog";
+import { ArrowLeft, Save, Upload, X } from "lucide-react";
+import { BlogCategory } from "@/types/blog";
 import { Tag } from "@/types/tag";
+import dynamic from "next/dynamic";
+
+// Import markdown editor dynamically to avoid SSR issues
+const MarkdownEditor = dynamic(() => import("@/components/MarkdownEditor"), {
+  ssr: false,
+  loading: () => <div className="h-64 bg-gray-100 animate-pulse rounded-md" />
+});
 
 export default function CreateBlogPage() {
   const router = useRouter();
@@ -303,13 +303,10 @@ export default function CreateBlogPage() {
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                     Nội dung *
                   </label>
-                  <Textarea
-                    required
+                  <MarkdownEditor
                     value={formData.content}
-                    onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+                    onChange={(value) => setFormData(prev => ({ ...prev, content: value }))}
                     placeholder="Nội dung chi tiết của blog..."
-                    rows={10}
-                    className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
@@ -418,16 +415,21 @@ export default function CreateBlogPage() {
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                     Chọn tags
                   </label>
-                  <button
-                    type="button"
-                    onClick={() => setShowTagDropdown(!showTagDropdown)}
-                    className="w-full flex items-center justify-between px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <span className={formData.tagIds.length > 0 ? "text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-400"}>
-                      {formData.tagIds.length > 0 ? getSelectedTagNames() : "Chọn tags..."}
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      {formData.tagIds.length} tags được chọn
                     </span>
-                    <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform ${showTagDropdown ? 'rotate-180' : ''}`} />
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowTagDropdown(!showTagDropdown)}
+                      className="flex items-center space-x-2 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      <span className="text-sm">Chọn tags</span>
+                      <svg className={`h-4 w-4 text-gray-400 transition-transform ${showTagDropdown ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                  </div>
                   
                   {/* Dropdown Menu */}
                   {showTagDropdown && (
@@ -482,7 +484,7 @@ export default function CreateBlogPage() {
                       {formData.tagIds.map((tagId) => {
                         const tag = tags.find((t: Tag) => t.id === tagId);
                         return tag ? (
-                          <Badge key={tagId} variant="default" className="flex items-center space-x-1 bg-green-500 hover:bg-green-600 text-white">
+                          <span key={tagId} className="flex items-center space-x-1 bg-green-500 hover:bg-green-600 text-white rounded-full px-2 py-1 text-xs font-medium">
                             <span>{tag.name}</span>
                             <button
                               type="button"
@@ -491,7 +493,7 @@ export default function CreateBlogPage() {
                             >
                               <X className="h-3 w-3" />
                             </button>
-                          </Badge>
+                          </span>
                         ) : null;
                       })}
                     </div>

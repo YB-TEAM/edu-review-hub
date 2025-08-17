@@ -30,6 +30,7 @@ import {
   UnbanBlogDto,
 } from "../dto/blog/moderate-blog.dto";
 import { IUploadedFileRepository } from "@/domain/repositories/uploaded-file.repository.interface";
+import { BlogImageTrackerService } from "@/domain/services/blog-image-tracker.service";
 
 @Injectable()
 export class BlogService implements IBlogService {
@@ -42,7 +43,8 @@ export class BlogService implements IBlogService {
     private readonly userActivityRepository: UserActivityRepository,
     private readonly cloudinaryService: CloudinaryService,
     @Inject("IUploadedFileRepository")
-    private readonly uploadedFileRepository: IUploadedFileRepository
+    private readonly uploadedFileRepository: IUploadedFileRepository,
+    private readonly blogImageTrackerService: BlogImageTrackerService
   ) {}
 
   async create(
@@ -55,7 +57,10 @@ export class BlogService implements IBlogService {
     let tags = [];
     if (dto.tagIds && dto.tagIds.length > 0) {
       tags = await this.tagRepository.findByIds(dto.tagIds);
-      console.log("🔖 Tags found:", tags.map(t => ({ id: t.id, name: t.name })));
+      console.log(
+        "🔖 Tags found:",
+        tags.map((t) => ({ id: t.id, name: t.name }))
+      );
       // Increment usage count for each tag
       for (const tag of tags) {
         await this.tagRepository.incrementUsageCount(tag.id);
@@ -82,7 +87,7 @@ export class BlogService implements IBlogService {
       title: dto.title,
       tagIds: dto.tagIds,
       tagsCount: tags.length,
-      featuredImage
+      featuredImage,
     });
 
     const blog = await this.blogRepository.create({
@@ -96,7 +101,12 @@ export class BlogService implements IBlogService {
       tags: tags,
     });
 
-    console.log("📝 Blog created with ID:", blog.id, "Tags count:", blog.tags?.length || 0);
+    console.log(
+      "📝 Blog created with ID:",
+      blog.id,
+      "Tags count:",
+      blog.tags?.length || 0
+    );
 
     // Track activity
     try {
@@ -223,7 +233,7 @@ export class BlogService implements IBlogService {
     },
     sorting?: {
       sortBy?: string;
-      sortOrder?: 'ASC' | 'DESC';
+      sortOrder?: "ASC" | "DESC";
     }
   ): Promise<{ data: BlogResponseDto[]; metadata: any; statistics: any }> {
     // Check if user is admin/moderator
@@ -430,6 +440,21 @@ export class BlogService implements IBlogService {
     }
 
     const updated = await this.blogRepository.update(id, dto);
+
+    // Track images in updated blog content
+    if (dto.content) {
+      try {
+        await this.blogImageTrackerService.trackImagesInBlog(
+          id.toString(),
+          dto.content
+        );
+        console.log("✅ Blog content images tracked for updated blog", id);
+      } catch (error) {
+        console.error("❌ Failed to track blog content images:", error);
+        // Don't throw error, continue with blog update
+      }
+    }
+
     return this.toResponseDto(updated);
   }
 
@@ -466,6 +491,15 @@ export class BlogService implements IBlogService {
         );
         // Don't throw error, continue with blog deletion
       }
+    }
+
+    // Remove image tracking for this blog
+    try {
+      await this.blogImageTrackerService.removeBlogImageTracking(id.toString());
+      console.log("✅ Blog image tracking removed for blog", id);
+    } catch (error) {
+      console.error("❌ Failed to remove blog image tracking:", error);
+      // Don't throw error, continue with blog deletion
     }
 
     await this.blogRepository.delete(id);
@@ -707,9 +741,9 @@ export class BlogService implements IBlogService {
     const [blogs, total] = await this.blogRepository.findAll({
       page,
       limit,
-      filters: { 
+      filters: {
         authorId: userId,
-        status: BlogStatus.DRAFT 
+        status: BlogStatus.DRAFT,
       },
     });
 
@@ -778,19 +812,20 @@ export class BlogService implements IBlogService {
     console.log(`🔖 Blog ${blog.id} tags in toResponseDto:`, {
       hasTags: !!blog.tags,
       tagsLength: blog.tags?.length || 0,
-      tagsData: blog.tags?.map(t => ({ id: t.id, name: t.name })) || []
+      tagsData: blog.tags?.map((t) => ({ id: t.id, name: t.name })) || [],
     });
 
-    const mappedTags = blog.tags?.map((tag) => ({
-      id: tag.id,
-      name: tag.name,
-      description: tag.description,
-      color: tag.color,
-      isActive: tag.isActive,
-      usageCount: tag.usageCount,
-      createdAt: tag.createdAt,
-      updatedAt: tag.updatedAt,
-    })) || [];
+    const mappedTags =
+      blog.tags?.map((tag) => ({
+        id: tag.id,
+        name: tag.name,
+        description: tag.description,
+        color: tag.color,
+        isActive: tag.isActive,
+        usageCount: tag.usageCount,
+        createdAt: tag.createdAt,
+        updatedAt: tag.updatedAt,
+      })) || [];
 
     console.log(`🔖 Blog ${blog.id} mapped tags:`, mappedTags.length);
 
@@ -905,14 +940,14 @@ export class BlogService implements IBlogService {
       pendingBlogs,
       totalViews,
       totalLikes,
-      totalComments
+      totalComments,
     ] = await Promise.all([
       this.blogRepository.count({}),
       this.blogRepository.count({ status: BlogStatus.APPROVED }),
       this.blogRepository.count({ status: BlogStatus.PUBLISHED }), // Changed from PENDING to PUBLISHED
-      this.blogRepository.sumField('viewCount'),
-      this.blogRepository.sumField('likeCount'),
-      this.blogRepository.sumField('commentCount')
+      this.blogRepository.sumField("viewCount"),
+      this.blogRepository.sumField("likeCount"),
+      this.blogRepository.sumField("commentCount"),
     ]);
 
     return {
@@ -921,7 +956,7 @@ export class BlogService implements IBlogService {
       pendingBlogs,
       totalViews: totalViews || 0,
       totalLikes: totalLikes || 0,
-      totalComments: totalComments || 0
+      totalComments: totalComments || 0,
     };
   }
 }

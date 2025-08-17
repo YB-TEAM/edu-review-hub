@@ -723,10 +723,11 @@ export default function BlogsPage() {
                         {new Date(blog.createdAt).toLocaleDateString('vi-VN')}
                       </td>
                       <td className="p-3">
-                        <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <div className="flex space-x-2">
                           <Button 
                             variant="outline" 
                             size="sm"
+                            onClick={() => router.push(`/dashboard/blogs/${blog.id}`)}
                             className="hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 transition-all duration-200 transform hover:scale-105"
                           >
                             <Eye className="h-4 w-4" />
@@ -734,6 +735,7 @@ export default function BlogsPage() {
                           <Button 
                             variant="outline" 
                             size="sm"
+                            onClick={() => router.push(`/dashboard/blogs/${blog.id}/edit`)}
                             className="hover:bg-green-50 hover:border-green-200 hover:text-green-600 transition-all duration-200 transform hover:scale-105"
                           >
                             <Edit className="h-4 w-4" />
@@ -861,6 +863,7 @@ export default function BlogsPage() {
                   <Button 
                     variant="outline" 
                     size="sm" 
+                    onClick={() => router.push(`/dashboard/blogs/${blog.id}`)}
                     className="flex-1 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 transition-all duration-300 transform hover:scale-105"
                   >
                     <Eye className="h-4 w-4 mr-1" />
@@ -869,6 +872,7 @@ export default function BlogsPage() {
                   <Button 
                     variant="outline" 
                     size="sm" 
+                    onClick={() => router.push(`/dashboard/blogs/${blog.id}/edit`)}
                     className="flex-1 hover:bg-green-50 hover:border-green-200 hover:text-green-600 transition-all duration-300 transform hover:scale-105"
                   >
                     <Edit className="h-4 w-4 mr-1" />
