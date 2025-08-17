@@ -5,7 +5,7 @@ import { useGetTagsQuery, useCreateTagMutation, useUpdateTagMutation, useDeleteT
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tags, Search, Filter, Plus, Edit, Trash2, Eye, Hash, TrendingUp, BookOpen } from "lucide-react";
 import { Tag as TagType } from "@/types/tag";
