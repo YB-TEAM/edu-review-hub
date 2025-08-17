@@ -65,7 +65,14 @@ export class BlogRepository implements IBlogRepository {
       authorId?: number;
       search?: string;
       tagIds?: string;
+      dateFrom?: string;
+      dateTo?: string;
+      minViews?: number;
+      minLikes?: number;
+      minComments?: number;
     };
+    sortBy?: string;
+    sortOrder?: 'ASC' | 'DESC';
   }): Promise<[Blog[], number]> {
     const queryBuilder = this.repo
       .createQueryBuilder("blog")
@@ -76,7 +83,7 @@ export class BlogRepository implements IBlogRepository {
 
     // Apply filters
     if (params?.filters) {
-      const { status, category, authorId, search, tagIds } = params.filters;
+      const { status, category, authorId, search, tagIds, dateFrom, dateTo, minViews, minLikes, minComments } = params.filters;
 
       if (status) {
         queryBuilder.andWhere("blog.status = :status", { status });
@@ -103,9 +110,58 @@ export class BlogRepository implements IBlogRepository {
           tagIds: tagIdArray,
         });
       }
+
+      // Advanced date filtering
+      if (dateFrom) {
+        queryBuilder.andWhere("blog.createdAt >= :dateFrom", { dateFrom });
+      }
+
+      if (dateTo) {
+        queryBuilder.andWhere("blog.createdAt <= :dateTo", { dateTo });
+      }
+
+      // Advanced count filtering
+      if (minViews !== undefined) {
+        queryBuilder.andWhere("blog.viewCount >= :minViews", { minViews });
+      }
+
+      if (minLikes !== undefined) {
+        queryBuilder.andWhere("blog.likeCount >= :minLikes", { minLikes });
+      }
+
+      if (minComments !== undefined) {
+        queryBuilder.andWhere("blog.commentCount >= :minComments", { minComments });
+      }
     }
 
-    queryBuilder.orderBy("blog.createdAt", "DESC");
+    // Apply sorting
+    const sortBy = params?.sortBy || 'createdAt';
+    const sortOrder = params?.sortOrder || 'DESC';
+    
+    switch (sortBy) {
+      case 'title':
+        queryBuilder.orderBy("blog.title", sortOrder);
+        break;
+      case 'viewCount':
+        queryBuilder.orderBy("blog.viewCount", sortOrder);
+        break;
+      case 'likeCount':
+        queryBuilder.orderBy("blog.likeCount", sortOrder);
+        break;
+      case 'commentCount':
+        queryBuilder.orderBy("blog.commentCount", sortOrder);
+        break;
+      case 'publishedAt':
+        queryBuilder.orderBy("blog.publishedAt", sortOrder);
+        break;
+      case 'updatedAt':
+        queryBuilder.orderBy("blog.updatedAt", sortOrder);
+        break;
+      case 'createdAt':
+      default:
+        queryBuilder.orderBy("blog.createdAt", sortOrder);
+        break;
+    }
 
     if (params?.page && params?.limit) {
       const { page, limit } = params;

@@ -19,17 +19,17 @@ export const tagApi = createApi({
   endpoints: (builder) => ({
     // Basic CRUD operations
     getAllTags: builder.query<TagListResponse, TagQueryParams>({
-      query: (params) => ({ url: '/tags', method: 'GET', params }),
+      query: (params) => ({ url: '/api/v1/tags', method: 'GET', params }),
       providesTags: ['Tag'],
     }),
 
     getTagById: builder.query<TagResponse, number>({
-      query: (id) => `/tags/${id}`,
+      query: (id) => `/api/v1/tags/${id}`,
       providesTags: (result, error, id) => [{ type: 'Tag', id }],
     }),
 
     createTag: builder.mutation<TagResponse, CreateTagRequest>({
-      query: (tagData) => ({ url: '/tags', method: 'POST', body: tagData }),
+      query: (tagData) => ({ url: '/api/v1/tags', method: 'POST', body: tagData }),
       invalidatesTags: ['Tag', 'TagStats'],
     }),
 
@@ -106,18 +106,18 @@ export const tagApi = createApi({
 
     // Tag statistics and analytics
     getTagStatistics: builder.query<TagStatistics, void>({
-      query: () => '/tags/statistics',
+      query: () => '/api/v1/tags/statistics',
       providesTags: ['TagStats'],
     }),
 
     getTagAnalytics: builder.query<TagAnalytics, { startDate?: string; endDate?: string }>({
-      query: (params) => ({ url: '/tags/analytics', method: 'GET', params }),
+      query: (params) => ({ url: '/api/v1/tags/analytics', method: 'GET', params }),
       providesTags: ['TagStats'],
     }),
 
     // Tag usage
     getTagUsage: builder.query<TagUsage[], { tagId?: number; limit?: number }>({
-      query: (params) => ({ url: '/tags/usage', method: 'GET', params }),
+      query: (params) => ({ url: '/api/v1/tags/usage', method: 'GET', params }),
       providesTags: ['Tag'],
     }),
 
@@ -133,26 +133,26 @@ export const tagApi = createApi({
     // Tag suggestions
     getTagSuggestions: builder.query<TagSuggestion[], { query: string; limit?: number }>({
       query: ({ query, limit }) => ({ 
-        url: '/tags/suggestions', 
+        url: '/api/v1/tags/suggestions', 
         method: 'GET', 
         params: { q: query, limit } 
       }),
     }),
 
     getPopularTags: builder.query<TagResponse[], { limit?: number; period?: string }>({
-      query: (params) => ({ url: '/tags/popular', method: 'GET', params }),
+      query: (params) => ({ url: '/api/v1/tags/popular', method: 'GET', params }),
       providesTags: ['Tag'],
     }),
 
     getTrendingTags: builder.query<TagResponse[], { limit?: number; period?: string }>({
-      query: (params) => ({ url: '/tags/trending', method: 'GET', params }),
+      query: (params) => ({ url: '/api/v1/tags/trending', method: 'GET', params }),
       providesTags: ['Tag'],
     }),
 
     // Tag search and filtering
     searchTags: builder.query<TagListResponse, { query: string; params?: TagQueryParams }>({
       query: ({ query, params }) => ({ 
-        url: '/tags/search', 
+        url: '/api/v1/tags/search', 
         method: 'GET', 
         params: { q: query, ...params } 
       }),
@@ -197,7 +197,7 @@ export const tagApi = createApi({
     }),
 
     getTagHierarchy: builder.query<{ tags: TagResponse[]; hierarchy: any }, void>({
-      query: () => '/tags/hierarchy',
+      query: () => '/api/v1/tags/hierarchy',
       providesTags: ['Tag'],
     }),
 
@@ -217,33 +217,33 @@ export const tagApi = createApi({
 
     // Bulk operations
     bulkActivateTags: builder.mutation<{ success: number; failed: number }, number[]>({
-      query: (ids) => ({ url: '/tags/bulk/activate', method: 'POST', body: { tagIds: ids } }),
+      query: (ids) => ({ url: '/api/v1/tags/bulk/activate', method: 'POST', body: { tagIds: ids } }),
       invalidatesTags: ['Tag', 'TagStats'],
     }),
 
     bulkDeactivateTags: builder.mutation<{ success: number; failed: number }, number[]>({
-      query: (ids) => ({ url: '/tags/bulk/deactivate', method: 'POST', body: { tagIds: ids } }),
+      query: (ids) => ({ url: '/api/v1/tags/bulk/deactivate', method: 'POST', body: { tagIds: ids } }),
       invalidatesTags: ['Tag', 'TagStats'],
     }),
 
     bulkDeleteTags: builder.mutation<{ success: number; failed: number }, number[]>({
-      query: (ids) => ({ url: '/tags/bulk/delete', method: 'POST', body: { tagIds: ids } }),
+      query: (ids) => ({ url: '/api/v1/tags/bulk/delete', method: 'POST', body: { tagIds: ids } }),
       invalidatesTags: ['Tag', 'TagStats'],
     }),
 
     bulkVerifyTags: builder.mutation<{ success: number; failed: number }, number[]>({
-      query: (ids) => ({ url: '/tags/bulk/verify', method: 'POST', body: { tagIds: ids } }),
+      query: (ids) => ({ url: '/api/v1/tags/bulk/verify', method: 'POST', body: { tagIds: ids } }),
       invalidatesTags: ['Tag', 'TagStats'],
     }),
 
     // Tag import/Export
     exportTags: builder.mutation<{ downloadUrl: string }, TagQueryParams>({
-      query: (params) => ({ url: '/tags/export', method: 'POST', body: params }),
+      query: (params) => ({ url: '/api/v1/tags/export', method: 'POST', body: params }),
     }),
 
     importTags: builder.mutation<{ success: number; failed: number; errors: string[] }, FormData>({
       query: (formData) => ({ 
-        url: '/tags/import', 
+        url: '/api/v1/tags/import', 
         method: 'POST', 
         body: formData,
         headers: {}, // Let the browser set Content-Type for FormData
@@ -256,7 +256,7 @@ export const tagApi = createApi({
       sourceTagId: number; 
       targetTagId: number 
     }>({
-      query: (data) => ({ url: '/tags/merge', method: 'POST', body: data }),
+      query: (data) => ({ url: '/api/v1/tags/merge', method: 'POST', body: data }),
       invalidatesTags: ['Tag', 'TagStats'],
     }),
 
@@ -279,7 +279,7 @@ export const tagApi = createApi({
     }),
 
     getTagAliases: builder.query<{ aliases: string[] }, number>({
-      query: (tagId) => `/tags/${tagId}/aliases`,
+      query: (id) => `/api/v1/tags/${tagId}/aliases`,
       providesTags: (result, error, tagId) => [{ type: 'Tag', id: tagId }],
     }),
 
@@ -302,7 +302,7 @@ export const tagApi = createApi({
     }),
 
     getTagSynonyms: builder.query<{ synonyms: string[] }, number>({
-      query: (tagId) => `/tags/${tagId}/synonyms`,
+      query: (id) => `/api/v1/tags/${tagId}/synonyms`,
       providesTags: (result, error, tagId) => [{ type: 'Tag', id: tagId }],
     }),
 
@@ -338,7 +338,7 @@ export const tagApi = createApi({
     }),
 
     getTagReports: builder.query<{ reports: any[] }, { tagId?: number; status?: string }>({
-      query: (params) => ({ url: '/tags/reports', method: 'GET', params }),
+      query: (params) => ({ url: '/api/v1/tags/reports', method: 'GET', params }),
       providesTags: ['Tag'],
     }),
 
@@ -347,13 +347,13 @@ export const tagApi = createApi({
       threshold?: number; 
       dryRun?: boolean 
     }>({
-      query: (params) => ({ url: '/tags/cleanup', method: 'POST', body: params }),
+      query: (params) => ({ url: '/api/v1/tags/cleanup', method: 'POST', body: params }),
       invalidatesTags: ['Tag', 'TagStats'],
     }),
 
     // Tag validation
     validateTag: builder.mutation<{ isValid: boolean; errors: string[] }, CreateTagRequest>({
-      query: (tagData) => ({ url: '/tags/validate', method: 'POST', body: tagData }),
+      query: (tagData) => ({ url: '/api/v1/tags/validate', method: 'POST', body: tagData }),
     }),
   }),
 });

@@ -30,6 +30,16 @@ export interface IBlogService {
       category?: BlogCategory;
       authorId?: number;
       search?: string;
+      tagIds?: string;
+      dateFrom?: string;
+      dateTo?: string;
+      minViews?: number;
+      minLikes?: number;
+      minComments?: number;
+    },
+    sorting?: {
+      sortBy?: string;
+      sortOrder?: 'ASC' | 'DESC';
     }
   ): Promise<{ data: BlogResponseDto[]; metadata: any }>;
   findAllWithDeleted(

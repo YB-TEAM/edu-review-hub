@@ -20,18 +20,18 @@ export const profileApi = createApi({
   endpoints: (builder) => ({
     // Basic profile operations
     getProfile: builder.query<ProfileResponse, void>({
-      query: () => '/profile',
+      query: () => '/api/v1/profile',
       providesTags: ['Profile'],
     }),
 
     updateProfile: builder.mutation<ProfileResponse, UpdateProfileRequest>({
-      query: (data) => ({ url: '/profile', method: 'PUT', body: data }),
+      query: (data) => ({ url: '/api/v1/profile', method: 'PUT', body: data }),
       invalidatesTags: ['Profile'],
     }),
 
     // Password management
     changePassword: builder.mutation<{ success: boolean }, ChangePasswordRequest>({
-      query: (data) => ({ url: '/profile/change-password', method: 'POST', body: data }),
+      query: (data) => ({ url: '/api/v1/profile/change-password', method: 'POST', body: data }),
     }),
 
     // Avatar management
@@ -40,7 +40,7 @@ export const profileApi = createApi({
         const formData = new FormData();
         formData.append('avatar', data.avatar);
         return { 
-          url: '/profile/avatar', 
+          url: '/api/v1/profile/avatar', 
           method: 'PUT', 
           body: formData,
           headers: {}, // Let the browser set Content-Type for FormData
@@ -50,79 +50,79 @@ export const profileApi = createApi({
     }),
 
     removeAvatar: builder.mutation<{ success: boolean }, void>({
-      query: () => ({ url: '/profile/avatar', method: 'DELETE' }),
+      query: () => ({ url: '/api/v1/profile/avatar', method: 'DELETE' }),
       invalidatesTags: ['Profile'],
     }),
 
     // Profile settings
     getProfileSettings: builder.query<ProfileSettings, void>({
-      query: () => '/profile/settings',
+      query: () => '/api/v1/profile/settings',
       providesTags: ['ProfileSettings'],
     }),
 
     updateProfileSettings: builder.mutation<ProfileSettings, Partial<ProfileSettings>>({
-      query: (settings) => ({ url: '/profile/settings', method: 'PUT', body: settings }),
+      query: (settings) => ({ url: '/api/v1/profile/settings', method: 'PUT', body: settings }),
       invalidatesTags: ['ProfileSettings'],
     }),
 
     // Notification preferences
     getNotificationPreferences: builder.query<NotificationPreferences, void>({
-      query: () => '/profile/notifications',
+      query: () => '/api/v1/profile/notifications',
       providesTags: ['ProfileSettings'],
     }),
 
     updateNotificationPreferences: builder.mutation<NotificationPreferences, NotificationPreferences>({
-      query: (preferences) => ({ url: '/profile/notifications', method: 'PUT', body: preferences }),
+      query: (preferences) => ({ url: '/api/v1/profile/notifications', method: 'PUT', body: preferences }),
       invalidatesTags: ['ProfileSettings'],
     }),
 
     // Privacy settings
     getPrivacySettings: builder.query<PrivacySettings, void>({
-      query: () => '/profile/privacy',
+      query: () => '/api/v1/profile/privacy',
       providesTags: ['ProfileSettings'],
     }),
 
     updatePrivacySettings: builder.mutation<PrivacySettings, PrivacySettings>({
-      query: (settings) => ({ url: '/profile/privacy', method: 'PUT', body: settings }),
+      query: (settings) => ({ url: '/api/v1/profile/privacy', method: 'PUT', body: settings }),
       invalidatesTags: ['ProfileSettings'],
     }),
 
     // Security settings
     getSecuritySettings: builder.query<SecuritySettings, void>({
-      query: () => '/profile/security',
+      query: () => '/api/v1/profile/security',
       providesTags: ['ProfileSettings'],
     }),
 
     updateSecuritySettings: builder.mutation<SecuritySettings, SecuritySettings>({
-      query: (settings) => ({ url: '/profile/security', method: 'PUT', body: settings }),
+      query: (settings) => ({ url: '/api/v1/profile/security', method: 'PUT', body: settings }),
       invalidatesTags: ['ProfileSettings'],
     }),
 
     // Two-factor authentication
     enableTwoFactor: builder.mutation<{ qrCode: string; secret: string }, void>({
-      query: () => ({ url: '/profile/2fa/enable', method: 'POST' }),
+      query: () => ({ url: '/api/v1/profile/2fa/enable', method: 'POST' }),
       invalidatesTags: ['ProfileSettings'],
     }),
 
     verifyTwoFactor: builder.mutation<{ success: boolean }, { code: string }>({
-      query: (data) => ({ url: '/profile/2fa/verify', method: 'POST', body: data }),
+      query: (data) => ({ url: '/api/v1/profile/2fa/verify', method: 'POST', body: data }),
       invalidatesTags: ['ProfileSettings'],
     }),
 
     disableTwoFactor: builder.mutation<{ success: boolean }, { code: string }>({
-      query: (data) => ({ url: '/profile/2fa/disable', method: 'POST', body: data }),
+      query: (data) => ({ url: '/api/v1/profile/2fa/disable', method: 'POST', body: data }),
       invalidatesTags: ['ProfileSettings'],
     }),
 
     // Backup codes
     generateBackupCodes: builder.mutation<{ codes: string[] }, void>({
-      query: () => ({ url: '/profile/2fa/backup-codes', method: 'POST' }),
+      query: () => ({ url: '/api/v1/profile/2fa/backup-codes', method: 'POST' }),
       invalidatesTags: ['ProfileSettings'],
     }),
 
     // Session management
     getActiveSessions: builder.query<{ sessions: any[] }, void>({
-      query: () => '/profile/sessions',
+      query: () => '/api/v1/profile/sessions',
       providesTags: ['ProfileSettings'],
     }),
 
@@ -132,58 +132,58 @@ export const profileApi = createApi({
     }),
 
     revokeAllSessions: builder.mutation<{ success: boolean }, void>({
-      query: () => ({ url: '/profile/sessions/revoke-all', method: 'POST' }),
+      query: () => ({ url: '/api/v1/profile/sessions/revoke-all', method: 'POST' }),
       invalidatesTags: ['ProfileSettings'],
     }),
 
     // Profile statistics
     getProfileStatistics: builder.query<ProfileStatistics, { startDate?: string; endDate?: string }>({
-      query: (params) => ({ url: '/profile/statistics', method: 'GET', params }),
+      query: (params) => ({ url: '/api/v1/profile/statistics', method: 'GET', params }),
       providesTags: ['ProfileStats'],
     }),
 
     // Profile activity
     getProfileActivity: builder.query<ProfileActivity[], { limit?: number; type?: string }>({
-      query: (params) => ({ url: '/profile/activity', method: 'GET', params }),
+      query: (params) => ({ url: '/api/v1/profile/activity', method: 'GET', params }),
       providesTags: ['Profile'],
     }),
 
     // Profile verification
     requestEmailVerification: builder.mutation<{ success: boolean }, void>({
-      query: () => ({ url: '/profile/verify-email', method: 'POST' }),
+      query: () => ({ url: '/api/v1/profile/verify-email', method: 'POST' }),
     }),
 
     verifyEmail: builder.mutation<{ success: boolean }, { token: string }>({
-      query: (data) => ({ url: '/profile/verify-email', method: 'POST', body: data }),
+      query: (data) => ({ url: '/api/v1/profile/verify-email', method: 'POST', body: data }),
       invalidatesTags: ['Profile'],
     }),
 
     // Profile export
     exportProfileData: builder.mutation<{ downloadUrl: string }, { format: string }>({
-      query: (data) => ({ url: '/profile/export', method: 'POST', body: data }),
+      query: (data) => ({ url: '/api/v1/profile/export', method: 'POST', body: data }),
     }),
 
     // Profile deletion
     requestProfileDeletion: builder.mutation<{ success: boolean }, { reason: string }>({
-      query: (data) => ({ url: '/profile/deletion-request', method: 'POST', body: data }),
+      query: (data) => ({ url: '/api/v1/profile/deletion-request', method: 'POST', body: data }),
     }),
 
     cancelProfileDeletion: builder.mutation<{ success: boolean }, void>({
-      query: () => ({ url: '/profile/deletion-request', method: 'DELETE' }),
+      query: () => ({ url: '/api/v1/profile/deletion-request', method: 'DELETE' }),
     }),
 
     // Profile backup
     createProfileBackup: builder.mutation<{ backupId: string; downloadUrl: string }, void>({
-      query: () => ({ url: '/profile/backup', method: 'POST' }),
+      query: () => ({ url: '/api/v1/profile/backup', method: 'POST' }),
     }),
 
     getProfileBackups: builder.query<{ id: string; createdAt: string; size: string }[], void>({
-      query: () => '/profile/backups',
+      query: () => '/api/v1/profile/backups',
       providesTags: ['Profile'],
     }),
 
     downloadProfileBackup: builder.query<{ downloadUrl: string }, string>({
-      query: (backupId) => `/profile/backups/${backupId}/download`,
+      query: (id) => `/api/v1/profile/backups/${backupId}/download`,
     }),
 
     deleteProfileBackup: builder.mutation<{ success: boolean }, string>({
@@ -193,67 +193,67 @@ export const profileApi = createApi({
 
     // Profile preferences
     getProfilePreferences: builder.query<{ preferences: any }, void>({
-      query: () => '/profile/preferences',
+      query: () => '/api/v1/profile/preferences',
       providesTags: ['ProfileSettings'],
     }),
 
     updateProfilePreferences: builder.mutation<{ success: boolean }, { preferences: any }>({
-      query: (data) => ({ url: '/profile/preferences', method: 'PUT', body: data }),
+      query: (data) => ({ url: '/api/v1/profile/preferences', method: 'PUT', body: data }),
       invalidatesTags: ['ProfileSettings'],
     }),
 
     // Profile themes
     getProfileThemes: builder.query<{ themes: any[]; currentTheme: string }, void>({
-      query: () => '/profile/themes',
+      query: () => '/api/v1/profile/themes',
       providesTags: ['ProfileSettings'],
     }),
 
     updateProfileTheme: builder.mutation<{ success: boolean }, { theme: string }>({
-      query: (data) => ({ url: '/profile/themes', method: 'PUT', body: data }),
+      query: (data) => ({ url: '/api/v1/profile/themes', method: 'PUT', body: data }),
       invalidatesTags: ['ProfileSettings'],
     }),
 
     // Profile language
     getProfileLanguage: builder.query<{ language: string; availableLanguages: string[] }, void>({
-      query: () => '/profile/language',
+      query: () => '/api/v1/profile/language',
       providesTags: ['ProfileSettings'],
     }),
 
     updateProfileLanguage: builder.mutation<{ success: boolean }, { language: string }>({
-      query: (data) => ({ url: '/profile/language', method: 'PUT', body: data }),
+      query: (data) => ({ url: '/api/v1/profile/language', method: 'PUT', body: data }),
       invalidatesTags: ['ProfileSettings'],
     }),
 
     // Profile timezone
     getProfileTimezone: builder.query<{ timezone: string; availableTimezones: string[] }, void>({
-      query: () => '/profile/timezone',
+      query: () => '/api/v1/profile/timezone',
       providesTags: ['ProfileSettings'],
     }),
 
     updateProfileTimezone: builder.mutation<{ success: boolean }, { timezone: string }>({
-      query: (data) => ({ url: '/profile/timezone', method: 'PUT', body: data }),
+      query: (data) => ({ url: '/api/v1/profile/timezone', method: 'PUT', body: data }),
       invalidatesTags: ['ProfileSettings'],
     }),
 
     // Profile currency
     getProfileCurrency: builder.query<{ currency: string; availableCurrencies: string[] }, void>({
-      query: () => '/profile/currency',
+      query: () => '/api/v1/profile/currency',
       providesTags: ['ProfileSettings'],
     }),
 
     updateProfileCurrency: builder.mutation<{ success: boolean }, { currency: string }>({
-      query: (data) => ({ url: '/profile/currency', method: 'PUT', body: data }),
+      query: (data) => ({ url: '/api/v1/profile/currency', method: 'PUT', body: data }),
       invalidatesTags: ['ProfileSettings'],
     }),
 
     // Profile social links
     getProfileSocialLinks: builder.query<{ socialLinks: any[] }, void>({
-      query: () => '/profile/social-links',
+      query: () => '/api/v1/profile/social-links',
       providesTags: ['Profile'],
     }),
 
     addProfileSocialLink: builder.mutation<{ success: boolean }, { platform: string; url: string }>({
-      query: (data) => ({ url: '/profile/social-links', method: 'POST', body: data }),
+      query: (data) => ({ url: '/api/v1/profile/social-links', method: 'POST', body: data }),
       invalidatesTags: ['Profile'],
     }),
 
@@ -269,19 +269,19 @@ export const profileApi = createApi({
 
     // Profile achievements
     getProfileAchievements: builder.query<{ achievements: any[]; totalPoints: number }, void>({
-      query: () => '/profile/achievements',
+      query: () => '/api/v1/profile/achievements',
       providesTags: ['Profile'],
     }),
 
     // Profile badges
     getProfileBadges: builder.query<{ badges: any[] }, void>({
-      query: () => '/profile/badges',
+      query: () => '/api/v1/profile/badges',
       providesTags: ['Profile'],
     }),
 
     // Profile reputation
     getProfileReputation: builder.query<{ reputation: number; level: string; nextLevel: string }, void>({
-      query: () => '/profile/reputation',
+      query: () => '/api/v1/profile/reputation',
       providesTags: ['Profile'],
     }),
   }),

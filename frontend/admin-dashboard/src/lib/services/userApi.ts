@@ -1,82 +1,75 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { baseQuery } from "./baseQuery";
 import type {
   User,
-  UserFilters,
-  UpdateUserStatusDto,
-  UpdateUserRoleDto,
-  UserActivity,
-  UserDevice,
-  PaginatedResponse,
+  UserRole,
+  UserStatus,
+  PaginationMeta,
+  ApiResponse,
 } from "@/types";
+
+// Define local types for API responses
+interface UserListResponse {
+  data: User[];
+  metadata: PaginationMeta;
+  success: boolean;
+  message: string;
+}
+
+interface UpdateUserRequest {
+  id: number;
+  status?: UserStatus;
+  role?: UserRole;
+}
 
 export const userApi = createApi({
   reducerPath: "userApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: "/api/v1",
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as any).auth.accessToken;
-      if (token) {
-        headers.set("authorization", `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
-  tagTypes: ["User", "UserActivity", "UserDevice"],
+  baseQuery,
+  tagTypes: ["User"],
   endpoints: (builder) => ({
     // Get all users with pagination and filters
-    getUsers: builder.query<PaginatedResponse<User>, UserFilters>({
+    getUsers: builder.query<UserListResponse, { page?: number; limit?: number; search?: string }>({
       query: (filters) => ({
-        url: "/users",
+        url: "/api/v1/users",
+        method: "GET",
         params: filters,
       }),
       providesTags: ["User"],
     }),
 
     // Get user by ID
-    getUserById: builder.query<User, number>({
-      query: (id) => `/users/${id}`,
+    getUserById: builder.query<ApiResponse<User>, number>({
+      query: (id) => ({
+        url: `/api/v1/users/${id}`,
+        method: "GET",
+      }),
       providesTags: (result, error, id) => [{ type: "User", id }],
     }),
 
     // Update user status
-    updateUserStatus: builder.mutation<User, { id: number; data: UpdateUserStatusDto }>({
-      query: ({ id, data }) => ({
-        url: `/users/${id}/status`,
+    updateUserStatus: builder.mutation<ApiResponse<User>, { id: number; status: UserStatus }>({
+      query: ({ id, status }) => ({
+        url: `/api/v1/users/${id}/status`,
         method: "PATCH",
-        body: data,
+        body: { status },
       }),
       invalidatesTags: (result, error, { id }) => [{ type: "User", id }],
     }),
 
     // Update user role
-    updateUserRole: builder.mutation<User, { id: number; data: UpdateUserRoleDto }>({
-      query: ({ id, data }) => ({
-        url: `/users/${id}/role`,
+    updateUserRole: builder.mutation<ApiResponse<User>, { id: number; role: UserRole }>({
+      query: ({ id, role }) => ({
+        url: `/api/v1/users/${id}/role`,
         method: "PATCH",
-        body: data,
+        body: { role },
       }),
       invalidatesTags: (result, error, { id }) => [{ type: "User", id }],
     }),
 
-    // Get user activities
-    getUserActivities: builder.query<PaginatedResponse<UserActivity>, { userId: number; page: number; limit: number }>({
-      query: ({ userId, page, limit }) => ({
-        url: `/users/${userId}/activities`,
-        params: { page, limit },
-      }),
-      providesTags: (result, error, { userId }) => [{ type: "UserActivity", id: userId }],
-    }),
-
-    // Get user devices
-    getUserDevices: builder.query<UserDevice[], number>({
-      query: (userId) => `/users/${userId}/devices`,
-      providesTags: (result, error, userId) => [{ type: "UserDevice", id: userId }],
-    }),
-
     // Deactivate user account
-    deactivateUser: builder.mutation<void, { id: number; reason: string }>({
+    deactivateUser: builder.mutation<ApiResponse<void>, { id: number; reason: string }>({
       query: ({ id, reason }) => ({
-        url: `/users/${id}/deactivate`,
+        url: `/api/v1/users/${id}/deactivate`,
         method: "POST",
         body: { reason },
       }),
@@ -84,9 +77,9 @@ export const userApi = createApi({
     }),
 
     // Reactivate user account
-    reactivateUser: builder.mutation<User, number>({
+    reactivateUser: builder.mutation<ApiResponse<User>, number>({
       query: (id) => ({
-        url: `/users/${id}/reactivate`,
+        url: `/api/v1/users/${id}/reactivate`,
         method: "POST",
       }),
       invalidatesTags: (result, error, id) => [{ type: "User", id }],
@@ -99,8 +92,6 @@ export const {
   useGetUserByIdQuery,
   useUpdateUserStatusMutation,
   useUpdateUserRoleMutation,
-  useGetUserActivitiesQuery,
-  useGetUserDevicesQuery,
   useDeactivateUserMutation,
   useReactivateUserMutation,
 } = userApi;

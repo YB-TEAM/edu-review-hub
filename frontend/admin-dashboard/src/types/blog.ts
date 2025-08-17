@@ -1,8 +1,8 @@
 // Blog status enum
 export enum BlogStatus {
   DRAFT = 'draft',
-  PENDING = 'pending',
-  PUBLISHED = 'published',
+  PENDING = 'published',
+  APPROVED = 'approved',
   REJECTED = 'rejected',
   BANNED = 'banned',
 }
@@ -49,23 +49,36 @@ export interface BlogAuthor {
 export interface BlogResponse {
   id: number;
   title: string;
-  slug: string;
+  slug?: string;
   excerpt: string;
   content: string;
   status: BlogStatus;
-  visibility: BlogVisibility;
+  visibility?: BlogVisibility;
   category: BlogCategory;
   featuredImage?: string;
+  featuredImageUrl?: string;
+  featuredImageUrls?: {
+    thumbnail: string;
+    medium: string;
+    large: string;
+    original: string;
+  };
   tags: BlogTag[];
-  author: BlogAuthor;
+  author?: BlogAuthor; // Optional for backward compatibility
+  authorId?: number; // New field from API
+  authorName?: string; // New field from API
   viewCount: number;
   likeCount: number;
   commentCount: number;
-  isFeatured: boolean;
-  isPublished: boolean;
+  isFeatured?: boolean;
+  isPublished?: boolean;
   publishedAt?: string;
+  moderatedAt?: string;
+  moderationReason?: string;
+  moderatorId?: number;
   createdAt: string;
   updatedAt: string;
+  isLiked?: boolean;
 }
 
 // Blog list response with pagination
@@ -82,13 +95,11 @@ export interface BlogListResponse {
 // Create blog request matching backend CreateBlogDto
 export interface CreateBlogRequest {
   title: string;
-  excerpt: string;
+  excerpt?: string;
   content: string;
-  category: BlogCategory;
-  visibility: BlogVisibility;
+  category?: BlogCategory;
   featuredImage?: string;
   tagIds?: number[];
-  status?: BlogStatus;
 }
 
 // Update blog request matching backend UpdateBlogDto

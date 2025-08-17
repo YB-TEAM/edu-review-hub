@@ -8,8 +8,8 @@
 
 - **Base URL**: `http://localhost:3001/api/v1`
 - **Swagger Documentation**: `http://localhost:3001/api/docs`
-- **Tổng số Controllers**: 15 controllers
-- **Tổng số API Endpoints**: 150+ endpoints
+- **Tổng số Controllers**: 16 controllers
+- **Tổng số API Endpoints**: 160+ endpoints
 - **Authentication**: JWT Bearer Token
 - **Authorization**: Role-Based Access Control (RBAC)
 
@@ -17,7 +17,19 @@
 
 ## 📋 DANH SÁCH TẤT CẢ API ENDPOINTS
 
-### 🔐 1. AUTHENTICATION APIs (`/api/v1/auth`)
+### 🏥 1. HEALTH APIs (`/api/v1/health`)
+
+| Method | Endpoint | Description | Auth Required | Roles |
+|--------|----------|-------------|---------------|-------|
+| `GET` | `/health` | Kiểm tra sức khỏe hệ thống | ❌ | Public |
+
+**Chi tiết:**
+- Trả về trạng thái hệ thống, uptime, environment
+- Không cần xác thực, dùng để health check
+
+---
+
+### 🔐 2. AUTHENTICATION APIs (`/api/v1/auth`)
 
 | Method | Endpoint | Description | Auth Required | Roles |
 |--------|----------|-------------|---------------|-------|
@@ -34,7 +46,7 @@
 
 ---
 
-### 📧 2. EMAIL VERIFICATION APIs (`/api/v1/email-verification`)
+### 📧 3. EMAIL VERIFICATION APIs (`/api/v1/email-verification`)
 
 | Method | Endpoint | Description | Auth Required | Roles |
 |--------|----------|-------------|---------------|-------|
@@ -52,7 +64,7 @@
 
 ---
 
-### 👤 3. USER PROFILE APIs (`/api/v1/profile`)
+### 👤 4. USER PROFILE APIs (`/api/v1/profile`)
 
 | Method | Endpoint | Description | Auth Required | Roles |
 |--------|----------|-------------|---------------|-------|
@@ -70,7 +82,7 @@
 
 ---
 
-### 🏛️ 4. UNIVERSITY APIs (`/api/v1/universities`)
+### 🏛️ 5. UNIVERSITY APIs (`/api/v1/universities`)
 
 #### 🌐 Public APIs (không cần xác thực)
 
@@ -113,7 +125,7 @@
 
 ---
 
-### 📝 5. BLOG APIs (`/api/v1/blogs`)
+### 📝 6. BLOG APIs (`/api/v1/blogs`)
 
 #### 🌐 Public/Protected APIs
 
@@ -121,13 +133,14 @@
 |--------|----------|-------------|---------------|-------|
 | `GET` | `/blogs` | Danh sách blog công khai | Optional | All |
 | `GET` | `/blogs/public/:id` | Xem blog công khai | ❌ | Public |
-| `GET` | `/blogs/my` | Blog của tôi | ✅ | Student+ |
+| `GET` | `/blogs/my` | Blog của tôi | ✅ | All |
 | `GET` | `/blogs/:id` | Chi tiết blog | ✅ | All |
-| `POST` | `/blogs` | Tạo blog mới | ✅ | Student+ |
-| `PATCH` | `/blogs/:id` | Cập nhật blog | ✅ | Student+ |
-| `POST` | `/blogs/:id/publish` | Gửi blog để kiểm duyệt | ✅ | Student+ |
-| `POST` | `/blogs/:id/like` | Like/Unlike blog | ✅ | Student+ |
-| `DELETE` | `/blogs/:id` | Xóa blog | ✅ | Student+ |
+| `POST` | `/blogs` | Tạo blog mới | ✅ | All |
+| `PATCH` | `/blogs/:id` | Cập nhật blog | ✅ | All |
+| `POST` | `/blogs/:id/publish` | Gửi blog để kiểm duyệt | ✅ | All |
+| `POST` | `/blogs/:id/like` | Like/Unlike blog | ✅ | All |
+| `DELETE` | `/blogs/:id` | Xóa blog | ✅ | All |
+| `POST` | `/blogs/:id/restore` | Khôi phục blog đã xóa | ✅ | All |
 
 #### ⚡ Admin/Moderator APIs
 
@@ -135,19 +148,22 @@
 |--------|----------|-------------|-------|
 | `GET` | `/blogs/pending` | Blog chờ kiểm duyệt | Moderator+ |
 | `GET` | `/blogs/admin/all` | Tất cả blog (admin) | Moderator+ |
-| `PATCH` | `/blogs/:id/moderate` | Kiểm duyệt blog | Moderator+ |
+| `GET` | `/blogs/admin/all-with-deleted` | Tất cả blog kể cả đã xóa | Moderator+ |
+| `GET` | `/blogs/admin/:id/with-deleted` | Blog chi tiết kể cả đã xóa | Moderator+ |
 | `PATCH` | `/blogs/:id/approve` | Phê duyệt blog | Moderator+ |
 | `PATCH` | `/blogs/:id/reject` | Từ chối blog | Moderator+ |
 | `PATCH` | `/blogs/:id/ban` | Cấm blog | Moderator+ |
+| `PATCH` | `/blogs/:id/unban` | Bỏ cấm blog | Moderator+ |
 
 **Chi tiết:**
 - Blog có các trạng thái: Draft, Pending, Approved, Rejected, Banned
 - Hỗ trợ tìm kiếm theo title, content, author
 - Hệ thống like/unlike với tracking IP và User Agent
+- Hỗ trợ soft delete và restore
 
 ---
 
-### 🏷️ 6. TAG APIs (`/api/v1/tags`)
+### 🏷️ 7. TAG APIs (`/api/v1/tags`)
 
 | Method | Endpoint | Description | Auth Required | Roles |
 |--------|----------|-------------|---------------|-------|
@@ -163,7 +179,7 @@
 
 ---
 
-### 📊 7. DASHBOARD APIs (`/api/v1/dashboard`)
+### 📊 8. DASHBOARD APIs (`/api/v1/dashboard`)
 
 | Method | Endpoint | Description | Roles |
 |--------|----------|-------------|-------|
@@ -183,7 +199,7 @@
 
 ---
 
-### ⚙️ 8. SYSTEM MANAGEMENT APIs (`/api/v1/system`)
+### ⚙️ 9. SYSTEM MANAGEMENT APIs (`/api/v1/system`)
 
 | Method | Endpoint | Description | Roles |
 |--------|----------|-------------|-------|
@@ -211,7 +227,7 @@
 
 ---
 
-### 📤 9. UPLOAD APIs (`/api/v1/upload`)
+### 📤 10. UPLOAD APIs (`/api/v1/upload`)
 
 | Method | Endpoint | Description | Roles |
 |--------|----------|-------------|-------|
@@ -228,7 +244,7 @@
 
 ---
 
-### 📱 10. DEVICE APIs (`/api/v1/devices`)
+### 📱 11. DEVICE APIs (`/api/v1/devices`)
 
 | Method | Endpoint | Description | Roles |
 |--------|----------|-------------|-------|
@@ -242,7 +258,7 @@
 
 ---
 
-### 📈 11. ACTIVITY APIs (`/api/v1/activities`)
+### 📈 12. ACTIVITY APIs (`/api/v1/activities`)
 
 | Method | Endpoint | Description | Roles |
 |--------|----------|-------------|-------|
@@ -256,7 +272,7 @@
 
 ---
 
-### 🏃 12. USER ACTIVITY APIs (`/api/v1/activity`)
+### 🏃 13. USER ACTIVITY APIs (`/api/v1/activity`)
 
 | Method | Endpoint | Description | Auth Required |
 |--------|----------|-------------|---------------|
@@ -265,7 +281,7 @@
 
 ---
 
-### 🔐 13. ACCOUNT DEACTIVATION APIs (`/api/v1/account`)
+### 🔐 14. ACCOUNT DEACTIVATION APIs (`/api/v1/account`)
 
 | Method | Endpoint | Description | Auth Required |
 |--------|----------|-------------|---------------|
@@ -275,7 +291,7 @@
 
 ---
 
-### 🎯 14. UNIVERSITY REVIEW APIs (`/api/v1/university-reviews`)
+### 🎯 15. UNIVERSITY REVIEW APIs (`/api/v1/university-reviews`)
 
 | Method | Endpoint | Description | Auth Required | Roles |
 |--------|----------|-------------|---------------|-------|
@@ -289,7 +305,7 @@
 
 ---
 
-### 📏 15. UNIVERSITY REVIEW CRITERION APIs (`/api/v1/university-review-criteria`)
+### 📏 16. UNIVERSITY REVIEW CRITERION APIs (`/api/v1/university-review-criteria`)
 
 | Method | Endpoint | Description | Auth Required | Roles |
 |--------|----------|-------------|---------------|-------|
@@ -378,7 +394,7 @@ src/
 ├── infrastructure/      # Infrastructure Layer
 │   └── database/        # Database Layer
 └── presentation/        # Presentation Layer
-    ├── controllers/     # API Controllers (15 files)
+    ├── controllers/     # API Controllers (16 files)
     ├── guards/          # Authentication Guards
     └── decorators/      # Custom Decorators
 ```
@@ -398,6 +414,7 @@ src/
 3. **Permissions**: Một số API sử dụng permission-based access control thay vì role-based
 4. **File Upload**: Sử dụng Cloudinary, hỗ trợ tự động xóa file cũ khi upload mới
 5. **Activity Tracking**: Hệ thống tự động ghi lại IP address và User Agent cho các hoạt động quan trọng
+6. **Health Check**: Endpoint `/health` dùng để kiểm tra trạng thái hệ thống, không cần xác thực
 
 ---
 

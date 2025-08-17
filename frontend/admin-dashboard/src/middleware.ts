@@ -22,6 +22,20 @@ export function middleware(request: NextRequest) {
       // Redirect về trang login nếu chưa có token
       return NextResponse.redirect(new URL('/', request.url));
     }
+    
+    // Kiểm tra role từ JWT token (decode cơ bản)
+    try {
+      const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+      const userRole = tokenPayload.role || tokenPayload.accountType;
+      
+      // Chỉ cho phép admin và moderator truy cập dashboard
+      if (userRole === 'student' || userRole === 'user') {
+        return NextResponse.redirect(new URL('/unauthorized', request.url));
+      }
+    } catch (error) {
+      // Nếu không decode được token, redirect về login
+      return NextResponse.redirect(new URL('/', request.url));
+    }
   }
 
   // Kiểm tra nếu đã đăng nhập mà truy cập trang login

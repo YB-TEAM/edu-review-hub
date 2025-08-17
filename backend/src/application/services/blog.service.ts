@@ -215,6 +215,15 @@ export class BlogService implements IBlogService {
       authorId?: number;
       search?: string;
       tagIds?: string;
+      dateFrom?: string;
+      dateTo?: string;
+      minViews?: number;
+      minLikes?: number;
+      minComments?: number;
+    },
+    sorting?: {
+      sortBy?: string;
+      sortOrder?: 'ASC' | 'DESC';
     }
   ): Promise<{ data: BlogResponseDto[]; metadata: any }> {
     // Check if user is admin/moderator
@@ -236,6 +245,8 @@ export class BlogService implements IBlogService {
       page,
       limit,
       filters,
+      sortBy: sorting?.sortBy,
+      sortOrder: sorting?.sortOrder,
     });
 
     // Check like status for authenticated users

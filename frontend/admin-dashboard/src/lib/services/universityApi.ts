@@ -22,17 +22,17 @@ export const universityApi = createApi({
   endpoints: (builder) => ({
     // Basic CRUD operations
     getAllUniversities: builder.query<UniversityListResponse, UniversityQueryParams>({
-      query: (params) => ({ url: '/universities/admin/all', method: 'GET', params }),
+      query: (params) => ({ url: '/api/v1/universities/admin/all', method: 'GET', params }),
       providesTags: ['University'],
     }),
 
     getUniversityById: builder.query<UniversityResponse, number>({
-      query: (id) => `/universities/${id}`,
+      query: (id) => `/api/v1/universities/${id}`,
       providesTags: (result, error, id) => [{ type: 'University', id }],
     }),
 
     createUniversity: builder.mutation<UniversityResponse, CreateUniversityRequest>({
-      query: (universityData) => ({ url: '/universities', method: 'POST', body: universityData }),
+      query: (universityData) => ({ url: '/api/v1/universities', method: 'POST', body: universityData }),
       invalidatesTags: ['University', 'UniversityStats'],
     }),
 
@@ -228,24 +228,24 @@ export const universityApi = createApi({
 
     // University statistics and analytics
     getUniversityStatistics: builder.query<UniversityStatistics, void>({
-      query: () => '/universities/statistics',
+      query: () => '/api/v1/universities/statistics',
       providesTags: ['UniversityStats'],
     }),
 
     getUniversityAnalytics: builder.query<UniversityAnalytics, { startDate?: string; endDate?: string }>({
-      query: (params) => ({ url: '/universities/analytics', method: 'GET', params }),
+      query: (params) => ({ url: '/api/v1/universities/analytics', method: 'GET', params }),
       providesTags: ['UniversityStats'],
     }),
 
     // University comparison
     compareUniversities: builder.mutation<UniversityComparisonResponse, UniversityComparisonRequest>({
-      query: (data) => ({ url: '/universities/compare', method: 'POST', body: data }),
+      query: (data) => ({ url: '/api/v1/universities/compare', method: 'POST', body: data }),
     }),
 
     // Search and filtering
     searchUniversities: builder.query<UniversityListResponse, { query: string; params?: UniversityQueryParams }>({
       query: ({ query, params }) => ({ 
-        url: '/universities/search', 
+        url: '/api/v1/universities/search', 
         method: 'GET', 
         params: { q: query, ...params } 
       }),
@@ -290,33 +290,33 @@ export const universityApi = createApi({
 
     // Bulk operations
     bulkActivateUniversities: builder.mutation<{ success: number; failed: number }, number[]>({
-      query: (ids) => ({ url: '/universities/bulk/activate', method: 'POST', body: { universityIds: ids } }),
+      query: (ids) => ({ url: '/api/v1/universities/bulk/activate', method: 'POST', body: { universityIds: ids } }),
       invalidatesTags: ['University', 'UniversityStats'],
     }),
 
     bulkDeactivateUniversities: builder.mutation<{ success: number; failed: number }, number[]>({
-      query: (ids) => ({ url: '/universities/bulk/deactivate', method: 'POST', body: { universityIds: ids } }),
+      query: (ids) => ({ url: '/api/v1/universities/bulk/deactivate', method: 'POST', body: { universityIds: ids } }),
       invalidatesTags: ['University', 'UniversityStats'],
     }),
 
     bulkDeleteUniversities: builder.mutation<{ success: number; failed: number }, number[]>({
-      query: (ids) => ({ url: '/universities/bulk/delete', method: 'POST', body: { universityIds: ids } }),
+      query: (ids) => ({ url: '/api/v1/universities/bulk/delete', method: 'POST', body: { universityIds: ids } }),
       invalidatesTags: ['University', 'UniversityStats'],
     }),
 
     bulkVerifyUniversities: builder.mutation<{ success: number; failed: number }, number[]>({
-      query: (ids) => ({ url: '/universities/bulk/verify', method: 'POST', body: { universityIds: ids } }),
+      query: (ids) => ({ url: '/api/v1/universities/bulk/verify', method: 'POST', body: { universityIds: ids } }),
       invalidatesTags: ['University', 'UniversityStats'],
     }),
 
     // Import/Export operations
     exportUniversities: builder.mutation<{ downloadUrl: string }, UniversityQueryParams>({
-      query: (params) => ({ url: '/universities/export', method: 'POST', body: params }),
+      query: (params) => ({ url: '/api/v1/universities/export', method: 'POST', body: params }),
     }),
 
     importUniversities: builder.mutation<{ success: number; failed: number; errors: string[] }, FormData>({
       query: (formData) => ({ 
-        url: '/universities/import', 
+        url: '/api/v1/universities/import', 
         method: 'POST', 
         body: formData,
         headers: {}, // Let the browser set Content-Type for FormData

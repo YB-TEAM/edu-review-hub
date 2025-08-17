@@ -5,6 +5,7 @@ import { blogApi } from "./services/blogApi";
 import { universityApi } from "./services/universityApi";
 import { tagApi } from "./services/tagApi";
 import { dashboardApi } from "./services/dashboardApi";
+import { uploadApi } from "./services/uploadApi";
 import authReducer from "./slices/authSlice";
 
 export const store = configureStore({
@@ -16,6 +17,7 @@ export const store = configureStore({
     [universityApi.reducerPath]: universityApi.reducer,
     [tagApi.reducerPath]: tagApi.reducer,
     [dashboardApi.reducerPath]: dashboardApi.reducer,
+    [uploadApi.reducerPath]: uploadApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -24,7 +26,8 @@ export const store = configureStore({
       blogApi.middleware,
       universityApi.middleware,
       tagApi.middleware,
-      dashboardApi.middleware
+      dashboardApi.middleware,
+      uploadApi.middleware
     ),
 });
 
