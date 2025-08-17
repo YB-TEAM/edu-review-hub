@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { CommandModule } from 'nest-commander';
+
 
 import { AuthModule } from "@/infrastructure/config/auth.module";
 import { databaseConfig } from "@/infrastructure/config/database.config";
@@ -22,7 +22,7 @@ import { CleanupOrphanedImagesCommand } from "@/infrastructure/commands/cleanup-
       envFilePath: ".env",
     }),
     TypeOrmModule.forRoot(databaseConfig),
-    CommandModule,
+
     AuthModule,
     UniversityModule,
     UniversityReviewModule,
