@@ -171,6 +171,66 @@ export class BlogRepository implements IBlogRepository {
     return queryBuilder.getManyAndCount();
   }
 
+  // Count blogs with optional filters
+  async count(filters?: {
+    status?: BlogStatus;
+    category?: BlogCategory;
+    authorId?: number;
+  }): Promise<number> {
+    const queryBuilder = this.repo
+      .createQueryBuilder("blog")
+      .where("blog.deletedAt IS NULL");
+
+    if (filters) {
+      const { status, category, authorId } = filters;
+
+      if (status) {
+        queryBuilder.andWhere("blog.status = :status", { status });
+      }
+
+      if (category) {
+        queryBuilder.andWhere("blog.category = :category", { category });
+      }
+
+      if (authorId) {
+        queryBuilder.andWhere("blog.authorId = :authorId", { authorId });
+      }
+    }
+
+    return queryBuilder.getCount();
+  }
+
+  // Sum a specific field with optional filters
+  async sumField(field: string, filters?: {
+    status?: BlogStatus;
+    category?: BlogCategory;
+    authorId?: number;
+  }): Promise<number> {
+    const queryBuilder = this.repo
+      .createQueryBuilder("blog")
+      .select(`SUM(blog.${field})`, "sum")
+      .where("blog.deletedAt IS NULL");
+
+    if (filters) {
+      const { status, category, authorId } = filters;
+
+      if (status) {
+        queryBuilder.andWhere("blog.status = :status", { status });
+      }
+
+      if (category) {
+        queryBuilder.andWhere("blog.category = :category", { category });
+      }
+
+      if (authorId) {
+        queryBuilder.andWhere("blog.authorId = :authorId", { authorId });
+      }
+    }
+
+    const result = await queryBuilder.getRawOne();
+    return result?.sum || 0;
+  }
+
   async update(id: number, blog: Partial<Blog>): Promise<Blog> {
     await this.repo.update(id, blog);
     const result = await this.findById(id);

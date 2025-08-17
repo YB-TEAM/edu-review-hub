@@ -41,6 +41,14 @@ interface BlogApiResponse {
     currentPage: number;
     totalPages: number;
   };
+  statistics: {
+    totalBlogs: number;
+    approvedBlogs: number;
+    pendingBlogs: number;
+    totalViews: number;
+    totalLikes: number;
+    totalComments: number;
+  };
 }
 
 export default function BlogsPage() {
@@ -78,6 +86,22 @@ export default function BlogsPage() {
     setCurrentPage(1); // Reset to first page when filters change
   }, [statusFilter, sortBy, sortOrder, dateFrom, dateTo, minViews, minLikes]);
 
+  // Debug: Log current parameters
+  useEffect(() => {
+    console.log('🔍 Current API parameters:', {
+      page: currentPage,
+      limit: blogsPerPage,
+      search: debouncedSearchTerm,
+      status: statusFilter === "all" ? undefined : statusFilter,
+      sortBy,
+      sortOrder: sortOrder === "asc" ? "ASC" : "DESC",
+      dateFrom,
+      dateTo,
+      minViews: minViews ? parseInt(minViews) : undefined,
+      minLikes: minLikes ? parseInt(minLikes) : undefined,
+    });
+  }, [currentPage, blogsPerPage, debouncedSearchTerm, statusFilter, sortBy, sortOrder, dateFrom, dateTo, minViews, minLikes]);
+
   const { data: blogsResponse, isLoading, error, refetch } = useGetAllBlogsQuery({
     page: currentPage,
     limit: blogsPerPage,
@@ -97,9 +121,10 @@ export default function BlogsPage() {
   const [importBlogs] = useImportBlogsMutation();
 
   // Extract blogs array from response - handle nested data structure
-  // API returns: { data: [...], metadata: {...} }
+  // API returns: { data: [...], metadata: {...}, statistics: {...} }
   const blogs = (blogsResponse as unknown as BlogApiResponse)?.data || [];
   const metadata = (blogsResponse as unknown as BlogApiResponse)?.metadata;
+  const statistics = (blogsResponse as unknown as BlogApiResponse)?.statistics;
 
   // Get unique authors for filter (for display purposes only)
   const uniqueAuthors = blogs
@@ -114,6 +139,12 @@ export default function BlogsPage() {
   const currentBlogs = blogs;
   const totalPages = metadata?.totalPages || 1;
   const totalItems = metadata?.totalItems || 0;
+
+  // Use statistics from API
+  const totalBlogs = statistics?.totalBlogs || 0;
+  const approvedBlogs = statistics?.approvedBlogs || 0;
+  const pendingBlogs = statistics?.pendingBlogs || 0;
+  const totalViews = statistics?.totalViews || 0;
 
   const handleStatusChange = async (blogId: number, newStatus: string) => {
     try {
@@ -345,7 +376,7 @@ export default function BlogsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {blogs.filter(b => b.status === "approved").length}
+              {approvedBlogs}
             </div>
             <p className="text-xs text-muted-foreground">Bài viết đã phê duyệt</p>
           </CardContent>
@@ -358,7 +389,7 @@ export default function BlogsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-yellow-600">
-              {blogs.filter(b => b.status === "published").length}
+              {pendingBlogs}
             </div>
             <p className="text-xs text-muted-foreground">Cần xử lý</p>
           </CardContent>
@@ -371,7 +402,7 @@ export default function BlogsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-purple-600">
-              {blogs.reduce((sum, blog) => sum + (blog.viewCount || 0), 0)}
+              {totalViews}
             </div>
             <p className="text-xs text-muted-foreground">Lượt xem tổng cộng</p>
           </CardContent>

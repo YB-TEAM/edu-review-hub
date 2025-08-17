@@ -17,7 +17,14 @@ export interface IBlogRepository {
       authorId?: number;
       search?: string;
       tagIds?: string;
+      dateFrom?: string;
+      dateTo?: string;
+      minViews?: number;
+      minLikes?: number;
+      minComments?: number;
     };
+    sortBy?: string;
+    sortOrder?: 'ASC' | 'DESC';
   }): Promise<[Blog[], number]>;
   findAllWithDeleted(params?: {
     page?: number;
@@ -35,4 +42,17 @@ export interface IBlogRepository {
   restore(id: number): Promise<void>;
   incrementViewCount(id: number): Promise<void>;
   toggleLike(id: number, userId: number): Promise<void>;
+  
+  // New methods for statistics
+  count(filters?: {
+    status?: BlogStatus;
+    category?: BlogCategory;
+    authorId?: number;
+  }): Promise<number>;
+  
+  sumField(field: string, filters?: {
+    status?: BlogStatus;
+    category?: BlogCategory;
+    authorId?: number;
+  }): Promise<number>;
 }

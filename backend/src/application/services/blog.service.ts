@@ -225,7 +225,7 @@ export class BlogService implements IBlogService {
       sortBy?: string;
       sortOrder?: 'ASC' | 'DESC';
     }
-  ): Promise<{ data: BlogResponseDto[]; metadata: any }> {
+  ): Promise<{ data: BlogResponseDto[]; metadata: any; statistics: any }> {
     // Check if user is admin/moderator
     const isAdmin = user?.roles?.some(
       (role: any) =>
@@ -264,13 +264,17 @@ export class BlogService implements IBlogService {
       return blogDto;
     });
 
+    // Get system-wide statistics (not affected by current filters)
+    const systemStats = await this.getSystemStatistics();
+
     const metadata = {
       totalItems: total,
       pageSize: limit,
       currentPage: page,
       totalPages: Math.ceil(total / limit),
     };
-    return { data, metadata };
+
+    return { data, metadata, statistics: systemStats };
   }
 
   async findAllWithDeleted(
@@ -890,6 +894,34 @@ export class BlogService implements IBlogService {
       moderatorName: blog.moderator?.username,
       createdAt: blog.createdAt,
       updatedAt: blog.updatedAt,
+    };
+  }
+
+  // New method to get system-wide statistics
+  private async getSystemStatistics(): Promise<any> {
+    const [
+      totalBlogs,
+      approvedBlogs,
+      pendingBlogs,
+      totalViews,
+      totalLikes,
+      totalComments
+    ] = await Promise.all([
+      this.blogRepository.count({}),
+      this.blogRepository.count({ status: BlogStatus.APPROVED }),
+      this.blogRepository.count({ status: BlogStatus.PENDING }),
+      this.blogRepository.sumField('viewCount'),
+      this.blogRepository.sumField('likeCount'),
+      this.blogRepository.sumField('commentCount')
+    ]);
+
+    return {
+      totalBlogs,
+      approvedBlogs,
+      pendingBlogs,
+      totalViews: totalViews || 0,
+      totalLikes: totalLikes || 0,
+      totalComments: totalComments || 0
     };
   }
 }
