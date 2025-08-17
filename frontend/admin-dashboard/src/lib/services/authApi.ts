@@ -14,14 +14,15 @@ export const authApi = createApi({
         body: credentials,
       }),
       invalidatesTags: ["Auth"],
-      // Transform response to handle success/error
+      // Transform response - API returns data directly
       transformResponse: (response: any) => {
-        if (response.success) {
-          return response.data;
+        // Check if response has required fields
+        if (response.accessToken && response.user) {
+          return response;
         }
-        throw new Error(response.message || 'Login failed');
+        throw new Error('Invalid response format');
       },
-      // Handle errors
+      // Handle successful login
       async onQueryStarted(credentials, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
@@ -34,6 +35,9 @@ export const authApi = createApi({
           }
         } catch (error) {
           console.error('Login error:', error);
+          // Clear any partial data
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
         }
       },
     }),

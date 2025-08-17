@@ -22,7 +22,7 @@ export default function DashboardLayout({
       <div className="md:ml-64">
         <Header />
         
-        <main className="p-6">
+        <main className="p-8">
           {children}
         </main>
       </div>

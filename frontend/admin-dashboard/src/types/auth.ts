@@ -44,6 +44,7 @@ export interface AuthResponse {
     accountType: UserRole;
     status: UserStatus;
     isVerified: boolean;
+    role?: UserRole; // Add role field for compatibility
   };
 }
 

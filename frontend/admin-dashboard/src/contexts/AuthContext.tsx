@@ -24,6 +24,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { user, isAuthenticated, accessToken, refreshToken } = useSelector((state: RootState) => state.auth);
   const [isLoading, setIsLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   const [loginMutation] = useLoginMutation();
   const [refreshTokenMutation] = useRefreshTokenMutation();
@@ -47,6 +48,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     checkAuth();
   }, [dispatch, accessToken, refreshToken, user]);
+
+  // Tránh hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Xử lý logout và redirect
   const handleLogout = () => {
@@ -83,16 +89,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const hasPermission = (permission: string): boolean => {
-    if (!user || !user.role) return false;
+    if (!mounted || !user || (!user.role && !user.accountType)) return false;
+    
+    // Use role or accountType, prioritize role
+    const userRole = user.role || user.accountType;
+    
+    // Chỉ cho phép admin và moderator truy cập dashboard
+    if (userRole === 'student' || userRole === 'user') {
+      return false;
+    }
     
     // Kiểm tra permission dựa trên role
     const rolePermissions: Record<string, string[]> = {
       super_admin: ['*'], // Tất cả permissions
-      admin: ['users.read', 'users.write', 'blogs.read', 'blogs.write', 'universities.read', 'universities.write', 'system.read'],
-      moderator: ['blogs.read', 'blogs.write', 'universities.read', 'users.read'],
+      admin: ['users.read', 'users.write', 'blogs.read', 'blogs.write', 'universities.read', 'universities.write', 'system.read', 'dashboard.read'],
+      moderator: ['blogs.read', 'blogs.write', 'universities.read', 'universities.write'], // Chỉ blog và university
     };
 
-    const userPermissions = rolePermissions[user.role] || [];
+    const userPermissions = rolePermissions[userRole] || [];
     return userPermissions.includes('*') || userPermissions.includes(permission);
   };
 
@@ -118,8 +132,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const value: AuthContextType = {
-    user,
-    isAuthenticated,
+    user: mounted ? user : null,
+    isAuthenticated: mounted ? isAuthenticated : false,
     isLoading,
     login,
     logout: logoutUser,

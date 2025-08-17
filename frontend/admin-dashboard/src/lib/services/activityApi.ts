@@ -23,20 +23,20 @@ export const activityApi = createApi({
     // System activities
     getActivities: builder.query<ActivityListResponse, ActivityQueryParams>({
       query: (params) => ({
-        url: '/activities',
+        url: '/api/v1/activities',
         params,
       }),
       providesTags: ['Activity'],
     }),
 
     getActivityById: builder.query<ActivityResponse, number>({
-      query: (id) => `/activities/${id}`,
+      query: (id) => `/api/v1/activities/${id}`,
       providesTags: (result, error, id) => [{ type: 'Activity', id }],
     }),
 
     createActivity: builder.mutation<ActivityResponse, { type: string; description: string; metadata?: Record<string, unknown> }>({
       query: (data) => ({
-        url: '/activities',
+        url: '/api/v1/activities',
         method: 'POST',
         body: data,
       }),
@@ -63,14 +63,14 @@ export const activityApi = createApi({
     // User activities
     getUserActivities: builder.query<UserActivityListResponse, UserActivityQueryParams>({
       query: (params) => ({
-        url: '/user-activities',
+        url: '/api/v1/user-activities',
         params,
       }),
       providesTags: ['UserActivity'],
     }),
 
     getUserActivityById: builder.query<UserActivityResponse, number>({
-      query: (id) => `/user-activities/${id}`,
+      query: (id) => `/api/v1/user-activities/${id}`,
       providesTags: (result, error, id) => [{ type: 'UserActivity', id }],
     }),
 
@@ -91,7 +91,7 @@ export const activityApi = createApi({
       userAgent?: string;
     }>({
       query: (data) => ({
-        url: '/user-activities',
+        url: '/api/v1/user-activities',
         method: 'POST',
         body: data,
       }),
@@ -118,7 +118,7 @@ export const activityApi = createApi({
     // Activity filtering and search
     searchActivities: builder.query<ActivityListResponse, { query: string; filters?: ActivityFilter }>({
       query: (params) => ({
-        url: '/activities/search',
+        url: '/api/v1/activities/search',
         params,
       }),
       providesTags: ['Activity'],
@@ -126,7 +126,7 @@ export const activityApi = createApi({
 
     searchUserActivities: builder.query<UserActivityListResponse, { query: string; filters?: ActivityFilter }>({
       query: (params) => ({
-        url: '/user-activities/search',
+        url: '/api/v1/user-activities/search',
         params,
       }),
       providesTags: ['UserActivity'],
@@ -134,7 +134,7 @@ export const activityApi = createApi({
 
     filterActivities: builder.query<ActivityListResponse, ActivityFilter>({
       query: (filters) => ({
-        url: '/activities/filter',
+        url: '/api/v1/activities/filter',
         method: 'POST',
         body: filters,
       }),
@@ -143,7 +143,7 @@ export const activityApi = createApi({
 
     filterUserActivities: builder.query<UserActivityListResponse, ActivityFilter>({
       query: (filters) => ({
-        url: '/user-activities/filter',
+        url: '/api/v1/user-activities/filter',
         method: 'POST',
         body: filters,
       }),
@@ -153,7 +153,7 @@ export const activityApi = createApi({
     // Activity statistics and analytics
     getActivityStatistics: builder.query<ActivityStatistics, { period: string; type?: string }>({
       query: (params) => ({
-        url: '/activities/statistics',
+        url: '/api/v1/activities/statistics',
         params,
       }),
       providesTags: ['ActivityStats'],
@@ -161,7 +161,7 @@ export const activityApi = createApi({
 
     getUserActivityStatistics: builder.query<ActivityStatistics, { period: string; userId?: number }>({
       query: (params) => ({
-        url: '/user-activities/statistics',
+        url: '/api/v1/user-activities/statistics',
         params,
       }),
       providesTags: ['ActivityStats'],
@@ -169,7 +169,7 @@ export const activityApi = createApi({
 
     getActivityAnalytics: builder.query<ActivityAnalytics, { period: string; groupBy?: string; filters?: ActivityFilter }>({
       query: (params) => ({
-        url: '/activities/analytics',
+        url: '/api/v1/activities/analytics',
         params,
       }),
       providesTags: ['ActivityStats'],
@@ -177,7 +177,7 @@ export const activityApi = createApi({
 
     getUserActivityAnalytics: builder.query<ActivityAnalytics, { period: string; userId?: number; groupBy?: string }>({
       query: (params) => ({
-        url: '/user-activities/analytics',
+        url: '/api/v1/user-activities/analytics',
         params,
       }),
       providesTags: ['ActivityStats'],
@@ -185,13 +185,13 @@ export const activityApi = createApi({
 
     // Activity reports
     getActivityReports: builder.query<ActivityReportResponse[], void>({
-      query: () => '/activities/reports',
+      query: () => '/api/v1/activities/reports',
       providesTags: ['Activity'],
     }),
 
     generateActivityReport: builder.mutation<ActivityReportResponse, ActivityReportRequest>({
       query: (data) => ({
-        url: '/activities/reports/generate',
+        url: '/api/v1/activities/reports/generate',
         method: 'POST',
         body: data,
       }),
@@ -208,7 +208,7 @@ export const activityApi = createApi({
     // Activity export
     exportActivities: builder.query<Blob, ActivityExportRequest>({
       query: (params) => ({
-        url: '/activities/export',
+        url: '/api/v1/activities/export',
         method: 'POST',
         body: params,
         responseHandler: (response) => response.blob(),
@@ -217,7 +217,7 @@ export const activityApi = createApi({
 
     exportUserActivities: builder.query<Blob, ActivityExportRequest>({
       query: (params) => ({
-        url: '/user-activities/export',
+        url: '/api/v1/user-activities/export',
         method: 'POST',
         body: params,
         responseHandler: (response) => response.blob(),
@@ -227,7 +227,7 @@ export const activityApi = createApi({
     // Activity cleanup and maintenance
     clearOldActivities: builder.mutation<{ cleared: number; freed: number }, { olderThan: string; type?: string }>({
       query: (params) => ({
-        url: '/activities/cleanup',
+        url: '/api/v1/activities/cleanup',
         method: 'POST',
         body: params,
       }),
@@ -236,7 +236,7 @@ export const activityApi = createApi({
 
     clearOldUserActivities: builder.mutation<{ cleared: number; freed: number }, { olderThan: string; userId?: number }>({
       query: (params) => ({
-        url: '/user-activities/cleanup',
+        url: '/api/v1/user-activities/cleanup',
         method: 'POST',
         body: params,
       }),
@@ -246,7 +246,7 @@ export const activityApi = createApi({
     // Real-time activity monitoring
     getRecentActivities: builder.query<ActivityResponse[], { limit?: number; type?: string }>({
       query: (params) => ({
-        url: '/activities/recent',
+        url: '/api/v1/activities/recent',
         params,
       }),
       providesTags: ['Activity'],
@@ -254,7 +254,7 @@ export const activityApi = createApi({
 
     getRecentUserActivities: builder.query<UserActivityResponse[], { limit?: number; userId?: number }>({
       query: (params) => ({
-        url: '/user-activities/recent',
+        url: '/api/v1/user-activities/recent',
         params,
       }),
       providesTags: ['UserActivity'],
@@ -267,7 +267,7 @@ export const activityApi = createApi({
       performanceMetrics: Array<{ metric: string; value: number; threshold: number; status: string }>;
     }, { period: string }>({
       query: (params) => ({
-        url: '/activities/insights',
+        url: '/api/v1/activities/insights',
         params,
       }),
       providesTags: ['ActivityStats'],
@@ -278,7 +278,7 @@ export const activityApi = createApi({
       recommendations: Array<{ userId: number; recommendation: string; priority: string }>;
     }, { period: string }>({
       query: (params) => ({
-        url: '/user-activities/insights',
+        url: '/api/v1/user-activities/insights',
         params,
       }),
       providesTags: ['ActivityStats'],

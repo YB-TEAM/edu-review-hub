@@ -26,13 +26,13 @@ export const systemApi = createApi({
   endpoints: (builder) => ({
     // System configuration
     getSystemConfig: builder.query<SystemConfigResponse, void>({
-      query: () => '/system/config',
+      query: () => '/api/v1/system/config',
       providesTags: ['SystemConfig'],
     }),
 
     updateSystemConfig: builder.mutation<SystemConfigResponse, SystemConfigUpdateRequest>({
       query: (data) => ({
-        url: '/system/config',
+        url: '/api/v1/system/config',
         method: 'PUT',
         body: data,
       }),
@@ -41,7 +41,7 @@ export const systemApi = createApi({
 
     resetSystemConfig: builder.mutation<SystemConfigResponse, void>({
       query: () => ({
-        url: '/system/config/reset',
+        url: '/api/v1/system/config/reset',
         method: 'POST',
       }),
       invalidatesTags: ['SystemConfig'],
@@ -49,39 +49,39 @@ export const systemApi = createApi({
 
     // System health and monitoring
     getSystemHealth: builder.query<SystemHealthResponse, void>({
-      query: () => '/system/health',
+      query: () => '/api/v1/system/health',
       providesTags: ['SystemHealth'],
     }),
 
     getSystemMetrics: builder.query<SystemMetricsResponse, { period: string; type?: string }>({
       query: (params) => ({
-        url: '/system/metrics',
+        url: '/api/v1/system/metrics',
         params,
       }),
       providesTags: ['SystemHealth'],
     }),
 
     checkSystemStatus: builder.query<{ status: string; timestamp: string }, void>({
-      query: () => '/system/status',
+      query: () => '/api/v1/system/status',
     }),
 
     // System logs
     getSystemLogs: builder.query<SystemLogResponse, SystemLogQueryParams>({
       query: (params) => ({
-        url: '/system/logs',
+        url: '/api/v1/system/logs',
         params,
       }),
       providesTags: ['SystemLogs'],
     }),
 
     getSystemLogById: builder.query<SystemLogResponse, number>({
-      query: (id) => `/system/logs/${id}`,
+      query: (id) => `/api/v1/system/logs/${id}`,
       providesTags: (result, error, id) => [{ type: 'SystemLogs', id }],
     }),
 
     clearSystemLogs: builder.mutation<{ cleared: number }, { olderThan?: string; level?: string }>({
       query: (params) => ({
-        url: '/system/logs/clear',
+        url: '/api/v1/system/logs/clear',
         method: 'POST',
         body: params,
       }),
@@ -90,7 +90,7 @@ export const systemApi = createApi({
 
     exportSystemLogs: builder.query<Blob, SystemLogQueryParams>({
       query: (params) => ({
-        url: '/system/logs/export',
+        url: '/api/v1/system/logs/export',
         params,
         responseHandler: (response) => response.blob(),
       }),
@@ -98,13 +98,13 @@ export const systemApi = createApi({
 
     // System backup and restore
     getSystemBackups: builder.query<SystemBackupResponse[], void>({
-      query: () => '/system/backups',
+      query: () => '/api/v1/system/backups',
       providesTags: ['System'],
     }),
 
     createSystemBackup: builder.mutation<SystemBackupResponse, SystemBackupRequest>({
       query: (data) => ({
-        url: '/system/backups',
+        url: '/api/v1/system/backups',
         method: 'POST',
         body: data,
       }),
@@ -113,7 +113,7 @@ export const systemApi = createApi({
 
     restoreSystemBackup: builder.mutation<{ success: boolean; message: string }, SystemRestoreRequest>({
       query: (data) => ({
-        url: '/system/backups/restore',
+        url: '/api/v1/system/backups/restore',
         method: 'POST',
         body: data,
       }),
@@ -138,7 +138,7 @@ export const systemApi = createApi({
     // System maintenance
     startMaintenance: builder.mutation<{ success: boolean; message: string }, SystemMaintenanceRequest>({
       query: (data) => ({
-        url: '/system/maintenance/start',
+        url: '/api/v1/system/maintenance/start',
         method: 'POST',
         body: data,
       }),
@@ -147,25 +147,25 @@ export const systemApi = createApi({
 
     stopMaintenance: builder.mutation<{ success: boolean; message: string }, void>({
       query: () => ({
-        url: '/system/maintenance/stop',
+        url: '/api/v1/system/maintenance/stop',
         method: 'POST',
       }),
       invalidatesTags: ['System'],
     }),
 
     getMaintenanceStatus: builder.query<{ isMaintenanceMode: boolean; message?: string; startedAt?: string }, void>({
-      query: () => '/system/maintenance/status',
+      query: () => '/api/v1/system/maintenance/status',
     }),
 
     // System notifications
     getSystemNotifications: builder.query<SystemNotificationResponse[], void>({
-      query: () => '/system/notifications',
+      query: () => '/api/v1/system/notifications',
       providesTags: ['System'],
     }),
 
     createSystemNotification: builder.mutation<SystemNotificationResponse, SystemNotificationRequest>({
       query: (data) => ({
-        url: '/system/notifications',
+        url: '/api/v1/system/notifications',
         method: 'POST',
         body: data,
       }),
@@ -192,7 +192,7 @@ export const systemApi = createApi({
     // System audit
     getSystemAudit: builder.query<SystemAuditResponse, SystemAuditQueryParams>({
       query: (params) => ({
-        url: '/system/audit',
+        url: '/api/v1/system/audit',
         params,
       }),
       providesTags: ['System'],
@@ -200,7 +200,7 @@ export const systemApi = createApi({
 
     exportSystemAudit: builder.query<Blob, SystemAuditQueryParams>({
       query: (params) => ({
-        url: '/system/audit/export',
+        url: '/api/v1/system/audit/export',
         params,
         responseHandler: (response) => response.blob(),
       }),
@@ -208,13 +208,13 @@ export const systemApi = createApi({
 
     // System reports
     getSystemReports: builder.query<SystemReportResponse[], void>({
-      query: () => '/system/reports',
+      query: () => '/api/v1/system/reports',
       providesTags: ['System'],
     }),
 
     generateSystemReport: builder.mutation<SystemReportResponse, SystemReportRequest>({
       query: (data) => ({
-        url: '/system/reports/generate',
+        url: '/api/v1/system/reports/generate',
         method: 'POST',
         body: data,
       }),
@@ -231,7 +231,7 @@ export const systemApi = createApi({
     // System utilities
     clearSystemCache: builder.mutation<{ cleared: boolean; message: string }, { type?: string }>({
       query: (params) => ({
-        url: '/system/cache/clear',
+        url: '/api/v1/system/cache/clear',
         method: 'POST',
         body: params,
       }),
@@ -240,7 +240,7 @@ export const systemApi = createApi({
 
     optimizeSystem: builder.mutation<{ success: boolean; message: string; optimizations: string[] }, void>({
       query: () => ({
-        url: '/system/optimize',
+        url: '/api/v1/system/optimize',
         method: 'POST',
       }),
       invalidatesTags: ['System'],
@@ -254,7 +254,7 @@ export const systemApi = createApi({
       disk: { used: number; total: number };
       cpu: { usage: number; cores: number };
     }, void>({
-      query: () => '/system/info',
+      query: () => '/api/v1/system/info',
     }),
 
     // Database operations
@@ -264,12 +264,12 @@ export const systemApi = createApi({
       size: number;
       lastBackup?: string;
     }, void>({
-      query: () => '/system/database/status',
+      query: () => '/api/v1/system/database/status',
     }),
 
     optimizeDatabase: builder.mutation<{ success: boolean; message: string }, void>({
       query: () => ({
-        url: '/system/database/optimize',
+        url: '/api/v1/system/database/optimize',
         method: 'POST',
       }),
       invalidatesTags: ['System'],
@@ -282,12 +282,12 @@ export const systemApi = createApi({
       vulnerabilities: number;
       recommendations: string[];
     }, void>({
-      query: () => '/system/security/status',
+      query: () => '/api/v1/system/security/status',
     }),
 
     runSecurityScan: builder.mutation<{ success: boolean; message: string; scanId: string }, void>({
       query: () => ({
-        url: '/system/security/scan',
+        url: '/api/v1/system/security/scan',
         method: 'POST',
       }),
       invalidatesTags: ['System'],

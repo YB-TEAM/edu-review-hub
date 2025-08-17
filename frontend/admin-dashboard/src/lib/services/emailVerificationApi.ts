@@ -21,20 +21,20 @@ export const emailVerificationApi = createApi({
     // Email verification requests
     getEmailVerifications: builder.query<EmailVerificationListResponse, EmailVerificationQueryParams>({
       query: (params) => ({
-        url: '/email-verifications',
+        url: '/api/v1/email-verifications',
         params,
       }),
       providesTags: ['EmailVerification'],
     }),
 
     getEmailVerificationById: builder.query<EmailVerificationResponse, number>({
-      query: (id) => `/email-verifications/${id}`,
+      query: (id) => `/api/v1/email-verifications/${id}`,
       providesTags: (result, error, id) => [{ type: 'EmailVerification', id }],
     }),
 
     createEmailVerification: builder.mutation<EmailVerificationResponse, EmailVerificationRequest>({
       query: (data) => ({
-        url: '/email-verifications',
+        url: '/api/v1/email-verifications',
         method: 'POST',
         body: data,
       }),
@@ -69,7 +69,7 @@ export const emailVerificationApi = createApi({
 
     verifyEmail: builder.mutation<{ success: boolean; message: string }, { token: string; userId: number }>({
       query: (data) => ({
-        url: '/email-verifications/verify',
+        url: '/api/v1/email-verifications/verify',
         method: 'POST',
         body: data,
       }),
@@ -94,24 +94,24 @@ export const emailVerificationApi = createApi({
     }),
 
     getUserPendingVerifications: builder.query<EmailVerificationResponse[], number>({
-      query: (userId) => `/users/${userId}/email-verifications/pending`,
+      query: (id) => `/api/v1/users/${userId}/email-verifications/pending`,
       providesTags: (result, error, userId) => [{ type: 'EmailVerification', userId }],
     }),
 
     // Email templates
     getEmailTemplates: builder.query<EmailTemplateResponse[], void>({
-      query: () => '/email-verifications/templates',
+      query: () => '/api/v1/email-verifications/templates',
       providesTags: ['EmailTemplate'],
     }),
 
     getEmailTemplateById: builder.query<EmailTemplateResponse, number>({
-      query: (id) => `/email-verifications/templates/${id}`,
+      query: (id) => `/api/v1/email-verifications/templates/${id}`,
       providesTags: (result, error, id) => [{ type: 'EmailTemplate', id }],
     }),
 
     createEmailTemplate: builder.mutation<EmailTemplateResponse, EmailTemplateRequest>({
       query: (data) => ({
-        url: '/email-verifications/templates',
+        url: '/api/v1/email-verifications/templates',
         method: 'POST',
         body: data,
       }),
@@ -137,13 +137,13 @@ export const emailVerificationApi = createApi({
 
     // Email verification settings
     getEmailVerificationSettings: builder.query<EmailVerificationSettings, void>({
-      query: () => '/email-verifications/settings',
+      query: () => '/api/v1/email-verifications/settings',
       providesTags: ['EmailVerification'],
     }),
 
     updateEmailVerificationSettings: builder.mutation<EmailVerificationSettings, Partial<EmailVerificationSettings>>({
       query: (data) => ({
-        url: '/email-verifications/settings',
+        url: '/api/v1/email-verifications/settings',
         method: 'PUT',
         body: data,
       }),
@@ -153,7 +153,7 @@ export const emailVerificationApi = createApi({
     // Email verification statistics and analytics
     getEmailVerificationStatistics: builder.query<EmailVerificationStatistics, { period: string; type?: string }>({
       query: (params) => ({
-        url: '/email-verifications/statistics',
+        url: '/api/v1/email-verifications/statistics',
         params,
       }),
       providesTags: ['EmailVerificationStats'],
@@ -161,7 +161,7 @@ export const emailVerificationApi = createApi({
 
     getEmailVerificationAnalytics: builder.query<EmailVerificationAnalytics, { period: string; groupBy?: string }>({
       query: (params) => ({
-        url: '/email-verifications/analytics',
+        url: '/api/v1/email-verifications/analytics',
         params,
       }),
       providesTags: ['EmailVerificationStats'],
@@ -169,13 +169,13 @@ export const emailVerificationApi = createApi({
 
     // Email verification reports
     getEmailVerificationReports: builder.query<EmailVerificationReport[], void>({
-      query: () => '/email-verifications/reports',
+      query: () => '/api/v1/email-verifications/reports',
       providesTags: ['EmailVerification'],
     }),
 
     generateEmailVerificationReport: builder.mutation<EmailVerificationReport, { period: string; type: string; format: string }>({
       query: (data) => ({
-        url: '/email-verifications/reports/generate',
+        url: '/api/v1/email-verifications/reports/generate',
         method: 'POST',
         body: data,
       }),
@@ -192,7 +192,7 @@ export const emailVerificationApi = createApi({
     // Email verification export
     exportEmailVerifications: builder.query<Blob, EmailVerificationQueryParams>({
       query: (params) => ({
-        url: '/email-verifications/export',
+        url: '/api/v1/email-verifications/export',
         params,
         responseHandler: (response) => response.blob(),
       }),
@@ -201,7 +201,7 @@ export const emailVerificationApi = createApi({
     // Email verification cleanup and maintenance
     clearExpiredVerifications: builder.mutation<{ cleared: number; freed: number }, { olderThan?: string }>({
       query: (params) => ({
-        url: '/email-verifications/cleanup',
+        url: '/api/v1/email-verifications/cleanup',
         method: 'POST',
         body: params,
       }),
@@ -211,7 +211,7 @@ export const emailVerificationApi = createApi({
     // Email verification testing
     testEmailTemplate: builder.mutation<{ success: boolean; message: string }, { templateId: number; testData: Record<string, unknown> }>({
       query: (data) => ({
-        url: '/email-verifications/templates/test',
+        url: '/api/v1/email-verifications/templates/test',
         method: 'POST',
         body: data,
       }),
@@ -219,7 +219,7 @@ export const emailVerificationApi = createApi({
 
     sendTestVerificationEmail: builder.mutation<{ success: boolean; message: string }, { email: string; templateId?: number }>({
       query: (data) => ({
-        url: '/email-verifications/test',
+        url: '/api/v1/email-verifications/test',
         method: 'POST',
         body: data,
       }),
@@ -232,13 +232,13 @@ export const emailVerificationApi = createApi({
       failed: number;
       retryCount: number;
     }, void>({
-      query: () => '/email-verifications/queue/status',
+      query: () => '/api/v1/email-verifications/queue/status',
       providesTags: ['EmailVerification'],
     }),
 
     retryFailedVerifications: builder.mutation<{ retried: number; message: string }, { olderThan?: string; maxRetries?: number }>({
       query: (params) => ({
-        url: '/email-verifications/retry',
+        url: '/api/v1/email-verifications/retry',
         method: 'POST',
         body: params,
       }),
@@ -252,7 +252,7 @@ export const emailVerificationApi = createApi({
       recommendations: Array<{ recommendation: string; priority: string; impact: string }>;
     }, { period: string }>({
       query: (params) => ({
-        url: '/email-verifications/insights',
+        url: '/api/v1/email-verifications/insights',
         params,
       }),
       providesTags: ['EmailVerificationStats'],

@@ -45,19 +45,36 @@ export default function LoginPage() {
       // Hiển thị toast thành công
       toast.success(`Chào mừng ${result.user.username}! Đăng nhập thành công.`);
       
+      // Kiểm tra role trước khi redirect
+      const userRole = result.user.role || result.user.accountType;
+      
+      if (userRole === 'student' || userRole === 'user') {
+        // Student/User không thể truy cập admin dashboard
+        toast.error('Tài khoản của bạn không có quyền truy cập Admin Dashboard');
+        // Có thể redirect đến trang khác hoặc logout
+        return;
+      }
+      
       // Redirect đến dashboard sau khi đăng nhập thành công
       router.push('/dashboard');
     } catch (err: any) {
       console.error("Login failed:", err);
       
-      // Xử lý lỗi cụ thể
+      // Xử lý lỗi cụ thể từ RTK Query
       if (err?.data?.message) {
         setLoginError(err.data.message);
+      } else if (err?.error?.data?.message) {
+        setLoginError(err.error.data.message);
       } else if (err?.error) {
         setLoginError(err.error);
+      } else if (err?.message) {
+        setLoginError(err.message);
       } else {
         setLoginError('Đăng nhập thất bại. Vui lòng kiểm tra thông tin đăng nhập.');
       }
+      
+      // Reset form state
+      setIsLoading(false);
     }
   };
 

@@ -31,13 +31,13 @@ export function Header() {
   };
 
   return (
-    <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <h1 className="text-lg font-semibold">Admin Dashboard</h1>
+    <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
+      <div className="container flex h-16 items-center justify-between px-6">
+        <div className="flex items-center space-x-6">
+          <h1 className="text-xl font-bold text-foreground">Admin Dashboard</h1>
         </div>
         
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-6">
           {/* Test buttons for toast functionality */}
           <Button 
             variant="outline" 

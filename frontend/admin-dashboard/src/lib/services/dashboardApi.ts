@@ -20,121 +20,121 @@ export const dashboardApi = createApi({
   endpoints: (builder) => ({
     // Main dashboard data
     getDashboardData: builder.query<DashboardResponse, DashboardQueryParams>({
-      query: (params) => ({ url: '/dashboard', method: 'GET', params }),
+      query: (params) => ({ url: '/api/v1/dashboard', method: 'GET', params }),
       providesTags: ['Dashboard'],
     }),
 
     getDashboardOverview: builder.query<DashboardOverview, void>({
-      query: () => '/dashboard/overview',
+      query: () => '/api/v1/dashboard/overview',
       providesTags: ['Dashboard'],
     }),
 
     getDashboardStatistics: builder.query<DashboardStatistics, void>({
-      query: () => '/dashboard/statistics',
+      query: () => '/api/v1/dashboard/statistics',
       providesTags: ['DashboardStats'],
     }),
 
     // User analytics
     getUserAnalytics: builder.query<UserAnalytics, { startDate?: string; endDate?: string }>({
-      query: (params) => ({ url: '/dashboard/user-analytics', method: 'GET', params }),
+      query: (params) => ({ url: '/api/v1/dashboard/user-analytics', method: 'GET', params }),
       providesTags: ['DashboardAnalytics'],
     }),
 
     getUserRetention: builder.query<UserAnalytics['retention'], { startDate?: string; endDate?: string }>({
-      query: (params) => ({ url: '/dashboard/user-retention', method: 'GET', params }),
+      query: (params) => ({ url: '/api/v1/dashboard/user-retention', method: 'GET', params }),
       providesTags: ['DashboardAnalytics'],
     }),
 
     getUserBehavior: builder.query<UserAnalytics['behavior'], { startDate?: string; endDate?: string }>({
-      query: (params) => ({ url: '/dashboard/user-behavior', method: 'GET', params }),
+      query: (params) => ({ url: '/api/v1/dashboard/user-behavior', method: 'GET', params }),
       providesTags: ['DashboardAnalytics'],
     }),
 
     getUserSegments: builder.query<UserAnalytics['segments'], { startDate?: string; endDate?: string }>({
-      query: (params) => ({ url: '/dashboard/user-segments', method: 'GET', params }),
+      query: (params) => ({ url: '/api/v1/dashboard/user-segments', method: 'GET', params }),
       providesTags: ['DashboardAnalytics'],
     }),
 
     getTopUsers: builder.query<UserAnalytics['topUsers'], { limit?: number; period?: string }>({
-      query: (params) => ({ url: '/dashboard/top-users', method: 'GET', params }),
+      query: (params) => ({ url: '/api/v1/dashboard/top-users', method: 'GET', params }),
       providesTags: ['DashboardAnalytics'],
     }),
 
     getUserActivityHeatmap: builder.query<UserAnalytics['activityHeatmap'], { startDate?: string; endDate?: string }>({
-      query: (params) => ({ url: '/dashboard/user-activity-heatmap', method: 'GET', params }),
+      query: (params) => ({ url: '/api/v1/dashboard/user-activity-heatmap', method: 'GET', params }),
       providesTags: ['DashboardAnalytics'],
     }),
 
     // Content analytics
     getContentAnalytics: builder.query<ContentAnalytics, { startDate?: string; endDate?: string }>({
-      query: (params) => ({ url: '/dashboard/content-analytics', method: 'GET', params }),
+      query: (params) => ({ url: '/api/v1/dashboard/content-analytics', method: 'GET', params }),
       providesTags: ['DashboardAnalytics'],
     }),
 
     getBlogAnalytics: builder.query<ContentAnalytics['blogAnalytics'], { startDate?: string; endDate?: string }>({
-      query: (params) => ({ url: '/dashboard/blog-analytics', method: 'GET', params }),
+      query: (params) => ({ url: '/api/v1/dashboard/blog-analytics', method: 'GET', params }),
       providesTags: ['DashboardAnalytics'],
     }),
 
     getUniversityAnalytics: builder.query<ContentAnalytics['universityAnalytics'], { startDate?: string; endDate?: string }>({
-      query: (params) => ({ url: '/dashboard/university-analytics', method: 'GET', params }),
+      query: (params) => ({ url: '/api/v1/dashboard/university-analytics', method: 'GET', params }),
       providesTags: ['DashboardAnalytics'],
     }),
 
     getReviewAnalytics: builder.query<ContentAnalytics['reviewAnalytics'], { startDate?: string; endDate?: string }>({
-      query: (params) => ({ url: '/dashboard/review-analytics', method: 'GET', params }),
+      query: (params) => ({ url: '/api/v1/dashboard/review-analytics', method: 'GET', params }),
       providesTags: ['DashboardAnalytics'],
     }),
 
     getSearchAnalytics: builder.query<ContentAnalytics['searchAnalytics'], { startDate?: string; endDate?: string }>({
-      query: (params) => ({ url: '/dashboard/search-analytics', method: 'GET', params }),
+      query: (params) => ({ url: '/api/v1/dashboard/search-analytics', method: 'GET', params }),
       providesTags: ['DashboardAnalytics'],
     }),
 
     getContentPerformance: builder.query<ContentAnalytics['contentPerformance'], { startDate?: string; endDate?: string }>({
-      query: (params) => ({ url: '/dashboard/content-performance', method: 'GET', params }),
+      query: (params) => ({ url: '/api/v1/dashboard/content-performance', method: 'GET', params }),
       providesTags: ['DashboardAnalytics'],
     }),
 
     // System health and monitoring
     getSystemHealth: builder.query<SystemHealth, void>({
-      query: () => '/dashboard/system-health',
+      query: () => '/api/v1/dashboard/system-health',
       providesTags: ['Dashboard'],
     }),
 
     getPerformanceMetrics: builder.query<PerformanceMetrics, { startDate?: string; endDate?: string }>({
-      query: (params) => ({ url: '/dashboard/performance-metrics', method: 'GET', params }),
+      query: (params) => ({ url: '/api/v1/dashboard/performance-metrics', method: 'GET', params }),
       providesTags: ['Dashboard'],
     }),
 
     getSystemAlerts: builder.query<SystemAlert[], { severity?: string; status?: string; limit?: number }>({
-      query: (params) => ({ url: '/dashboard/alerts', method: 'GET', params }),
+      query: (params) => ({ url: '/api/v1/dashboard/alerts', method: 'GET', params }),
       providesTags: ['Dashboard'],
     }),
 
     getRecentActivities: builder.query<RecentActivity[], { limit?: number; type?: string }>({
-      query: (params) => ({ url: '/dashboard/recent-activities', method: 'GET', params }),
+      query: (params) => ({ url: '/api/v1/dashboard/recent-activities', method: 'GET', params }),
       providesTags: ['Dashboard'],
     }),
 
     // Dashboard customization
     getDashboardLayout: builder.query<{ layout: string; widgets: any[] }, void>({
-      query: () => '/dashboard/layout',
+      query: () => '/api/v1/dashboard/layout',
       providesTags: ['Dashboard'],
     }),
 
     updateDashboardLayout: builder.mutation<{ success: boolean }, { layout: string; widgets: any[] }>({
-      query: (data) => ({ url: '/dashboard/layout', method: 'PUT', body: data }),
+      query: (data) => ({ url: '/api/v1/dashboard/layout', method: 'PUT', body: data }),
       invalidatesTags: ['Dashboard'],
     }),
 
     getDashboardWidgets: builder.query<any[], void>({
-      query: () => '/dashboard/widgets',
+      query: () => '/api/v1/dashboard/widgets',
       providesTags: ['Dashboard'],
     }),
 
     addDashboardWidget: builder.mutation<{ success: boolean }, { widgetType: string; position: any; config: any }>({
-      query: (data) => ({ url: '/dashboard/widgets', method: 'POST', body: data }),
+      query: (data) => ({ url: '/api/v1/dashboard/widgets', method: 'POST', body: data }),
       invalidatesTags: ['Dashboard'],
     }),
 
@@ -154,27 +154,27 @@ export const dashboardApi = createApi({
       format: string; 
       params: any 
     }>({
-      query: (data) => ({ url: '/dashboard/reports', method: 'POST', body: data }),
+      query: (data) => ({ url: '/api/v1/dashboard/reports', method: 'POST', body: data }),
     }),
 
     getDashboardReports: builder.query<{ id: string; type: string; createdAt: string; status: string }[], void>({
-      query: () => '/dashboard/reports',
+      query: () => '/api/v1/dashboard/reports',
       providesTags: ['Dashboard'],
     }),
 
     downloadDashboardReport: builder.query<{ downloadUrl: string }, string>({
-      query: (reportId) => `/dashboard/reports/${reportId}/download`,
+      query: (id) => `/api/v1/dashboard/reports/${reportId}/download`,
     }),
 
     // Real-time dashboard updates
     getDashboardUpdates: builder.query<{ updates: any[]; timestamp: string }, void>({
-      query: () => '/dashboard/updates',
+      query: () => '/api/v1/dashboard/updates',
       providesTags: ['Dashboard'],
     }),
 
     // Dashboard insights and recommendations
     getDashboardInsights: builder.query<{ insights: any[]; recommendations: any[] }, void>({
-      query: () => '/dashboard/insights',
+      query: () => '/api/v1/dashboard/insights',
       providesTags: ['Dashboard'],
     }),
 
@@ -184,12 +184,12 @@ export const dashboardApi = createApi({
       format: string; 
       params: any 
     }>({
-      query: (data) => ({ url: '/dashboard/export', method: 'POST', body: data }),
+      query: (data) => ({ url: '/api/v1/dashboard/export', method: 'POST', body: data }),
     }),
 
     // Dashboard backup and restore
     backupDashboard: builder.mutation<{ backupId: string; backupUrl: string }, void>({
-      query: () => ({ url: '/dashboard/backup', method: 'POST' }),
+      query: () => ({ url: '/api/v1/dashboard/backup', method: 'POST' }),
     }),
 
     restoreDashboard: builder.mutation<{ success: boolean }, { backupId: string }>({
@@ -198,13 +198,13 @@ export const dashboardApi = createApi({
     }),
 
     getDashboardBackups: builder.query<{ id: string; createdAt: string; size: string; description: string }[], void>({
-      query: () => '/dashboard/backups',
+      query: () => '/api/v1/dashboard/backups',
       providesTags: ['Dashboard'],
     }),
 
     // Dashboard settings
     getDashboardSettings: builder.query<{ theme: string; refreshInterval: number; notifications: boolean }, void>({
-      query: () => '/dashboard/settings',
+      query: () => '/api/v1/dashboard/settings',
       providesTags: ['Dashboard'],
     }),
 
@@ -213,13 +213,13 @@ export const dashboardApi = createApi({
       refreshInterval?: number; 
       notifications?: boolean 
     }>({
-      query: (settings) => ({ url: '/dashboard/settings', method: 'PUT', body: settings }),
+      query: (settings) => ({ url: '/api/v1/dashboard/settings', method: 'PUT', body: settings }),
       invalidatesTags: ['Dashboard'],
     }),
 
     // Dashboard notifications
     getDashboardNotifications: builder.query<{ notifications: any[]; unreadCount: number }, void>({
-      query: () => '/dashboard/notifications',
+      query: () => '/api/v1/dashboard/notifications',
       providesTags: ['Dashboard'],
     }),
 
@@ -229,14 +229,14 @@ export const dashboardApi = createApi({
     }),
 
     markAllNotificationsAsRead: builder.mutation<{ success: boolean }, void>({
-      query: () => ({ url: '/dashboard/notifications/read-all', method: 'PATCH' }),
+      query: () => ({ url: '/api/v1/dashboard/notifications/read-all', method: 'PATCH' }),
       invalidatesTags: ['Dashboard'],
     }),
 
     // Dashboard search
     searchDashboard: builder.query<{ results: any[]; total: number }, { query: string; filters?: any }>({
       query: ({ query, filters }) => ({ 
-        url: '/dashboard/search', 
+        url: '/api/v1/dashboard/search', 
         method: 'GET', 
         params: { q: query, ...filters } 
       }),
@@ -244,11 +244,11 @@ export const dashboardApi = createApi({
 
     // Dashboard help and documentation
     getDashboardHelp: builder.query<{ sections: any[]; faq: any[] }, void>({
-      query: () => '/dashboard/help',
+      query: () => '/api/v1/dashboard/help',
     }),
 
     getDashboardTutorials: builder.query<{ tutorials: any[] }, void>({
-      query: () => '/dashboard/tutorials',
+      query: () => '/api/v1/dashboard/tutorials',
     }),
   }),
 });

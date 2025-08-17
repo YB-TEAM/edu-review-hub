@@ -29,6 +29,15 @@ export interface UploadRequest {
   context?: Record<string, string>;
 }
 
+// Image upload request - specific for image uploads
+export interface ImageUploadRequest {
+  image: File;
+  folder?: string;
+  transformation?: ImageTransformation;
+  tags?: string[];
+  context?: Record<string, string>;
+}
+
 // Image transformation options
 export interface ImageTransformation {
   width?: number;

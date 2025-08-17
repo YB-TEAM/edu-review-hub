@@ -23,7 +23,7 @@ export const blogApi = createApi({
     // Get all blogs for admin
     getAllBlogs: builder.query<BlogListResponse, BlogQueryParams>({
       query: (params) => ({
-        url: '/blogs/admin/all',
+        url: '/api/v1/blogs/admin/all',
         method: 'GET',
         params,
       }),
@@ -33,7 +33,7 @@ export const blogApi = createApi({
     // Get blogs pending moderation
     getPendingModeration: builder.query<BlogListResponse, BlogQueryParams>({
       query: (params) => ({
-        url: '/blogs/pending-moderation',
+        url: '/api/v1/blogs/pending',
         method: 'GET',
         params,
       }),
@@ -42,14 +42,14 @@ export const blogApi = createApi({
 
     // Get blog by ID
     getBlogById: builder.query<BlogResponse, number>({
-      query: (id) => `/blogs/${id}`,
+      query: (id) => `/api/v1/blogs/${id}`,
       providesTags: (result, error, id) => [{ type: 'Blog', id }],
     }),
 
     // Create new blog
     createBlog: builder.mutation<BlogResponse, CreateBlogRequest>({
       query: (blogData) => ({
-        url: '/blogs',
+        url: '/api/v1/blogs',
         method: 'POST',
         body: blogData,
       }),
@@ -59,7 +59,7 @@ export const blogApi = createApi({
     // Update blog
     updateBlog: builder.mutation<BlogResponse, { id: number; data: UpdateBlogRequest }>({
       query: ({ id, data }) => ({
-        url: `/blogs/${id}`,
+        url: `/api/v1/blogs/${id}`,
         method: 'PATCH',
         body: data,
       }),
@@ -73,7 +73,7 @@ export const blogApi = createApi({
     // Delete blog
     deleteBlog: builder.mutation<void, number>({
       query: (id) => ({
-        url: `/blogs/${id}`,
+        url: `/api/v1/blogs/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Blog', 'BlogStats'],
@@ -82,7 +82,7 @@ export const blogApi = createApi({
     // Publish blog
     publishBlog: builder.mutation<BlogResponse, number>({
       query: (id) => ({
-        url: `/blogs/${id}/publish`,
+        url: `/api/v1/blogs/${id}/publish`,
         method: 'POST',
       }),
       invalidatesTags: (result, error, id) => [
@@ -95,7 +95,7 @@ export const blogApi = createApi({
     // Like/unlike blog
     toggleBlogLike: builder.mutation<void, number>({
       query: (id) => ({
-        url: `/blogs/${id}/like`,
+        url: `/api/v1/blogs/${id}/like`,
         method: 'POST',
       }),
       invalidatesTags: (result, error, id) => [
@@ -107,7 +107,7 @@ export const blogApi = createApi({
     // Approve blog
     approveBlog: builder.mutation<BlogResponse, { id: number; data: ApproveBlogRequest }>({
       query: ({ id, data }) => ({
-        url: `/blogs/${id}/approve`,
+        url: `/api/v1/blogs/${id}/approve`,
         method: 'POST',
         body: data,
       }),
@@ -121,7 +121,7 @@ export const blogApi = createApi({
     // Reject blog
     rejectBlog: builder.mutation<BlogResponse, { id: number; data: RejectBlogRequest }>({
       query: ({ id, data }) => ({
-        url: `/blogs/${id}/reject`,
+        url: `/api/v1/blogs/${id}/reject`,
         method: 'POST',
         body: data,
       }),
@@ -135,11 +135,11 @@ export const blogApi = createApi({
     // Ban blog
     banBlog: builder.mutation<BlogResponse, { id: number; data: BanBlogRequest }>({
       query: ({ id, data }) => ({
-        url: `/blogs/${id}/ban`,
+        url: `/api/v1/blogs/${id}/ban`,
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: (result, error, { id }) => [
+      invalidatesTags: (result, error, id) => [
         { type: 'Blog', id },
         'Blog',
         'BlogStats'
@@ -149,7 +149,7 @@ export const blogApi = createApi({
     // Unban blog
     unbanBlog: builder.mutation<BlogResponse, { id: number; data: UnbanBlogRequest }>({
       query: ({ id, data }) => ({
-        url: `/blogs/${id}/unban`,
+        url: `/api/v1/blogs/${id}/unban`,
         method: 'POST',
         body: data,
       }),
@@ -162,14 +162,14 @@ export const blogApi = createApi({
 
     // Get blog statistics
     getBlogStatistics: builder.query<BlogStatistics, void>({
-      query: () => '/blogs/statistics',
+      query: () => '/api/v1/blogs/statistics',
       providesTags: ['BlogStats'],
     }),
 
     // Get blog analytics
     getBlogAnalytics: builder.query<BlogAnalytics, { startDate?: string; endDate?: string }>({
       query: (params) => ({
-        url: '/blogs/analytics',
+        url: '/api/v1/blogs/analytics',
         method: 'GET',
         params,
       }),
@@ -179,7 +179,7 @@ export const blogApi = createApi({
     // Bulk operations
     bulkApproveBlogs: builder.mutation<{ success: number; failed: number }, number[]>({
       query: (ids) => ({
-        url: '/blogs/bulk/approve',
+        url: '/api/v1/blogs/bulk/approve',
         method: 'POST',
         body: { blogIds: ids },
       }),
@@ -188,7 +188,7 @@ export const blogApi = createApi({
 
     bulkRejectBlogs: builder.mutation<{ success: number; failed: number }, { ids: number[]; reason: string }>({
       query: ({ ids, reason }) => ({
-        url: '/blogs/bulk/reject',
+        url: '/api/v1/blogs/bulk/reject',
         method: 'POST',
         body: { blogIds: ids, reason },
       }),
@@ -197,7 +197,7 @@ export const blogApi = createApi({
 
     bulkDeleteBlogs: builder.mutation<{ success: number; failed: number }, number[]>({
       query: (ids) => ({
-        url: '/blogs/bulk/delete',
+        url: '/api/v1/blogs/bulk/delete',
         method: 'DELETE',
         body: { blogIds: ids },
       }),
@@ -207,7 +207,7 @@ export const blogApi = createApi({
     // Search blogs
     searchBlogs: builder.query<BlogListResponse, { query: string; params?: BlogQueryParams }>({
       query: ({ query, params }) => ({
-        url: `/blogs/search?q=${encodeURIComponent(query)}`,
+        url: `/api/v1/blogs/search?q=${encodeURIComponent(query)}`,
         method: 'GET',
         params,
       }),
@@ -217,7 +217,7 @@ export const blogApi = createApi({
     // Get blogs by author
     getBlogsByAuthor: builder.query<BlogListResponse, { authorId: number; params?: BlogQueryParams }>({
       query: ({ authorId, params }) => ({
-        url: `/blogs/author/${authorId}`,
+        url: `/api/v1/blogs/author/${authorId}`,
         method: 'GET',
         params,
       }),
@@ -227,7 +227,7 @@ export const blogApi = createApi({
     // Get blogs by category
     getBlogsByCategory: builder.query<BlogListResponse, { category: string; params?: BlogQueryParams }>({
       query: ({ category, params }) => ({
-        url: `/blogs/category/${category}`,
+        url: `/api/v1/blogs/category/${category}`,
         method: 'GET',
         params,
       }),
@@ -237,7 +237,7 @@ export const blogApi = createApi({
     // Get blogs by tag
     getBlogsByTag: builder.query<BlogListResponse, { tagId: number; params?: BlogQueryParams }>({
       query: ({ tagId, params }) => ({
-        url: `/blogs/tag/${tagId}`,
+        url: `/api/v1/blogs/tag/${tagId}`,
         method: 'GET',
         params,
       }),
@@ -247,7 +247,7 @@ export const blogApi = createApi({
     // Export blogs
     exportBlogs: builder.mutation<Blob, { format: 'csv' | 'excel' | 'pdf'; params?: BlogQueryParams }>({
       query: ({ format, params }) => ({
-        url: `/blogs/export/${format}`,
+        url: `/api/v1/blogs/export/${format}`,
         method: 'GET',
         params,
         responseHandler: (response) => response.blob(),
@@ -257,7 +257,7 @@ export const blogApi = createApi({
     // Import blogs
     importBlogs: builder.mutation<{ success: number; failed: number; errors: string[] }, FormData>({
       query: (formData) => ({
-        url: '/blogs/import',
+        url: '/api/v1/blogs/import',
         method: 'POST',
         body: formData,
       }),

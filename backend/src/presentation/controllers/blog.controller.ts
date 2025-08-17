@@ -93,6 +93,48 @@ export class BlogController {
     type: Number,
     description: "Filter by author ID",
   })
+  @ApiQuery({
+    name: "sortBy",
+    required: false,
+    enum: ["createdAt", "updatedAt", "title", "viewCount", "likeCount", "commentCount", "publishedAt"],
+    description: "Field to sort by",
+  })
+  @ApiQuery({
+    name: "sortOrder",
+    required: false,
+    enum: ["ASC", "DESC"],
+    description: "Sort order",
+  })
+  @ApiQuery({
+    name: "dateFrom",
+    required: false,
+    type: String,
+    description: "Filter blogs created from this date (ISO string)",
+  })
+  @ApiQuery({
+    name: "dateTo",
+    required: false,
+    type: String,
+    description: "Filter blogs created until this date (ISO string)",
+  })
+  @ApiQuery({
+    name: "minViews",
+    required: false,
+    type: Number,
+    description: "Minimum view count",
+  })
+  @ApiQuery({
+    name: "minLikes",
+    required: false,
+    type: Number,
+    description: "Minimum like count",
+  })
+  @ApiQuery({
+    name: "minComments",
+    required: false,
+    type: Number,
+    description: "Minimum comment count",
+  })
   @ApiOkResponse({
     description: "Blogs retrieved successfully",
     type: [BlogResponseDto],
@@ -107,10 +149,11 @@ export class BlogController {
       "Invalid JWT token (optional - request continues without authentication)",
   })
   async findAll(@Request() req: any, @Query() query: BlogPublicQueryDto) {
-    const { page, limit, authorId, search, tagIds } = query;
+    const { page, limit, authorId, search, tagIds, sortBy, sortOrder, dateFrom, dateTo, minViews, minLikes, minComments } = query;
     const pagination = { page, limit };
-    const filters = { authorId, search, tagIds };
-    return this.blogService.findAll(req.user, pagination, filters);
+    const filters = { authorId, search, tagIds, dateFrom, dateTo, minViews, minLikes, minComments };
+    const sorting = { sortBy, sortOrder };
+    return this.blogService.findAll(req.user, pagination, filters, sorting);
   }
 
   @Get("public/:id")
@@ -241,6 +284,48 @@ export class BlogController {
     type: String,
     description: "Search in title, content, and excerpt",
   })
+  @ApiQuery({
+    name: "sortBy",
+    required: false,
+    enum: ["createdAt", "updatedAt", "title", "viewCount", "likeCount", "commentCount", "publishedAt"],
+    description: "Field to sort by",
+  })
+  @ApiQuery({
+    name: "sortOrder",
+    required: false,
+    enum: ["ASC", "DESC"],
+    description: "Sort order",
+  })
+  @ApiQuery({
+    name: "dateFrom",
+    required: false,
+    type: String,
+    description: "Filter blogs created from this date (ISO string)",
+  })
+  @ApiQuery({
+    name: "dateTo",
+    required: false,
+    type: String,
+    description: "Filter blogs created until this date (ISO string)",
+  })
+  @ApiQuery({
+    name: "minViews",
+    required: false,
+    type: Number,
+    description: "Minimum view count",
+  })
+  @ApiQuery({
+    name: "minLikes",
+    required: false,
+    type: Number,
+    description: "Minimum like count",
+  })
+  @ApiQuery({
+    name: "minComments",
+    required: false,
+    type: Number,
+    description: "Minimum comment count",
+  })
   @ApiOkResponse({
     description: "All blogs retrieved successfully",
     type: [BlogResponseDto],
@@ -258,10 +343,11 @@ export class BlogController {
     description: "Forbidden - Admin access required",
   })
   async getAllBlogsAdmin(@Request() req: any, @Query() query: BlogQueryDto) {
-    const { page, limit, status, category, authorId, search, tagIds } = query;
+    const { page, limit, status, category, authorId, search, tagIds, sortBy, sortOrder, dateFrom, dateTo, minViews, minLikes, minComments } = query;
     const pagination = { page, limit };
-    const filters = { status, category, authorId, search, tagIds };
-    return this.blogService.findAll(req.user, pagination, filters);
+    const filters = { status, category, authorId, search, tagIds, dateFrom, dateTo, minViews, minLikes, minComments };
+    const sorting = { sortBy, sortOrder };
+    return this.blogService.findAll(req.user, pagination, filters, sorting);
   }
 
   @Get("admin/all-with-deleted")
@@ -399,12 +485,11 @@ export class BlogController {
 
   @Post()
   @ApiTags("Blog - User")
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.SUPER_ADMIN, UserRole.UNIVERSITY_REP, UserRole.STUDENT)
+  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth("JWT-auth")
   @ApiOperation({
     summary: "Create new blog",
-    description: "Create a new blog post (draft status)",
+    description: "Create a new blog post (draft status) - Any authenticated user can create",
   })
   @ApiBody({ type: CreateBlogDto, description: "Blog data" })
   @ApiCreatedResponse({
@@ -413,7 +498,6 @@ export class BlogController {
   })
   @ApiBadRequestResponse({ description: "Invalid blog data" })
   @ApiUnauthorizedResponse({ description: "Unauthorized" })
-  @ApiForbiddenResponse({ description: "Insufficient permissions" })
   async create(
     @Request() req,
     @Body() dto: CreateBlogDto
@@ -430,12 +514,11 @@ export class BlogController {
 
   @Patch(":id")
   @ApiTags("Blog - User")
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.SUPER_ADMIN, UserRole.UNIVERSITY_REP, UserRole.STUDENT)
+  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth("JWT-auth")
   @ApiOperation({
     summary: "Update blog",
-    description: "Update an existing blog (author only)",
+    description: "Update an existing blog (author only) - Any authenticated user can update their own blog",
   })
   @ApiParam({ name: "id", type: Number, description: "Blog ID" })
   @ApiBody({ type: UpdateBlogDto, description: "Blog update data" })
@@ -446,7 +529,7 @@ export class BlogController {
   @ApiBadRequestResponse({ description: "Invalid blog data" })
   @ApiUnauthorizedResponse({ description: "Unauthorized" })
   @ApiForbiddenResponse({
-    description: "Insufficient permissions or not the author",
+    description: "Not the author of the blog",
   })
   @ApiNotFoundResponse({ description: "Blog not found" })
   async update(
@@ -459,12 +542,11 @@ export class BlogController {
 
   @Post(":id/publish")
   @ApiTags("Blog - User")
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.SUPER_ADMIN, UserRole.UNIVERSITY_REP, UserRole.STUDENT)
+  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth("JWT-auth")
   @ApiOperation({
     summary: "Publish blog",
-    description: "Submit blog for moderation (author only)",
+    description: "Submit blog for moderation (author only) - Any authenticated user can publish their own blog",
   })
   @ApiParam({ name: "id", type: Number, description: "Blog ID" })
   @ApiOkResponse({
@@ -473,7 +555,7 @@ export class BlogController {
   })
   @ApiUnauthorizedResponse({ description: "Unauthorized" })
   @ApiForbiddenResponse({
-    description: "Insufficient permissions or not the author",
+    description: "Not the author of the blog",
   })
   @ApiNotFoundResponse({ description: "Blog not found" })
   async publish(
@@ -485,12 +567,11 @@ export class BlogController {
 
   @Post(":id/like")
   @ApiTags("Blog - User")
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.SUPER_ADMIN, UserRole.UNIVERSITY_REP, UserRole.STUDENT)
+  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth("JWT-auth")
   @ApiOperation({
     summary: "Like/Unlike blog",
-    description: "Toggle like status for a blog",
+    description: "Toggle like status for a blog - Any authenticated user can like/unlike",
   })
   @ApiParam({ name: "id", type: Number, description: "Blog ID" })
   @HttpCode(HttpStatus.OK)

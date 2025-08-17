@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DashboardController } from '../../presentation/controllers/dashboard.controller';
 import { DashboardService } from '../../application/services/dashboard.service';
+import { AuthModule } from './auth.module';
 import { User } from '../database/entities/user.entity';
 import { Blog } from '../database/entities/blog.entity';
 import { UniversityReview } from '../database/entities/university-review.entity';
@@ -11,6 +12,7 @@ import { UserDevice } from '../database/entities/user-device.entity';
 
 @Module({
   imports: [
+    AuthModule,
     TypeOrmModule.forFeature([
       User,
       Blog,
