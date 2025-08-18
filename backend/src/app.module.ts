@@ -22,7 +22,6 @@ import { CleanupOrphanedImagesCommand } from "@/infrastructure/commands/cleanup-
       envFilePath: ".env",
     }),
     TypeOrmModule.forRoot(databaseConfig),
-    CommandModule,
     AuthModule,
     UniversityModule,
     UniversityReviewModule,
