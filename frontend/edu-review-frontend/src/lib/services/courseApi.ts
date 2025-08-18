@@ -1,64 +1,20 @@
-import { api } from "../api";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { baseQueryWithErrorHandling } from "../api";
+import type {
+  Course,
+  CreateCourseRequest,
+  UpdateCourseRequest,
+  CourseFilters,
+  CourseListResponse,
+  InstitutionCoursesResponse,
+} from "@/types/course";
 
-export interface Course {
-  id: number;
-  name: string;
-  description?: string;
-  code?: string;
-  duration?: string;
-  level?: "beginner" | "intermediate" | "advanced";
-  category?: string;
-  created_at: string;
-  updated_at: string;
-  institution?: {
-    id: number;
-    name: string;
-  };
-  reviews_count?: number;
-  average_rating?: number;
-}
-
-export interface CreateCourseRequest {
-  name: string;
-  description?: string;
-  code?: string;
-  duration?: string;
-  level?: "beginner" | "intermediate" | "advanced";
-  category?: string;
-  institution_id: number;
-}
-
-export interface UpdateCourseRequest {
-  name?: string;
-  description?: string;
-  code?: string;
-  duration?: string;
-  level?: "beginner" | "intermediate" | "advanced";
-  category?: string;
-}
-
-export interface CourseFilters {
-  institution_id?: number;
-  category?: string;
-  level?: "beginner" | "intermediate" | "advanced";
-  search?: string;
-  page?: number;
-  limit?: number;
-  sort_by?: "name" | "created_at" | "average_rating";
-  sort_order?: "asc" | "desc";
-}
-
-export const courseApi = api.injectEndpoints({
+export const courseApi = createApi({
+  reducerPath: "courseApi",
+  baseQuery: baseQueryWithErrorHandling,
+  tagTypes: ["Course"],
   endpoints: (builder) => ({
-    getCourses: builder.query<
-      {
-        data: Course[];
-        total: number;
-        current_page: number;
-        last_page: number;
-      },
-      CourseFilters
-    >({
+    getCourses: builder.query<CourseListResponse, CourseFilters>({
       query: (filters) => ({
         url: "/courses",
         params: filters,
@@ -110,7 +66,7 @@ export const courseApi = api.injectEndpoints({
     }),
 
     getInstitutionCourses: builder.query<
-      { data: Course[]; total: number },
+      InstitutionCoursesResponse,
       { institution_id: number; page?: number; limit?: number }
     >({
       query: ({ institution_id, page = 1, limit = 10 }) => ({

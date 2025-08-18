@@ -1,68 +1,20 @@
-import { api } from "../api";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { baseQueryWithErrorHandling } from "../api";
+import type {
+  Review,
+  CreateReviewRequest,
+  UpdateReviewRequest,
+  ReviewFilters,
+  ReviewListResponse,
+  UserReviewsResponse,
+} from "@/types/review";
 
-export interface Review {
-  id: number;
-  user_id: number;
-  course_id: number;
-  institution_id: number;
-  rating: number;
-  content: string;
-  pros?: string;
-  cons?: string;
-  created_at: string;
-  updated_at: string;
-  user?: {
-    id: number;
-    name: string;
-  };
-  course?: {
-    id: number;
-    name: string;
-  };
-  institution?: {
-    id: number;
-    name: string;
-  };
-}
-
-export interface CreateReviewRequest {
-  course_id: number;
-  institution_id: number;
-  rating: number;
-  content: string;
-  pros?: string;
-  cons?: string;
-}
-
-export interface UpdateReviewRequest {
-  rating?: number;
-  content?: string;
-  pros?: string;
-  cons?: string;
-}
-
-export interface ReviewFilters {
-  course_id?: number;
-  institution_id?: number;
-  rating?: number;
-  user_id?: number;
-  page?: number;
-  limit?: number;
-  sort_by?: "created_at" | "rating" | "updated_at";
-  sort_order?: "asc" | "desc";
-}
-
-export const reviewApi = api.injectEndpoints({
+export const reviewApi = createApi({
+  reducerPath: "reviewApi",
+  baseQuery: baseQueryWithErrorHandling,
+  tagTypes: ["Review"],
   endpoints: (builder) => ({
-    getReviews: builder.query<
-      {
-        data: Review[];
-        total: number;
-        current_page: number;
-        last_page: number;
-      },
-      ReviewFilters
-    >({
+    getReviews: builder.query<ReviewListResponse, ReviewFilters>({
       query: (filters) => ({
         url: "/reviews",
         params: filters,
@@ -114,7 +66,7 @@ export const reviewApi = api.injectEndpoints({
     }),
 
     getUserReviews: builder.query<
-      { data: Review[]; total: number },
+      UserReviewsResponse,
       { user_id: number; page?: number; limit?: number }
     >({
       query: ({ user_id, page = 1, limit = 10 }) => ({

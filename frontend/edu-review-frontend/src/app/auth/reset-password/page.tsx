@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,7 @@ import { useRouter } from "next/navigation";
 import "../auth.scss";
 import { useResetPasswordMutation } from "@/lib/services/authApi";
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [step, setStep] = useState<"email" | "reset" | "success">("email");
@@ -360,5 +360,13 @@ export default function ResetPasswordPage() {
         {step === "success" && renderSuccessStep()}
       </div>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPasswordContent />
+    </Suspense>
   );
 }

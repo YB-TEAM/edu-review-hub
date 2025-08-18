@@ -1,7 +1,7 @@
-// Blog Types
 export interface Blog {
   id: number;
   title: string;
+  slug: string;
   content: string;
   excerpt?: string;
   featuredImage?: string;
@@ -12,24 +12,36 @@ export interface Blog {
     large: string;
     original: string;
   };
-  category: BlogCategory;
+  category?: BlogCategory;
   status: BlogStatus;
-  moderationReason?: string;
+  moderationReason?: string | null;
+  moderatorId?: number | null;
+  moderatedAt?: string | null;
+  publishedAt?: string | null;
   viewCount: number;
   likeCount: number;
-  isLiked?: boolean;
   commentCount: number;
-  tags?: Tag[];
-  keywords?: string[];
-  slug?: string;
-  publishedAt?: string;
-  moderatedAt?: string;
+  isLiked?: boolean;
   authorId: number;
   authorName?: string;
-  moderatorId?: number;
-  moderatorName?: string;
+  author?: {
+    id: number;
+    username: string;
+    avatar?: string;
+  };
+  tags?: Tag[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface BlogListResponse {
+  data: Blog[];
+  metadata: {
+    totalItems: number;
+    pageSize: number;
+    currentPage: number;
+    totalPages: number;
+  };
 }
 
 export interface CreateBlogRequest {
@@ -37,10 +49,8 @@ export interface CreateBlogRequest {
   content: string;
   excerpt?: string;
   featuredImage?: string;
-  category?: BlogCategory;
   tagIds?: number[];
-  keywords?: string[];
-  slug?: string;
+  category?: BlogCategory;
 }
 
 export interface UpdateBlogRequest {
@@ -48,51 +58,61 @@ export interface UpdateBlogRequest {
   content?: string;
   excerpt?: string;
   featuredImage?: string;
-  category?: BlogCategory;
   tagIds?: number[];
-  keywords?: string[];
-  slug?: string;
 }
 
 export interface BlogFilters {
   search?: string;
-  authorId?: number;
-  category?: BlogCategory;
   status?: BlogStatus;
+  authorId?: number;
   tags?: number[];
-  publishedAfter?: string;
-  publishedBefore?: string;
   page?: number;
   limit?: number;
-  sortBy?:
-    | "createdAt"
-    | "updatedAt"
-    | "publishedAt"
-    | "viewCount"
-    | "likeCount"
-    | "title";
-  sortOrder?: "asc" | "desc";
+  sort_by?: "created_at" | "updated_at" | "published_at" | "likes" | "views";
+  sort_order?: "asc" | "desc";
 }
 
 export interface Tag {
   id: number;
   name: string;
-  color: string;
+  slug?: string;
   description?: string;
+  color?: string;
+  isActive?: boolean;
+  usageCount: number;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface CreateTagRequest {
   name: string;
-  color: string;
   description?: string;
 }
 
 export interface UpdateTagRequest {
   name?: string;
-  color?: string;
   description?: string;
+}
+
+export interface BlogLike {
+  id: number;
+  blogId: number;
+  userId: number;
+  createdAt: string;
+}
+
+export interface BlogComment {
+  id: number;
+  blogId: number;
+  userId: number;
+  content: string;
+  user?: {
+    id: number;
+    username: string;
+    avatar?: string;
+  };
+  createdAt: string;
+  updatedAt: string;
 }
 
 export enum BlogCategory {
@@ -108,25 +128,8 @@ export enum BlogCategory {
 export enum BlogStatus {
   DRAFT = "draft",
   PUBLISHED = "published",
-  APPROVED = "approved",
+  PENDING = "pending",
   REJECTED = "rejected",
   BANNED = "banned",
-}
-
-export interface BlogLike {
-  id: number;
-  blogId: number;
-  userId: number;
-  createdAt: string;
-}
-
-export interface BlogComment {
-  id: number;
-  content: string;
-  blogId: number;
-  userId: number;
-  userName: string;
-  userAvatar?: string;
-  createdAt: string;
-  updatedAt: string;
+  APPROVED = "approved",
 }

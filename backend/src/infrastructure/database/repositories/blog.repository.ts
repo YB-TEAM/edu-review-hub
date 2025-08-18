@@ -16,17 +16,37 @@ export class BlogRepository implements IBlogRepository {
     // Extract tags from blog data
     const { tags, ...blogData } = blog;
 
+    console.log("🔖 Repository create - Tags to assign:", tags?.length || 0);
+
     // Create blog without tags first
     const createdBlog = await this.repo.save(blogData);
 
     // If tags are provided, add them to the blog
     if (tags && tags.length > 0) {
-      createdBlog.tags = tags;
-      await this.repo.save(createdBlog);
+      console.log("🔖 Assigning tags to blog:", createdBlog.id);
+      
+      // Load the blog with relations and assign tags
+      const blogWithRelations = await this.repo.findOne({
+        where: { id: createdBlog.id },
+        relations: ["tags"]
+      });
+      
+      if (blogWithRelations) {
+        blogWithRelations.tags = tags;
+        await this.repo.save(blogWithRelations);
+        console.log("🔖 Tags assigned successfully");
+      }
     }
 
-    // Return blog with relations
-    return this.findById(createdBlog.id) as Promise<Blog>;
+    // Return blog with all relations
+    const result = await this.findById(createdBlog.id);
+    if (!result) {
+      throw new Error(`Failed to retrieve created blog with ID: ${createdBlog.id}`);
+    }
+    
+    console.log("🔖 Final blog tags count:", result.tags?.length || 0);
+    
+    return result;
   }
 
   async findById(id: number): Promise<Blog | null> {
@@ -214,7 +234,11 @@ export class BlogRepository implements IBlogRepository {
 
   async update(id: number, blog: Partial<Blog>): Promise<Blog> {
     await this.repo.update(id, blog);
-    return this.findById(id) as Promise<Blog>;
+    const result = await this.findById(id);
+    if (!result) {
+      throw new Error(`Failed to retrieve updated blog with ID: ${id}`);
+    }
+    return result;
   }
 
   async delete(id: number): Promise<void> {

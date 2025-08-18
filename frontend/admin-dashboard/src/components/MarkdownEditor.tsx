@@ -5,14 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useUploadImageMutation } from "@/lib/services/uploadApi";
 import { toast } from "sonner";
-import { 
-  Bold, 
-  Italic, 
-  List, 
-  ListOrdered, 
-  Quote, 
-  Code, 
-  Link, 
+import {
+  Bold,
+  Italic,
+  List,
+  ListOrdered,
+  Quote,
+  Code,
+  Link,
   Image,
   Heading1,
   Heading2,
@@ -20,7 +20,7 @@ import {
   Eye,
   Edit3,
   Upload,
-  X
+  X,
 } from "lucide-react";
 
 interface MarkdownEditorProps {
@@ -29,7 +29,11 @@ interface MarkdownEditorProps {
   placeholder?: string;
 }
 
-export default function MarkdownEditor({ value, onChange, placeholder }: MarkdownEditorProps) {
+export default function MarkdownEditor({
+  value,
+  onChange,
+  placeholder,
+}: MarkdownEditorProps) {
   const [showPreview, setShowPreview] = useState(false);
   const [showImageUpload, setShowImageUpload] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -42,11 +46,14 @@ export default function MarkdownEditor({ value, onChange, placeholder }: Markdow
 
   // Convert markdown to HTML for display
   const renderMarkdown = (markdown: string) => {
-    if (!markdown) return '';
-    
+    if (!markdown) return "";
+
     let html = markdown
       // Headers
-      .replace(/^### (.*$)/gim, '<h3 class="text-lg font-semibold mb-2">$1</h3>')
+      .replace(
+        /^### (.*$)/gim,
+        '<h3 class="text-lg font-semibold mb-2">$1</h3>'
+      )
       .replace(/^## (.*$)/gim, '<h2 class="text-xl font-semibold mb-3">$1</h2>')
       .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold mb-4">$1</h1>')
       // Bold
@@ -54,36 +61,54 @@ export default function MarkdownEditor({ value, onChange, placeholder }: Markdow
       // Italic
       .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
       // Code blocks
-      .replace(/```([\s\S]*?)```/g, '<pre class="bg-gray-100 dark:bg-gray-800 p-3 rounded-md overflow-x-auto my-3"><code class="text-sm font-mono">$1</code></pre>')
+      .replace(
+        /```([\s\S]*?)```/g,
+        '<pre class="bg-gray-100 dark:bg-gray-800 p-3 rounded-md overflow-x-auto my-3"><code class="text-sm font-mono">$1</code></pre>'
+      )
       // Inline code
-      .replace(/`(.*?)`/g, '<code class="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded text-sm font-mono">$1</code>')
+      .replace(
+        /`(.*?)`/g,
+        '<code class="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded text-sm font-mono">$1</code>'
+      )
       // Links
-      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" class="text-blue-600 hover:underline">$1</a>')
+      .replace(
+        /\[([^\]]+)\]\(([^)]+)\)/g,
+        '<a href="$2" target="_blank" class="text-blue-600 hover:underline">$1</a>'
+      )
       // Images - improved regex to handle various URL formats
-      .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="max-w-full h-auto rounded my-3 border border-gray-200 dark:border-gray-600" onerror="this.style.display=\'none\'; this.nextElementSibling?.style.display=\'block\';" /><div class="hidden text-sm text-red-500 bg-red-50 dark:bg-red-900/20 p-2 rounded border border-red-200 dark:border-red-800">⚠️ Không thể tải ảnh: $2</div>')
+      .replace(
+        /!\[([^\]]*)\]\(([^)]+)\)/g,
+        '<img src="$2" alt="$1" class="max-w-full h-auto rounded my-3 border border-gray-200 dark:border-gray-600" onerror="this.style.display=\'none\'; this.nextElementSibling?.style.display=\'block\';" /><div class="hidden text-sm text-red-500 bg-red-50 dark:bg-red-900/20 p-2 rounded border border-red-200 dark:border-red-800">⚠️ Không thể tải ảnh: $2</div>'
+      )
       // Lists
       .replace(/^\* (.*$)/gim, '<li class="ml-4">$1</li>')
       .replace(/^\d+\. (.*$)/gim, '<li class="ml-4">$1</li>')
       // Blockquotes
-      .replace(/^> (.*$)/gim, '<blockquote class="border-l-4 border-gray-300 pl-4 italic my-3 text-gray-600 dark:text-gray-400">$1</blockquote>')
+      .replace(
+        /^> (.*$)/gim,
+        '<blockquote class="border-l-4 border-gray-300 pl-4 italic my-3 text-gray-600 dark:text-gray-400">$1</blockquote>'
+      )
       // Line breaks
-      .replace(/\n/g, '<br />');
+      .replace(/\n/g, "<br />");
 
     // Wrap lists
-    const lines = html.split('<br />');
+    const lines = html.split("<br />");
     let inList = false;
     let listStart = -1;
-    
+
     for (let i = 0; i < lines.length; i++) {
-      if (lines[i].includes('<li>')) {
+      if (lines[i].includes("<li>")) {
         if (!inList) {
           inList = true;
           listStart = i;
         }
-      } else if (inList && !lines[i].includes('<li>')) {
+      } else if (inList && !lines[i].includes("<li>")) {
         if (listStart !== -1) {
           const listItems = lines.slice(listStart, i);
-          const listHtml = '<ul class="list-disc list-inside space-y-1 my-3">' + listItems.join('') + '</ul>';
+          const listHtml =
+            '<ul class="list-disc list-inside space-y-1 my-3">' +
+            listItems.join("") +
+            "</ul>";
           lines.splice(listStart, i - listStart, listHtml);
           i = listStart;
         }
@@ -91,42 +116,65 @@ export default function MarkdownEditor({ value, onChange, placeholder }: Markdow
         listStart = -1;
       }
     }
-    
+
     if (inList && listStart !== -1) {
       const listItems = lines.slice(listStart);
-      const listHtml = '<ul class="list-disc list-inside space-y-1 my-3">' + listItems.join('') + '</ul>';
+      const listHtml =
+        '<ul class="list-disc list-inside space-y-1 my-3">' +
+        listItems.join("") +
+        "</ul>";
       lines.splice(listStart);
       lines.push(listHtml);
     }
-    
-    return lines.join('<br />');
+
+    return lines.join("<br />");
   };
 
   // Insert markdown at cursor position
-  const insertMarkdown = (prefix: string, suffix: string = "", placeholder: string = "") => {
+  const insertMarkdown = (
+    prefix: string,
+    suffix: string = "",
+    placeholder: string = ""
+  ) => {
     if (!textareaRef.current) return;
 
     const textarea = textareaRef.current;
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const selectedText = value.substring(start, end);
-    
+
     let newText = "";
     if (selectedText) {
-      newText = value.substring(0, start) + prefix + selectedText + suffix + value.substring(end);
+      newText =
+        value.substring(0, start) +
+        prefix +
+        selectedText +
+        suffix +
+        value.substring(end);
     } else {
-      newText = value.substring(0, start) + prefix + placeholder + suffix + value.substring(end);
+      newText =
+        value.substring(0, start) +
+        prefix +
+        placeholder +
+        suffix +
+        value.substring(end);
     }
-    
+
     onChange(newText);
-    
+
     // Set cursor position after the inserted text
     setTimeout(() => {
       textarea.focus();
       if (selectedText) {
-        textarea.setSelectionRange(start + prefix.length, start + prefix.length + selectedText.length);
+        textarea.setSelectionRange(
+          start + prefix.length,
+          start + prefix.length + selectedText.length
+        );
       } else {
-        textarea.setSelectionRange(start + prefix.length, start + prefix.length + placeholder.length);
+        textarea.setSelectionRange(
+          start + prefix.length,
+          start + prefix.length + placeholder.length
+        );
       }
     }, 0);
   };
@@ -135,16 +183,16 @@ export default function MarkdownEditor({ value, onChange, placeholder }: Markdow
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (!file.type.startsWith('image/')) {
-        toast.error('Vui lòng chọn file ảnh hợp lệ');
+      if (!file.type.startsWith("image/")) {
+        toast.error("Vui lòng chọn file ảnh hợp lệ");
         return;
       }
-      
+
       if (file.size > 10 * 1024 * 1024) {
-        toast.error('File ảnh không được lớn hơn 10MB');
+        toast.error("File ảnh không được lớn hơn 10MB");
         return;
       }
-      
+
       setImageFile(file);
       setImageAlt(file.name.replace(/\.[^/.]+$/, "")); // Remove extension for default alt text
     }
@@ -153,7 +201,7 @@ export default function MarkdownEditor({ value, onChange, placeholder }: Markdow
   // Upload image and insert markdown
   const handleImageUpload = async () => {
     if (!imageFile || !imageAlt) {
-      toast.error('Vui lòng chọn ảnh và nhập alt text');
+      toast.error("Vui lòng chọn ảnh và nhập alt text");
       return;
     }
 
@@ -161,11 +209,11 @@ export default function MarkdownEditor({ value, onChange, placeholder }: Markdow
     try {
       const result = await uploadImage({
         image: imageFile,
-        folder: 'blog-content-images'
+        folder: "blog-content-images",
       }).unwrap();
 
       // Extract image URL from response
-      let imageUrl = '';
+      let imageUrl = "";
       if (result.success && result.data) {
         imageUrl = result.data.url || result.data.secureUrl;
       } else if ((result as any).url) {
@@ -178,19 +226,22 @@ export default function MarkdownEditor({ value, onChange, placeholder }: Markdow
         // Insert markdown image syntax
         const markdownImage = `![${imageAlt}](${imageUrl})`;
         insertMarkdown("", "", markdownImage);
-        
+
         // Reset form
         setImageFile(null);
         setImageAlt("");
         setShowImageUpload(false);
-        
-        toast.success('Upload ảnh thành công!');
+
+        toast.success("Upload ảnh thành công!");
       } else {
-        throw new Error('Không thể lấy URL ảnh từ response');
+        throw new Error("Không thể lấy URL ảnh từ response");
       }
     } catch (error) {
-      console.error('Image upload failed:', error);
-      toast.error('Upload ảnh thất bại: ' + (error as any)?.data?.message || 'Lỗi không xác định');
+      console.error("Image upload failed:", error);
+      toast.error(
+        "Upload ảnh thất bại: " + (error as any)?.data?.message ||
+          "Lỗi không xác định"
+      );
     } finally {
       setIsUploading(false);
     }
@@ -217,7 +268,7 @@ export default function MarkdownEditor({ value, onChange, placeholder }: Markdow
         >
           <Bold className="h-4 w-4" />
         </Button>
-        
+
         <Button
           type="button"
           variant="ghost"
@@ -228,7 +279,7 @@ export default function MarkdownEditor({ value, onChange, placeholder }: Markdow
         >
           <Italic className="h-4 w-4" />
         </Button>
-        
+
         <Button
           type="button"
           variant="ghost"
@@ -239,7 +290,7 @@ export default function MarkdownEditor({ value, onChange, placeholder }: Markdow
         >
           <Heading3 className="h-4 w-4" />
         </Button>
-        
+
         <Button
           type="button"
           variant="ghost"
@@ -250,7 +301,7 @@ export default function MarkdownEditor({ value, onChange, placeholder }: Markdow
         >
           <Heading2 className="h-4 w-4" />
         </Button>
-        
+
         <Button
           type="button"
           variant="ghost"
@@ -261,9 +312,9 @@ export default function MarkdownEditor({ value, onChange, placeholder }: Markdow
         >
           <Heading1 className="h-4 w-4" />
         </Button>
-        
+
         <div className="w-px h-6 bg-gray-400 dark:bg-gray-500 mx-1"></div>
-        
+
         <Button
           type="button"
           variant="ghost"
@@ -274,7 +325,7 @@ export default function MarkdownEditor({ value, onChange, placeholder }: Markdow
         >
           <List className="h-4 w-4" />
         </Button>
-        
+
         <Button
           type="button"
           variant="ghost"
@@ -285,7 +336,7 @@ export default function MarkdownEditor({ value, onChange, placeholder }: Markdow
         >
           <ListOrdered className="h-4 w-4" />
         </Button>
-        
+
         <Button
           type="button"
           variant="ghost"
@@ -296,9 +347,9 @@ export default function MarkdownEditor({ value, onChange, placeholder }: Markdow
         >
           <Quote className="h-4 w-4" />
         </Button>
-        
+
         <div className="w-px h-6 bg-gray-400 dark:bg-gray-500 mx-1"></div>
-        
+
         <Button
           type="button"
           variant="ghost"
@@ -309,7 +360,7 @@ export default function MarkdownEditor({ value, onChange, placeholder }: Markdow
         >
           <Code className="h-4 w-4" />
         </Button>
-        
+
         <Button
           type="button"
           variant="ghost"
@@ -320,7 +371,7 @@ export default function MarkdownEditor({ value, onChange, placeholder }: Markdow
         >
           <Link className="h-4 w-4" />
         </Button>
-        
+
         <Button
           type="button"
           variant="ghost"
@@ -343,7 +394,7 @@ export default function MarkdownEditor({ value, onChange, placeholder }: Markdow
           title="Toggle Preview"
         >
           <Eye className="h-4 w-4 mr-1" />
-          {showPreview ? 'Ẩn Preview' : 'Xem Preview'}
+          {showPreview ? "Ẩn Preview" : "Xem Preview"}
         </Button>
       </div>
 
@@ -351,7 +402,9 @@ export default function MarkdownEditor({ value, onChange, placeholder }: Markdow
       {showImageUpload && (
         <div className="border-b bg-gray-50 dark:bg-gray-800 p-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-medium text-gray-900 dark:text-white">Thêm ảnh vào nội dung</h3>
+            <h3 className="text-sm font-medium text-gray-900 dark:text-white">
+              Thêm ảnh vào nội dung
+            </h3>
             <Button
               type="button"
               variant="ghost"
@@ -362,7 +415,7 @@ export default function MarkdownEditor({ value, onChange, placeholder }: Markdow
               <X className="h-4 w-4" />
             </Button>
           </div>
-          
+
           <div className="space-y-3">
             <div>
               <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -376,7 +429,7 @@ export default function MarkdownEditor({ value, onChange, placeholder }: Markdow
                 className="text-xs"
               />
             </div>
-            
+
             <div>
               <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Alt text (mô tả ảnh)
@@ -388,7 +441,7 @@ export default function MarkdownEditor({ value, onChange, placeholder }: Markdow
                 className="text-xs"
               />
             </div>
-            
+
             <div className="flex space-x-2">
               <Button
                 type="button"
@@ -409,7 +462,7 @@ export default function MarkdownEditor({ value, onChange, placeholder }: Markdow
                   </>
                 )}
               </Button>
-              
+
               <Button
                 type="button"
                 variant="outline"
@@ -431,12 +484,14 @@ export default function MarkdownEditor({ value, onChange, placeholder }: Markdow
           <div className="p-4 border-t">
             <div className="prose prose-sm max-w-none min-h-[256px] dark:prose-invert">
               {value ? (
-                <div 
+                <div
                   dangerouslySetInnerHTML={{ __html: renderMarkdown(value) }}
                   className="markdown-content text-gray-900 dark:text-white"
                 />
               ) : (
-                <div className="text-gray-500 dark:text-gray-400 italic">Chưa có nội dung để xem trước</div>
+                <div className="text-gray-500 dark:text-gray-400 italic">
+                  Chưa có nội dung để xem trước
+                </div>
               )}
             </div>
           </div>
@@ -447,12 +502,16 @@ export default function MarkdownEditor({ value, onChange, placeholder }: Markdow
               ref={textareaRef}
               value={value}
               onChange={(e) => onChange(e.target.value)}
-              placeholder={placeholder || "Viết nội dung blog bằng markdown... (sử dụng các nút trên để định dạng)"}
+              placeholder={
+                placeholder ||
+                "Viết nội dung blog bằng markdown... (sử dụng các nút trên để định dạng)"
+              }
               className="w-full h-64 p-3 border-0 resize-none focus:outline-none focus:ring-0 text-sm font-mono bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-              style={{ minHeight: '256px' }}
+              style={{ minHeight: "256px" }}
             />
             <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-              💡 Sử dụng các nút trên để định dạng văn bản. Nội dung sẽ được lưu dưới dạng Markdown.
+              💡 Sử dụng các nút trên để định dạng văn bản. Nội dung sẽ được lưu
+              dưới dạng Markdown.
             </div>
           </div>
         )}

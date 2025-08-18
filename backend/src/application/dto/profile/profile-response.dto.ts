@@ -25,4 +25,9 @@ export class ProfileResponseDto {
   @ApiProperty() notificationSettings?: any;
   @ApiProperty() createdAt: string;
   @ApiProperty() updatedAt: string;
+  @ApiProperty({ 
+    enum: ["student", "university_rep", "admin", "moderator", "super_admin"],
+    description: "User account type/role"
+  }) 
+  accountType: string;
 }

@@ -209,6 +209,36 @@ export class BlogController {
     return this.blogService.getMyBlogs(req.user.id, pagination);
   }
 
+  @Get("my-drafts")
+  @ApiTags("Blog - User")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPER_ADMIN, UserRole.UNIVERSITY_REP, UserRole.STUDENT)
+  @ApiBearerAuth("JWT-auth")
+  @ApiOperation({
+    summary: "Get my draft blogs",
+    description: "Retrieve draft blogs created by the authenticated user",
+  })
+  @ApiQuery({
+    name: "page",
+    required: false,
+    type: Number,
+    description: "Page number (default: 1)",
+  })
+  @ApiQuery({
+    name: "limit",
+    required: false,
+    type: Number,
+    description: "Items per page (default: 10)",
+  })
+  @ApiOkResponse({
+    description: "User's draft blogs retrieved successfully",
+    type: [BlogResponseDto],
+  })
+  @ApiUnauthorizedResponse({ description: "Unauthorized" })
+  async getMyDrafts(@Request() req, @Query() pagination: PaginationDto) {
+    return this.blogService.getMyDrafts(req.user.id, pagination);
+  }
+
   @Get("pending")
   @ApiTags("Blog - Moderator", "Blog - Admin")
   @UseGuards(JwtAuthGuard, RolesGuard)

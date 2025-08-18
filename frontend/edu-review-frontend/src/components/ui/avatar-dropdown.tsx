@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { LogOut, Settings, User as UserIcon, ChevronDown } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import type { User } from "@/types";
@@ -18,6 +19,7 @@ export function AvatarDropdown({ profile, isScrolled = false }: { profile?: User
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const { logout } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -37,10 +39,22 @@ export function AvatarDropdown({ profile, isScrolled = false }: { profile?: User
 
   const handleLogout = async () => {
     setOpen(false);
+    console.log("🔐 AvatarDropdown: Starting logout process...");
+    
     try {
-      await logout();
+      // Call logout which will call the API and clear local state
+      // Specify redirect to home page
+      await logout("/");
+      console.log("🔐 AvatarDropdown: Logout completed successfully");
+      
+      // Redirect to home page after successful logout
+      router.push("/");
+      console.log("🔐 AvatarDropdown: Redirecting to home page");
+      
     } catch (error) {
-      console.error("Logout failed:", error);
+      console.error("🔐 AvatarDropdown: Logout failed", error);
+      // You might want to show a toast notification here
+      // toast.error("Đăng xuất thất bại. Vui lòng thử lại.");
     }
   };
 

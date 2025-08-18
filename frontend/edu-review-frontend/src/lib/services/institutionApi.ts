@@ -1,38 +1,30 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { baseQueryWithErrorHandling } from "../api";
 import type {
   Institution,
   InstitutionDetail,
   CreateInstitutionRequest,
   UpdateInstitutionRequest,
   InstitutionFilters,
-  PaginatedResponse,
-} from "@/types";
+  InstitutionListResponse,
+  InstitutionStats,
+} from "@/types/institution";
 
 export const institutionApi = createApi({
   reducerPath: "institutionApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: "/api/v1",
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as any).auth.accessToken;
-      if (token) {
-        headers.set("authorization", `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithErrorHandling,
   tagTypes: ["Institution", "InstitutionDetail"],
   endpoints: (builder) => ({
     // Get all institutions with pagination and filters
-    getInstitutions: builder.query<
-      PaginatedResponse<Institution>,
-      InstitutionFilters
-    >({
-      query: (filters) => ({
-        url: "/universities",
-        params: filters,
-      }),
-      providesTags: ["Institution"],
-    }),
+    getInstitutions: builder.query<InstitutionListResponse, InstitutionFilters>(
+      {
+        query: (filters) => ({
+          url: "/universities",
+          params: filters,
+        }),
+        providesTags: ["Institution"],
+      }
+    ),
 
     // Get institution by ID
     getInstitutionById: builder.query<InstitutionDetail, number>({
@@ -77,7 +69,7 @@ export const institutionApi = createApi({
 
     // Search institutions
     searchInstitutions: builder.query<
-      PaginatedResponse<Institution>,
+      InstitutionListResponse,
       InstitutionFilters
     >({
       query: (filters) => ({
@@ -115,15 +107,7 @@ export const institutionApi = createApi({
     }),
 
     // Get institution statistics
-    getInstitutionStats: builder.query<
-      {
-        totalInstitutions: number;
-        totalStudents: number;
-        averageRating: number;
-        topPrograms: string[];
-      },
-      void
-    >({
+    getInstitutionStats: builder.query<InstitutionStats, void>({
       query: () => "/universities/stats",
       providesTags: ["Institution"],
     }),
@@ -146,7 +130,7 @@ export const institutionApi = createApi({
 
     // Get institution reviews
     getInstitutionReviews: builder.query<
-      PaginatedResponse<any>,
+      { data: any[]; total: number; current_page: number; last_page: number },
       { institutionId: number; page?: number; limit?: number }
     >({
       query: ({ institutionId, page = 1, limit = 10 }) => ({
@@ -160,7 +144,7 @@ export const institutionApi = createApi({
 
     // Get institution courses
     getInstitutionCourses: builder.query<
-      PaginatedResponse<any>,
+      { data: any[]; total: number; current_page: number; last_page: number },
       { institutionId: number; page?: number; limit?: number }
     >({
       query: ({ institutionId, page = 1, limit = 10 }) => ({

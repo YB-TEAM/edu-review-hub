@@ -91,6 +91,10 @@ export interface IBlogService {
     userId: number,
     pagination: PaginationDto
   ): Promise<{ data: BlogResponseDto[]; metadata: any }>;
+  getMyDrafts(
+    userId: number,
+    pagination: PaginationDto
+  ): Promise<{ data: BlogResponseDto[]; metadata: any }>;
   getPendingModeration(
     pagination: PaginationDto
   ): Promise<{ data: BlogResponseDto[]; metadata: any }>;

@@ -4,7 +4,7 @@ import {
   useRegisterMutation,
   useLogoutMutation,
   useGetCurrentUserQuery,
-} from "@/lib/services/authApi";
+} from "@/lib/services";
 import {
   setAuth,
   logout as logoutAction,
@@ -12,50 +12,95 @@ import {
   clearError,
   setUser,
   restoreAuth,
+  forceRefetch,
 } from "@/lib/slices/authSlice";
 import type { RootState } from "@/lib/store";
 import type { LoginRequest, RegisterRequest, User } from "@/types";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { validateToken, clearAuthData } from "@/lib/utils/auth";
 
 export const useAuth = () => {
   const dispatch = useDispatch();
   const { user, isAuthenticated, isLoading, error } = useSelector(
     (state: RootState) => state.auth
   );
+  const hasRestoredAuth = useRef(false);
+  const hasFetchedUser = useRef(false);
+  const lastProcessedUser = useRef<User | null>(null);
 
-  // Get current user data - luôn chạy nếu có token
+  // Get current user data - chỉ chạy khi có token
   const {
     data: currentUser,
     isLoading: isUserLoading,
     error: userError,
+    refetch: refetchUser,
   } = useGetCurrentUserQuery(undefined, {
-    skip: !isAuthenticated && !localStorage.getItem("accessToken"),
+    skip: !isAuthenticated, // Chỉ chạy khi đã authenticated
+    // Add polling to keep user data fresh
+    pollingInterval: 5 * 60 * 1000, // 5 minutes
+    // Refetch on window focus
+    refetchOnFocus: true,
+    // Refetch on reconnect
+    refetchOnReconnect: true,
   });
 
-  // Khôi phục authentication state từ localStorage khi component mount
+  // Khôi phục authentication state từ localStorage khi cần thiết
+  // CHỈ CHẠY KHI AuthProvider chưa restore auth state
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && !hasRestoredAuth.current && !isAuthenticated) {
       const accessToken = localStorage.getItem("accessToken");
       const refreshToken = localStorage.getItem("refreshToken");
 
       // Nếu có token nhưng chưa authenticated, restore auth state
-      if (accessToken && refreshToken && !isAuthenticated) {
+      if (accessToken && refreshToken) {
+        // Validate tokens using utility function
+        const accessTokenValidation = validateToken(accessToken);
+        const refreshTokenValidation = validateToken(refreshToken);
+        
+        if (!accessTokenValidation.isValid || !refreshTokenValidation.isValid) {
+          clearAuthData();
+          hasRestoredAuth.current = true;
+          return;
+        }
+        
+        if (accessTokenValidation.isExpired && refreshTokenValidation.isExpired) {
+          clearAuthData();
+          hasRestoredAuth.current = true;
+          return;
+        }
+        
         dispatch(restoreAuth());
+        hasRestoredAuth.current = true;
+      } else {
+        hasRestoredAuth.current = true;
       }
     }
   }, [isAuthenticated, dispatch]);
 
-  // Cập nhật user data khi có currentUser
+  // Cập nhật user data khi có currentUser - FIXED: Prevent infinite loop
   useEffect(() => {
-    if (currentUser && !user) {
+    if (currentUser && !user && currentUser !== lastProcessedUser.current) {
+      lastProcessedUser.current = currentUser;
       dispatch(setUser(currentUser as User));
+      hasFetchedUser.current = true;
     }
   }, [currentUser, user, dispatch]);
+
+  // Force fetch user data when authentication is restored
+  useEffect(() => {
+    if (isAuthenticated && !user && !currentUser && !isUserLoading && refetchUser && !hasFetchedUser.current) {
+      refetchUser();
+      hasFetchedUser.current = true;
+    }
+  }, [isAuthenticated, user, currentUser, isUserLoading, refetchUser]);
 
   // Handle 401 errors from user query
   useEffect(() => {
     if (userError && "status" in userError && userError.status === 401) {
       dispatch(logoutAction());
+      hasRestoredAuth.current = false;
+      hasFetchedUser.current = false;
+      lastProcessedUser.current = null;
     }
   }, [userError, dispatch]);
 
@@ -68,6 +113,8 @@ export const useAuth = () => {
       dispatch(clearError());
       const response = await login(credentials).unwrap();
       dispatch(setAuth(response));
+      hasFetchedUser.current = false; // Reset flag for new session
+      lastProcessedUser.current = null; // Reset last processed user
       return response;
     } catch (error: any) {
       const errorMessage = error?.data?.message || "Login failed";
@@ -81,6 +128,8 @@ export const useAuth = () => {
       dispatch(clearError());
       const response = await register(userData).unwrap();
       dispatch(setAuth(response));
+      hasFetchedUser.current = false; // Reset flag for new session
+      lastProcessedUser.current = null; // Reset last processed user
       return response;
     } catch (error: any) {
       const errorMessage = error?.data?.message || "Registration failed";
@@ -89,31 +138,45 @@ export const useAuth = () => {
     }
   };
 
-  const handleLogout = async () => {
+  const handleLogout = async (redirectTo?: string) => {
     try {
+      // Call logout API first to invalidate tokens on backend
       await logout().unwrap();
     } catch (error) {
-      // Logout error handled silently
+      // Continue with local logout even if API fails
     } finally {
+      // Clear local auth state
       dispatch(logoutAction());
+      hasRestoredAuth.current = false; // Reset for next session
+      hasFetchedUser.current = false; // Reset for next session
+      lastProcessedUser.current = null; // Reset last processed user
+      
+      // Return redirect path if specified
+      if (redirectTo) {
+        return redirectTo;
+      }
     }
   };
 
   const isAdmin =
-    user?.accountType === "admin" || user?.accountType === "super_admin";
-  const isModerator = user?.accountType === "moderator" || isAdmin;
-  const isUniversityRep = user?.accountType === "university_rep";
-  const isStudent = user?.accountType === "student";
+    (currentUser?.accountType === "admin" || currentUser?.accountType === "super_admin") ||
+    (user?.accountType === "admin" || user?.accountType === "super_admin");
+  const isModerator = 
+    currentUser?.accountType === "moderator" || 
+    user?.accountType === "moderator" || 
+    isAdmin;
+  const isUniversityRep = 
+    currentUser?.accountType === "university_rep" || 
+    user?.accountType === "university_rep";
+  const isStudent = 
+    currentUser?.accountType === "student" || 
+    user?.accountType === "student";
 
-  return {
+  const result = {
     // State
     user: currentUser || user,
-    isAuthenticated:
-      isAuthenticated ||
-      !!(
-        localStorage.getItem("accessToken") &&
-        localStorage.getItem("refreshToken")
-      ),
+    currentUser, // Thêm currentUser vào result
+    isAuthenticated: isAuthenticated,
     isLoading:
       isLoading ||
       isLoginLoading ||
@@ -138,4 +201,6 @@ export const useAuth = () => {
     isVerified: user?.isVerified || false,
     isActive: user?.status === "active",
   };
+
+  return result;
 };

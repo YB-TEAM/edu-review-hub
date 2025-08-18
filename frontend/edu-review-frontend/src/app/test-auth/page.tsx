@@ -49,11 +49,11 @@ export default function TestAuthPage() {
               </div>
               
               <div>
-                <strong>localStorage accessToken:</strong> {localStorage.getItem("accessToken") ? "✅ Có" : "❌ Không có"}
+                <strong>localStorage accessToken:</strong> {typeof window !== 'undefined' && localStorage.getItem("accessToken") ? "✅ Có" : "❌ Không có"}
               </div>
               
               <div>
-                <strong>localStorage refreshToken:</strong> {localStorage.getItem("refreshToken") ? "✅ Có" : "❌ Không có"}
+                <strong>localStorage refreshToken:</strong> {typeof window !== 'undefined' && localStorage.getItem("refreshToken") ? "✅ Có" : "❌ Không có"}
               </div>
             </CardContent>
           </Card>

@@ -57,10 +57,16 @@ export class BlogService implements IBlogService {
     let tags = [];
     if (dto.tagIds && dto.tagIds.length > 0) {
       tags = await this.tagRepository.findByIds(dto.tagIds);
+      console.log(
+        "🔖 Tags found:",
+        tags.map((t) => ({ id: t.id, name: t.name }))
+      );
       // Increment usage count for each tag
       for (const tag of tags) {
         await this.tagRepository.incrementUsageCount(tag.id);
       }
+    } else {
+      console.log("🔖 No tags provided for blog creation");
     }
 
     // Handle featuredImage if provided (should be Cloudinary public_id)
@@ -77,6 +83,13 @@ export class BlogService implements IBlogService {
       }
     }
 
+    console.log("📝 Creating blog with data:", {
+      title: dto.title,
+      tagIds: dto.tagIds,
+      tagsCount: tags.length,
+      featuredImage,
+    });
+
     const blog = await this.blogRepository.create({
       ...dto,
       featuredImage,
@@ -88,14 +101,12 @@ export class BlogService implements IBlogService {
       tags: tags,
     });
 
-    // Track images in blog content
-    try {
-      await this.blogImageTrackerService.trackImagesInBlog(blog.id, dto.content);
-      console.log("✅ Blog content images tracked for blog", blog.id);
-    } catch (error) {
-      console.error("❌ Failed to track blog content images:", error);
-      // Don't throw error, continue with blog creation
-    }
+    console.log(
+      "📝 Blog created with ID:",
+      blog.id,
+      "Tags count:",
+      blog.tags?.length || 0
+    );
 
     // Track activity
     try {
@@ -222,7 +233,7 @@ export class BlogService implements IBlogService {
     },
     sorting?: {
       sortBy?: string;
-      sortOrder?: 'ASC' | 'DESC';
+      sortOrder?: "ASC" | "DESC";
     }
   ): Promise<{ data: BlogResponseDto[]; metadata: any; statistics: any }> {
     // Check if user is admin/moderator
@@ -429,22 +440,21 @@ export class BlogService implements IBlogService {
     }
 
     const updated = await this.blogRepository.update(id, dto);
-    
+
     // Track images in updated blog content
     if (dto.content) {
       try {
-        await this.blogImageTrackerService.trackImagesInBlog(id, dto.content);
+        await this.blogImageTrackerService.trackImagesInBlog(
+          id.toString(),
+          dto.content
+        );
         console.log("✅ Blog content images tracked for updated blog", id);
       } catch (error) {
         console.error("❌ Failed to track blog content images:", error);
-        // Don't throw error, continue with blog update
       }
     }
-    
-    return this.toResponseDto(updated);
-  }
 
-  async delete(id: number, userId: number): Promise<void> {
+    return this.toResponseDto(updated);
     const blog = await this.blogRepository.findById(id);
     if (!blog) throw new NotFoundException("Blog not found");
 
@@ -719,6 +729,38 @@ export class BlogService implements IBlogService {
     return { data, metadata };
   }
 
+  async getMyDrafts(
+    userId: number,
+    pagination: PaginationDto
+  ): Promise<{ data: BlogResponseDto[]; metadata: any }> {
+    const { page = 1, limit = 10 } = pagination;
+    const [blogs, total] = await this.blogRepository.findAll({
+      page,
+      limit,
+      filters: {
+        authorId: userId,
+        status: BlogStatus.DRAFT,
+      },
+    });
+
+    // Check like status for user's draft blogs
+    const likeStatusMap = await this.checkLikeStatusForBlogs(blogs, userId);
+
+    const data = blogs.map((blog) => {
+      const blogDto = this.toResponseDto(blog);
+      blogDto.isLiked = likeStatusMap.get(blog.id) || false;
+      return blogDto;
+    });
+
+    const metadata = {
+      totalItems: total,
+      pageSize: limit,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+    };
+    return { data, metadata };
+  }
+
   async getPendingModeration(
     pagination: PaginationDto
   ): Promise<{ data: BlogResponseDto[]; metadata: any }> {
@@ -762,36 +804,30 @@ export class BlogService implements IBlogService {
       }
     }
 
+
+    // Debug tags mapping
+    console.log(`🔖 Blog ${blog.id} tags in toResponseDto:`, {
+      hasTags: !!blog.tags,
+      tagsData: blog.tags?.map((t) => ({ id: t.id, name: t.name })) || [],
+    });
+
+    const mappedTags =
+      blog.tags?.map((tag) => ({
+        id: tag.id,
+        name: tag.name,
+        description: tag.description,
+        color: tag.color,
+        isActive: tag.isActive,
+        usageCount: tag.usageCount,
+        createdAt: tag.createdAt,
+        updatedAt: tag.updatedAt,
+      })) || [];
+
+    console.log(`🔖 Blog ${blog.id} mapped tags:`, mappedTags.length);
+
     // Debug logging to see what's being loaded
     console.log("🔍 Debug - Blog author:", {
       authorId: blog.authorId,
-      author: blog.author,
-      authorProfile: blog.author?.profile,
-      displayName: blog.author?.profile?.displayName,
-      username: blog.author?.username
-    });
-
-    console.log("🔍 Debug - Blog moderator:", {
-      moderatorId: blog.moderatorId,
-      moderator: blog.moderator,
-      moderatorProfile: blog.moderator?.profile,
-      displayName: blog.moderator?.profile?.displayName,
-      username: blog.moderator?.username
-    });
-
-    // Extract author name - prioritize displayName, fallback to username
-    const authorName = blog.author?.profile?.displayName || 
-                      blog.author?.username || 
-                      'Unknown';
-
-    // Extract moderator name - prioritize displayName, fallback to username
-    const moderatorName = blog.moderator?.profile?.displayName || 
-                         blog.moderator?.username || 
-                         null;
-
-    return {
-      id: blog.id,
-      title: blog.title,
       content: blog.content,
       excerpt: blog.excerpt,
       featuredImage: blog.featuredImage,
@@ -803,16 +839,7 @@ export class BlogService implements IBlogService {
       viewCount: blog.viewCount,
       likeCount: blog.likeCount,
       commentCount: blog.commentCount,
-      tags: blog.tags?.map((tag) => ({
-        id: tag.id,
-        name: tag.name,
-        description: tag.description,
-        color: tag.color,
-        isActive: tag.isActive,
-        usageCount: tag.usageCount,
-        createdAt: tag.createdAt,
-        updatedAt: tag.updatedAt,
-      })),
+      tags: mappedTags,
       publishedAt: blog.publishedAt,
       moderatedAt: blog.moderatedAt,
       authorId: blog.authorId,
@@ -919,14 +946,14 @@ export class BlogService implements IBlogService {
       pendingBlogs,
       totalViews,
       totalLikes,
-      totalComments
+      totalComments,
     ] = await Promise.all([
       this.blogRepository.count({}),
       this.blogRepository.count({ status: BlogStatus.APPROVED }),
       this.blogRepository.count({ status: BlogStatus.PUBLISHED }), // Changed from PENDING to PUBLISHED
-      this.blogRepository.sumField('viewCount'),
-      this.blogRepository.sumField('likeCount'),
-      this.blogRepository.sumField('commentCount')
+      this.blogRepository.sumField("viewCount"),
+      this.blogRepository.sumField("likeCount"),
+      this.blogRepository.sumField("commentCount"),
     ]);
 
     return {
@@ -935,7 +962,7 @@ export class BlogService implements IBlogService {
       pendingBlogs,
       totalViews: totalViews || 0,
       totalLikes: totalLikes || 0,
-      totalComments: totalComments || 0
+      totalComments: totalComments || 0,
     };
   }
 }

@@ -7,81 +7,54 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { blogApi } from "@/lib/services/blogApi";
 import { Blog, BlogStatus } from "@/types/blog";
-import { Plus, Edit, Eye, Trash2, Send } from "lucide-react";
+import { Plus, Edit, Eye, Send } from "lucide-react";
+import { AuthenticatedGuard } from "@/components/auth/PermissionGuard";
+import { useGetMyDraftsQuery, usePublishBlogMutation } from "@/lib/services/blogApi";
 
 export default function MyDraftsPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { user } = useAuth();
-  const [drafts, setDrafts] = useState<Blog[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (user) {
-      fetchDrafts();
-    }
-  }, [user]);
-
-  const fetchDrafts = async () => {
-    try {
-      const response = await blogApi.getMyDrafts({ page: 1, limit: 50 }).unwrap();
-      setDrafts(response.data || []);
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.data?.message || "Failed to fetch drafts",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  
+  // Use RTK Query hooks
+  const { data: draftsData, isLoading, error } = useGetMyDraftsQuery(
+    { page: 1, limit: 50 },
+    { skip: !user }
+  );
+  
+  const [publishBlog, { isLoading: isPublishing }] = usePublishBlogMutation();
+  
+  const drafts = draftsData?.data || [];
 
   const handlePublish = async (blogId: number) => {
     try {
-      await blogApi.publishBlog({ id: blogId, data: {} }).unwrap();
+      await publishBlog({ id: blogId, data: {} }).unwrap();
+      
       toast({
         title: "Success",
         description: "Blog submitted for moderation!",
       });
-      fetchDrafts(); // Refresh the list
+      // RTK Query will automatically refetch the data
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.data?.message || "Failed to publish blog",
+        description: error.message || "Failed to publish blog",
         variant: "destructive"
       });
     }
   };
 
-  const handleDelete = async (blogId: number) => {
-    if (!confirm("Are you sure you want to delete this draft?")) return;
-    
-    try {
-      await blogApi.deleteBlog(blogId).unwrap();
-      toast({
-        title: "Success",
-        description: "Draft deleted successfully!",
-      });
-      fetchDrafts(); // Refresh the list
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.data?.message || "Failed to delete draft",
-        variant: "destructive"
-      });
-    }
-  };
+  // Delete function removed - blogs cannot be deleted, only banned
 
   const getStatusBadge = (status: BlogStatus) => {
-    const statusConfig = {
-      [BlogStatus.DRAFT]: { label: "Draft", variant: "secondary" as const },
-      [BlogStatus.PUBLISHED]: { label: "Published", variant: "default" as const },
-      [BlogStatus.APPROVED]: { label: "Approved", variant: "default" as const },
-      [BlogStatus.REJECTED]: { label: "Rejected", variant: "destructive" as const },
-      [BlogStatus.BANNED]: { label: "Banned", variant: "destructive" as const },
+    const statusConfig: Record<BlogStatus, { label: string; variant: "secondary" | "default" | "destructive" }> = {
+      [BlogStatus.DRAFT]: { label: "Draft", variant: "secondary" },
+      [BlogStatus.PUBLISHED]: { label: "Published", variant: "default" },
+      [BlogStatus.PENDING]: { label: "Pending", variant: "secondary" },
+      [BlogStatus.APPROVED]: { label: "Approved", variant: "default" },
+      [BlogStatus.REJECTED]: { label: "Rejected", variant: "destructive" },
+      [BlogStatus.BANNED]: { label: "Banned", variant: "destructive" },
     };
 
     const config = statusConfig[status];
@@ -201,14 +174,7 @@ export default function MyDraftsPage() {
                     </Button>
                   )}
                   
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    onClick={() => handleDelete(blog.id)}
-                  >
-                    <Trash2 className="w-4 h-4 mr-1" />
-                    Delete
-                  </Button>
+                  {/* Delete button removed - blogs cannot be deleted, only banned */}
                 </div>
               </CardContent>
             </Card>
