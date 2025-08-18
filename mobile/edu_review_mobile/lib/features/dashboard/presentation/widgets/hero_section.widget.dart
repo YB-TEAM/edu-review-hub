@@ -19,25 +19,26 @@ class HeroSection extends StatefulWidget {
 
 class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStateMixin {
   final List<String> quotes = [
-    'The best way to predict the future is to create it.',
-    'Life is 10% what happens to us and 90% how we react to it.',
-    'Do not wait to strike till the iron is hot; but make it hot by striking.',
-    'Success is not in what you have, but who you are.',
+    'Vì lợi ích mười năm trồng cây, vì lợi ích trăm năm trồng người.',
+    'Hiền tài là nguyên khí của quốc gia.',
+    'Học, học nữa, học mãi.',
+    'Ngọc không mài không thành đồ vật, người không học không biết rõ đạo.',
   ];
 
   final List<String> descriptions = [
-    'Take control and shape your destiny.',
-    'Your attitude determines your success.',
-    'Act decisively to create opportunities.',
-    'True success comes from character.',
+    'Giáo dục là nền tảng lâu dài cho sự phát triển của đất nước.',
+    'Người tài chính là sức mạnh, nền tảng của quốc gia.',
+    'Việc học là con đường không có điểm dừng.',
+    'Học tập là cách rèn luyện con người trở nên hoàn thiện.',
   ];
 
   final List<String> authors = [
-    'Peter Drucker',
-    'Charles R. Swindoll',
-    'William Butler Yeats',
-    'Bo Bennett',
+    'Hồ Chí Minh',
+    'Thân Nhân Trung',
+    'V.I. Lênin', 
+    'Khổng Tử',  
   ];
+
 
   int _quoteIndex = 0;
   int _circleIndex = 0;
@@ -67,7 +68,7 @@ class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
       setState(() {
         _quoteIndex = (_quoteIndex + 1) % quotes.length;
         _circleIndex = (_circleIndex + 1) % 4;
@@ -90,7 +91,7 @@ class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStat
         child: FadeTransition(
           opacity: widget.fadeAnimation,
           child: Container(
-            height: 210,
+            height: 224,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               gradient: LinearGradient(
@@ -140,7 +141,6 @@ class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStat
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Quote
                       AnimatedSwitcher(
                         duration: const Duration(milliseconds: 400),
                         transitionBuilder: (child, animation) =>
