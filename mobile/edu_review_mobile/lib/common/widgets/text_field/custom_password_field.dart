@@ -73,6 +73,7 @@ class _CustomPasswordFieldState extends State<CustomPasswordField> {
           validator: widget.validator,
           style: Theme.of(context).textTheme.bodyMedium,
           decoration: InputDecoration(
+            errorMaxLines: 2,
             hintText: widget.placeholder,
             hintStyle: Theme.of(
               context,
