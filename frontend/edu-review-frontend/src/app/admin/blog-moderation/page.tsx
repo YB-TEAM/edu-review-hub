@@ -5,13 +5,19 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { blogApi } from "@/lib/services/blogApi";
-import { Blog, BlogStatus } from "@/types/blog";
+import { blogApi } from "../../../lib/services/blogApi";
+import { Blog, BlogStatus } from "../../../types/blog";
 import { Eye, Check, X, Ban, Clock, User, Calendar } from "lucide-react";
 
 export default function BlogModerationPage() {
@@ -32,27 +38,30 @@ export default function BlogModerationPage() {
 
   const fetchModerationBlogs = async () => {
     try {
-      const response = await blogApi.getModerationBlogs({ page: 1, limit: 50 }).unwrap();
+      const response = await blogApi
+        .getModerationBlogs({ page: 1, limit: 50 })
+        .unwrap();
       setBlogs(response.data || []);
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.data?.message || "Failed to fetch blogs for moderation",
-        variant: "destructive"
+        description:
+          error.data?.message || "Failed to fetch blogs for moderation",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleModerate = async (action: 'approve' | 'reject' | 'ban') => {
+  const handleModerate = async (action: "approve" | "reject" | "ban") => {
     if (!selectedBlog) return;
 
-    if (action === 'reject' && !moderationReason.trim()) {
+    if (action === "reject" && !moderationReason.trim()) {
       toast({
         title: "Error",
         description: "Please provide a reason for rejection",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -60,14 +69,20 @@ export default function BlogModerationPage() {
     setIsModerating(true);
     try {
       switch (action) {
-        case 'approve':
-          await blogApi.approveBlog({ id: selectedBlog.id, data: { moderationReason } }).unwrap();
+        case "approve":
+          await blogApi
+            .approveBlog({ id: selectedBlog.id, data: { moderationReason } })
+            .unwrap();
           break;
-        case 'reject':
-          await blogApi.rejectBlog({ id: selectedBlog.id, data: { moderationReason } }).unwrap();
+        case "reject":
+          await blogApi
+            .rejectBlog({ id: selectedBlog.id, data: { moderationReason } })
+            .unwrap();
           break;
-        case 'ban':
-          await blogApi.banBlog({ id: selectedBlog.id, data: { moderationReason } }).unwrap();
+        case "ban":
+          await blogApi
+            .banBlog({ id: selectedBlog.id, data: { moderationReason } })
+            .unwrap();
           break;
       }
 
@@ -75,7 +90,7 @@ export default function BlogModerationPage() {
         title: "Success",
         description: `Blog ${action}d successfully!`,
       });
-      
+
       setSelectedBlog(null);
       setModerationReason("");
       fetchModerationBlogs(); // Refresh the list
@@ -83,7 +98,7 @@ export default function BlogModerationPage() {
       toast({
         title: "Error",
         description: error.data?.message || `Failed to ${action} blog`,
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setIsModerating(false);
@@ -93,9 +108,15 @@ export default function BlogModerationPage() {
   const getStatusBadge = (status: BlogStatus) => {
     const statusConfig = {
       [BlogStatus.DRAFT]: { label: "Draft", variant: "secondary" as const },
-      [BlogStatus.PUBLISHED]: { label: "Published", variant: "default" as const },
+      [BlogStatus.PUBLISHED]: {
+        label: "Published",
+        variant: "default" as const,
+      },
       [BlogStatus.APPROVED]: { label: "Approved", variant: "default" as const },
-      [BlogStatus.REJECTED]: { label: "Rejected", variant: "destructive" as const },
+      [BlogStatus.REJECTED]: {
+        label: "Rejected",
+        variant: "destructive" as const,
+      },
       [BlogStatus.BANNED]: { label: "Banned", variant: "destructive" as const },
     };
 
@@ -104,8 +125,8 @@ export default function BlogModerationPage() {
   };
 
   // Check if user has admin/moderator permissions
-  const hasModerationPermission = user?.roles?.some(role => 
-    ['admin', 'moderator', 'super_admin'].includes(role.name)
+  const hasModerationPermission = user?.roles?.some((role) =>
+    ["admin", "moderator", "super_admin"].includes(role.name)
   );
 
   if (!user || !hasModerationPermission) {
@@ -113,7 +134,9 @@ export default function BlogModerationPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
-          <p className="text-gray-600">You don't have permission to access this page.</p>
+          <p className="text-gray-600">
+            You don't have permission to access this page.
+          </p>
         </div>
       </div>
     );
@@ -149,7 +172,9 @@ export default function BlogModerationPage() {
           <CardContent className="text-center py-12">
             <div className="text-gray-500 mb-4">
               <Clock className="w-12 h-12 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No blogs to moderate</h3>
+              <h3 className="text-lg font-semibold mb-2">
+                No blogs to moderate
+              </h3>
               <p className="text-sm">All published blogs have been reviewed.</p>
             </div>
           </CardContent>
@@ -176,7 +201,7 @@ export default function BlogModerationPage() {
                 <p className="text-gray-600 line-clamp-3 mb-4">
                   {blog.excerpt || "No excerpt available"}
                 </p>
-                
+
                 <div className="flex flex-wrap gap-2 mb-4">
                   {blog.tags?.map((tag) => (
                     <Badge key={tag.id} variant="outline" className="text-xs">
@@ -194,13 +219,10 @@ export default function BlogModerationPage() {
                     <Eye className="w-4 h-4 mr-1" />
                     View
                   </Button>
-                  
+
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button
-                        size="sm"
-                        onClick={() => setSelectedBlog(blog)}
-                      >
+                      <Button size="sm" onClick={() => setSelectedBlog(blog)}>
                         <Check className="w-4 h-4 mr-1" />
                         Approve
                       </Button>
@@ -216,14 +238,16 @@ export default function BlogModerationPage() {
                           <Textarea
                             id="reason"
                             value={moderationReason}
-                            onChange={(e) => setModerationReason(e.target.value)}
+                            onChange={(e) =>
+                              setModerationReason(e.target.value)
+                            }
                             placeholder="Optional reason for approval..."
                             rows={3}
                           />
                         </div>
                         <div className="flex gap-2">
                           <Button
-                            onClick={() => handleModerate('approve')}
+                            onClick={() => handleModerate("approve")}
                             disabled={isModerating}
                           >
                             {isModerating ? "Approving..." : "Approve"}
@@ -264,7 +288,9 @@ export default function BlogModerationPage() {
                           <Textarea
                             id="reason"
                             value={moderationReason}
-                            onChange={(e) => setModerationReason(e.target.value)}
+                            onChange={(e) =>
+                              setModerationReason(e.target.value)
+                            }
                             placeholder="Please provide a reason for rejection..."
                             rows={3}
                             required
@@ -273,7 +299,7 @@ export default function BlogModerationPage() {
                         <div className="flex gap-2">
                           <Button
                             variant="destructive"
-                            onClick={() => handleModerate('reject')}
+                            onClick={() => handleModerate("reject")}
                             disabled={isModerating || !moderationReason.trim()}
                           >
                             {isModerating ? "Rejecting..." : "Reject"}
@@ -314,7 +340,9 @@ export default function BlogModerationPage() {
                           <Textarea
                             id="reason"
                             value={moderationReason}
-                            onChange={(e) => setModerationReason(e.target.value)}
+                            onChange={(e) =>
+                              setModerationReason(e.target.value)
+                            }
                             placeholder="Please provide a reason for banning..."
                             rows={3}
                             required
@@ -323,7 +351,7 @@ export default function BlogModerationPage() {
                         <div className="flex gap-2">
                           <Button
                             variant="destructive"
-                            onClick={() => handleModerate('ban')}
+                            onClick={() => handleModerate("ban")}
                             disabled={isModerating || !moderationReason.trim()}
                           >
                             {isModerating ? "Banning..." : "Ban"}
@@ -349,4 +377,4 @@ export default function BlogModerationPage() {
       )}
     </div>
   );
-} 
+}

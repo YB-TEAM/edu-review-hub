@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ import { RootState } from "@/lib/store";
 import "../auth.scss";
 import { useVerifyEmailMutation, useResendVerificationEmailMutation } from "@/lib/services/authApi";
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { user } = useSelector((state: RootState) => state.auth);
@@ -352,5 +352,25 @@ export default function VerifyEmailPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={
+      <div className="auth-container">
+        <div className="auth-logo">
+          <NavbarLogo isScrolled={true} onLogoClick={() => {}} />
+        </div>
+        <div className="auth-card">
+          <div className="text-center">
+            <Loader2 className="mx-auto mb-4 w-8 h-8 animate-spin" />
+            <p>Đang tải...</p>
+          </div>
+        </div>
+      </div>
+    }>
+      <VerifyEmailContent />
+    </Suspense>
   );
 }

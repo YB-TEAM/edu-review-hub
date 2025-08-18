@@ -11,7 +11,7 @@ import type {
   BlogLike,
   BlogComment,
   BlogListResponse,
-} from "@/types/blog";
+} from "../../types/blog";
 
 export const blogApi = createApi({
   reducerPath: "blogApi",
@@ -57,7 +57,7 @@ export const blogApi = createApi({
       { page?: number; limit?: number }
     >({
       query: (params) => ({
-        url: "/blogs/moderation",
+        url: "/blogs/pending",
         params,
       }),
       providesTags: ["Blog"],
@@ -78,16 +78,14 @@ export const blogApi = createApi({
     }),
 
     // Update blog
-    updateBlog: builder.mutation<Blog, { id: number; data: UpdateBlogRequest }>(
-      {
-        query: ({ id, data }) => ({
-          url: `/blogs/${id}`,
-          method: "PATCH",
-          body: data,
-        }),
-        invalidatesTags: (result, error, { id }) => [{ type: "Blog", id }],
-      }
-    ),
+    updateBlog: builder.mutation<Blog, { id: number; data: UpdateBlogRequest }>({
+      query: ({ id, data }) => ({
+        url: `/blogs/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: "Blog", id }],
+    }),
 
     // Publish blog (submit for moderation)
     publishBlog: builder.mutation<Blog, { id: number; data: any }>({
@@ -182,7 +180,7 @@ export const blogApi = createApi({
         method: "PATCH",
         body: data,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: "Tag", id }],
+      invalidatesTags: (result, error, { id }) => [{ type: "Blog", id }],
     }),
 
     // Delete tag
