@@ -135,7 +135,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      'Student',
+                                      'Sinh Viên',
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyMedium
@@ -155,7 +155,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ),
                                     const SizedBox(width: 16),
                                     Text(
-                                      'Joined ${formatDate(state.profileEntity.createdAt)}',
+                                      'Tham gia từ: ${formatDate(state.profileEntity.createdAt)}',
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyMedium
@@ -170,7 +170,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   child: PrimaryButton(
                                     onPressed:
                                         () => navigateToEditProfile(context),
-                                    title: "Edit Public Details",
+                                    title: "Chỉnh sửa trang cá nhân",
                                     icon: Icon(
                                       Icons.edit,
                                       color: AppColors.primaryWhite,

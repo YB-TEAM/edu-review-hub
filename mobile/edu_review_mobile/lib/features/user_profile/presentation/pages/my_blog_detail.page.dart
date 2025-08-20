@@ -18,10 +18,10 @@ class MyBlogDetailPage extends StatelessWidget {
 
   const MyBlogDetailPage({super.key, required this.blog});
 
-   void _showSuccessDialog(BuildContext context, String message) {
+  void _showSuccessDialog(BuildContext context, String message) {
     showAppDialog(
       context: context,
-      title: 'Success',
+      title: 'Thành công',
       content: message,
       icon: Icons.check_circle,
       iconColor: Colors.green,
@@ -43,13 +43,13 @@ class MyBlogDetailPage extends StatelessWidget {
     showAppDialog(
       context: context,
       title: title,
-      content: 'Error: $message',
+      content: 'Lỗi: $message',
       icon: Icons.error,
       iconColor: Colors.red,
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Close'),
+          child: const Text('Đóng'),
         ),
       ],
     );
@@ -64,7 +64,7 @@ class MyBlogDetailPage extends StatelessWidget {
       ],
       child: Scaffold(
         appBar: CustomAppBar(
-          title: "Blog Detail",
+          title: "Chi tiết Blog",
           onBackPressed: () => Navigator.of(context).maybePop(),
           actions: [
             if (blog.status == 'draft') 
@@ -136,7 +136,7 @@ class MyBlogDetailPage extends StatelessWidget {
                           Container(
                             constraints: const BoxConstraints(maxWidth: 150),
                             child: Text(
-                              blog.authorName ?? "Unknown Author",
+                              blog.authorName ?? "Tác giả không xác định",
                               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                     fontWeight: FontWeight.w600,
                                     color: AppColors.textGrey,
@@ -175,18 +175,18 @@ class MyBlogDetailPage extends StatelessWidget {
                   BlocListener<DeleteBlogCubit, DeleteBlogState>(
                     listener: (context, state) {
                       if (state is DeleteBlogSuccess) {
-                        _showSuccessDialog(context, 'Delete Blog successfully!');
+                        _showSuccessDialog(context, 'Xóa blog thành công!');
                       } else if (state is DeleteBlogFailure) {
-                        _showErrorDialog(context, 'Delete Blog Failed', state.errorMessage);
+                        _showErrorDialog(context, 'Xóa blog thất bại', state.errorMessage);
                       }
                     },
                   ),
                   BlocListener<UserPublishBlogCubit, PublishBlogState>(
                     listener: (context, state) {
                       if (state is PublishBlogSuccess) {
-                        _showSuccessDialog(context, 'Publish Blog successfully!');
+                        _showSuccessDialog(context, 'Đăng tải blog thành công!');
                       } else if (state is PublishBlogFailure) {
-                        _showErrorDialog(context, 'Publish Blog Failed', state.errorMessage);
+                        _showErrorDialog(context, 'Đăng tải blog thất bại', state.errorMessage);
                       }
                     },
                   ),
@@ -211,21 +211,21 @@ class MyBlogDetailPage extends StatelessWidget {
                                     final deleteCubit = context.read<DeleteBlogCubit>();
                                     showAppDialog(
                                       context: context,
-                                      title: "Confirm Delete",
-                                      content: "Are you sure you want to delete this blog?",
+                                      title: "Xác nhận xóa",
+                                      content: "Bạn có chắc chắn muốn xóa blog này?",
                                       icon: Icons.warning_amber_rounded,
                                       iconColor: Colors.red,
                                       actions: [
                                         TextButton(
                                           onPressed: () => Navigator.of(context).pop(),
-                                          child: const Text("Cancel"),
+                                          child: const Text("Hủy"),
                                         ),
                                         TextButton(
                                           onPressed: () {
                                             Navigator.of(context).pop();
                                             deleteCubit.deleteBlog(blog.id);
                                           },
-                                          child: const Text("Delete"),
+                                          child: const Text("Xóa"),
                                         ),
                                       ],
                                     );
@@ -244,7 +244,7 @@ class MyBlogDetailPage extends StatelessWidget {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        'Delete',
+                                        'Xóa',
                                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                           color: AppColors.textBlack,
                                           fontWeight: FontWeight.w900,
@@ -296,7 +296,7 @@ class MyBlogDetailPage extends StatelessWidget {
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                          'Publish',
+                                          'Đăng tải',
                                           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                                 color: AppColors.primaryWhite,
                                                 fontWeight: FontWeight.w900,
@@ -326,4 +326,3 @@ class MyBlogDetailPage extends StatelessWidget {
     );
   }
 }
-

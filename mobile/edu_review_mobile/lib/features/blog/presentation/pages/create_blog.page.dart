@@ -61,11 +61,11 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
   void _submitBlog(CreateBlogCubit cubit) {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedTagIds.isEmpty) {
-      _showSnackBar("Please select at least one tag");
+      _showSnackBar("Vui lòng chọn ít nhất một thẻ");
       return;
     }
     if (_contentPlainText.length < 10) {
-      _showSnackBar('Content must be at least 10 characters');
+      _showSnackBar('Nội dung phải có ít nhất 10 ký tự');
       return;
     }
 
@@ -89,11 +89,11 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
   void _publishBlog(PublishBlogCubit cubit) {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedTagIds.isEmpty) {
-      _showSnackBar("Please select at least one tag");
+      _showSnackBar("Vui lòng chọn ít nhất một thẻ");
       return;
     }
     if (_contentPlainText.length < 10) {
-      _showSnackBar('Content must be at least 10 characters');
+      _showSnackBar('Nội dung phải có ít nhất 10 ký tự');
       return;
     }
 
@@ -142,11 +142,11 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
         (success) {
           setState(() => _uploadedImageUrl = success.secureUrl);
           setState(() => _featuredImage = success.publicId);
-          _showSnackBar('Image uploaded successfully!');
+          _showSnackBar('Tải ảnh thành công!');
         },
       );
     } catch (e) {
-      _showSnackBar('Error: $e');
+      _showSnackBar('Lỗi: $e');
     }
 
     setState(() => _isUploadingImage = false);
@@ -161,7 +161,7 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
   void _showSuccessDialog(BuildContext context, String message) {
     showAppDialog(
       context: context,
-      title: 'Success',
+      title: 'Thành công',
       content: message,
       icon: Icons.check_circle,
       iconColor: Colors.green,
@@ -183,13 +183,13 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
     showAppDialog(
       context: context,
       title: title,
-      content: 'Error: $message',
+      content: 'Lỗi: $message',
       icon: Icons.error,
       iconColor: Colors.red,
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Close'),
+          child: const Text('Đóng'),
         ),
       ],
     );
@@ -200,7 +200,7 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
       _uploadedImageUrl = null;
       _featuredImage = null;
     });
-    _showSnackBar('Image deleted');
+    _showSnackBar('Đã xóa ảnh');
   }
 
   @override
@@ -215,18 +215,18 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
           BlocListener<CreateBlogCubit, CreateBlogState>(
             listener: (context, state) {
               if (state is CreateBlogSuccess) {
-                _showSuccessDialog(context, 'Create Blog successfully!');
+                _showSuccessDialog(context, 'Tạo Blog thành công!');
               } else if (state is CreateBlogFailure) {
-                _showErrorDialog(context, 'Create Blog Failed', state.errorMessage);
+                _showErrorDialog(context, 'Tạo Blog thất bại', state.errorMessage);
               }
             },
           ),
           BlocListener<PublishBlogCubit, PublishBlogState>(
             listener: (context, state) {
               if (state is PublishBlogSuccess) {
-                _showSuccessDialog(context, 'Publish Blog successfully!');
+                _showSuccessDialog(context, 'Đăng tải Blog thành công!');
               } else if (state is PublishBlogFailure) {
-                _showErrorDialog(context, 'Publish Blog Failed', state.errorMessage);
+                _showErrorDialog(context, 'Đăng tải Blog thất bại', state.errorMessage);
               }
             },
           ),
@@ -237,7 +237,7 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
             builder: (context, state) {
               return Scaffold(
                 appBar: CustomAppBar(
-                  title: 'Create Blog',
+                  title: 'Tạo Blog',
                   onBackPressed: () => Navigator.of(context).maybePop(),
                 ),
                 backgroundColor: AppColors.primaryWhite,
@@ -248,26 +248,26 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        _buildLabel('Title', context),
+                        _buildLabel('Tiêu đề', context),
                         const SizedBox(height: 8),
                         CustomTextField(
                           controller: _titleController,
-                          placeholder: 'Enter title',
+                          placeholder: 'Nhập tiêu đề',
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
-                              return 'Title is required';
+                              return 'Tiêu đề là bắt buộc';
                             }
                             if (value.trim().length < 5) {
-                              return 'Title must be at least 5 characters';
+                              return 'Tiêu đề phải có ít nhất 5 ký tự';
                             }
                             if (value.trim().length > 255) {
-                              return 'Title cannot exceed 255 characters';
+                              return 'Tiêu đề không được vượt quá 255 ký tự';
                             }
-                            return null; // hợp lệ
+                            return null;
                           },
                         ),
                         const SizedBox(height: 16),
-                        _buildLabel('Tags', context),
+                        _buildLabel('Thẻ', context),
                         const SizedBox(height: 8),
                         CustomTagMultiSelect(
                           onTagsSelected: (ids) {
@@ -275,15 +275,15 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
                           },
                         ),
                         const SizedBox(height: 16),
-                        _buildLabel('Excerpt', context),
+                        _buildLabel('Tóm tắt', context),
                         const SizedBox(height: 8),
                         CustomTextField(
                           controller: _excerptController,
-                          placeholder: 'Short summary (optional)',
+                          placeholder: 'Tóm tắt ngắn (không bắt buộc)',
                           maxLines: 3,
                         ),
                         const SizedBox(height: 16),
-                        _buildLabel('Featured Image', context),
+                        _buildLabel('Ảnh nổi bật', context),
                         const SizedBox(height: 8),
                         CustomImagePicker(
                           imageUrl: _uploadedImageUrl,
@@ -292,7 +292,7 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
                           onDelete: _deleteImage,
                         ),
                         const SizedBox(height: 16),
-                        _buildLabel('Content', context),
+                        _buildLabel('Nội dung', context),
                         const SizedBox(height: 8),
                         CustomRichTextField(
                           controller: _quillController,
@@ -334,7 +334,7 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
                                               Text(
-                                                'Save Blog',
+                                                'Lưu',
                                                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                                   color: AppColors.textBlack,
                                                   fontWeight: FontWeight.w900,
@@ -387,7 +387,7 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
                                               Text(
-                                                'Publish',
+                                                'Đăng tải',
                                                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                                       color: AppColors.primaryWhite,
                                                       fontWeight: FontWeight.w900,

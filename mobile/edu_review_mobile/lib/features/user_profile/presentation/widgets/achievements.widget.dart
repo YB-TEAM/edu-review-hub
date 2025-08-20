@@ -80,7 +80,6 @@ class _AchievementsWidgetState extends State<AchievementsWidget>
           decoration: BoxDecoration(
             color: AppColors.primaryWhite,
             borderRadius: BorderRadius.circular(8),
-
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
@@ -104,7 +103,8 @@ class _AchievementsWidgetState extends State<AchievementsWidget>
   }
 
   Widget _buildTabBar(BuildContext context) {
-    final tabs = ['Overall', 'Points', 'Badges'];
+    // Đổi text sang tiếng Việt
+    final tabs = ['Tổng quan', 'Điểm số', 'Huy hiệu'];
     final icons = [
       Icons.trending_up_rounded,
       Icons.star_rounded,
@@ -132,19 +132,18 @@ class _AchievementsWidgetState extends State<AchievementsWidget>
                 duration: const Duration(milliseconds: 200),
                 padding: const EdgeInsets.symmetric(
                   vertical: 10,
-                  horizontal: 12,
+                  horizontal: 4,
                 ),
                 margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
                 decoration: BoxDecoration(
-                  gradient:
-                      isSelected
-                          ? LinearGradient(
-                            colors: [
-                              AppColors.primaryBlue,
-                              AppColors.primaryBlue.withOpacity(0.8),
-                            ],
-                          )
-                          : null,
+                  gradient: isSelected
+                      ? LinearGradient(
+                          colors: [
+                            AppColors.primaryBlue,
+                            AppColors.primaryBlue.withOpacity(0.8),
+                          ],
+                        )
+                      : null,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -154,22 +153,20 @@ class _AchievementsWidgetState extends State<AchievementsWidget>
                     Icon(
                       icons[index],
                       size: 18,
-                      color:
-                          isSelected
-                              ? AppColors.primaryWhite
-                              : AppColors.textBlack,
+                      color: isSelected
+                          ? AppColors.primaryWhite
+                          : AppColors.textBlack,
                     ),
                     const SizedBox(width: 6),
                     Flexible(
                       child: Text(
                         tabs[index],
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color:
-                              isSelected
+                              fontWeight: FontWeight.w600,
+                              color: isSelected
                                   ? AppColors.textWhite
                                   : AppColors.textBlack,
-                        ),
+                            ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),

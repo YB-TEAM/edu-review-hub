@@ -28,27 +28,25 @@ class _SignInPageState extends State<SignInPage> {
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  // Track if form has been submitted to show validation errors
   bool _isFormSubmitted = false;
 
   String? _validateIdentifier(String? value) {
     if (!_isFormSubmitted) return null;
 
     if (value == null || value.isEmpty) {
-      return 'Please enter your email or username';
+      return 'Vui lòng nhập email hoặc tên đăng nhập';
     }
 
-    // Cho phép email hoặc username
     final emailRegex = RegExp(
       r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
     );
 
     final usernameRegex = RegExp(
-      r'^[a-zA-Z0-9._-]{3,}$', // ví dụ: tối thiểu 3 ký tự, không có khoảng trắng
+      r'^[a-zA-Z0-9._-]{3,}$',
     );
 
     if (!emailRegex.hasMatch(value) && !usernameRegex.hasMatch(value)) {
-      return 'Please enter a valid email or username';
+      return 'Vui lòng nhập email hoặc tên đăng nhập hợp lệ';
     }
 
     return null;
@@ -57,10 +55,10 @@ class _SignInPageState extends State<SignInPage> {
   String? _validatePassword(String? value) {
     if (!_isFormSubmitted) return null;
     if (value == null || value.isEmpty) {
-      return 'Please enter password';
+      return 'Vui lòng nhập mật khẩu';
     }
     if (value.length < 8) {
-      return 'Password must be at least 8 characters';
+      return 'Mật khẩu phải có ít nhất 8 ký tự';
     }
     return null;
   }
@@ -82,12 +80,8 @@ class _SignInPageState extends State<SignInPage> {
       _isFormSubmitted = true;
     });
 
-    // Force validation to show errors
     _formKey.currentState!.validate();
 
-
-
-    // Check if form is valid before proceeding
     if (_identifierController.text.isNotEmpty &&
         _passwordController.text.isNotEmpty &&
         _validateIdentifier(_identifierController.text) == null &&
@@ -98,8 +92,8 @@ class _SignInPageState extends State<SignInPage> {
         params: SignInParams(
           identifier: _identifierController.text,
           password: _passwordController.text,
-          deviceId: deviceId, 
-          rememberMe: null, 
+          deviceId: deviceId,
+          rememberMe: null,
         ),
       );
     }
@@ -111,7 +105,7 @@ class _SignInPageState extends State<SignInPage> {
         pageBuilder:
             (context, animation, secondaryAnimation) => const SignUpPage(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0); 
+          const begin = Offset(1.0, 0.0);
           const end = Offset.zero;
           final tween = Tween(
             begin: begin,
@@ -127,13 +121,13 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
-  void _handleForgotPassword () {
+  void _handleForgotPassword() {
     Navigator.of(context).push(
       PageRouteBuilder(
         pageBuilder:
             (context, animation, secondaryAnimation) => const ForgotPasswordPage(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0); 
+          const begin = Offset(1.0, 0.0);
           const end = Offset.zero;
           final tween = Tween(
             begin: begin,
@@ -164,24 +158,16 @@ class _SignInPageState extends State<SignInPage> {
               Navigator.pushReplacementNamed(context, RouteConstant.mainScreen);
             }
             if (state is ButtonFailureState) {
-              // if (state.statusCode == 403) {
-              //   Navigator.pushNamed(
-              //     context,
-              //     RouteConstant.verifyEmail,
-              //     arguments: emailController.text, 
-              //   );
-              //   return;
-              // }
               showAppDialog(
                 context: context,
-                title: 'Error',
+                title: 'Lỗi',
                 content: state.errorMessage,
                 icon: Icons.error_outline,
                 iconColor: Colors.red,
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Close'),
+                    child: const Text('Đóng'),
                   ),
                 ],
               );
@@ -230,7 +216,7 @@ class _SignInPageState extends State<SignInPage> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Sign In',
+                          'Đăng nhập',
                           style: Theme.of(
                             context,
                           ).textTheme.headlineLarge?.copyWith(
@@ -243,7 +229,7 @@ class _SignInPageState extends State<SignInPage> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Welcome back you've been missed!",
+                          "Chào mừng trở lại, lâu rồi không gặp bạn!",
                           style: Theme.of(
                             context,
                           ).textTheme.bodyMedium?.copyWith(
@@ -260,16 +246,16 @@ class _SignInPageState extends State<SignInPage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             CustomTextField(
-                              label: 'Username or Email',
-                              placeholder: 'Enter your email or username',
+                              label: 'Tên đăng nhập/Email',
+                              placeholder: 'Nhập tên đăng nhập hoặc email',
                               prefixIconData: Icons.person_outline,
                               controller: _identifierController,
                               validator: _validateIdentifier,
                             ),
                             SizedBox(height: 16),
                             CustomPasswordField(
-                              label: 'Password',
-                              placeholder: 'Enter your password',
+                              label: 'Mật khẩu',
+                              placeholder: 'Nhập mật khẩu',
                               prefixIcon: Icon(Icons.lock_outline),
                               controller: _passwordController,
                               validator: _validatePassword,
@@ -279,14 +265,14 @@ class _SignInPageState extends State<SignInPage> {
                               alignment: Alignment.centerRight,
                               child: CustomTextButton(
                                 onPressed: _handleForgotPassword,
-                                title: "Forgot Password?",
+                                title: "Quên mật khẩu?",
                               ),
                             ),
                             SizedBox(height: 30),
                             Builder(
                               builder: (context) {
                                 return PrimaryButton(
-                                  title: "Sign In",
+                                  title: "Đăng nhập",
                                   onPressed: () => _handleSignIn(context),
                                 );
                               },
@@ -296,13 +282,13 @@ class _SignInPageState extends State<SignInPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  "Don't have an account?",
+                                  "Bạn chưa có tài khoản?",
                                   style: Theme.of(context).textTheme.bodyMedium
                                       ?.copyWith(color: AppColors.textGrey),
                                 ),
                                 CustomTextButton(
                                   onPressed: _handleSignUp,
-                                  title: "Sign up",
+                                  title: "Đăng ký",
                                   style: Theme.of(context).textTheme.bodyMedium
                                       ?.copyWith(fontWeight: FontWeight.w700),
                                 ),

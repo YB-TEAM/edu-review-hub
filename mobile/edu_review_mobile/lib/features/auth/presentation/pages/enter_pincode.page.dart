@@ -61,8 +61,8 @@ class _EnterPinCodePageState extends State<EnterPinCodePage> {
                 if (state is ButtonSuccessState) {
                    await showAppDialog(
                     context: context,
-                    title: 'Success',
-                    content: 'Your password has been reset successfully.',
+                    title: 'Thành công',
+                    content: 'Mật khẩu của bạn đã được đặt lại thành công.',
                     icon: Icons.check_circle_outline,
                     iconColor: Colors.green,
                     actions: [
@@ -77,14 +77,14 @@ class _EnterPinCodePageState extends State<EnterPinCodePage> {
                   if (mounted) codeController.clear();
                   showAppDialog(
                     context: context,
-                    title: 'Error',
+                    title: 'Lỗi',
                     content: state.errorMessage,
                     icon: Icons.error_outline,
                     iconColor: Colors.red,
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('Close'),
+                        child: const Text('Đóng'),
                       ),
                     ],
                   );
@@ -96,8 +96,8 @@ class _EnterPinCodePageState extends State<EnterPinCodePage> {
                 if (state is ButtonSuccessState) {
                   showAppDialog(
                     context: context,
-                    title: 'Code Resent',
-                    content: 'OTP code has been resent to ${widget.email}',
+                    title: 'Đã gửi lại mã',
+                    content: 'Mã OTP đã được gửi lại đến ${widget.email}',
                     icon: Icons.email,
                     iconColor: Colors.green,
                     actions: [
@@ -110,14 +110,14 @@ class _EnterPinCodePageState extends State<EnterPinCodePage> {
                 } else if (state is ButtonFailureState) {
                   showAppDialog(
                     context: context,
-                    title: 'Error',
+                    title: 'Lỗi',
                     content: state.errorMessage,
                     icon: Icons.error_outline,
                     iconColor: Colors.red,
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('Close'),
+                        child: const Text('Đóng'),
                       ),
                     ],
                   );
@@ -183,7 +183,7 @@ class _EnterPinCodePageState extends State<EnterPinCodePage> {
                           ),
                           const SizedBox(height: 30),
                           Text(
-                            'Enter OTP Code',
+                            'Nhập mã OTP',
                             style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                                   color: AppColors.textBlack,
                                 ),
@@ -195,7 +195,7 @@ class _EnterPinCodePageState extends State<EnterPinCodePage> {
                                     color: AppColors.textBlack,
                                   ),
                               children: [
-                                const TextSpan(text: "Enter the 6-digit code sent to your email: "),
+                                const TextSpan(text: "Nhập mã gồm 6 số đã được gửi đến email của bạn: "),
                                 TextSpan(
                                   text: widget.email,
                                   style: const TextStyle(
@@ -237,7 +237,7 @@ class _EnterPinCodePageState extends State<EnterPinCodePage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                "Didn't Receive the Code? ",
+                                "Bạn chưa nhận được mã? ",
                                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.textGrey),
                               ),
                               BlocBuilder<ForgotPasswordCubit, ButtonState>(
@@ -260,7 +260,7 @@ class _EnterPinCodePageState extends State<EnterPinCodePage> {
                                             ),
                                           )
                                         : Text(
-                                            'Resend',
+                                            'Gửi lại',
                                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                                   color: AppColors.textBlue,
                                                   fontWeight: FontWeight.w700,

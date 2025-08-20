@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:edu_review_mobile/common_libs.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -46,7 +44,7 @@ class CustomIconButton extends StatelessWidget {
             () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('This feature is coming soon!'),
+                  content: Text('Tính năng này sẽ được cập nhật sau!'),
                   duration: Duration(seconds: 2),
                 ),
               );

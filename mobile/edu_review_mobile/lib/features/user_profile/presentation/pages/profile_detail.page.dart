@@ -12,27 +12,27 @@ class ProfileDetailPage extends StatelessWidget {
   List<Map<String, String?>> get _personalInfoItems => [
     {
       'icon': AppIcons.cake,
-      'label': 'Birthday',
+      'label': 'Ngày sinh',
       'value': profileEntity.dateOfBirth,
     },
     {
       'icon': AppIcons.gender,
-      'label': 'Gender',
+      'label': 'Giới tính',
       'value': profileEntity.gender,
     },
     {
       'icon': AppIcons.pin,
-      'label': 'Address',
+      'label': 'Địa chỉ',
       'value': profileEntity.address,
     },
     {
       'icon': AppIcons.globe,
-      'label': 'Country',
+      'label': 'Quốc gia',
       'value': profileEntity.country,
     },
     {
       'icon': AppIcons.city,
-      'label': 'City',
+      'label': 'Thành phố',
       'value': profileEntity.city,
     },
   ];
@@ -40,22 +40,22 @@ class ProfileDetailPage extends StatelessWidget {
   List<Map<String, String?>> get _educationItems => [
     {
       'icon': AppIcons.university,
-      'label': 'University',
+      'label': 'Trường đại học',
       'value': profileEntity.universityName,
     },
     {
       'icon': AppIcons.book,
-      'label': 'Major',
+      'label': 'Ngành học',
       'value': profileEntity.major,
     },
     {
       'icon': AppIcons.card,
-      'label': 'Student ID',
+      'label': 'Mã số sinh viên',
       'value': profileEntity.studentId,
     },
     {
       'icon': AppIcons.calendar,
-      'label': 'Graduation Year',
+      'label': 'Năm tốt nghiệp',
       'value': profileEntity.graduationYear?.toString(),
     },
   ];
@@ -64,7 +64,7 @@ class ProfileDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'Profile Details',
+        title: 'Chi tiết hồ sơ',
         onBackPressed: () => Navigator.of(context).maybePop(),
       ),
       body: SingleChildScrollView(
@@ -77,7 +77,7 @@ class ProfileDetailPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Personal Information',
+                    'Thông tin cá nhân',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w700,
                       color: AppColors.textBlack,
@@ -105,7 +105,7 @@ class ProfileDetailPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Education',
+                    'Học vấn',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w700,
                       color: AppColors.textBlack,
@@ -129,7 +129,7 @@ class ProfileDetailPage extends StatelessWidget {
   }
 
   Widget _buildDetailInfoRow(String icon, String label, String? value, BuildContext context) {
-    if (value == null || value.isEmpty) return _buildEmptyInfoRow(icon, 'Add $label Information', context);
+    if (value == null || value.isEmpty) return _buildEmptyInfoRow(icon, 'Thêm thông tin $label', context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: InkWell(

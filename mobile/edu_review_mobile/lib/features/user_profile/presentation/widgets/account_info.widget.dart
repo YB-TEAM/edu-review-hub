@@ -21,15 +21,15 @@ class AccountInfoWidget extends StatelessWidget {
   }) : super(key: key);
 
   String _getGraduationStatus() {
-    if (graduationYear == null) return 'Studying at';
+    if (graduationYear == null) return 'Đang học tại';
 
     final currentYear = DateTime.now().year;
     if (graduationYear! < currentYear) {
-      return 'Graduated from';
+      return 'Đã tốt nghiệp tại';
     } else if (graduationYear! == currentYear) {
-      return 'Currently studying at';
+      return 'Hiện đang học tại';
     } else {
-      return 'Studying at';
+      return 'Đang học tại';
     }
   }
 
@@ -46,7 +46,7 @@ class AccountInfoWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Personal Information',
+              'Giới thiệu',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.w700,
                 color: AppColors.textBlack,
@@ -55,16 +55,16 @@ class AccountInfoWidget extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             if (city != null && city!.isNotEmpty)
-              _buildInfoRow(AppIcons.city, 'Lives in', city!, context),
+              _buildInfoRow(AppIcons.city, 'Sống tại', city!, context),
             if (universityName != null && universityName!.isNotEmpty)
               _buildInfoRow(AppIcons.university, _getGraduationStatus(), universityName!, context),
             if (major != null && major!.isNotEmpty)
-              _buildInfoRow(AppIcons.book, 'Majoring in', major!, context),
+              _buildInfoRow(AppIcons.book, 'Ngành học', major!, context),
             SizedBox(
               width: double.infinity,
               child: CustomTextButton(
                 onPressed: onSeeMorePressed,
-                title: "See more",
+                title: "Xem thêm",
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: AppColors.textGrey,
                   fontWeight: FontWeight.w700,

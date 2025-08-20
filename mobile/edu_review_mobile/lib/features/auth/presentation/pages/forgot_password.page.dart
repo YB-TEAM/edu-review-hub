@@ -27,13 +27,13 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   String? _validateEmail(String? value) {
     if (!_isFormSubmitted) return null;
     if (value == null || value.isEmpty) {
-      return 'Please enter your email';
+      return 'Vui lòng nhập email';
     }
     final emailRegex = RegExp(
       r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
     );
     if (!emailRegex.hasMatch(value)) {
-      return 'Please enter a valid email';
+      return 'Email không hợp lệ';
     }
     return null;
   }
@@ -41,17 +41,16 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   String? _validatePassword(String? value) {
     if (!_isFormSubmitted) return null;
     if (value == null || value.isEmpty) {
-      return 'Please enter password';
+      return 'Vui lòng nhập mật khẩu';
     }
     if (value.length < 3) {
-      return 'Password must be at least 3 characters';
+      return 'Mật khẩu phải có ít nhất 3 ký tự';
     }
     if (value.length > 50) {
-      return 'Password cannot exceed 50 characters';
+      return 'Mật khẩu không được vượt quá 50 ký tự';
     }
-    // Kiểm tra có ít nhất 1 chữ hoa, 1 chữ thường, 1 số
     if (!RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)').hasMatch(value)) {
-      return 'Password must contain at least 1 uppercase, 1 lowercase and 1 number';
+      return 'Mật khẩu phải có ít nhất 1 chữ hoa, 1 chữ thường và 1 số';
     }
     return null;
   }
@@ -59,10 +58,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   String? _validateConfirmPassword(String? value) {
     if (!_isFormSubmitted) return null;
     if (value == null || value.isEmpty) {
-      return 'Please confirm your password';
+      return 'Vui lòng xác nhận mật khẩu';
     }
     if (value != _newPasswordController.text) {
-      return 'Passwords do not match';
+      return 'Mật khẩu không khớp';
     }
     return null;
   }
@@ -103,14 +102,14 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             if (state is ButtonFailureState) {
               showAppDialog(
                 context: context,
-                title: 'Error',
+                title: 'Lỗi',
                 content: state.errorMessage,
                 icon: Icons.error_outline,
                 iconColor: Colors.red,
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('Close'),
+                    child: const Text('Đóng'),
                   ),
                 ],
               );
@@ -171,14 +170,14 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       ),
                       const SizedBox(height: 30),
                       Text(
-                        'Forgot Password',
+                        'Quên mật khẩu',
                         style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                               color: AppColors.textBlack,
                             ),
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        "Please enter your email and set a new password.",
+                        "Vui lòng nhập email và đặt mật khẩu mới.",
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: AppColors.textBlack,
                             ),
@@ -190,23 +189,23 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           children: [
                             CustomTextField(
                               label: 'Email',
-                              placeholder: 'Enter your email',
+                              placeholder: 'Nhập email',
                               prefixIconData: Icons.email_outlined,
                               controller: _emailController,
                               validator: _validateEmail,
                             ),
                             const SizedBox(height: 20),
                             CustomPasswordField(
-                              label: 'New Password',
-                              placeholder: 'Enter new password',
+                              label: 'Mật khẩu mới',
+                              placeholder: 'Nhập mật khẩu mới',
                               controller: _newPasswordController,
                               validator: _validatePassword,
                               prefixIconData: Icons.lock_outline,
                             ),
                             const SizedBox(height: 20),
                             CustomPasswordField(
-                              label: 'Confirm Password',
-                              placeholder: 'Re-enter your password',
+                              label: 'Xác nhận mật khẩu',
+                              placeholder: 'Nhập lại mật khẩu',
                               controller: _confirmPasswordController,
                               validator: _validateConfirmPassword,
                               prefixIconData: Icons.lock_outline,
@@ -215,7 +214,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                             Builder(
                               builder: (context) {
                                 return PrimaryButton(
-                                  title: "Change Password",
+                                  title: "Đổi mật khẩu",
                                   onPressed: () => _handleSubmit(context),
                                 );
                               },

@@ -14,48 +14,49 @@ class _BadgesTabWidgetState extends State<BadgesTabWidget> {
 
   final List<Map<String, dynamic>> _badges = [
     {
-      'name': 'Newbie',
-      'description': 'Complete first post',
+      'name': 'Người mới',
+      'description': 'Hoàn thành bài viết đầu tiên',
       'icon': Icons.rocket_launch_rounded,
       'colors': [AppColors.blue400, AppColors.blue600],
       'unlocked': true,
     },
     {
-      'name': 'Sharer',
-      'description': 'Post 10 articles',
+      'name': 'Người chia sẻ',
+      'description': 'Đăng 10 bài viết',
       'icon': Icons.share_rounded,
       'colors': [AppColors.green400, AppColors.green600],
       'unlocked': true,
     },
     {
-      'name': 'Popular',
-      'description': 'Receive 100 likes',
+      'name': 'Phổ biến',
+      'description': 'Nhận được 100 lượt thích',
       'icon': Icons.local_fire_department_rounded,
       'colors': [AppColors.orange400, AppColors.orange600],
       'unlocked': true,
     },
     {
-      'name': 'Expert',
-      'description': 'Reach 1000 points',
+      'name': 'Chuyên gia',
+      'description': 'Đạt 1000 điểm',
       'icon': Icons.psychology_rounded,
       'colors': [AppColors.purple400, AppColors.purple600],
       'unlocked': false,
     },
     {
-      'name': 'Legend',
-      'description': 'Reach level 10',
+      'name': 'Huyền thoại',
+      'description': 'Đạt cấp độ 10',
       'icon': Icons.auto_awesome_rounded,
       'colors': [AppColors.primaryRed, AppColors.primaryRed],
       'unlocked': false,
     },
     {
-      'name': 'Creator',
-      'description': 'Create 50 quality posts',
+      'name': 'Người sáng tạo',
+      'description': 'Tạo 50 bài viết chất lượng',
       'icon': Icons.lightbulb_rounded,
       'colors': [AppColors.amber400, AppColors.amber600],
       'unlocked': false,
     },
   ];
+
 
   List<List<Map<String, dynamic>>> get _badgePages {
     List<List<Map<String, dynamic>>> pages = [];
@@ -73,7 +74,7 @@ class _BadgesTabWidgetState extends State<BadgesTabWidget> {
     return Column(
       children: [
         SizedBox(
-          height: 360,
+          height: 390,
           child: PageView.builder(
             controller: _pageController,
             itemCount: pages.length,
@@ -139,6 +140,7 @@ class _BadgesTabWidgetState extends State<BadgesTabWidget> {
     final colors = badge['colors'] as List<Color>;
 
     return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,

@@ -93,7 +93,7 @@ class BlogCard extends StatelessWidget {
                       Container(
                         constraints: const BoxConstraints(maxWidth: 80),
                         child: Text(
-                          blog.authorName ?? 'Unknown Author', 
+                          blog.authorName ?? 'Tác giả không xác định', 
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                             color: AppColors.textGrey,

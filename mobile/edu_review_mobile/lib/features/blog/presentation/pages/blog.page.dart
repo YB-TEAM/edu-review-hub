@@ -44,8 +44,8 @@ class _BlogPageState extends State<BlogPage> {
             floating: false,
             delegate: CustomAppBar(
               statusBarHeight: statusBarHeight,
-              title: 'Blog – Insightful Reviews & Tips',
-              hintText: 'Search blogs, articles...',
+              title: 'Blog – Học hỏi và Trải nghiệm',
+              hintText: 'Tìm kiếm blog, bài viết...',
             ),
           ),
           _buildBlogContent()

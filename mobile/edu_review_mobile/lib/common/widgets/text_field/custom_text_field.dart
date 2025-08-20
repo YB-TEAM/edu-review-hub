@@ -11,7 +11,7 @@ class CustomTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
   final void Function(String)? onChanged;
-  final int? maxLines; // ✅ Thêm dòng này
+  final int? maxLines; 
 
   const CustomTextField({
     super.key,
@@ -97,6 +97,7 @@ class CustomTextField extends StatelessWidget {
             ),
             suffixIcon: suffixIcon,
             prefixIcon: styledPrefixIcon,
+            errorMaxLines: 2,
           ),
           autovalidateMode: AutovalidateMode.onUserInteraction,
         ),

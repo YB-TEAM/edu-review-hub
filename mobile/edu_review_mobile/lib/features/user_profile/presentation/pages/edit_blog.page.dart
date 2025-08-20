@@ -50,7 +50,6 @@ class _EditBlogPageState extends State<EditBlogPage> {
     _featuredImagePublicId = null;
     _featuredImageURL = widget.blog.featuredImageUrl;
 
-    // Chuyển markdown sang Delta cho Quill
     final markdownContent = widget.blog.content;
     final markdownDocument = md.Document();
     final delta =

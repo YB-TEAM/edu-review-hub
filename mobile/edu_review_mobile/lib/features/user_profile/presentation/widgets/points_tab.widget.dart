@@ -50,14 +50,14 @@ class PointsTabWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Accumulated Points',
+                      'Điểm tích lũy',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w700,
                         color: Colors.grey.shade800,
                       ),
                     ),
                     Text(
-                      'Keep learning to earn more points!',
+                      'Học thêm để nhận nhiều điểm hơn!',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Colors.grey.shade600,
                       ),
@@ -70,7 +70,7 @@ class PointsTabWidget extends StatelessWidget {
 
           const SizedBox(height: 24),
 
-          // Points display
+          // Hiển thị điểm
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -118,7 +118,7 @@ class PointsTabWidget extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Current Points',
+                  'Điểm hiện tại',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.grey.shade600,
                     fontWeight: FontWeight.w500,
@@ -130,7 +130,7 @@ class PointsTabWidget extends StatelessWidget {
 
           const SizedBox(height: 20),
 
-          // Progress bar
+          // Thanh tiến trình
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -138,7 +138,7 @@ class PointsTabWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Progress',
+                    'Tiến trình',
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: Colors.grey.shade700,
@@ -185,7 +185,7 @@ class PointsTabWidget extends StatelessWidget {
                         ),
                       ),
                     ),
-                    // Animated dots on progress bar
+                    // Chấm di chuyển trên thanh tiến trình
                     if (progress > 0.1)
                       Positioned(
                         left:
@@ -217,7 +217,7 @@ class PointsTabWidget extends StatelessWidget {
 
           const SizedBox(height: 20),
 
-          // Level info
+          // Thông tin cấp độ
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -249,7 +249,7 @@ class PointsTabWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Level $level',
+                        'Cấp độ $level',
                         style: Theme.of(
                           context,
                         ).textTheme.titleMedium?.copyWith(
@@ -258,7 +258,7 @@ class PointsTabWidget extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '$remainingPoints points to next level',
+                        'Cần $remainingPoints điểm để lên cấp',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: Colors.grey.shade600,
                         ),
