@@ -19,6 +19,8 @@ class AppIcons {
   static const String publish = 'assets/icons/ic_publish.svg';
   static const String save = 'assets/icons/ic_save.svg';
   static const String send = 'assets/icons/ic_send.svg';
+  static const String location = 'assets/icons/ic_location.svg';
+  static const String rank = 'assets/icons/ic_rank.svg';
 
   // Bottom navigation bar icons
   static const String homeActive = 'assets/icons/ic_home_active.svg';

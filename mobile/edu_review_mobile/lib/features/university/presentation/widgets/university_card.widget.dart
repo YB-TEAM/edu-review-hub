@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:edu_review_mobile/features/university/data/models/university_response.dart';
 import 'package:edu_review_mobile/common_libs.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class UniversityCard extends StatelessWidget {
   final UniversityResponse university;
@@ -9,13 +9,13 @@ class UniversityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String? imageUrl = AppDefaultImages.defaultImage;
+    final String? imageUrl = university.bannerUrl ?? university.logoUrl ?? AppDefaultImages.defaultImage;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      height: 220,
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -26,112 +26,168 @@ class UniversityCard extends StatelessWidget {
         ],
       ),
       child: InkWell(
-        borderRadius: BorderRadius.circular(20),
-        onTap: () {
-          debugPrint('Đã nhấn vào ${university.name}');
-        },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Phần hình ảnh đầu thẻ
-            if (imageUrl != null && imageUrl.isNotEmpty)
-              ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-                child: Image.network(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () => debugPrint('Clicked ${university.name}'),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              if (imageUrl != null && imageUrl.isNotEmpty)
+                Image.network(
                   imageUrl,
-                  height: 150,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      height: 150,
-                      color: Colors.grey[200],
-                      child: const Center(
-                        child: Icon(Icons.school, size: 60, color: Colors.grey),
-                      ),
-                    );
-                  },
-                ),
-              )
-            else
-              Container(
-                height: 150,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFF0F2F5),
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                ),
-                child: const Center(
-                  child: Icon(Icons.apartment, size: 60, color: Colors.grey),
-                ),
-              ),
+                  errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[300]),
+                )
+              else
+                Container(color: const Color(0xFFF0F2F5)),
 
-            // Phần nội dung chính
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Tên trường đại học
-                  Text(
-                    university.name,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w900,
-                          color: const Color(0xFF1E2749),
-                        ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 8),
+              Container(color: Colors.black.withOpacity(0.6)),
 
-                  // Địa điểm
-                  _buildInfoRow(
-                    context,
-                    icon: Icons.location_on_outlined,
-                    text:
-                        '${university.city ?? ''}${university.city != null && university.province != null ? ', ' : ''}${university.province ?? ''}',
-                  ),
-                  const SizedBox(height: 8),
-
-                  // Loại hình
-                  if (university.type != null)
-                    _buildInfoRow(
-                      context,
-                      icon: Icons.category_outlined,
-                      text: 'Loại hình: ${university.type}',
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Row(
+                      children: [
+                        if (university.isFeatured == true)
+                          _buildTag(context, text: "Nổi bật", color: AppColors.amber700),
+                        if (university.isVerified == true)
+                          _buildTag(context, text: "Tin cậy", color: AppColors.green400),
+                      ],
                     ),
-                  const SizedBox(height: 8),
+                    const SizedBox(height: 8),
+                    Text(
+                      university.name,
+                      maxLines: 2,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w900,
+                        color: AppColors.textWhite,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
 
-                  // Xếp hạng Quốc gia
-                  if (university.rankingNational != null)
-                    _buildInfoRow(
-                      context,
-                      icon: Icons.trending_up,
-                      text: 'Xếp hạng quốc gia: ${university.rankingNational}',
+                    Row(
+                      children: [
+                        if (university.averageRating != null)
+                          Row(
+                            children: [
+                              SvgPicture.asset(AppIcons.starActive, width: 16, height: 16, color: AppColors.primaryYellow,),
+                              const SizedBox(width: 4),
+                              Text(
+                                university.averageRating!,
+                                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                  fontWeight: FontWeight.w900,
+                                  color: AppColors.textWhite,
+                                ),
+                              ),
+                            ],
+                          ),
+                        const SizedBox(width: 12),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 6,
+                      children: [
+                        if (university.city != null || university.province != null)
+                          buildInfoRow(
+                            context: context,
+                            text:
+                                '${university.city ?? ''}${university.city != null && university.province != null ? ', ${university.province}' : ''}',
+                            svgAssetPath: AppIcons.location,
+                          ),
+                        if (university.type != null)
+                          buildInfoRow(
+                            context: context,
+                            text: university.type!,
+                            svgAssetPath: AppIcons.university,
+                          ),
+                        if (university.rankingNational != null)
+                          buildInfoRow(
+                            context: context,
+                            text: 'Rank: ${university.rankingNational}',
+                            svgAssetPath: AppIcons.rank,
+                          ),
+                        if (university.studentCount != null)
+                          buildInfoRow(
+                            context: context,
+                            text: '${university.studentCount} students',
+                            svgAssetPath: AppIcons.users,
+                          ),
+                      ],
                     ),
                   ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  // Widget con để hiển thị một dòng thông tin với biểu tượng
-  Widget _buildInfoRow(BuildContext context, {required IconData icon, required String text}) {
+  Widget buildInfoRow({
+    required String text,
+    required String svgAssetPath,
+    Color textColor = Colors.white70,
+    double iconSize = 18,
+    double spacing = 6,
+    required BuildContext context,
+  }) {
     if (text.isEmpty) return const SizedBox.shrink();
-    return Row(
-      children: [
-        Icon(icon, size: 18, color: Colors.grey[600]),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            text,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.grey[700],
-                ),
-            overflow: TextOverflow.ellipsis,
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: AppColors.primaryBlue,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset(
+            svgAssetPath,
+            height: iconSize,
+            width: iconSize,
+            color: textColor,
           ),
-        ),
-      ],
+          SizedBox(width: spacing),
+          Flexible(
+            child: Text(
+              text,
+              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                fontWeight: FontWeight.w900,
+                color: AppColors.textWhite,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTag(BuildContext context, {required String text, required Color color}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      margin: const EdgeInsets.only(right: 6),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        text,
+        style: Theme.of(context).textTheme.displaySmall?.copyWith(
+          fontWeight: FontWeight.w900,
+          color: AppColors.textWhite,
+        )
+      ),
     );
   }
 }

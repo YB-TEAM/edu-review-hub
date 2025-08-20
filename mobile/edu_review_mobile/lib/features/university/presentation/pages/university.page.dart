@@ -66,38 +66,18 @@ class UniversityPage extends StatelessWidget {
                           );
                         } else if (state is UniversityLoaded) {
                           final universities = state.universities;
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 12, right: 12, bottom: 8, top: 16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'All Blog Posts',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headlineSmall,
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      'Browse all insightful reviews and experiences.',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.copyWith(color: AppColors.textGrey),
-                                    ),
-                                  ],
+                          return Padding(
+                            padding: EdgeInsetsGeometry.all(12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ...universities.map(
+                                  (university) =>
+                                      UniversityCard(university: university),
                                 ),
-                              ),
-                              ...universities.map(
-                                (university) =>
-                                    UniversityCard(university: university),
-                              ),
-                              const SizedBox(height: 30),
-                            ],
+                                const SizedBox(height: 30),
+                              ],
+                            ),
                           );
                         } else if (state is UniversityError) {
                           return Padding(
