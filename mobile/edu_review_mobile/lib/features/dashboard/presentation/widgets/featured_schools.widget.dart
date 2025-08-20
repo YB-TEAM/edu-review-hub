@@ -39,7 +39,7 @@ class FeaturedSchools extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Featured Universities',
+                'Các Trường Nổi Bật',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontSize: 20
                 ),
@@ -47,7 +47,7 @@ class FeaturedSchools extends StatelessWidget {
               TextButton(
                 onPressed: () {},
                 child: Text(
-                  'View All',
+                  'Xem tất cả',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     color: AppColors.primaryBlue,
                   ),

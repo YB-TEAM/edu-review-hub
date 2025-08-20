@@ -97,8 +97,8 @@ class _DashboardPageState extends State<DashboardPage>
               delegate: AnimatedSliverAppBar(
                 statusBarHeight: MediaQuery.of(context).padding.top,
                 title: 'EduReview Hub',
-                subtitle: 'Discover & Review Universities in Viet Nam',
-                hintText: 'Search...'
+                subtitle: 'Tìm hiểu & chia sẻ về các trường đại học',
+                hintText: 'Tìm kiếm ...'
               ),
               pinned: true, 
             ),
@@ -127,7 +127,7 @@ class _DashboardPageState extends State<DashboardPage>
             elevation: 8,
             icon: const Icon(Icons.add, color: Colors.white),
             label: const Text(
-              'Add Review',
+              'Thêm đánh giá',
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w600,

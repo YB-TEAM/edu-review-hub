@@ -10,32 +10,32 @@ class CategorySection extends StatelessWidget {
   Widget build(BuildContext context) {
     final categories = [
       {
-        'name': 'Engineering',
+        'name': 'Kỹ Thuật',
         'icon': Icons.engineering,
         'color': AppColors.primaryBlue,
       },
       {
-        'name': 'Business',
+        'name': 'Kinh Doanh',
         'icon': Icons.business,
         'color': AppColors.primaryGreen,
       },
       {
-        'name': 'Medicine',
+        'name': 'Y Học',
         'icon': Icons.medical_services,
         'color': AppColors.primaryRed,
       },
       {
-        'name': 'Arts',
+        'name': 'Nghệ Thuật',
         'icon': Icons.palette,
         'color': AppColors.primaryOrange,
       },
       {
-        'name': 'Science',
+        'name': 'Khoa Học',
         'icon': Icons.science,
         'color': AppColors.purple400,
       },
       {
-        'name': 'Technology',
+        'name': 'Công Nghệ',
         'icon': Icons.computer,
         'color': AppColors.blue400,
       },
@@ -47,7 +47,7 @@ class CategorySection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Browse by Category',
+            'Khám phá theo Ngành học',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontSize: 20,
             ),

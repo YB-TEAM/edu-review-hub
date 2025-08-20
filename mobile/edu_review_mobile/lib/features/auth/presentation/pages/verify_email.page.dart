@@ -76,14 +76,14 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                   if (mounted) codeController.clear();
                   showAppDialog(
                     context: context,
-                    title: 'Error',
+                    title: 'Lỗi',
                     content: state.errorMessage,
                     icon: Icons.error_outline,
                     iconColor: Colors.red,
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('Close'),
+                        child: const Text('Đóng'),
                       ),
                     ],
                   );
@@ -95,8 +95,8 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                 if (state is ButtonSuccessState) {
                   showAppDialog(
                     context: context,
-                    title: 'Code Resent',
-                    content: 'Verification code has been resent to ${widget.email}',
+                    title: 'Đã gửi lại mã',
+                    content: 'Mã xác thực đã được gửi lại tới ${widget.email}',
                     icon: Icons.email,
                     iconColor: Colors.green,
                     actions: [
@@ -109,14 +109,14 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                 } else if (state is ButtonFailureState) {
                   showAppDialog(
                     context: context,
-                    title: 'Error',
+                    title: 'Lỗi',
                     content: state.errorMessage,
                     icon: Icons.error_outline,
                     iconColor: Colors.red,
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('Close'),
+                        child: const Text('Đóng'),
                       ),
                     ],
                   );
@@ -186,7 +186,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                           const SizedBox(height: 30),
                           // Tiêu đề
                           Text(
-                            'Verification Code',
+                            'Mã xác thực',
                             style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                                   color: AppColors.textBlack,
                                 ),
@@ -198,7 +198,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                                     color: AppColors.textBlack,
                                   ),
                               children: [
-                                const TextSpan(text: "We sent you a 6-digit code (OTP) to your email: "),
+                                const TextSpan(text: "Chúng tôi đã gửi cho bạn mã OTP gồm 6 số đến email: "),
                                 TextSpan(
                                   text: widget.email,
                                   style: const TextStyle(
@@ -240,7 +240,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                "Didn't Receive the Code? ",
+                                "Không nhận được mã? ",
                                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.textGrey),
                               ),
                               BlocBuilder<ResendVerificationCubit, ButtonState>(
@@ -263,7 +263,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                                             ),
                                           )
                                         : Text(
-                                            'Resend',
+                                            'Gửi lại',
                                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                                   color: AppColors.textBlue,
                                                   fontWeight: FontWeight.w700,

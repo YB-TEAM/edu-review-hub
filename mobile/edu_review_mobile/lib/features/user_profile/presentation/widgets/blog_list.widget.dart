@@ -18,7 +18,7 @@ class MyBlogList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (blogs.isEmpty) {
-      return const Text("No blog posts available.");
+      return Container();
     }
 
     return Container(
@@ -32,7 +32,7 @@ class MyBlogList extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "My Blogs",
+              "Blog của tôi",
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.w700,
               ),

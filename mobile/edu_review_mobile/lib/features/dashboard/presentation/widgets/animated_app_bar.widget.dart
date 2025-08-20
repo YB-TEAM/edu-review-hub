@@ -92,7 +92,6 @@ Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
           ),
         ),
       ),
-      // Search bar luôn hiển thị
       Positioned(
         bottom: 0,
         left: 2,

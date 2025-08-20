@@ -21,7 +21,7 @@ class AchievementsTabWidget extends StatelessWidget {
         Expanded(
           child: _buildAchievementCard(
             context,
-            'Posts',
+            'Bài viết',
             posts,
             Icons.article_rounded,
             [AppColors.blue400, AppColors.blue600],
@@ -31,7 +31,7 @@ class AchievementsTabWidget extends StatelessWidget {
         Expanded(
           child: _buildAchievementCard(
             context,
-            'Likes',
+            'Lượt thích', 
             likes,
             Icons.favorite_rounded,
             [AppColors.primaryRed, AppColors.primaryRed],
@@ -41,7 +41,7 @@ class AchievementsTabWidget extends StatelessWidget {
         Expanded(
           child: _buildAchievementCard(
             context,
-            'Points',
+            'Điểm số', 
             points,
             Icons.star_rounded,
             [AppColors.amber400, AppColors.amber600],

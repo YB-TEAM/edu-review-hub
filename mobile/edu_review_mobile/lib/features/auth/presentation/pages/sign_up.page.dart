@@ -29,24 +29,23 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _confirmedpasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  // Track if form has been submitted to show validation errors
+  // Theo dõi nếu form đã được submit để hiển thị lỗi xác thực
   bool _isFormSubmitted = false;
 
   String? _validateUsername(String? value) {
     if (!_isFormSubmitted) return null;
     if (value == null || value.isEmpty) {
-      return 'Please enter username';
+      return 'Vui lòng nhập tên đăng nhập';
     }
     if (value.length < 3) {
-      return 'Username must be at least 3 characters';
+      return 'Tên đăng nhập phải có ít nhất 3 ký tự';
     }
     if (value.length > 20) {
-      return 'Username cannot exceed 20 characters';
+      return 'Tên đăng nhập không được vượt quá 20 ký tự';
     }
-    // Chỉ cho phép chữ cái, số, dấu gạch dưới, không có khoảng trắng hoặc ký tự đặc biệt
     final usernameRegex = RegExp(r'^[a-zA-Z0-9_]+$');
     if (!usernameRegex.hasMatch(value)) {
-      return 'Username can only contain letters, numbers, and underscores';
+      return 'Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới';
     }
     return null;
   }
@@ -54,14 +53,14 @@ class _SignUpPageState extends State<SignUpPage> {
   String? _validateEmail(String? value) {
     if (!_isFormSubmitted) return null;
     if (value == null || value.isEmpty) {
-      return 'Please enter email';
+      return 'Vui lòng nhập email';
     }
     // Kiểm tra định dạng email
     final emailRegex = RegExp(
       r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
     );
     if (!emailRegex.hasMatch(value)) {
-      return 'Please enter a valid email address';
+      return 'Vui lòng nhập một địa chỉ email hợp lệ';
     }
     return null;
   }
@@ -69,17 +68,17 @@ class _SignUpPageState extends State<SignUpPage> {
   String? _validatePassword(String? value) {
     if (!_isFormSubmitted) return null;
     if (value == null || value.isEmpty) {
-      return 'Please enter password';
+      return 'Vui lòng nhập mật khẩu';
     }
     if (value.length < 3) {
-      return 'Password must be at least 3 characters';
+      return 'Mật khẩu phải có ít nhất 3 ký tự';
     }
     if (value.length > 50) {
-      return 'Password cannot exceed 50 characters';
+      return 'Mật khẩu không được vượt quá 50 ký tự';
     }
     // Kiểm tra có ít nhất 1 chữ hoa, 1 chữ thường, 1 số
     if (!RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)').hasMatch(value)) {
-      return 'Password must contain at least 1 uppercase, 1 lowercase and 1 number';
+      return 'Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường và 1 số';
     }
     return null;
   }
@@ -87,10 +86,10 @@ class _SignUpPageState extends State<SignUpPage> {
   String? _validateConfirmedPassword(String? value) {
     if (!_isFormSubmitted) return null;
     if (value == null || value.isEmpty) {
-      return 'Please confirm your password';
+      return 'Vui lòng xác nhận mật khẩu';
     }
     if (value != _passwordController.text) {
-      return 'Passwords do not match';
+      return 'Mật khẩu không khớp';
     }
     return null;
   }
@@ -112,10 +111,10 @@ class _SignUpPageState extends State<SignUpPage> {
       _isFormSubmitted = true;
     });
 
-    // Force validation to show errors
+    // Ép xác thực để hiển thị lỗi
     _formKey.currentState!.validate();
 
-    // Check if form is valid before proceeding
+    // Kiểm tra nếu form hợp lệ trước khi tiếp tục
     if (_usernameController.text.isNotEmpty &&
       _emailController.text.isNotEmpty &&
       _passwordController.text.isNotEmpty &&
@@ -171,21 +170,23 @@ class _SignUpPageState extends State<SignUpPage> {
         child: BlocListener<ButtonStateCubit, ButtonState>(
           listener: (context, state) {
             if (state is ButtonSuccessState) {
-
-              Navigator.pushReplacementNamed(context, RouteConstant.verifyEmail, arguments: _emailController.text);
-
+              Navigator.pushReplacementNamed(
+                context, 
+                RouteConstant.verifyEmail, 
+                arguments: _emailController.text
+              );
             }
             if (state is ButtonFailureState) {
               showAppDialog(
                 context: context,
-                title: 'Error',
+                title: 'Lỗi',
                 content: state.errorMessage,
                 icon: Icons.error_outline,
                 iconColor: Colors.red,
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Close'),
+                    child: const Text('Đóng'),
                   ),
                 ],
               );
@@ -234,7 +235,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Sign Up',
+                          'Đăng ký',
                           style: Theme.of(
                             context,
                           ).textTheme.headlineLarge?.copyWith(
@@ -248,7 +249,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Just a few quick things to get started",
+                          "Hoàn tất vài bước đơn giản để bắt đầu",
                           style: Theme.of(
                             context,
                           ).textTheme.bodyMedium?.copyWith(
@@ -265,8 +266,8 @@ class _SignUpPageState extends State<SignUpPage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             CustomTextField(
-                              label: 'Username',
-                              placeholder: 'Enter your username',
+                              label: 'Tên đăng nhập',
+                              placeholder: 'Nhập tên đăng nhập của bạn',
                               controller: _usernameController,
                               validator: _validateUsername,
                               prefixIconData: Icons.email_outlined,
@@ -274,23 +275,23 @@ class _SignUpPageState extends State<SignUpPage> {
                             SizedBox(height: 16),
                             CustomTextField(
                               label: 'Email',
-                              placeholder: 'Enter your email',
+                              placeholder: 'Nhập email của bạn',
                               controller: _emailController,
                               validator: _validateEmail,
                               prefixIconData: Icons.email_outlined,
                             ),
                             SizedBox(height: 16),
                             CustomPasswordField(
-                              label: 'Password',
-                              placeholder: 'Enter your password',
+                              label: 'Mật khẩu',
+                              placeholder: 'Nhập mật khẩu của bạn',
                               controller: _passwordController,
                               validator: _validatePassword,
                               prefixIconData: Icons.lock_outline,
                             ),
                             SizedBox(height: 16),
                             CustomPasswordField(
-                              label: 'Confirm Password',
-                              placeholder: 'Re-enter your password',
+                              label: 'Xác nhận mật khẩu',
+                              placeholder: 'Nhập lại mật khẩu',
                               controller: _confirmedpasswordController,
                               validator: _validateConfirmedPassword,
                               prefixIconData: Icons.lock_outline,
@@ -299,7 +300,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             Builder(
                               builder: (context) {
                                 return PrimaryButton(
-                                  title: "Sign Up",
+                                  title: 'Đăng ký',
                                   onPressed: () => _handleSignUp(context),
                                 );
                               },
@@ -309,13 +310,13 @@ class _SignUpPageState extends State<SignUpPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  "Already have an account?",
+                                  "Bạn đã có tài khoản?",
                                   style: Theme.of(context).textTheme.bodyMedium
                                       ?.copyWith(color: AppColors.textGrey),
                                 ),
                                 CustomTextButton(
                                   onPressed: _handleSignIn,
-                                  title: "Sign in",
+                                  title: "Đăng nhập",
                                   style: Theme.of(
                                     context,
                                   ).textTheme.bodyMedium?.copyWith(

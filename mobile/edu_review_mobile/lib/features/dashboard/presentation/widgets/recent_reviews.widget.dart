@@ -13,26 +13,26 @@ class RecentReviews extends StatelessWidget {
         'user': 'Sarah M.',
         'university': 'MIT',
         'rating': 5.0,
-        'comment': 'Amazing engineering program with world-class facilities!',
-        'time': '2 hours ago',
+        'comment': 'Chương trình kỹ thuật tuyệt vời với cơ sở vật chất hàng đầu thế giới!',
+        'time': '2 giờ trước',
         'avatar': 'S',
         'image': 'https://wp.technologyreview.com/wp-content/uploads/2025/06/MIT-Dome-green.png',
       },
       {
         'user': 'John D.',
-        'university': 'Stanford University',
+        'university': 'Đại học Stanford',
         'rating': 4.5,
-        'comment': 'Great campus life and excellent professors.',
-        'time': '5 hours ago',
+        'comment': 'Đời sống trong khuôn viên tuyệt vời và giảng viên xuất sắc.',
+        'time': '5 giờ trước',
         'avatar': 'J',
         'image': 'https://img2.storyblok.com/fit-in/1200x630/f/64062/1181x709/0a5a1e360a/stanford-br.png',
       },
       {
         'user': 'Emily R.',
-        'university': 'Harvard University',
+        'university': 'Đại học Harvard',
         'rating': 4.8,
-        'comment': 'Outstanding academic environment and research opportunities.',
-        'time': '1 day ago',
+        'comment': 'Môi trường học tập xuất sắc và nhiều cơ hội nghiên cứu.',
+        'time': '1 ngày trước',
         'avatar': 'E',
         'image': 'https://image-static.collegedunia.com/public/college_data/images/studyabroad/appImage/college_1090_29-15:00_o-HARVARD-UNIVERSITY-BUILDING-facebook.jpeg',
       },
@@ -48,13 +48,13 @@ class RecentReviews extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Recent Reviews',
+                'Đánh Giá Gần Đây',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontSize: 20),
               ),
               TextButton(
                 onPressed: () {},
                 child: Text(
-                  'View All',
+                  'Xem tất cả',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         color: AppColors.primaryBlue,
                       ),
@@ -162,7 +162,7 @@ class RecentReviews extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  print('Share tapped');
+                  print('Chia sẻ được bấm');
                 },
                 child: Icon(
                   Icons.more_horiz,
@@ -212,7 +212,7 @@ class RecentReviews extends StatelessWidget {
                 const SizedBox(width: 36),
                 GestureDetector(
                   onTap: () {
-                    print('Comment tapped');
+                    print('Bình luận được bấm');
                   },
                   child: Row(
                     children: [
@@ -235,7 +235,7 @@ class RecentReviews extends StatelessWidget {
                 const SizedBox(width: 36),
                 GestureDetector(
                   onTap: () {
-                    print('Share tapped');
+                    print('Chia sẻ được bấm');
                   },
                   child: Row(
                     children: [

@@ -64,37 +64,37 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   void _saveProfile(EditProfileCubit cubit, ProfileEntity currentProfile) {
     final editModel = EditProfileModel(
-      // Basic Info
+      // Thông tin cơ bản
       firstName: currentProfile.firstName,
       lastName: currentProfile.lastName,
       displayName: _displayNameController.text.trim(),
       bio: _bioController.text.trim(),
       
-      // Images
+      // Hình ảnh
       avatarUrl: currentProfile.avatarUrl,
       coverImageUrl: currentProfile.coverImageUrl,
       
-      // Personal Info
+      // Thông tin cá nhân
       dateOfBirth: currentProfile.dateOfBirth,
       gender: currentProfile.gender,
       
-      // Location Info
+      // Địa chỉ
       country: currentProfile.country,
       city: _cityController.text.trim(),
       address: currentProfile.address,
       
-      // Preferences
+      // Cài đặt cá nhân
       timezone: currentProfile.timezone,
       language: currentProfile.language,
       
-      // Education Info
+      // Thông tin học tập
       universityName: _universityController.text.trim(),
       major: _majorController.text.trim(),
       graduationYear: currentProfile.graduationYear,
       studentId: currentProfile.studentId,
       isStudentVerified: currentProfile.isStudentVerified,
       
-      // Settings
+      // Cài đặt hệ thống
       privacySettings: currentProfile.privacySettings,
       notificationSettings: currentProfile.notificationSettings,
     );
@@ -111,7 +111,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           if (state is EditProfileSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Profile updated successfully!'),
+                content: Text('Cập nhật hồ sơ thành công!'),
                 backgroundColor: Colors.green,
               ),
             );
@@ -120,7 +120,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           if (state is EditProfileFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Error: ${state.errorMessage}'),
+                content: Text('Lỗi: ${state.errorMessage}'),
                 backgroundColor: Colors.red,
               ),
             );
@@ -128,7 +128,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         },
         child: Scaffold(
           appBar: CustomAppBar(
-            title: 'Edit Profile',
+            title: 'Chỉnh sửa hồ sơ',
             onBackPressed: () => Navigator.of(context).maybePop(),
           ),
           bottomNavigationBar: null,
@@ -150,14 +150,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     child: Column(
                       children: [
                         const SizedBox(height: 32),
-                        // Edit Form
+                        // Form chỉnh sửa
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Avatar',
+                                'Ảnh đại diện',
                                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -211,9 +211,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               ),
                               const SizedBox(height: 16),
 
-                              // Cover Image
+                              // Ảnh bìa
                               Text(
-                                'Cover Image',
+                                'Ảnh bìa',
                                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -233,11 +233,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                   child: Stack(
                                     children: [
                                       Image.network(
-                                        state
-                                                    .profileEntity
-                                                    .coverImageUrl
-                                                    ?.isNotEmpty ==
-                                                true
+                                        state.profileEntity.coverImageUrl?.isNotEmpty == true
                                             ? state.profileEntity.coverImageUrl!
                                             : AppDefaultImages.defaultCover,
                                         width: double.infinity,
@@ -269,9 +265,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               ),
                               const SizedBox(height: 24),
 
-                              // Display Name
+                              // Tên hiển thị
                               Text(
-                                'Display Name',
+                                'Tên hiển thị',
                                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -279,13 +275,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               const SizedBox(height: 8),
                               CustomTextField(
                                 controller: _displayNameController,
-                                placeholder: 'Enter display name',
+                                placeholder: 'Nhập tên hiển thị',
                               ),
                               const SizedBox(height: 16),
 
-                              // Bio
+                              // Giới thiệu
                               Text(
-                                'Bio',
+                                'Giới thiệu',
                                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -293,13 +289,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               const SizedBox(height: 8),
                               CustomTextField(
                                 controller: _bioController,
-                                placeholder: 'Enter your bio',
+                                placeholder: 'Nhập thông tin giới thiệu',
                               ),
                               const SizedBox(height: 16),
 
-                              // City
+                              // Thành phố
                               Text(
-                                'City',
+                                'Thành phố',
                                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -307,13 +303,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               const SizedBox(height: 8),
                               CustomTextField(
                                 controller: _cityController,
-                                placeholder: 'Enter city',
+                                placeholder: 'Nhập tên thành phố',
                               ),
                               const SizedBox(height: 16),
 
-                              // University
+                              // Trường đại học
                               Text(
-                                'University',
+                                'Trường đại học',
                                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -321,12 +317,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               const SizedBox(height: 8),
                               CustomTextField(
                                 controller: _universityController,
-                                placeholder: 'Enter university name',
+                                placeholder: 'Nhập tên trường đại học',
                               ),
                               const SizedBox(height: 16),
 
+                              // Chuyên ngành
                               Text(
-                                'Major',
+                                'Chuyên ngành',
                                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -334,80 +331,59 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               const SizedBox(height: 8),
                               CustomTextField(
                                 controller: _majorController,
-                                placeholder: 'Enter major',
+                                placeholder: 'Nhập chuyên ngành',
                               ),
                               const SizedBox(height: 32),
 
-                              // Save Button
+                              // Nút lưu
                               SizedBox(
                                 width: double.infinity,
-                                child: BlocBuilder<
-                                  EditProfileCubit,
-                                  EditProfileState
-                                >(
+                                child: BlocBuilder<EditProfileCubit, EditProfileState>(
                                   builder: (context, saveState) {
-                                    final isLoading =
-                                        saveState is EditProfileSaving;
+                                    final isLoading = saveState is EditProfileSaving;
                                     return ElevatedButton(
-                                      onPressed:
-                                          isLoading
-                                              ? null
-                                              : () => _saveProfile(
-                                                context
-                                                    .read<EditProfileCubit>(),
+                                      onPressed: isLoading
+                                          ? null
+                                          : () => _saveProfile(
+                                                context.read<EditProfileCubit>(),
                                                 state.profileEntity,
                                               ),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.primaryBlue,
-                                        minimumSize: const Size(
-                                          double.infinity,
-                                          48,
-                                        ),
+                                        minimumSize: const Size(double.infinity, 48),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
+                                          borderRadius: BorderRadius.circular(8),
                                         ),
                                       ),
-                                      child:
-                                          isLoading
-                                              ? const SizedBox(
-                                                width: 20,
-                                                height: 20,
-                                                child: CircularProgressIndicator(
-                                                  strokeWidth: 2,
-                                                  valueColor:
-                                                      AlwaysStoppedAnimation<
-                                                        Color
-                                                      >(Colors.white),
+                                      child: isLoading
+                                          ? const SizedBox(
+                                              width: 20,
+                                              height: 20,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                valueColor: AlwaysStoppedAnimation<Color>(
+                                                  Colors.white,
                                                 ),
-                                              )
-                                              : Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  const Icon(
-                                                    Icons.save,
-                                                    color:
-                                                        AppColors.primaryWhite,
-                                                  ),
-                                                  const SizedBox(width: 8),
-                                                  Text(
-                                                    'Save Changes',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyLarge
-                                                        ?.copyWith(
-                                                          color:
-                                                              AppColors
-                                                                  .primaryWhite,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                        ),
-                                                  ),
-                                                ],
                                               ),
+                                            )
+                                          : Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                const Icon(
+                                                  Icons.save,
+                                                  color: AppColors.primaryWhite,
+                                                ),
+                                                const SizedBox(width: 8),
+                                                Text(
+                                                  'Lưu thay đổi',
+                                                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                                        color: AppColors.primaryWhite,
+                                                        fontWeight: FontWeight.w600,
+                                                      ),
+                                                ),
+                                              ],
+                                            ),
                                     );
                                   },
                                 ),
@@ -433,7 +409,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'Error: ${state.errorMessage}',
+                          'Lỗi: ${state.errorMessage}',
                           textAlign: TextAlign.center,
                           style: const TextStyle(fontSize: 16),
                         ),
@@ -442,7 +418,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           onPressed: () {
                             context.read<EditProfileCubit>().loadProfile();
                           },
-                          child: const Text('Try Again'),
+                          child: const Text('Thử lại'),
                         ),
                       ],
                     ),

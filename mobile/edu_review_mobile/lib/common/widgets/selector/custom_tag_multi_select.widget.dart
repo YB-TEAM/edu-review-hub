@@ -78,7 +78,7 @@ class _CustomTagMultiSelectState extends State<CustomTagMultiSelect> {
           const SizedBox(height: 8),
           ElevatedButton(
             onPressed: _fetchTags,
-            child: const Text("Retry"),
+            child: const Text("Thử lại"),
           )
         ],
       );

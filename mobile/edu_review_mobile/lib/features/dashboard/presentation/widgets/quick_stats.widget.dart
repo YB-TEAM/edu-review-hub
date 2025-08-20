@@ -12,7 +12,7 @@ class QuickStats extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Quick Stats',
+            'Số Liệu Nổi Bật',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontSize: 20,
             ),
@@ -24,7 +24,7 @@ class QuickStats extends StatelessWidget {
                 child: _buildStatCard(
                   context: context,
                   icon: AppIcons.university,
-                  title: 'Universities',
+                  title: 'Đại học',
                   value: '2,847',
                   color: AppColors.primaryBlue,
                   highlight: true,
@@ -35,7 +35,7 @@ class QuickStats extends StatelessWidget {
                 child: _buildStatCard(
                   context: context,
                   icon: AppIcons.users,
-                  title: 'Students',
+                  title: 'Sinh viên',
                   value: '45.2K',
                   color: AppColors.primaryGreen,
                   highlight: true,
@@ -46,7 +46,7 @@ class QuickStats extends StatelessWidget {
                 child: _buildStatCard(
                   context: context,
                   icon: AppIcons.starActive,
-                  title: 'Reviews',
+                  title: 'Đánh giá',
                   value: '12.8K',
                   color: AppColors.primaryOrange,
                   highlight: true,
