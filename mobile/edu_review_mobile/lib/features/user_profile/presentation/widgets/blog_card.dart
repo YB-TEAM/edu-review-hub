@@ -33,11 +33,16 @@ class BlogCard extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  blog.featuredImageUrl ?? AppDefaultImages.defaultImage,
-                  fit: BoxFit.cover,
+                child: Container(
                   width: double.infinity,
                   height: 160,
+                  color: AppColors.secondaryGrey, 
+                  child: Image.network(
+                    blog.featuredImageUrl ?? AppDefaultImages.defaultImage,
+                    fit: BoxFit.contain, 
+                    width: double.infinity,
+                    height: 160,
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -91,7 +96,7 @@ class BlogCard extends StatelessWidget {
                       SvgPicture.asset(AppIcons.userActive, width: 24, height: 24, color: AppColors.primaryGrey),
                       const SizedBox(width: 8),
                       Container(
-                        constraints: const BoxConstraints(maxWidth: 80),
+                        constraints: const BoxConstraints(maxWidth: 60),
                         child: Text(
                           blog.authorName ?? 'Tác giả không xác định', 
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
