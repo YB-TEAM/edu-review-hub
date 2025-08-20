@@ -1,44 +1,50 @@
-import 'package:edu_review_mobile/features/university/data/models/university_response.dart';
-
 class UniversityPagination {
-  final List<UniversityResponse> universities;
-  final int currentPage;
   final int limit;
-  final int totalItems;
-  final int totalPages;
-  final int itemsInCurrentPage;
-  final bool hasPreviousPage;
-  final bool hasNextPage;
-  final int? previousPage;
-  final int? nextPage;
+  final int page;
+  final String? search;
+  final String? location;
+  final String? type;
 
   UniversityPagination({
-    required this.universities,
-    required this.currentPage,
-    required this.limit,
-    required this.totalItems,
-    required this.totalPages,
-    required this.itemsInCurrentPage,
-    required this.hasPreviousPage,
-    required this.hasNextPage,
-    this.previousPage,
-    this.nextPage,
+    this.limit = 10,
+    this.page = 1,
+    this.search,
+    this.location,
+    this.type,
   });
 
-  factory UniversityPagination.fromJson(Map<String, dynamic> json) {
+  Map<String, dynamic> toMap() {
+    final Map<String, dynamic> map = {
+      'limit': limit,
+      'page': page,
+    };
+
+    if (search != null && search!.isNotEmpty) {
+      map['search'] = search;
+    }
+    if (location != null && location!.isNotEmpty) {
+      map['location'] = location;
+    }
+    if (type != null && type!.isNotEmpty) {
+      map['type'] = type;
+    }
+
+    return map;
+  }
+
+  UniversityPagination copyWith({
+    int? limit,
+    int? page,
+    String? search,
+    String? location,
+    String? type,
+  }) {
     return UniversityPagination(
-      universities: (json['universities'] as List)
-          .map((e) => UniversityResponse.fromJson(e))
-          .toList(),
-      currentPage: json['pagination']['currentPage'],
-      limit: json['pagination']['limit'],
-      totalItems: json['pagination']['totalItems'],
-      totalPages: json['pagination']['totalPages'],
-      itemsInCurrentPage: json['pagination']['itemsInCurrentPage'],
-      hasPreviousPage: json['pagination']['hasPreviousPage'],
-      hasNextPage: json['pagination']['hasNextPage'],
-      previousPage: json['pagination']['previousPage'],
-      nextPage: json['pagination']['nextPage'],
+      limit: limit ?? this.limit,
+      page: page ?? this.page,
+      search: search ?? this.search,
+      location: location ?? this.location,
+      type: type ?? this.type,
     );
   }
 }

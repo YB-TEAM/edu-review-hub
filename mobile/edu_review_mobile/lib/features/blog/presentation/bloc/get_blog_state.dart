@@ -10,11 +10,25 @@ class BlogLoading extends BlogState {}
 class BlogLoaded extends BlogState {
   final BlogListResponse blogList;
   final BlogPagination pagination;
+  final bool hasReachedEnd;
 
   BlogLoaded({
     required this.blogList,
     required this.pagination,
+    this.hasReachedEnd = false,
   });
+
+  BlogLoaded copyWith({
+    BlogListResponse? blogList,
+    BlogPagination? pagination,
+    bool? hasReachedEnd,
+  }) {
+    return BlogLoaded(
+      blogList: blogList ?? this.blogList,
+      pagination: pagination ?? this.pagination,
+      hasReachedEnd: hasReachedEnd ?? this.hasReachedEnd,
+    );
+  }
 }
 
 class BlogError extends BlogState {

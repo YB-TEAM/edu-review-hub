@@ -4,7 +4,7 @@ class UniversityResponse {
   final String? shortName;
   final String? englishName;
   final String? address;
-  final List<String> location;
+  final List<String>? location;
   final String? city;
   final String? province;
   final String? phone;
@@ -17,13 +17,13 @@ class UniversityResponse {
   final String? history;
   final String? mission;
   final String? vision;
-  final String type; 
-  final String status; 
+  final String? type; 
+  final String? status; 
   final int? foundedYear;
   final String? accreditation;
-  final List<String> specializations;
-  final List<String> facilities;
-  final List<String> achievements;
+  final List<String>? specializations;
+  final List<String>? facilities;
+  final List<String>? achievements;
   final String? rankingNational;
   final String? rankingInternational;
   final int? studentCount;
@@ -31,21 +31,21 @@ class UniversityResponse {
   final String? acceptanceRate;
   final String? tuitionFeeMin;
   final String? tuitionFeeMax;
-  final String currency;
-  final List<String> admissionRequirements;
-  final List<String> scholarships;
-  final List<String> internationalPartnerships;
+  final String? currency;
+  final List<String>? admissionRequirements;
+  final List<String>? scholarships;
+  final List<String>? internationalPartnerships;
   final String? campusMapUrl;
   final String? latitude;
   final String? longitude;
-  final bool isFeatured;
-  final bool isVerified;
-  // final String? viewCount;
-  // final int reviewCount;
+  final bool? isFeatured;
+  final bool? isVerified;
+  final int? viewCount;
+  final int? reviewCount;
   final String? averageRating;
-  // final int totalRating;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final int? totalRating;
+  final String? createdAt;
+  final String? updatedAt;
 
   UniversityResponse({
     required this.id,
@@ -66,8 +66,8 @@ class UniversityResponse {
     this.history,
     this.mission,
     this.vision,
-    required this.type,
-    required this.status,
+    this.type,
+    this.status,
     this.foundedYear,
     this.accreditation,
     this.specializations = const [],
@@ -80,7 +80,7 @@ class UniversityResponse {
     this.acceptanceRate,
     this.tuitionFeeMin,
     this.tuitionFeeMax,
-    required this.currency,
+    this.currency,
     this.admissionRequirements = const [],
     this.scholarships = const [],
     this.internationalPartnerships = const [],
@@ -89,12 +89,12 @@ class UniversityResponse {
     this.longitude,
     this.isFeatured = false,
     this.isVerified = false,
-    // this.viewCount,
-    // this.reviewCount = 0,
+    this.viewCount,
+    this.reviewCount = 0,
     this.averageRating,
-    // this.totalRating = 0,
-    required this.createdAt,
-    required this.updatedAt,
+    this.totalRating = 0,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory UniversityResponse.fromJson(Map<String, dynamic> json) {
@@ -142,12 +142,64 @@ class UniversityResponse {
       longitude: json["longitude"],
       isFeatured: json["is_featured"] ?? false,
       isVerified: json["is_verified"] ?? false,
-      // viewCount: json["view_count"] ?? 0,
-      // reviewCount: json["review_count"] ?? 0,
-      averageRating: json["average_rating"] ?? "0.00",
-      // totalRating: json["total_rating"] ?? 0,
-      createdAt: DateTime.parse(json["created_at"]),
-      updatedAt: DateTime.parse(json["updated_at"]),
+      viewCount: json["view_count"],
+      reviewCount: json["review_count"] ?? 0,
+      averageRating: json["average_rating"],
+      totalRating: json["total_rating"] ?? 0,
+      createdAt: json["created_at"],
+      updatedAt: json["updated_at"],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "name": name,
+      "short_name": shortName,
+      "english_name": englishName,
+      "address": address,
+      "location": location,
+      "city": city,
+      "province": province,
+      "phone": phone,
+      "email": email,
+      "website": website,
+      "facebook": facebook,
+      "logo_url": logoUrl,
+      "banner_url": bannerUrl,
+      "description": description,
+      "history": history,
+      "mission": mission,
+      "vision": vision,
+      "type": type,
+      "status": status,
+      "founded_year": foundedYear,
+      "accreditation": accreditation,
+      "specializations": specializations,
+      "facilities": facilities,
+      "achievements": achievements,
+      "ranking_national": rankingNational,
+      "ranking_international": rankingInternational,
+      "student_count": studentCount,
+      "faculty_count": facultyCount,
+      "acceptance_rate": acceptanceRate,
+      "tuition_fee_min": tuitionFeeMin,
+      "tuition_fee_max": tuitionFeeMax,
+      "currency": currency,
+      "admission_requirements": admissionRequirements,
+      "scholarships": scholarships,
+      "international_partnerships": internationalPartnerships,
+      "campus_map_url": campusMapUrl,
+      "latitude": latitude,
+      "longitude": longitude,
+      "is_featured": isFeatured,
+      "is_verified": isVerified,
+      "view_count": viewCount,
+      "review_count": reviewCount,
+      "average_rating": averageRating,
+      "total_rating": totalRating,
+      "created_at": createdAt,
+      "updated_at": updatedAt,
+    };
   }
 }
