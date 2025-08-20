@@ -29,19 +29,29 @@ export class UniversityReviewService implements IUniversityReviewService {
   private toResponseDto(review: UniversityReview): UniversityReviewResponseDto {
     return {
       id: review.id,
-      universityId: review.university.id,
-      userId: review.user.id,
+      university_id: review.university.id,
+      user_id: review.user.id,
       content: review.content,
+      pros: review.pros,
+      cons: review.cons,
+      recommendation: review.recommendation,
       overall_score: review.overall_score,
       status: review.status,
+      review_type: review.review_type,
+      study_program: review.study_program,
+      study_year: review.study_year,
+      graduation_year: review.graduation_year,
+      is_anonymous: review.is_anonymous,
+      is_verified: review.is_verified,
+      is_helpful: review.is_helpful,
+      helpful_count: review.helpful_count,
+      report_count: review.report_count,
+      admin_notes: review.admin_notes,
+      moderator_id: review.moderator_id,
+      moderated_at: review.moderated_at,
       created_at: review.created_at,
       updated_at: review.updated_at,
-      scores: (review.scores || []).map((s) => ({
-        id: s.id,
-        criterionId: s.criterion.id,
-        criterionName: s.criterion.name,
-        score: s.score,
-      })),
+      deleted_at: review.deleted_at,
     };
   }
 
@@ -71,11 +81,19 @@ export class UniversityReviewService implements IUniversityReviewService {
     const overall_score =
       scores.reduce((sum, s) => sum + s.score, 0) / scores.length;
     const review = await this.reviewRepo.create({
-      university: { id: dto.universityId } as any,
+      university: { id: dto.university_id } as any,
       user: { id: userId } as any,
       content: dto.content,
+      pros: dto.pros,
+      cons: dto.cons,
+      recommendation: dto.recommendation,
       overall_score,
       status: ReviewStatus.PENDING,
+      review_type: dto.review_type,
+      study_program: dto.study_program,
+      study_year: dto.study_year,
+      graduation_year: dto.graduation_year,
+      is_anonymous: dto.is_anonymous,
       created_at: new Date(),
       updated_at: new Date(),
       scores,

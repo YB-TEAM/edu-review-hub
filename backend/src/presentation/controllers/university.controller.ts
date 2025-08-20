@@ -17,6 +17,12 @@ import {
 import {
   PaginationDto,
   UniversityListResponseDto,
+  CreateUniversityDto,
+  UpdateUniversityDto,
+  CreateUniversityReviewDto,
+  UpdateUniversityReviewDto,
+  UniversityReviewResponseDto,
+  ModerateUniversityReviewDto,
 } from "../../application/dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { JwtAuthGuard } from "../guards/jwt-auth.guard";
@@ -40,6 +46,7 @@ import {
   UniversityStatus,
 } from "../../infrastructure/database/entities/university.entity";
 import { ReviewStatus } from "../../infrastructure/database/entities/university-review.entity";
+import { UniversityResponseDto } from "../../application/dto/university/university-response.dto";
 
 @Controller("universities")
 export class UniversityController {
@@ -56,7 +63,7 @@ export class UniversityController {
     name: "type",
     enum: UniversityType,
     required: false,
-    description: "University type (public/private)",
+    description: "University type (public/private/international/college)",
   })
   @ApiQuery({
     name: "location",
@@ -106,7 +113,11 @@ export class UniversityController {
   @Get("featured")
   @ApiTags("University - Public")
   @ApiOperation({ summary: "Get featured universities" })
-  @ApiResponse({ status: 200, description: "List of featured universities" })
+  @ApiResponse({
+    status: 200,
+    description: "List of featured universities",
+    type: [UniversityResponseDto],
+  })
   async getFeaturedUniversities() {
     return this.universityService.getFeaturedUniversities();
   }
@@ -114,8 +125,17 @@ export class UniversityController {
   @Get("top-rated")
   @ApiTags("University - Public")
   @ApiOperation({ summary: "Get top rated universities" })
-  @ApiQuery({ name: "limit", type: Number, required: false })
-  @ApiResponse({ status: 200, description: "List of top rated universities" })
+  @ApiQuery({
+    name: "limit",
+    type: Number,
+    required: false,
+    description: "Number of universities to return (default: 10)",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "List of top rated universities",
+    type: [UniversityResponseDto],
+  })
   async getTopRatedUniversities(@Query("limit") limit?: number) {
     return this.universityService.getTopRatedUniversities(limit);
   }
@@ -123,8 +143,17 @@ export class UniversityController {
   @Get("search")
   @ApiTags("University - Public")
   @ApiOperation({ summary: "Search universities" })
-  @ApiQuery({ name: "q", type: String, required: true })
-  @ApiResponse({ status: 200, description: "Search results" })
+  @ApiQuery({
+    name: "q",
+    type: String,
+    required: true,
+    description: "Search query",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Search results",
+    type: [UniversityResponseDto],
+  })
   async searchUniversities(@Query("q") query: string) {
     return this.universityService.searchUniversities(query);
   }
@@ -132,7 +161,20 @@ export class UniversityController {
   @Get("statistics")
   @ApiTags("University - Public")
   @ApiOperation({ summary: "Get university statistics" })
-  @ApiResponse({ status: 200, description: "University statistics" })
+  @ApiResponse({
+    status: 200,
+    description: "University statistics",
+    schema: {
+      type: "object",
+      properties: {
+        totalUniversities: { type: "number" },
+        totalReviews: { type: "number" },
+        averageRating: { type: "number" },
+        topTypes: { type: "array", items: { type: "string" } },
+        topLocations: { type: "array", items: { type: "string" } },
+      },
+    },
+  })
   async getUniversityStatistics() {
     return this.universityService.getUniversityStatistics();
   }
@@ -140,8 +182,16 @@ export class UniversityController {
   @Get(":id")
   @ApiTags("University - Public")
   @ApiOperation({ summary: "Get university by ID" })
-  @ApiParam({ name: "id", type: Number })
-  @ApiResponse({ status: 200, description: "University details" })
+  @ApiParam({
+    name: "id",
+    type: Number,
+    description: "University ID",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "University details",
+    type: UniversityResponseDto,
+  })
   @ApiResponse({ status: 404, description: "University not found" })
   async getUniversityById(@Param("id", ParseIntPipe) id: number) {
     return this.universityService.getUniversityById(id);
@@ -150,11 +200,43 @@ export class UniversityController {
   @Get(":id/reviews")
   @ApiTags("University - Public")
   @ApiOperation({ summary: "Get university reviews" })
-  @ApiParam({ name: "id", type: Number })
-  @ApiQuery({ name: "status", enum: ReviewStatus, required: false })
-  @ApiQuery({ name: "page", type: Number, required: false })
-  @ApiQuery({ name: "limit", type: Number, required: false })
-  @ApiResponse({ status: 200, description: "University reviews" })
+  @ApiParam({
+    name: "id",
+    type: Number,
+    description: "University ID",
+  })
+  @ApiQuery({
+    name: "status",
+    enum: ReviewStatus,
+    required: false,
+    description: "Review status filter",
+  })
+  @ApiQuery({
+    name: "page",
+    type: Number,
+    required: false,
+    description: "Page number",
+  })
+  @ApiQuery({
+    name: "limit",
+    type: Number,
+    required: false,
+    description: "Items per page",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "University reviews",
+    schema: {
+      type: "object",
+      properties: {
+        reviews: {
+          type: "array",
+          items: { $ref: "#/components/schemas/UniversityReviewResponseDto" },
+        },
+        total: { type: "number" },
+      },
+    },
+  })
   async getUniversityReviews(
     @Param("id", ParseIntPipe) id: number,
     @Query() filters: any
@@ -165,8 +247,24 @@ export class UniversityController {
   @Get(":id/statistics")
   @ApiTags("University - Public")
   @ApiOperation({ summary: "Get university review statistics" })
-  @ApiParam({ name: "id", type: Number })
-  @ApiResponse({ status: 200, description: "Review statistics" })
+  @ApiParam({
+    name: "id",
+    type: Number,
+    description: "University ID",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Review statistics",
+    schema: {
+      type: "object",
+      properties: {
+        totalReviews: { type: "number" },
+        averageRating: { type: "number" },
+        ratingDistribution: { type: "object" },
+        reviewTrends: { type: "array" },
+      },
+    },
+  })
   async getReviewStatistics(@Param("id", ParseIntPipe) id: number) {
     return this.universityService.getReviewStatistics(id);
   }
@@ -174,8 +272,25 @@ export class UniversityController {
   @Get(":id/analytics")
   @ApiTags("University - Public")
   @ApiOperation({ summary: "Get university analytics" })
-  @ApiParam({ name: "id", type: Number })
-  @ApiResponse({ status: 200, description: "University analytics" })
+  @ApiParam({
+    name: "id",
+    type: Number,
+    description: "University ID",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "University analytics",
+    schema: {
+      type: "object",
+      properties: {
+        viewCount: { type: "number" },
+        reviewCount: { type: "number" },
+        averageRating: { type: "number" },
+        ratingTrends: { type: "array" },
+        popularFeatures: { type: "array" },
+      },
+    },
+  })
   async getUniversityAnalytics(@Param("id", ParseIntPipe) id: number) {
     return this.universityService.getUniversityAnalytics(id);
   }
@@ -186,13 +301,25 @@ export class UniversityController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: "Create university review" })
-  @ApiParam({ name: "id", type: Number })
-  @ApiBody({ description: "Review data" })
-  @ApiResponse({ status: 201, description: "Review created" })
+  @ApiParam({
+    name: "id",
+    type: Number,
+    description: "University ID",
+  })
+  @ApiBody({
+    type: CreateUniversityReviewDto,
+    description: "Review data",
+  })
+  @ApiResponse({
+    status: 201,
+    description: "Review created",
+    type: UniversityReviewResponseDto,
+  })
   @ApiResponse({ status: 400, description: "Bad request" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
   async createUniversityReview(
     @Param("id", ParseIntPipe) universityId: number,
-    @Body() reviewData: any,
+    @Body() reviewData: CreateUniversityReviewDto,
     @Request() req: any
   ) {
     return this.universityService.createUniversityReview({
@@ -207,13 +334,25 @@ export class UniversityController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: "Update university review" })
-  @ApiParam({ name: "id", type: Number })
-  @ApiBody({ description: "Updated review data" })
-  @ApiResponse({ status: 200, description: "Review updated" })
+  @ApiParam({
+    name: "id",
+    type: Number,
+    description: "Review ID",
+  })
+  @ApiBody({
+    type: UpdateUniversityReviewDto,
+    description: "Updated review data",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Review updated",
+    type: UniversityReviewResponseDto,
+  })
   @ApiResponse({ status: 404, description: "Review not found" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
   async updateUniversityReview(
     @Param("id", ParseIntPipe) id: number,
-    @Body() reviewData: any,
+    @Body() reviewData: UpdateUniversityReviewDto,
     @Request() req: any
   ) {
     return this.universityService.updateUniversityReview(id, reviewData);
@@ -224,9 +363,14 @@ export class UniversityController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: "Delete university review" })
-  @ApiParam({ name: "id", type: Number })
+  @ApiParam({
+    name: "id",
+    type: Number,
+    description: "Review ID",
+  })
   @ApiResponse({ status: 200, description: "Review deleted" })
   @ApiResponse({ status: 404, description: "Review not found" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
   async deleteUniversityReview(@Param("id", ParseIntPipe) id: number) {
     return this.universityService.deleteUniversityReview(id);
   }
@@ -236,7 +380,12 @@ export class UniversityController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: "Get recommended universities" })
-  @ApiResponse({ status: 200, description: "Recommended universities" })
+  @ApiResponse({
+    status: 200,
+    description: "Recommended universities",
+    type: [UniversityResponseDto],
+  })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
   async getRecommendedUniversities(@Request() req: any) {
     return this.universityService.getRecommendedUniversities(req.user.id);
   }
@@ -249,10 +398,18 @@ export class UniversityController {
   @RequirePermissions("university:create")
   @ApiBearerAuth()
   @ApiOperation({ summary: "Create university (Admin only)" })
-  @ApiBody({ description: "University data" })
-  @ApiResponse({ status: 201, description: "University created" })
+  @ApiBody({
+    type: CreateUniversityDto,
+    description: "University data",
+  })
+  @ApiResponse({
+    status: 201,
+    description: "University created",
+    type: UniversityResponseDto,
+  })
   @ApiResponse({ status: 403, description: "Forbidden" })
-  async createUniversity(@Body() universityData: any) {
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  async createUniversity(@Body() universityData: CreateUniversityDto) {
     return this.universityService.createUniversity(universityData);
   }
 
@@ -263,13 +420,26 @@ export class UniversityController {
   @RequirePermissions("university:update")
   @ApiBearerAuth()
   @ApiOperation({ summary: "Update university (Admin only)" })
-  @ApiParam({ name: "id", type: Number })
-  @ApiBody({ description: "Updated university data" })
-  @ApiResponse({ status: 200, description: "University updated" })
+  @ApiParam({
+    name: "id",
+    type: Number,
+    description: "University ID",
+  })
+  @ApiBody({
+    type: UpdateUniversityDto,
+    description: "Updated university data",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "University updated",
+    type: UniversityResponseDto,
+  })
   @ApiResponse({ status: 404, description: "University not found" })
+  @ApiResponse({ status: 403, description: "Forbidden" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
   async updateUniversity(
     @Param("id", ParseIntPipe) id: number,
-    @Body() universityData: any
+    @Body() universityData: UpdateUniversityDto
   ) {
     return this.universityService.updateUniversity(id, universityData);
   }
@@ -281,9 +451,15 @@ export class UniversityController {
   @RequirePermissions("university:delete")
   @ApiBearerAuth()
   @ApiOperation({ summary: "Delete university (Admin only)" })
-  @ApiParam({ name: "id", type: Number })
+  @ApiParam({
+    name: "id",
+    type: Number,
+    description: "University ID",
+  })
   @ApiResponse({ status: 200, description: "University deleted" })
   @ApiResponse({ status: 404, description: "University not found" })
+  @ApiResponse({ status: 403, description: "Forbidden" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
   async deleteUniversity(@Param("id", ParseIntPipe) id: number) {
     return this.universityService.deleteUniversity(id);
   }
@@ -295,9 +471,31 @@ export class UniversityController {
   @RequirePermissions("university:update")
   @ApiBearerAuth()
   @ApiOperation({ summary: "Update university status (Admin only)" })
-  @ApiParam({ name: "id", type: Number })
-  @ApiBody({ description: "Status data" })
-  @ApiResponse({ status: 200, description: "Status updated" })
+  @ApiParam({
+    name: "id",
+    type: Number,
+    description: "University ID",
+  })
+  @ApiBody({
+    description: "Status data",
+    schema: {
+      type: "object",
+      properties: {
+        status: {
+          type: "string",
+          enum: Object.values(UniversityStatus),
+          description: "New university status",
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Status updated",
+    type: UniversityResponseDto,
+  })
+  @ApiResponse({ status: 403, description: "Forbidden" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
   async updateUniversityStatus(
     @Param("id", ParseIntPipe) id: number,
     @Body("status") status: UniversityStatus
@@ -312,9 +510,30 @@ export class UniversityController {
   @RequirePermissions("university:update")
   @ApiBearerAuth()
   @ApiOperation({ summary: "Feature/unfeature university (Admin only)" })
-  @ApiParam({ name: "id", type: Number })
-  @ApiBody({ description: "Feature data" })
-  @ApiResponse({ status: 200, description: "Feature status updated" })
+  @ApiParam({
+    name: "id",
+    type: Number,
+    description: "University ID",
+  })
+  @ApiBody({
+    description: "Feature data",
+    schema: {
+      type: "object",
+      properties: {
+        featured: {
+          type: "boolean",
+          description: "Whether to feature the university",
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Feature status updated",
+    type: UniversityResponseDto,
+  })
+  @ApiResponse({ status: 403, description: "Forbidden" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
   async featureUniversity(
     @Param("id", ParseIntPipe) id: number,
     @Body("featured") featured: boolean
@@ -329,9 +548,30 @@ export class UniversityController {
   @RequirePermissions("university:update")
   @ApiBearerAuth()
   @ApiOperation({ summary: "Verify university (Admin only)" })
-  @ApiParam({ name: "id", type: Number })
-  @ApiBody({ description: "Verification data" })
-  @ApiResponse({ status: 200, description: "Verification status updated" })
+  @ApiParam({
+    name: "id",
+    type: Number,
+    description: "University ID",
+  })
+  @ApiBody({
+    description: "Verification data",
+    schema: {
+      type: "object",
+      properties: {
+        verified: {
+          type: "boolean",
+          description: "Whether to verify the university",
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Verification status updated",
+    type: UniversityResponseDto,
+  })
+  @ApiResponse({ status: 403, description: "Forbidden" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
   async verifyUniversity(
     @Param("id", ParseIntPipe) id: number,
     @Body("verified") verified: boolean
@@ -346,9 +586,22 @@ export class UniversityController {
   @RequirePermissions("review:moderate")
   @ApiBearerAuth()
   @ApiOperation({ summary: "Moderate review (Moderator/Admin only)" })
-  @ApiParam({ name: "id", type: Number })
-  @ApiBody({ description: "Moderation data" })
-  @ApiResponse({ status: 200, description: "Review moderated" })
+  @ApiParam({
+    name: "id",
+    type: Number,
+    description: "Review ID",
+  })
+  @ApiBody({
+    type: ModerateUniversityReviewDto,
+    description: "Moderation data",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Review moderated",
+    type: UniversityReviewResponseDto,
+  })
+  @ApiResponse({ status: 403, description: "Forbidden" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
   async moderateReview(
     @Param("id", ParseIntPipe) id: number,
     @Body("status") status: ReviewStatus,
@@ -365,8 +618,24 @@ export class UniversityController {
   @ApiBearerAuth()
   @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "Upload university image (Admin only)" })
-  @ApiParam({ name: "id", type: Number })
-  @ApiResponse({ status: 200, description: "Image uploaded" })
+  @ApiParam({
+    name: "id",
+    type: Number,
+    description: "University ID",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Image uploaded",
+    schema: {
+      type: "object",
+      properties: {
+        imageUrl: { type: "string" },
+        message: { type: "string" },
+      },
+    },
+  })
+  @ApiResponse({ status: 403, description: "Forbidden" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
   @UseInterceptors(FileInterceptor("image"))
   async uploadUniversityImage(
     @Param("id", ParseIntPipe) id: number,
@@ -376,9 +645,32 @@ export class UniversityController {
   }
 
   @Post("compare")
+  @ApiTags("University - Public")
   @ApiOperation({ summary: "Compare universities" })
-  @ApiBody({ description: "University IDs to compare" })
-  @ApiResponse({ status: 200, description: "Comparison results" })
+  @ApiBody({
+    description: "University IDs to compare",
+    schema: {
+      type: "object",
+      properties: {
+        universityIds: {
+          type: "array",
+          items: { type: "number" },
+          description: "Array of university IDs to compare",
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Comparison results",
+    schema: {
+      type: "object",
+      properties: {
+        universities: { type: "array" },
+        comparison: { type: "object" },
+      },
+    },
+  })
   async compareUniversities(@Body("universityIds") universityIds: number[]) {
     return this.universityService.compareUniversities(universityIds);
   }
@@ -390,9 +682,29 @@ export class UniversityController {
   @RequirePermissions("university:read")
   @ApiBearerAuth()
   @ApiOperation({ summary: "Generate university report (Admin only)" })
-  @ApiParam({ name: "id", type: Number })
-  @ApiParam({ name: "type", type: String })
-  @ApiResponse({ status: 200, description: "Report generated" })
+  @ApiParam({
+    name: "id",
+    type: Number,
+    description: "University ID",
+  })
+  @ApiParam({
+    name: "type",
+    type: String,
+    description: "Report type (e.g., 'reviews', 'analytics', 'performance')",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Report generated",
+    schema: {
+      type: "object",
+      properties: {
+        report: { type: "object" },
+        generatedAt: { type: "string" },
+      },
+    },
+  })
+  @ApiResponse({ status: 403, description: "Forbidden" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
   async generateUniversityReport(
     @Param("id", ParseIntPipe) id: number,
     @Param("type") type: string
@@ -407,8 +719,25 @@ export class UniversityController {
   @RequirePermissions("university:read")
   @ApiBearerAuth()
   @ApiOperation({ summary: "Get university insights (Admin only)" })
-  @ApiParam({ name: "id", type: Number })
-  @ApiResponse({ status: 200, description: "University insights" })
+  @ApiParam({
+    name: "id",
+    type: Number,
+    description: "University ID",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "University insights",
+    schema: {
+      type: "object",
+      properties: {
+        performance: { type: "object" },
+        trends: { type: "array" },
+        recommendations: { type: "array" },
+      },
+    },
+  })
+  @ApiResponse({ status: 403, description: "Forbidden" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
   async getUniversityInsights(@Param("id", ParseIntPipe) id: number) {
     return this.universityService.getUniversityInsights(id);
   }

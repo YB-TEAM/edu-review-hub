@@ -1,9 +1,22 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsIn } from "class-validator";
+import { IsEnum, IsOptional, IsString } from "class-validator";
+import { ReviewStatus } from "../../../infrastructure/database/entities/university-review.entity";
 
 export class ModerateUniversityReviewDto {
-  @ApiProperty({ example: "approved", enum: ["approved", "rejected"] })
+  @ApiProperty({
+    enum: ReviewStatus,
+    example: ReviewStatus.APPROVED,
+    description: "New review status",
+  })
+  @IsEnum(ReviewStatus)
+  status: ReviewStatus;
+
+  @ApiProperty({
+    example: "Review approved after moderation",
+    required: false,
+    description: "Admin notes about the moderation",
+  })
+  @IsOptional()
   @IsString()
-  @IsIn(["approved", "rejected"])
-  status: string;
-} 
+  admin_notes?: string;
+}

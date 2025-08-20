@@ -444,10 +444,7 @@ export class BlogService implements IBlogService {
     // Track images in updated blog content
     if (dto.content) {
       try {
-        await this.blogImageTrackerService.trackImagesInBlog(
-          id.toString(),
-          dto.content
-        );
+        await this.blogImageTrackerService.trackImagesInBlog(id, dto.content);
         console.log("✅ Blog content images tracked for updated blog", id);
       } catch (error) {
         console.error("❌ Failed to track blog content images:", error);
@@ -455,6 +452,9 @@ export class BlogService implements IBlogService {
     }
 
     return this.toResponseDto(updated);
+  }
+
+  async delete(id: number, userId: number): Promise<void> {
     const blog = await this.blogRepository.findById(id);
     if (!blog) throw new NotFoundException("Blog not found");
 
@@ -804,7 +804,6 @@ export class BlogService implements IBlogService {
       }
     }
 
-
     // Debug tags mapping
     console.log(`🔖 Blog ${blog.id} tags in toResponseDto:`, {
       hasTags: !!blog.tags,
@@ -842,10 +841,30 @@ export class BlogService implements IBlogService {
       tags: mappedTags,
       publishedAt: blog.publishedAt,
       moderatedAt: blog.moderatedAt,
-      authorId: blog.authorId,
-      authorName: authorName,
       moderatorId: blog.moderatorId,
-      moderatorName: moderatorName,
+      createdAt: blog.createdAt,
+      updatedAt: blog.updatedAt,
+    });
+
+    return {
+      id: blog.id,
+      title: blog.title,
+      content: blog.content,
+      excerpt: blog.excerpt,
+      featuredImage: blog.featuredImage,
+      featuredImageUrl: featuredImageUrl,
+      featuredImageUrls: featuredImageUrls,
+      category: blog.category,
+      status: blog.status,
+      moderationReason: blog.moderationReason,
+      viewCount: blog.viewCount,
+      likeCount: blog.likeCount,
+      commentCount: blog.commentCount,
+      tags: mappedTags,
+      publishedAt: blog.publishedAt,
+      moderatedAt: blog.moderatedAt,
+      authorId: blog.authorId,
+      moderatorId: blog.moderatorId,
       createdAt: blog.createdAt,
       updatedAt: blog.updatedAt,
     };
@@ -893,14 +912,12 @@ export class BlogService implements IBlogService {
     }
 
     // Extract author name - prioritize displayName, fallback to username
-    const authorName = blog.author?.profile?.displayName || 
-                      blog.author?.username || 
-                      'Unknown';
+    const authorName =
+      blog.author?.profile?.displayName || blog.author?.username || "Unknown";
 
     // Extract moderator name - prioritize displayName, fallback to username
-    const moderatorName = blog.moderator?.profile?.displayName || 
-                         blog.moderator?.username || 
-                         null;
+    const moderatorName =
+      blog.moderator?.profile?.displayName || blog.moderator?.username || null;
 
     return {
       id: blog.id,
