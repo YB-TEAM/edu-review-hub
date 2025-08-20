@@ -1,0 +1,38 @@
+# Danh sách các trường đại học Việt Nam để crawl
+# Mỗi dòng một URL, có thể bỏ https:// nếu muốn
+
+# Các trường đại học lớn
+https://uit.edu.vn
+https://www.hust.edu.vn
+https://www.hcmut.edu.vn
+https://www.ctu.edu.vn
+https://www.dhqghn.edu.vn
+https://www.udn.vn
+https://www.agu.edu.vn
+https://www.tdmu.edu.vn
+https://www.ctuet.edu.vn
+https://www.ctuet.edu.vn
+
+# Các trường đại học khác
+https://www.ueh.edu.vn
+https://www.ftu.edu.vn
+https://www.neu.edu.vn
+https://www.hlu.edu.vn
+https://www.hutech.edu.vn
+https://www.tdtu.edu.vn
+https://www.ou.edu.vn
+https://www.ctu.edu.vn
+https://www.agu.edu.vn
+https://www.ctuet.edu.vn
+
+# Các trường đại học khu vực
+https://www.udn.vn
+https://www.agu.edu.vn
+https://www.ctuet.edu.vn
+https://www.ctu.edu.vn
+https://www.agu.edu.vn
+https://www.ctuet.edu.vn
+https://www.ctu.edu.vn
+https://www.agu.edu.vn
+https://www.ctuet.edu.vn
+https://www.ctu.edu.vn

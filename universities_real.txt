@@ -1,0 +1,38 @@
+# Danh sách các trường đại học Việt Nam thực tế
+# Mỗi dòng một URL
+
+# Các trường đại học quốc gia
+https://www.vnu.edu.vn
+https://www.hust.edu.vn
+https://www.uit.edu.vn
+https://www.ueh.edu.vn
+https://www.ftu.edu.vn
+https://www.neu.edu.vn
+https://www.hcmut.edu.vn
+https://www.ctu.edu.vn
+https://www.agu.edu.vn
+https://www.ctuet.edu.vn
+
+# Các trường đại học công lập lớn
+https://www.hlu.edu.vn
+https://www.hutech.edu.vn
+https://www.tdtu.edu.vn
+https://www.ou.edu.vn
+https://www.udn.vn
+https://www.tdmu.edu.vn
+https://www.hcmute.edu.vn
+https://www.hcmussh.edu.vn
+https://www.hcmus.edu.vn
+https://www.hcmup.edu.vn
+
+# Các trường đại học tư thục
+https://www.fpt.edu.vn
+https://www.rmit.edu.vn
+https://www.vinuni.edu.vn
+https://www.phenikaa.edu.vn
+https://www.thanglong.edu.vn
+https://www.phuongdong.edu.vn
+https://www.cmc.edu.vn
+https://www.dongdo.edu.vn
+https://www.donga.edu.vn
+https://www.ntu.edu.vn
