@@ -19,7 +19,7 @@ class BlogCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
         child: Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: AppColors.primaryWhite,
             borderRadius: BorderRadius.circular(16),

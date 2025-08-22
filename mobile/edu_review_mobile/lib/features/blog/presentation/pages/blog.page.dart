@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:edu_review_mobile/common/widgets/loading/custom_loading_indicator.dart';
 import 'package:edu_review_mobile/common_libs.dart';
 import 'package:edu_review_mobile/features/blog/data/models/blog_response.dart';
 import 'package:edu_review_mobile/features/blog/presentation/bloc/get_blog_cubit.dart';
@@ -81,45 +82,23 @@ class BlogPage extends StatelessWidget {
                 child: BlocBuilder<GetBlogCubit, BlogState>(
                   builder: (context, state) {
                     if (state is BlogLoading) {
-                      return const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(20),
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
+                      return const Center(child: CustomLoadingIndicator());
                     } else if (state is BlogLoaded) {
                       final blogs = state.blogList.data;
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 12, right: 12, bottom: 8, top: 16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('All Blog Posts',
-                                    style:
-                                        Theme.of(context).textTheme.headlineSmall),
-                                const SizedBox(height: 4),
-                                Text(
-                                  'Browse all insightful reviews and experiences.',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.copyWith(color: AppColors.textGrey),
-                                ),
-                              ],
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ...blogs.map(
+                              (blog) => BlogCardVertical(
+                                blog: blog,
+                                onTap: () => _openBlogPost(context, blog),
+                              ),
                             ),
-                          ),
-                          ...blogs.map(
-                            (blog) => BlogCardVertical(
-                              blog: blog,
-                              onTap: () => _openBlogPost(context, blog),
-                            ),
-                          ),
-                          const SizedBox(height: 30),
-                        ],
+                            const SizedBox(height: 30),
+                          ],
+                        ),
                       );
                     } else if (state is BlogError) {
                       return Padding(

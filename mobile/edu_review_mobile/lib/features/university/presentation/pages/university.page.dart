@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:edu_review_mobile/common/widgets/loading/custom_loading_indicator.dart';
 import 'package:edu_review_mobile/common_libs.dart';
 import 'package:edu_review_mobile/common/widgets/appbar/custom_appbar_delegate.dart';
 import 'package:edu_review_mobile/features/university/presentation/bloc/get_university_cubit.dart';
@@ -58,12 +59,7 @@ class UniversityPage extends StatelessWidget {
                     child: BlocBuilder<UniversityCubit, UniversityState>(
                       builder: (context, state) {
                         if (state is UniversityLoading) {
-                          return const Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(20),
-                              child: CircularProgressIndicator(),
-                            ),
-                          );
+                          return const Center(child: CustomLoadingIndicator());
                         } else if (state is UniversityLoaded) {
                           final universities = state.universities;
                           return Padding(

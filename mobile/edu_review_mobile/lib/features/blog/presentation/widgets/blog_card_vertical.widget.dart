@@ -1,6 +1,9 @@
+import 'package:edu_review_mobile/common/widgets/button/custom_like_button.dart';
+import 'package:edu_review_mobile/core/utils/number_formatter.dart';
 import 'package:edu_review_mobile/features/blog/data/models/blog_response.dart';
 import 'package:edu_review_mobile/common_libs.dart';
 import 'package:edu_review_mobile/core/utils/hex_color.dart';
+import 'package:flutter_svg/svg.dart';
 
 class BlogCardVertical extends StatelessWidget {
   final BlogResponse blog;
@@ -15,136 +18,181 @@ class BlogCardVertical extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: AppColors.primaryWhite,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primaryBlack.withOpacity(0.1),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: InkWell(
-        borderRadius: BorderRadius.circular(12),
         onTap: onTap,
-        child: IntrinsicHeight(
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Ảnh hero
-                Container(
-                  width: 120,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: AppColors.secondaryGrey,
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Hero(
-                      tag: 'blog_image_${blog.id}',
-                      child: Image.network(
-                        blog.featuredImageUrl ?? AppDefaultImages.defaultImage,
-                        fit: BoxFit.cover,
-                      ),
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppColors.primaryWhite,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: AppColors.secondaryGrey,
+              width: 1,
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  width: double.infinity,
+                  height: 160,
+                  color: AppColors.secondaryGrey,
+                  child: Hero(
+                    tag: 'blog_image_${blog.id}',
+                    child: Image.network(
+                      blog.featuredImageUrl ?? AppDefaultImages.defaultImage,
+                      fit: BoxFit.contain,
+                      width: double.infinity,
+                      height: 160,
                     ),
                   ),
                 ),
-                const SizedBox(width: 16),
-                // Nội dung
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Tags
-                        if (blog.tags != null && blog.tags!.isNotEmpty)
-                          Wrap(
-                            spacing: 6,
-                            runSpacing: 4,
-                            children: blog.tags!.map((tag) {
-                              final Color bgColor =
-                                  HexToColor(tag.color).withOpacity(0.2);
-                              return Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: bgColor,
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Text(
-                                  tag.name,
-                                  style: textTheme.displaySmall?.copyWith(
-                                    color: HexToColor(tag.color),
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              );
-                            }).toList(),
+              ),
+              const SizedBox(height: 16),
+              if (blog.tags != null && blog.tags!.isNotEmpty)
+                Column(
+                  children: [
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 12,
+                      children: blog.tags!.map((tag) {
+                        final Color bgColor = HexToColor(tag.color);
+                        return Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: bgColor.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                        const SizedBox(height: 8),
-                        // Tiêu đề
-                        Text(
-                          blog.title,
-                          style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w900),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 8),
-                        // Nội dung ngắn
-                        Text(
-                          blog.excerpt ?? blog.content,
+                          child: Text(
+                            tag.name,
+                            style: textTheme.bodySmall?.copyWith(
+                              color: bgColor,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+                ),
+              Text(
+                blog.title,
+                style: textTheme.headlineSmall,
+              ),
+              const SizedBox(height: 6),
+              if (blog.excerpt != null && blog.excerpt!.isNotEmpty)
+                Text(
+                  blog.excerpt!,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: textTheme.bodyLarge?.copyWith(
+                    color: AppColors.textGrey,
+                  ),
+                ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.person, size: 24, color: AppColors.primaryGrey),
+                      const SizedBox(width: 8),
+                      Container(
+                        constraints: const BoxConstraints(maxWidth: 150),
+                        child: Text(
+                          blog.authorName ?? 'Tác giả không xác định',
                           style: textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
                             color: AppColors.textGrey,
                           ),
-                          maxLines: 4,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 8),
-                        // Thông tin thêm
-                        Row(
-                          children: [
-                            Icon(Icons.access_time,
-                                size: 16, color: AppColors.primaryGrey),
-                            const SizedBox(width: 4),
-                            Text(
-                              _formatDate(blog.createdAt),
-                              style: textTheme.displayMedium?.copyWith(
-                                  color: AppColors.primaryGrey),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 16),
+                  Text(
+                    _formatDate(blog.createdAt),
+                    style: textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textGrey,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Row(
+                  children: [
+                    CustomLikeButton(
+                      likeCount: blog.likeCount,
+                      isLiked: false,
+                      onTap: (isLiked) {},
+                    ),
+                    const SizedBox(width: 40),
+                    GestureDetector(
+                      onTap: () {
+                        print('Bình luận được bấm');
+                      },
+                      child: Row(
+                        children: [
+                          SvgPicture.asset(
+                            AppIcons.comment,
+                            width: 20,
+                            height: 20,
+                            color: AppColors.primaryGrey,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            formatNumber(blog.commentCount),
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: AppColors.textGrey,
                             ),
-                            const SizedBox(width: 16),
-                            Icon(Icons.visibility,
-                                size: 16, color: AppColors.primaryGrey),
-                            const SizedBox(width: 4),
-                            Text(
-                              '${blog.viewCount}',
-                              style: textTheme.displayMedium?.copyWith(
-                                  color: AppColors.primaryGrey),
-                            ),
-                            const SizedBox(width: 16),
-                            Icon(Icons.favorite_border,
-                                size: 16, color: AppColors.primaryGrey),
-                            const SizedBox(width: 4),
-                            Text(
-                              '${blog.likeCount}',
-                              style: textTheme.displayMedium?.copyWith(
-                                  color: AppColors.primaryGrey),
-                            ),
-                          ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 40),
+                    Row(
+                      children: [
+                        SvgPicture.asset(
+                          AppIcons.eye,
+                          width: 20,
+                          height: 20,
+                          color: AppColors.primaryGrey,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          formatNumber(blog.viewCount),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: AppColors.textGrey,
+                          ),
                         ),
                       ],
                     ),
-                  ),
+                    const SizedBox(width: 40),
+                    GestureDetector(
+                      onTap: () {
+                        print('Chia sẻ được bấm');
+                      },
+                      child: SvgPicture.asset(
+                        AppIcons.share,
+                          width: 20,
+                          height: 20,
+                          color: AppColors.primaryGrey,
+                        ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

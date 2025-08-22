@@ -12,7 +12,7 @@ class UniversityCard extends StatelessWidget {
     final String? imageUrl = university.bannerUrl ?? university.logoUrl ?? AppDefaultImages.defaultImage;
 
     return Container(
-      height: 220,
+      height: 180,
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
@@ -45,7 +45,7 @@ class UniversityCard extends StatelessWidget {
               Container(color: Colors.black.withOpacity(0.6)),
 
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -69,28 +69,6 @@ class UniversityCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 8),
-
-                    Row(
-                      children: [
-                        if (university.averageRating != null)
-                          Row(
-                            children: [
-                              SvgPicture.asset(AppIcons.starActive, width: 16, height: 16, color: AppColors.primaryYellow,),
-                              const SizedBox(width: 4),
-                              Text(
-                                university.averageRating!,
-                                style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                  fontWeight: FontWeight.w900,
-                                  color: AppColors.textWhite,
-                                ),
-                              ),
-                            ],
-                          ),
-                        const SizedBox(width: 12),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-
                     Wrap(
                       spacing: 8,
                       runSpacing: 6,
@@ -102,16 +80,10 @@ class UniversityCard extends StatelessWidget {
                                 '${university.city ?? ''}${university.city != null && university.province != null ? ', ${university.province}' : ''}',
                             svgAssetPath: AppIcons.location,
                           ),
-                        if (university.type != null)
-                          buildInfoRow(
-                            context: context,
-                            text: university.type!,
-                            svgAssetPath: AppIcons.university,
-                          ),
                         if (university.rankingNational != null)
                           buildInfoRow(
                             context: context,
-                            text: 'Thứ hạng: ${university.rankingNational}',
+                            text: '${university.rankingNational}',
                             svgAssetPath: AppIcons.rank,
                           ),
                         if (university.studentCount != null)
@@ -136,7 +108,7 @@ class UniversityCard extends StatelessWidget {
     required String text,
     required String svgAssetPath,
     Color textColor = AppColors.textWhite,
-    double iconSize = 18,
+    double iconSize = 12,
     double spacing = 6,
     required BuildContext context,
   }) {

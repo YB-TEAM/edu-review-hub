@@ -6,7 +6,7 @@ class CustomLoadingIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LoadingAnimationWidget.staggeredDotsWave(
+    return LoadingAnimationWidget.bouncingBall(
       color: AppColors.primaryBlue,
       size: 100,
     );
