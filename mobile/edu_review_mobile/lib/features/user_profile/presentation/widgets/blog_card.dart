@@ -96,7 +96,7 @@ class BlogCard extends StatelessWidget {
                       SvgPicture.asset(AppIcons.userActive, width: 24, height: 24, color: AppColors.primaryGrey),
                       const SizedBox(width: 8),
                       Container(
-                        constraints: const BoxConstraints(maxWidth: 60),
+                        constraints: const BoxConstraints(maxWidth: 50),
                         child: Text(
                           blog.authorName ?? 'Tác giả không xác định', 
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(

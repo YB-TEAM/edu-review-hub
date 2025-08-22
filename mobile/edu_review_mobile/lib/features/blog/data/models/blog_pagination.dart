@@ -27,7 +27,6 @@ class BlogPagination {
     this.minComments,
   });
 
-  // Nếu bạn cần copy object để thay đổi page (phân trang)
   BlogPagination copyWith({
     int? page,
     int? pageSize,

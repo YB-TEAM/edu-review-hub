@@ -111,13 +111,13 @@ class UniversityCard extends StatelessWidget {
                         if (university.rankingNational != null)
                           buildInfoRow(
                             context: context,
-                            text: 'Rank: ${university.rankingNational}',
+                            text: 'Thứ hạng: ${university.rankingNational}',
                             svgAssetPath: AppIcons.rank,
                           ),
                         if (university.studentCount != null)
                           buildInfoRow(
                             context: context,
-                            text: '${university.studentCount} students',
+                            text: '${university.studentCount} sinh viên',
                             svgAssetPath: AppIcons.users,
                           ),
                       ],
@@ -135,7 +135,7 @@ class UniversityCard extends StatelessWidget {
   Widget buildInfoRow({
     required String text,
     required String svgAssetPath,
-    Color textColor = Colors.white70,
+    Color textColor = AppColors.textWhite,
     double iconSize = 18,
     double spacing = 6,
     required BuildContext context,

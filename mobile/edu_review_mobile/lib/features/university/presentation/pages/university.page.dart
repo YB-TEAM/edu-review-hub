@@ -38,7 +38,7 @@ class UniversityPage extends StatelessWidget {
               }
             },
             child: Scaffold(
-              backgroundColor: AppColors.backgroundGrey,
+              backgroundColor: AppColors.primaryWhite,
               body: CustomScrollView(
                 controller: _scrollController,
                 physics: Platform.isIOS

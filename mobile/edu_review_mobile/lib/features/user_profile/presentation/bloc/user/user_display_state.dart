@@ -1,19 +1,17 @@
-import 'package:edu_review_mobile/features/user_profile/data/models/blog_response.dart';
 import 'package:edu_review_mobile/features/user_profile/domain/entities/profile.dart';
 
-abstract class UserDisplayState {}
+abstract class UserState {}
 
-class UserLoading extends UserDisplayState {}
+class UserInitial extends UserState {}
 
-class UserLoaded extends UserDisplayState {
-  final ProfileEntity profileEntity;
-  final List<BlogResponse> blogs;
+class UserLoading extends UserState {}
 
-  UserLoaded({required this.profileEntity, required this.blogs});
+class UserLoaded extends UserState {
+  final ProfileEntity profile;
+  UserLoaded(this.profile);
 }
 
-class LoadUserFailure extends UserDisplayState {
-  final String errorMessage;
-
-  LoadUserFailure({required this.errorMessage});
+class UserError extends UserState {
+  final String message;
+  UserError(this.message);
 }
