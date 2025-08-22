@@ -59,4 +59,20 @@ class BlogRepositoryImpl extends BlogRepository {
       return Left(ServerFailure(message: e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> reactionBlog(int blogId) async {
+    try {
+      return await _apiService.reactionBlog(blogId);
+    } on DioException catch (e) {
+      return Left(
+        ServerFailure(
+          message: e.response?.data['message'] ?? 'Failed to reaction blogs',
+          statusCode: e.response?.statusCode,
+        ),
+      );
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
 }

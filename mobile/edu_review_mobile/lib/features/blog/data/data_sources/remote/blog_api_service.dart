@@ -14,6 +14,7 @@ abstract class BlogApiService {
   Future<Either<Failure, BlogResponse>> createBlog(BlogParams blogParams);
   Future<Either<Failure, BlogResponse>> publishBlog(int blogId);
   Future<Either<Failure, BlogListResponse>> getBlogs(BlogPagination paginations);
+  Future<Either<Failure, void>> reactionBlog(int blogId);
 }
 
 class BlogApiServiceImpl extends BlogApiService {
@@ -110,6 +111,34 @@ class BlogApiServiceImpl extends BlogApiService {
 
       final blogPagination = BlogListResponse.fromJson(response.data);
       return Right(blogPagination);
+    } on DioException catch (e) {
+      return Left(
+        ServerFailure(
+          message: e.response?.data['message'] ?? 'Unknown error',
+          statusCode: e.response?.statusCode,
+        ),
+      );
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> reactionBlog(int blogId) async {
+    try {
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      var token = sharedPreferences.getString('accessToken');
+      await sl<DioClient>().post(
+        queryParameters: {'id': blogId},
+        ApiUrls.reactionBlog(blogId),
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      return Right(null);
     } on DioException catch (e) {
       return Left(
         ServerFailure(

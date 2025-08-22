@@ -20,6 +20,7 @@
     static const blogs = "${baseURL}blogs";
     static const getMyBlog = "${baseURL}blogs/my";
     static String blog(int id) => "${baseURL}blogs/$id";
+    static String reactionBlog(int id) => "${baseURL}blogs/$id/like";
     static String publishBlog(int id) => "${baseURL}blogs/$id/publish";
 
     //University URLS

@@ -4,6 +4,8 @@ import 'package:edu_review_mobile/features/blog/data/models/blog_response.dart';
 import 'package:edu_review_mobile/common_libs.dart';
 import 'package:edu_review_mobile/core/utils/hex_color.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:edu_review_mobile/features/blog/domain/usecases/reaction_blog.dart';
+import 'package:edu_review_mobile/service_locator.dart';
 
 class BlogCardVertical extends StatelessWidget {
   final BlogResponse blog;
@@ -133,8 +135,10 @@ class BlogCardVertical extends StatelessWidget {
                   children: [
                     CustomLikeButton(
                       likeCount: blog.likeCount,
-                      isLiked: false,
-                      onTap: (isLiked) {},
+                      isLiked: blog.isLiked == true,
+                      onTap: (isLiked) async {
+                        await sl<ReactionBlogUseCase>().call(blog.id);
+                      },
                     ),
                     const SizedBox(width: 40),
                     GestureDetector(

@@ -17,6 +17,7 @@ import 'package:edu_review_mobile/features/blog/domain/repository/blog_repositor
 import 'package:edu_review_mobile/features/blog/domain/usecases/create_blog.dart';
 import 'package:edu_review_mobile/features/blog/domain/usecases/get_blog.dart';
 import 'package:edu_review_mobile/features/blog/domain/usecases/publish_blog.dart';
+import 'package:edu_review_mobile/features/blog/domain/usecases/reaction_blog.dart';
 import 'package:edu_review_mobile/features/settings/data/data_sources/remote/settings_api_service.dart';
 import 'package:edu_review_mobile/features/settings/data/repository/settings_repository_impl.dart';
 import 'package:edu_review_mobile/features/settings/domain/repository/settings_repository.dart';
@@ -89,4 +90,5 @@ void setUpServiceLocator() {
 
   sl.registerSingleton<GetUniversityUseCase>(GetUniversityUseCase());
   sl.registerSingleton<GetBlogsUseCase>(GetBlogsUseCase());
+  sl.registerSingleton<ReactionBlogUseCase>(ReactionBlogUseCase());
 }

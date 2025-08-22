@@ -9,4 +9,5 @@ abstract class BlogRepository {
   Future<Either<Failure, BlogResponse>> createBlog(BlogParams blogParams);
   Future<Either<Failure, BlogResponse>> publishBlog(int blogId);
   Future<Either<Failure, BlogListResponse>> getBlogs(BlogPagination paginations);
+  Future<Either<Failure, void>> reactionBlog(int blogId);
 }
