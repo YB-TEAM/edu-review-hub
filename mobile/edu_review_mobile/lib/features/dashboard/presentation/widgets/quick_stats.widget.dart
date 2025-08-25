@@ -45,7 +45,7 @@ class QuickStats extends StatelessWidget {
               Expanded(
                 child: _buildStatCard(
                   context: context,
-                  icon: AppIcons.starActive,
+                  icon: AppIcons.star,
                   title: 'Đánh giá',
                   value: '12.8K',
                   color: AppColors.primaryOrange,

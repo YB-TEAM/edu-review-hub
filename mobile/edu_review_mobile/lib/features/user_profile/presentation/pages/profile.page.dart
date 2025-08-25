@@ -6,6 +6,9 @@ import 'package:edu_review_mobile/common_libs.dart';
 import 'package:edu_review_mobile/core/utils/date_formatted.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user/user_display_cubit.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user/user_display_state.dart';
+import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user/user_blog_cubit.dart';
+import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user/user_blog_state.dart';
+import 'package:edu_review_mobile/features/user_profile/data/models/blog_pagination.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/widgets/blog_list.widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -14,6 +17,7 @@ import 'package:edu_review_mobile/features/user_profile/presentation/widgets/edi
 import 'package:edu_review_mobile/features/user_profile/presentation/widgets/achievements.widget.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/widgets/account_info.widget.dart';
 
+
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -21,15 +25,15 @@ class ProfilePage extends StatefulWidget {
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
+
 class _ProfilePageState extends State<ProfilePage> {
   final RefreshController _refreshController = RefreshController();
   bool _isRefreshing = false;
+  final BlogPagination _pagination = BlogPagination(page: 1, limit: 10);
+  bool _isLoadingMore = false;
 
   void _onRefresh() async {
-    setState(() => _isRefreshing = true);
-    await context.read<UserDisplayCubit>().reloadUser();
-    setState(() => _isRefreshing = false);
-    _refreshController.refreshCompleted();
+    Navigator.pushReplacementNamed(context, RouteConstant.profile);
   }
 
   @override
@@ -38,10 +42,10 @@ class _ProfilePageState extends State<ProfilePage> {
     super.dispose();
   }
 
-  void _navigateToDetailProfile(BuildContext context, dynamic profileEntity) async{
+  void _navigateToDetailProfile(BuildContext context, dynamic profileEntity) async {
     await Navigator.of(context, rootNavigator: true).pushNamed(RouteConstant.detailProfile, arguments: profileEntity);
     if (mounted) {
-      context.read<UserDisplayCubit>().reloadUser();
+      context.read<UserCubit>().reloadUser();
     }
   }
 
@@ -51,24 +55,26 @@ class _ProfilePageState extends State<ProfilePage> {
       rootNavigator: true,
     ).pushNamed(RouteConstant.editProfile);
     if (mounted) {
-      context.read<UserDisplayCubit>().reloadUser();
+      context.read<UserCubit>().reloadUser();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-
     return MultiBlocProvider(
-      providers: [BlocProvider(create: (context) => ButtonStateCubit())],
+      providers: [
+        BlocProvider(create: (context) => UserCubit()..fetchUser()),
+        BlocProvider(create: (context) => ButtonStateCubit()),
+        BlocProvider(create: (context) => UserBlogCubit()..fetchBlogs(pagination: _pagination)),
+      ],
       child: BlocListener<ButtonStateCubit, ButtonState>(
         listener: (context, state) {},
         child: Scaffold(
           backgroundColor: AppColors.backgroundDarkGrey,
           body: Stack(
             children: [
-              BlocBuilder<UserDisplayCubit, UserDisplayState>(
+              BlocBuilder<UserCubit, UserState>(
                 builder: (context, state) {
-                  
                   if (state is UserLoading) {
                     return Center(child: CustomLoadingIndicator());
                   }
@@ -84,12 +90,12 @@ class _ProfilePageState extends State<ProfilePage> {
                             child: Column(
                               children: [
                                 CoverPhotoWidget(
-                                  imageUrl: state.profileEntity.coverImageUrl ?? AppDefaultImages.defaultCover,
+                                  imageUrl: state.profile.coverImageUrl ?? AppDefaultImages.defaultCover,
                                   onChangeCover: () {
                                     print('Nhấn đổi ảnh bìa');
                                   },
                                   child: EditAvatarButton(
-                                    imageUrl: state.profileEntity.avatarUrl ?? AppDefaultImages.defaultAvatar,
+                                    imageUrl: state.profile.avatarUrl ?? AppDefaultImages.defaultAvatar,
                                     size: 128,
                                     onPressed: () {
                                       print('Nhấn đổi avatar');
@@ -99,7 +105,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 const SizedBox(height: 64),
                                 Center(
                                   child: Text(
-                                    state.profileEntity.displayName ?? '',
+                                    state.profile.displayName ?? '',
                                     style: Theme.of(context)
                                         .textTheme
                                         .headlineSmall
@@ -107,15 +113,15 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                 ),
                                 const SizedBox(height: 8),
-                                if (state.profileEntity.bio != null &&
-                                    state.profileEntity.bio!.isNotEmpty) ...[
+                                if (state.profile.bio != null &&
+                                    state.profile.bio!.isNotEmpty) ...[
                                   Center(
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 32,
                                       ),
                                       child: Text(
-                                        state.profileEntity.bio!,
+                                        state.profile.bio!,
                                         style: Theme.of(
                                           context,
                                         ).textTheme.bodyLarge?.copyWith(
@@ -155,7 +161,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ),
                                     const SizedBox(width: 16),
                                     Text(
-                                      'Tham gia từ: ${formatDate(state.profileEntity.createdAt)}',
+                                      'Tham gia từ: ${formatDate(state.profile.createdAt)}',
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyMedium
@@ -184,13 +190,13 @@ class _ProfilePageState extends State<ProfilePage> {
                           Column(
                             children: [
                               AccountInfoWidget(
-                                city: state.profileEntity.city,
+                                city: state.profile.city,
                                 universityName:
-                                    state.profileEntity.universityName,
-                                major: state.profileEntity.major,
+                                    state.profile.universityName,
+                                major: state.profile.major,
                                 graduationYear:
-                                    state.profileEntity.graduationYear,
-                                onSeeMorePressed: () => _navigateToDetailProfile(context, state.profileEntity),
+                                    state.profile.graduationYear,
+                                onSeeMorePressed: () => _navigateToDetailProfile(context, state.profile),
                               ),
                               const SizedBox(height: 4),
                               AchievementsWidget(
@@ -201,17 +207,75 @@ class _ProfilePageState extends State<ProfilePage> {
                                 totalPoints: 1000,
                               ),
                               const SizedBox(height: 4),
-                              if (state.blogs.isNotEmpty) ...[
-                                MyBlogList(blogs: state.blogs),
-                              ]
+                              BlocBuilder<UserBlogCubit, UserBlogState>(
+                                builder: (context, blogState) {
+                                  if (blogState is UserBlogLoading) {
+                                    return const Center(child: CustomLoadingIndicator());
+                                  }
+                                  if (blogState is UserBlogLoaded) {
+                                    return Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        MyBlogList(
+                                          key: ValueKey(blogState.blogList.length),
+                                          blogs: blogState.blogList,
+                                        ),
+                                        if (blogState.blogList.length >= blogState.pagination.limit && !blogState.hasReachedEnd)
+                                          Container(
+                                            width: double.infinity,
+                                            color: AppColors.primaryWhite,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(bottom: 16),
+                                              child: TextButton(
+                                                onPressed: _isLoadingMore ? null : () async {
+                                                  setState(() => _isLoadingMore = true);
+                                                  await context.read<UserBlogCubit>().loadMoreBlogs(blogState.pagination);
+                                                  setState(() => _isLoadingMore = false);
+                                                },
+                                                style: TextButton.styleFrom(
+                                                  padding: EdgeInsets.zero,
+                                                  minimumSize: Size.zero,
+                                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                ),
+                                                child: _isLoadingMore
+                                                    ? SizedBox(
+                                                        height: 16,
+                                                        width: 16,
+                                                        child: CircularProgressIndicator(
+                                                          strokeWidth: 2,
+                                                          valueColor: AlwaysStoppedAnimation<Color>(AppColors.textBlue),
+                                                        ),
+                                                      )
+                                                    : Text(
+                                                        'Tải thêm blog',
+                                                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                                          color: AppColors.textBlue,
+                                                          fontWeight: FontWeight.w700,
+                                                        ),
+                                                      ),
+                                              ),
+                                            ),
+                                          ),
+                                      ],
+                                    );
+                                  }
+                                  if (blogState is UserBlogError) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(16),
+                                      child: Text('Lỗi: ${blogState.message}', style: const TextStyle(color: Colors.red)),
+                                    );
+                                  }
+                                  return const SizedBox.shrink();
+                                },
+                              ),
                             ],
                           ),
                         ],
                       ),
                     );
                   }
-                  if (state is LoadUserFailure) {
-                    return Text(state.errorMessage);
+                  if (state is UserError) {
+                    return Text(state.message);
                   }
                   return Container();
                 },

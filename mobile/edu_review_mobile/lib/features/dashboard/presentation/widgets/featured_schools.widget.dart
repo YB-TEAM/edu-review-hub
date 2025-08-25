@@ -145,7 +145,7 @@ class FeaturedSchools extends StatelessWidget {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          SvgPicture.asset(AppIcons.starActive, width: 16, height: 16, color: AppColors.primaryYellow),
+                          SvgPicture.asset(AppIcons.star, width: 16, height: 16, color: AppColors.primaryYellow),
                           const SizedBox(width: 4),
                           Text(
                             rating.toString(),

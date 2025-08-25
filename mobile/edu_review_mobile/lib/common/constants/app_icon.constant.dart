@@ -19,6 +19,10 @@ class AppIcons {
   static const String publish = 'assets/icons/ic_publish.svg';
   static const String save = 'assets/icons/ic_save.svg';
   static const String send = 'assets/icons/ic_send.svg';
+  static const String location = 'assets/icons/ic_location.svg';
+  static const String rank = 'assets/icons/ic_rank.svg';
+  static const String star = 'assets/icons/ic_star.svg';
+  static const String eye = 'assets/icons/ic_eye.svg';
 
   // Bottom navigation bar icons
   static const String homeActive = 'assets/icons/ic_home_active.svg';
@@ -29,16 +33,14 @@ class AppIcons {
   static const String barInactive = 'assets/icons/ic_bar_inactive.svg';
   static const String communityActive = 'assets/icons/ic_community_active.svg';
   static const String communityInactive = 'assets/icons/ic_community_inactive.svg';
-  static const String universityActive = 'assets/icons/ic_university_active.svg';
-  static const String universityInactive = 'assets/icons/ic_university_inactive.svg';
+  static const String universityActive = 'assets/icons/ic_star_active.svg';
+  static const String universityInactive = 'assets/icons/ic_star_inactive.svg';
   
   // State icons
   static const String likeActive = 'assets/icons/ic_like_active.svg';
   static const String likeInactive = 'assets/icons/ic_like_inactive.svg';
   static const String dislikeActive = 'assets/icons/ic_dislike_active.svg';
   static const String dislikeInactive = 'assets/icons/ic_dislike_inactive.svg';
-  static const String starActive = 'assets/icons/ic_star_active.svg';
-  static const String starInactive = 'assets/icons/ic_star_inactive.svg';
   static const String notificationsActive = 'assets/icons/ic_notifications_active.svg';
   static const String notificationsInactive = 'assets/icons/ic_notifications_inactive.svg';
   static const String chatActive = 'assets/icons/ic_chat_active.svg';

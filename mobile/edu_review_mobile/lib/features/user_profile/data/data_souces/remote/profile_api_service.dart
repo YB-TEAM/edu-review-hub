@@ -4,6 +4,7 @@ import 'package:edu_review_mobile/common/constants/api_urls.dart';
 import 'package:edu_review_mobile/core/error/failures.dart';
 import 'package:edu_review_mobile/core/network/dio_client.dart';
 import 'package:edu_review_mobile/features/user_profile/data/models/blog_edit_params.dart';
+import 'package:edu_review_mobile/features/user_profile/data/models/blog_pagination.dart';
 import 'package:edu_review_mobile/features/user_profile/data/models/blog_response.dart';
 import 'package:edu_review_mobile/features/user_profile/data/models/profile.dart';
 import 'package:edu_review_mobile/features/user_profile/data/models/edit_profile.dart';
@@ -14,7 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 abstract class ProfileApiService {
   Future<Either<Failure, ProfileEntity>> getUser();
   Future<Either<Failure, ProfileEntity>> editProfile(EditProfileModel profileData);
-  Future<Either<Failure, List<BlogResponse>>> getBlogs();
+  Future<Either<Failure, List<BlogResponse>>> getBlogs(BlogPagination pagination);
   Future<Either<Failure, BlogResponse>> publishBlog(int blogId);
   Future<Either<Failure, BlogResponse>> editBlog(EditBlogParams editBlogParams);
   Future<Either<Failure, void>> deleteBlog(int blogId);
@@ -38,12 +39,16 @@ class ProfileApiServiceImpl extends ProfileApiService {
   }
 
   @override
-  Future<Either<Failure, List<BlogResponse>>> getBlogs() async {
+  Future<Either<Failure, List<BlogResponse>>> getBlogs(BlogPagination pagination) async {
     try {
       SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
       var token = sharedPreferences.getString('accessToken');
       var response = await sl<DioClient>().get(
         ApiUrls.getMyBlog,
+        queryParameters: {
+          'page': pagination.page,
+          'limit': pagination.limit,
+        },
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
       final data = response.data['data'] as List<dynamic>;

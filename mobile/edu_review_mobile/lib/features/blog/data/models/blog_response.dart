@@ -80,6 +80,32 @@ class BlogResponse {
       updatedAt: json['updatedAt'],
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'title': title,
+    'content': content,
+    'excerpt': excerpt,
+    'featuredImage': featuredImage,
+    'featuredImageUrl': featuredImageUrl,
+    'featuredImageUrls': featuredImageUrls,
+    'category': category,
+    'status': status,
+    'moderationReason': moderationReason,
+    'viewCount': viewCount,
+    'likeCount': likeCount,
+    'isLiked': isLiked,
+    'commentCount': commentCount,
+    'tags': tags?.map((e) => e.toJson()).toList(),
+    'publishedAt': publishedAt,
+    'moderatedAt': moderatedAt,
+    'authorId': authorId,
+    'authorName': authorName,
+    'moderatorId': moderatorId,
+    'moderatorName': moderatorName,
+    'createdAt': createdAt,
+    'updatedAt': updatedAt,
+  };
 }
 
 

@@ -4,6 +4,8 @@ import 'package:edu_review_mobile/common/constants/app_icon.constant.dart';
 import 'package:edu_review_mobile/features/blog/presentation/pages/blog.page.dart';
 import 'package:edu_review_mobile/features/university/presentation/pages/university.page.dart';
 import 'package:edu_review_mobile/features/settings/presentation/pages/settings.page.dart';
+import 'package:edu_review_mobile/features/user_profile/data/models/blog_pagination.dart';
+import 'package:edu_review_mobile/features/user_profile/presentation/bloc/user/user_blog_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:edu_review_mobile/features/dashboard/presentation/pages/dashboard.page.dart';
 import 'package:edu_review_mobile/features/user_profile/presentation/pages/profile.page.dart';
@@ -131,8 +133,13 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => UserDisplayCubit()..displayUser(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => UserBlogCubit()..fetchBlogs(pagination: BlogPagination(page: 1, limit: 10)),
+        ),
+        BlocProvider(create: (context) => UserCubit()..fetchUser()),
+      ],
       child: PersistentTabView(
         tabs: _tabs,
         navBarBuilder: (navBarConfig) {
