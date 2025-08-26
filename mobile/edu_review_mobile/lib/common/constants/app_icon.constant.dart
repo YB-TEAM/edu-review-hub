@@ -23,6 +23,7 @@ class AppIcons {
   static const String rank = 'assets/icons/ic_rank.svg';
   static const String star = 'assets/icons/ic_star.svg';
   static const String eye = 'assets/icons/ic_eye.svg';
+  static const String verified= 'assets/icons/ic_verified.svg';
 
   // Bottom navigation bar icons
   static const String homeActive = 'assets/icons/ic_home_active.svg';

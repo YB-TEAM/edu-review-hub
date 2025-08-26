@@ -40,9 +40,7 @@ class FeaturedSchools extends StatelessWidget {
             children: [
               Text(
                 'Các Trường Nổi Bật',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontSize: 20
-                ),
+                style: Theme.of(context).textTheme.titleMedium,
               ),
               TextButton(
                 onPressed: () {},

@@ -48,9 +48,7 @@ class CategorySection extends StatelessWidget {
         children: [
           Text(
             'Khám phá theo Ngành học',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontSize: 20,
-            ),
+            style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 16),
           GridView.builder(

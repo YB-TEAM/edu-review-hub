@@ -4,8 +4,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class UniversityCard extends StatelessWidget {
   final UniversityResponse university;
+  final VoidCallback? onTap;
 
-  const UniversityCard({super.key, required this.university});
+  const UniversityCard({super.key, required this.university, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,7 @@ class UniversityCard extends StatelessWidget {
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () => debugPrint('Clicked ${university.name}'),
+        onTap: onTap,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16),
           child: Stack(
@@ -35,9 +36,9 @@ class UniversityCard extends StatelessWidget {
             children: [
               if (imageUrl != null && imageUrl.isNotEmpty)
                 Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[300]),
+                    imageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[300]),
                 )
               else
                 Container(color: const Color(0xFFF0F2F5)),
@@ -53,9 +54,9 @@ class UniversityCard extends StatelessWidget {
                     Row(
                       children: [
                         if (university.isFeatured == true)
-                          _buildTag(context, text: "Nổi bật", color: AppColors.amber700),
+                          _buildTag(context, text: "Nổi bật", color: AppColors.amber700, icon: AppIcons.star),
                         if (university.isVerified == true)
-                          _buildTag(context, text: "Tin cậy", color: AppColors.green400),
+                          _buildTag(context, text: "Tin cậy", color: AppColors.green400, icon: AppIcons.verified),
                       ],
                     ),
                     const SizedBox(height: 8),
@@ -145,7 +146,7 @@ class UniversityCard extends StatelessWidget {
     );
   }
 
-  Widget _buildTag(BuildContext context, {required String text, required Color color}) {
+  Widget _buildTag(BuildContext context, {required String text, required Color color, required String icon}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       margin: const EdgeInsets.only(right: 6),
@@ -153,12 +154,23 @@ class UniversityCard extends StatelessWidget {
         color: color,
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.displaySmall?.copyWith(
-          fontWeight: FontWeight.w900,
-          color: AppColors.textWhite,
-        )
+      child: Row(
+        children: [
+          SvgPicture.asset(
+            icon,
+            height: 12,
+            width: 12,
+            color: AppColors.textWhite,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            text,
+            style: Theme.of(context).textTheme.displaySmall?.copyWith(
+              fontWeight: FontWeight.w900,
+              color: AppColors.textWhite,
+            )
+          ),
+        ],
       ),
     );
   }
