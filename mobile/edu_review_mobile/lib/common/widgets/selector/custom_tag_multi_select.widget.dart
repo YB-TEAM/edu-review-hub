@@ -30,25 +30,30 @@ class _CustomTagMultiSelectState extends State<CustomTagMultiSelect> {
   }
 
   Future<void> _fetchTags() async {
+    if (!mounted) return;
     setState(() {
       _isLoading = true;
       _error = null;
     });
 
     final result = await sl<GetTagApiService>().getTags();
+    if (!mounted) return;
     result.fold(
       (failure) {
+        if (!mounted) return;
         setState(() {
           _error = failure.message;
           _isLoading = false;
         });
       },
       (tags) {
+        if (!mounted) return;
         setState(() {
           _tags = tags;
           _selectedTagIds = widget.initialTagIds ?? [];
           _isLoading = false;
         });
+        if (!mounted) return;
         widget.onTagsSelected(_selectedTagIds);
       },
     );

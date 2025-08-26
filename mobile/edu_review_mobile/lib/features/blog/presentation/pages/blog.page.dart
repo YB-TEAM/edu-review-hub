@@ -8,6 +8,7 @@ import 'package:edu_review_mobile/features/blog/presentation/pages/blog_detail.p
 import 'package:edu_review_mobile/features/blog/presentation/widgets/blog_card_vertical.widget.dart';
 import 'package:edu_review_mobile/common/widgets/appbar/custom_appbar_delegate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 
 class BlogPage extends StatelessWidget {
   const BlogPage({super.key});
@@ -116,12 +117,16 @@ class BlogPage extends StatelessWidget {
             ],
           ),
           floatingActionButton: FloatingActionButton(
-            heroTag: 'create_blog_fab',
-            onPressed: () =>
-                Navigator.of(context, rootNavigator: true).pushNamed(RouteConstant.createBlog),
+            heroTag: null,
+            onPressed: () => Navigator.of(context, rootNavigator: true).pushNamed(RouteConstant.createBlog),
             backgroundColor: AppColors.primaryBlue,
             elevation: 8,
-            child: const Icon(Icons.add, color: Colors.white),
+            child: SvgPicture.asset(
+              AppIcons.pencil,
+              height: 24,
+              width: 24,
+              color: Colors.white,
+            )
           ),
         ),
       ),

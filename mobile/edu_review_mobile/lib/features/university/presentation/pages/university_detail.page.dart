@@ -160,7 +160,7 @@ class UniversityDetailPage extends StatelessWidget {
         onPressed: () {
           openCreatePostPage(context, university.id);
         },
-        backgroundColor: Colors.blue,
+        backgroundColor: AppColors.primaryBlue,
         child: SvgPicture.asset(
           AppIcons.pencil,
           height: 24,
