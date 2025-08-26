@@ -8,6 +8,7 @@ import {
   Index,
 } from "typeorm";
 import { UniversityReview } from "./university-review.entity";
+import { UniversityImage } from "./university-image.entity";
 
 export enum UniversityType {
   PUBLIC = "public",
@@ -81,10 +82,18 @@ export class University {
   @Column({ type: "text", nullable: true })
   vision: string;
 
-  @Column({ type: "enum", enum: UniversityType, default: UniversityType.PUBLIC })
+  @Column({
+    type: "enum",
+    enum: UniversityType,
+    default: UniversityType.PUBLIC,
+  })
   type: UniversityType;
 
-  @Column({ type: "enum", enum: UniversityStatus, default: UniversityStatus.ACTIVE })
+  @Column({
+    type: "enum",
+    enum: UniversityStatus,
+    default: UniversityStatus.ACTIVE,
+  })
   status: UniversityStatus;
 
   @Column({ type: "int", nullable: true })
@@ -172,10 +181,13 @@ export class University {
   @OneToMany(() => UniversityReview, (review) => review.university)
   reviews: UniversityReview[];
 
+  @OneToMany(() => UniversityImage, (image) => image.university)
+  images: UniversityImage[];
+
   // Computed properties
   get fullAddress(): string {
     const parts = [this.address, this.city, this.province].filter(Boolean);
-    return parts.join(', ');
+    return parts.join(", ");
   }
 
   get displayName(): string {

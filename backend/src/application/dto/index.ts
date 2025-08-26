@@ -43,5 +43,9 @@ export * from "./university/create-university-review.dto";
 export * from "./university/university-review-response.dto";
 export * from "./university/update-university-review.dto";
 export * from "./university/moderate-university-review.dto";
+export * from "./university/compare-universities.dto";
+export * from "./university/university-insights.dto";
+export * from "./university/university-report.dto";
+export * from "./university/upload-university-image.dto";
 
 export * from "./upload/upload-image.dto";

@@ -13,6 +13,7 @@ import {
   Inject,
   UseInterceptors,
   UploadedFile,
+  Patch,
 } from "@nestjs/common";
 import {
   PaginationDto,
@@ -23,6 +24,10 @@ import {
   UpdateUniversityReviewDto,
   UniversityReviewResponseDto,
   ModerateUniversityReviewDto,
+  CompareUniversitiesDto,
+  CompareUniversitiesResponseDto,
+  UniversityInsightsResponseDto,
+  UniversityReportResponseDto,
 } from "../../application/dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { JwtAuthGuard } from "../guards/jwt-auth.guard";
@@ -41,18 +46,25 @@ import {
   ApiConsumes,
 } from "@nestjs/swagger";
 import { IUniversityService } from "../../application/services/university.service.interface";
+import { UniversityImageService } from "../../application/services/university-image.service";
 import {
   UniversityType,
   UniversityStatus,
 } from "../../infrastructure/database/entities/university.entity";
 import { ReviewStatus } from "../../infrastructure/database/entities/university-review.entity";
 import { UniversityResponseDto } from "../../application/dto/university/university-response.dto";
+import {
+  UploadUniversityImageDto,
+  UniversityImageResponseDto,
+} from "../../application/dto/university/upload-university-image.dto";
+import { ImageType } from "../../infrastructure/database/entities/university-image.entity";
 
 @Controller("universities")
 export class UniversityController {
   constructor(
     @Inject("IUniversityService")
-    private readonly universityService: IUniversityService
+    private readonly universityService: IUniversityService,
+    private readonly universityImageService: UniversityImageService
   ) {}
 
   // Public APIs
@@ -112,10 +124,14 @@ export class UniversityController {
 
   @Get("featured")
   @ApiTags("University - Public")
-  @ApiOperation({ summary: "Get featured universities" })
+  @ApiOperation({
+    summary: "Get featured universities",
+    description:
+      "Get universities marked as featured, sorted by rating and name",
+  })
   @ApiResponse({
     status: 200,
-    description: "List of featured universities",
+    description: "Featured universities retrieved successfully",
     type: [UniversityResponseDto],
   })
   async getFeaturedUniversities() {
@@ -124,7 +140,10 @@ export class UniversityController {
 
   @Get("top-rated")
   @ApiTags("University - Public")
-  @ApiOperation({ summary: "Get top rated universities" })
+  @ApiOperation({
+    summary: "Get top rated universities",
+    description: "Get universities with highest ratings and review counts",
+  })
   @ApiQuery({
     name: "limit",
     type: Number,
@@ -133,7 +152,7 @@ export class UniversityController {
   })
   @ApiResponse({
     status: 200,
-    description: "List of top rated universities",
+    description: "Top rated universities retrieved successfully",
     type: [UniversityResponseDto],
   })
   async getTopRatedUniversities(@Query("limit") limit?: number) {
@@ -142,7 +161,11 @@ export class UniversityController {
 
   @Get("search")
   @ApiTags("University - Public")
-  @ApiOperation({ summary: "Search universities" })
+  @ApiOperation({
+    summary: "Search universities",
+    description:
+      "Search universities by name, short name, English name, or description",
+  })
   @ApiQuery({
     name: "q",
     type: String,
@@ -151,7 +174,7 @@ export class UniversityController {
   })
   @ApiResponse({
     status: 200,
-    description: "Search results",
+    description: "Search results retrieved successfully",
     type: [UniversityResponseDto],
   })
   async searchUniversities(@Query("q") query: string) {
@@ -617,62 +640,54 @@ export class UniversityController {
   @RequirePermissions("university:update")
   @ApiBearerAuth()
   @ApiConsumes("multipart/form-data")
-  @ApiOperation({ summary: "Upload university image (Admin only)" })
+  @ApiOperation({
+    summary: "Upload university image (Admin only)",
+    description:
+      "Upload image for university with metadata and type classification",
+  })
   @ApiParam({
     name: "id",
     type: Number,
     description: "University ID",
   })
+  @ApiBody({ type: UploadUniversityImageDto })
   @ApiResponse({
-    status: 200,
-    description: "Image uploaded",
-    schema: {
-      type: "object",
-      properties: {
-        imageUrl: { type: "string" },
-        message: { type: "string" },
-      },
-    },
+    status: 201,
+    description: "Image uploaded successfully",
+    type: UniversityImageResponseDto,
   })
+  @ApiResponse({ status: 400, description: "Bad request - Invalid data" })
   @ApiResponse({ status: 403, description: "Forbidden" })
   @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({ status: 404, description: "University not found" })
   @UseInterceptors(FileInterceptor("image"))
   async uploadUniversityImage(
     @Param("id", ParseIntPipe) id: number,
-    @UploadedFile() file: any
-  ) {
-    return this.universityService.uploadUniversityImage(id, file);
+    @UploadedFile() file: Express.Multer.File,
+    @Body() uploadData: UploadUniversityImageDto,
+    @Request() req: any
+  ): Promise<UniversityImageResponseDto> {
+    return this.universityImageService.uploadImage(
+      id,
+      file,
+      uploadData,
+      req.user.id,
+      req.ip || req.headers["x-forwarded-for"] || "unknown",
+      req.headers["user-agent"] || "unknown"
+    );
   }
 
   @Post("compare")
   @ApiTags("University - Public")
   @ApiOperation({ summary: "Compare universities" })
-  @ApiBody({
-    description: "University IDs to compare",
-    schema: {
-      type: "object",
-      properties: {
-        universityIds: {
-          type: "array",
-          items: { type: "number" },
-          description: "Array of university IDs to compare",
-        },
-      },
-    },
-  })
+  @ApiBody({ type: CompareUniversitiesDto })
   @ApiResponse({
     status: 200,
     description: "Comparison results",
-    schema: {
-      type: "object",
-      properties: {
-        universities: { type: "array" },
-        comparison: { type: "object" },
-      },
-    },
+    type: CompareUniversitiesResponseDto,
   })
-  async compareUniversities(@Body("universityIds") universityIds: number[]) {
-    return this.universityService.compareUniversities(universityIds);
+  async compareUniversities(@Body() compareDto: CompareUniversitiesDto) {
+    return this.universityService.compareUniversities(compareDto.universityIds);
   }
 
   @Get(":id/report/:type")
@@ -695,13 +710,7 @@ export class UniversityController {
   @ApiResponse({
     status: 200,
     description: "Report generated",
-    schema: {
-      type: "object",
-      properties: {
-        report: { type: "object" },
-        generatedAt: { type: "string" },
-      },
-    },
+    type: UniversityReportResponseDto,
   })
   @ApiResponse({ status: 403, description: "Forbidden" })
   @ApiResponse({ status: 401, description: "Unauthorized" })
@@ -727,18 +736,234 @@ export class UniversityController {
   @ApiResponse({
     status: 200,
     description: "University insights",
-    schema: {
-      type: "object",
-      properties: {
-        performance: { type: "object" },
-        trends: { type: "array" },
-        recommendations: { type: "array" },
-      },
-    },
+    type: UniversityInsightsResponseDto,
   })
   @ApiResponse({ status: 403, description: "Forbidden" })
   @ApiResponse({ status: 401, description: "Unauthorized" })
   async getUniversityInsights(@Param("id", ParseIntPipe) id: number) {
     return this.universityService.getUniversityInsights(id);
+  }
+
+  // ===== UNIVERSITY IMAGE MANAGEMENT APIs =====
+
+  @Get(":id/images")
+  @ApiTags("University - Public")
+  @ApiOperation({
+    summary: "Get university images",
+    description: "Get all images for a specific university",
+  })
+  @ApiParam({
+    name: "id",
+    type: Number,
+    description: "University ID",
+  })
+  @ApiQuery({
+    name: "type",
+    enum: ImageType,
+    required: false,
+    description: "Filter by image type",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "University images retrieved successfully",
+    type: [UniversityImageResponseDto],
+  })
+  @ApiResponse({ status: 404, description: "University not found" })
+  async getUniversityImages(
+    @Param("id", ParseIntPipe) id: number,
+    @Query("type") imageType?: ImageType
+  ): Promise<UniversityImageResponseDto[]> {
+    if (imageType) {
+      return this.universityImageService.getImagesByUniversityAndType(
+        id,
+        imageType
+      );
+    }
+    return this.universityImageService.getImagesByUniversity(id);
+  }
+
+  @Get(":id/images/primary/:type")
+  @ApiTags("University - Public")
+  @ApiOperation({
+    summary: "Get primary university image by type",
+    description:
+      "Get the primary image for a specific type (logo, banner, etc.)",
+  })
+  @ApiParam({
+    name: "id",
+    type: Number,
+    description: "University ID",
+  })
+  @ApiParam({
+    name: "type",
+    enum: ImageType,
+    description: "Image type",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Primary image retrieved successfully",
+    type: UniversityImageResponseDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: "University or primary image not found",
+  })
+  async getPrimaryUniversityImage(
+    @Param("id", ParseIntPipe) id: number,
+    @Param("type") imageType: ImageType
+  ): Promise<UniversityImageResponseDto | null> {
+    return this.universityImageService.getPrimaryImage(id, imageType);
+  }
+
+  @Patch(":id/images/:imageId")
+  @ApiTags("University - Admin")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @RequirePermissions("university:update")
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: "Update university image metadata",
+    description:
+      "Update image title, description, alt text, sort order, or primary status",
+  })
+  @ApiParam({
+    name: "id",
+    type: Number,
+    description: "University ID",
+  })
+  @ApiParam({
+    name: "imageId",
+    type: Number,
+    description: "Image ID",
+  })
+  @ApiBody({ type: UploadUniversityImageDto })
+  @ApiResponse({
+    status: 200,
+    description: "Image updated successfully",
+    type: UniversityImageResponseDto,
+  })
+  @ApiResponse({ status: 400, description: "Bad request - Invalid data" })
+  @ApiResponse({ status: 403, description: "Forbidden" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({ status: 404, description: "University or image not found" })
+  async updateUniversityImage(
+    @Param("id", ParseIntPipe) id: number,
+    @Param("imageId", ParseIntPipe) imageId: number,
+    @Body() updateData: Partial<UploadUniversityImageDto>,
+    @Request() req: any
+  ): Promise<UniversityImageResponseDto> {
+    return this.universityImageService.updateImage(
+      imageId,
+      updateData,
+      req.user.id,
+      req.ip || req.headers["x-forwarded-for"] || "unknown",
+      req.headers["user-agent"] || "unknown"
+    );
+  }
+
+  @Delete(":id/images/:imageId")
+  @ApiTags("University - Admin")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @RequirePermissions("university:update")
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: "Delete university image",
+    description: "Delete image from university and Cloudinary",
+  })
+  @ApiParam({
+    name: "id",
+    type: Number,
+    description: "University ID",
+  })
+  @ApiParam({
+    name: "imageId",
+    type: Number,
+    description: "Image ID",
+  })
+  @ApiResponse({
+    status: 204,
+    description: "Image deleted successfully",
+  })
+  @ApiResponse({ status: 403, description: "Forbidden" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({ status: 404, description: "University or image not found" })
+  async deleteUniversityImage(
+    @Param("id", ParseIntPipe) id: number,
+    @Param("imageId", ParseIntPipe) imageId: number,
+    @Request() req: any
+  ): Promise<void> {
+    await this.universityImageService.deleteImage(imageId, req.user.id);
+  }
+
+  @Post(":id/images/:imageId/set-primary")
+  @ApiTags("University - Admin")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @RequirePermissions("university:update")
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: "Set image as primary",
+    description: "Set a specific image as primary for its type",
+  })
+  @ApiParam({
+    name: "id",
+    type: Number,
+    description: "University ID",
+  })
+  @ApiParam({
+    name: "imageId",
+    type: Number,
+    description: "Image ID",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Image set as primary successfully",
+  })
+  @ApiResponse({ status: 400, description: "Bad request - Invalid data" })
+  @ApiResponse({ status: 403, description: "Forbidden" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({ status: 404, description: "University or image not found" })
+  async setPrimaryImage(
+    @Param("id", ParseIntPipe) id: number,
+    @Param("imageId", ParseIntPipe) imageId: number,
+    @Query("type") imageType: ImageType
+  ): Promise<void> {
+    await this.universityImageService.setPrimaryImage(id, imageType, imageId);
+  }
+
+  @Get(":id/images/stats")
+  @ApiTags("University - Admin")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @RequirePermissions("university:read")
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: "Get university image statistics",
+    description:
+      "Get statistics about university images including counts by type and primary images",
+  })
+  @ApiParam({
+    name: "id",
+    type: Number,
+    description: "University ID",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Image statistics retrieved successfully",
+    schema: {
+      type: "object",
+      properties: {
+        totalImages: { type: "number" },
+        imagesByType: { type: "object" },
+        primaryImages: { type: "object" },
+      },
+    },
+  })
+  @ApiResponse({ status: 403, description: "Forbidden" })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({ status: 404, description: "University not found" })
+  async getUniversityImageStats(@Param("id", ParseIntPipe) id: number) {
+    return this.universityImageService.getImageStats(id);
   }
 }
