@@ -308,7 +308,10 @@ class _EditBlogPageState extends State<EditBlogPage> {
   Widget _buildLabel(String text) {
     return Text(
       text,
-      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+        fontFamily: 'Roboto-Bold',
+        color: AppColors.textBlack,
+      ),
     );
   }
 }
