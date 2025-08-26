@@ -13,9 +13,7 @@ class QuickStats extends StatelessWidget {
         children: [
           Text(
             'Số Liệu Nổi Bật',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontSize: 20,
-            ),
+            style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 16),
           Row(

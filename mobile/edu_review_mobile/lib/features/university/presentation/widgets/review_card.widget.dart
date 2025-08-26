@@ -1,112 +1,29 @@
-// ignore_for_file: deprecated_member_use
-
+import 'package:edu_review_mobile/common/constants/app_default_images.constant.dart';
+import 'package:edu_review_mobile/common/constants/app_icon.constant.dart';
 import 'package:edu_review_mobile/common/widgets/button/custom_like_button.dart';
-import 'package:edu_review_mobile/common_libs.dart';
+import 'package:edu_review_mobile/core/config/theme/color.dart';
 import 'package:edu_review_mobile/core/utils/number_formatter.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
-class RecentReviews extends StatelessWidget {
+class ReviewCard extends StatelessWidget {
+  final BuildContext context;
+  final String user;
+  final String university;
+  final double rating;
+  final String comment;
+  final String time;
+  final String avatar;
+  final String imageUrl;
+  final int likeCount;
+  final int commentCount;
+  final int shareCount;
+  
+  const ReviewCard({super.key, required this.context, required this.user, required this.university, required this.rating, required this.comment, required this.time, required this.avatar, required this.imageUrl, required this.likeCount, required this.commentCount, required this.shareCount});
+
   @override
   Widget build(BuildContext context) {
-    final reviews = [
-      {
-        'user': 'Sarah M.',
-        'university': 'MIT',
-        'rating': 5.0,
-        'comment': 'Chương trình kỹ thuật tuyệt vời với cơ sở vật chất hàng đầu thế giới!',
-        'time': '2 giờ trước',
-        'avatar': 'S',
-        'image': 'https://wp.technologyreview.com/wp-content/uploads/2025/06/MIT-Dome-green.png',
-      },
-      {
-        'user': 'John D.',
-        'university': 'Đại học Stanford',
-        'rating': 4.5,
-        'comment': 'Đời sống trong khuôn viên tuyệt vời và giảng viên xuất sắc.',
-        'time': '5 giờ trước',
-        'avatar': 'J',
-        'image': 'https://img2.storyblok.com/fit-in/1200x630/f/64062/1181x709/0a5a1e360a/stanford-br.png',
-      },
-      {
-        'user': 'Emily R.',
-        'university': 'Đại học Harvard',
-        'rating': 4.8,
-        'comment': 'Môi trường học tập xuất sắc và nhiều cơ hội nghiên cứu.',
-        'time': '1 ngày trước',
-        'avatar': 'E',
-        'image': 'https://image-static.collegedunia.com/public/college_data/images/studyabroad/appImage/college_1090_29-15:00_o-HARVARD-UNIVERSITY-BUILDING-facebook.jpeg',
-      },
-    ];
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 36),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Đánh Giá Gần Đây',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              TextButton(
-                onPressed: () {},
-                child: Text(
-                  'Xem tất cả',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: AppColors.primaryBlue,
-                      ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          ListView.builder(
-            padding: EdgeInsets.zero,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: reviews.length,
-            itemBuilder: (context, index) {
-              final review = reviews[index];
-              return Container(
-                margin: const EdgeInsets.only(bottom: 16),
-                child: _buildReviewCard(
-                  context: context,
-                  user: review['user'] as String,
-                  university: review['university'] as String,
-                  rating: review['rating'] as double,
-                  comment: review['comment'] as String,
-                  time: review['time'] as String,
-                  avatar: review['avatar'] as String,
-                  imageUrl: review['image'] as String,
-                  likeCount: 5299,
-                  commentCount: 2200,
-                  shareCount: 1300,
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildReviewCard({
-    required BuildContext context,
-    required String user,
-    required String university,
-    required double rating,
-    required String comment,
-    required String time,
-    required String avatar,
-    required String imageUrl,
-    required int likeCount,
-    required int commentCount,
-    required int shareCount,
-  }) {
-    return Container(
+    return  Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppColors.primaryWhite,
