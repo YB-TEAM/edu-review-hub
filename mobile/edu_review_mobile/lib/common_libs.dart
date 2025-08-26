@@ -11,6 +11,6 @@ export 'package:edu_review_mobile/core/config/theme/theme.dart';
 export 'package:edu_review_mobile/core/config/theme/typography.dart';
 
 // Constants
-export 'package:edu_review_mobile/common/constants/route.constant.dart';
+export 'package:edu_review_mobile/common/constants/app_route.constant.dart';
 export 'package:edu_review_mobile/common/constants/app_icon.constant.dart';
 export 'package:edu_review_mobile/common/constants/app_default_images.constant.dart';

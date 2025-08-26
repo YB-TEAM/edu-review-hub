@@ -8,6 +8,11 @@ class UniversityDetailPage extends StatelessWidget {
   final UniversityResponse university;
   const UniversityDetailPage({super.key, required this.university});
 
+  void openCreatePostPage(BuildContext context, int universityId) {
+    Navigator.of(context, rootNavigator: true).pushNamed(RouteConstant.createPost, arguments: universityId);
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final imageUrl = university.bannerUrl ?? university.logoUrl ?? AppDefaultImages.defaultImage;
@@ -150,13 +155,26 @@ class UniversityDetailPage extends StatelessWidget {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        heroTag: null,
+        onPressed: () {
+          openCreatePostPage(context, university.id);
+        },
+        backgroundColor: Colors.blue,
+        child: SvgPicture.asset(
+          AppIcons.pencil,
+          height: 24,
+          width: 24,
+          color: Colors.white,
+        )
+      ),
     );
   }
 
   Widget _buildInfoRow({
     required String text,
     required String svgAssetPath,
-    Color textColor = AppColors.textBlue,
+    Color textColor = AppColors.textWhite,
     double iconSize = 18,
     double spacing = 8,
     required BuildContext context,
@@ -166,9 +184,8 @@ class UniversityDetailPage extends StatelessWidget {
       margin: const EdgeInsets.only(right: 10, bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: AppColors.primaryWhite,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.primaryBlack.withOpacity(0.1)),
+        color: AppColors.primaryBlue,
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

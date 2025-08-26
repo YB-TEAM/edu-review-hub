@@ -158,15 +158,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             children: [
                               Text(
                                 'Ảnh đại diện',
-                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                  fontWeight: FontWeight.w600,
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  fontFamily: 'Roboto-Bold',
+                                  color: AppColors.textBlack,
                                 ),
                               ),
-                              const SizedBox(height: 8),
+                              const SizedBox(height: 16),
                               Center(
                                 child: Container(
-                                  width: 120,
-                                  height: 120,
+                                  width: 150,
+                                  height: 150,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     border: Border.all(
@@ -181,8 +182,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                           state.profileEntity.avatarUrl?.isNotEmpty == true
                                               ? state.profileEntity.avatarUrl!
                                               : AppDefaultImages.defaultAvatar,
-                                          width: 120,
-                                          height: 120,
+                                          width: 150,
+                                          height: 150,
                                           fit: BoxFit.cover,
                                         ),
                                       ),
@@ -214,14 +215,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               // Ảnh bìa
                               Text(
                                 'Ảnh bìa',
-                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                fontFamily: 'Roboto-Bold',
+                                color: AppColors.textBlack,
+                              ),
                               ),
                               const SizedBox(height: 8),
                               Container(
                                 width: double.infinity,
-                                height: 120,
+                                height: 150,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
@@ -237,7 +239,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                             ? state.profileEntity.coverImageUrl!
                                             : AppDefaultImages.defaultCover,
                                         width: double.infinity,
-                                        height: 120,
+                                        height: 150,
                                         fit: BoxFit.cover,
                                       ),
                                       Positioned(
@@ -264,72 +266,32 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 ),
                               ),
                               const SizedBox(height: 24),
-
-                              // Tên hiển thị
-                              Text(
-                                'Tên hiển thị',
-                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
                               CustomTextField(
+                                label: 'Tên hiển thị',
                                 controller: _displayNameController,
                                 placeholder: 'Nhập tên hiển thị',
                               ),
                               const SizedBox(height: 16),
-
-                              // Giới thiệu
-                              Text(
-                                'Giới thiệu',
-                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
                               CustomTextField(
+                                label: 'Giới thiệu',
                                 controller: _bioController,
                                 placeholder: 'Nhập thông tin giới thiệu',
                               ),
                               const SizedBox(height: 16),
-
-                              // Thành phố
-                              Text(
-                                'Thành phố',
-                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
                               CustomTextField(
+                                label: 'Thành phố',
                                 controller: _cityController,
                                 placeholder: 'Nhập tên thành phố',
                               ),
                               const SizedBox(height: 16),
-
-                              // Trường đại học
-                              Text(
-                                'Trường đại học',
-                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
                               CustomTextField(
+                                label: 'Trường đại học',
                                 controller: _universityController,
                                 placeholder: 'Nhập tên trường đại học',
                               ),
                               const SizedBox(height: 16),
-
-                              // Chuyên ngành
-                              Text(
-                                'Chuyên ngành',
-                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
                               CustomTextField(
+                                label: 'Chuyên ngành',
                                 controller: _majorController,
                                 placeholder: 'Nhập chuyên ngành',
                               ),
@@ -370,10 +332,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                               mainAxisSize: MainAxisSize.min,
                                               mainAxisAlignment: MainAxisAlignment.center,
                                               children: [
-                                                const Icon(
-                                                  Icons.save,
-                                                  color: AppColors.primaryWhite,
-                                                ),
+                                                SvgPicture.asset(AppIcons.save, color: Colors.white),
                                                 const SizedBox(width: 8),
                                                 Text(
                                                   'Lưu thay đổi',
