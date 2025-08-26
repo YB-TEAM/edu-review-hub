@@ -25,6 +25,7 @@
 
     //University URLS
     static const getUniversities = "${baseURL}universities";
+    static const reviews = "${baseURL}university-reviews";
 
     //Upload
     static const uploadImage = "${baseURL}upload/image";

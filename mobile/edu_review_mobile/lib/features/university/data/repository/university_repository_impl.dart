@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:edu_review_mobile/core/error/failures.dart';
 import 'package:edu_review_mobile/features/university/data/data_sources/remote/university_api_service.dart';
+import 'package:edu_review_mobile/features/university/data/models/review_params.dart';
+import 'package:edu_review_mobile/features/university/data/models/review_response.dart';
 import 'package:edu_review_mobile/features/university/data/models/university_list_response.dart';
 import 'package:edu_review_mobile/features/university/data/models/university_pagination.dart';
 import 'package:edu_review_mobile/features/university/domain/repository/university_repository.dart';
@@ -11,5 +13,9 @@ class UniversityRepositoryImpl extends UniversityRepository {
   @override
   Future<Either<Failure, UniversityListResponse>> getUniversities(UniversityPagination paginations) async {
     return await sl<UniversityApiService>().getUniversities(paginations);
+  }
+  @override
+  Future<Either<Failure, ReviewResponse>> createReview(ReviewParams reviewParams) async {
+    return await sl<UniversityApiService>().createReview(reviewParams);
   }
 }
