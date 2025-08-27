@@ -24,6 +24,14 @@ class AppIcons {
   static const String star = 'assets/icons/ic_star.svg';
   static const String eye = 'assets/icons/ic_eye.svg';
   static const String verified= 'assets/icons/ic_verified.svg';
+  static const String science= 'assets/icons/ic_science.svg';
+  static const String heart= 'assets/icons/ic_heart.svg';
+  static const String briefcase= 'assets/icons/ic_briefcase.svg';
+  static const String handshake= 'assets/icons/ic_handshake.svg';
+  static const String networkWired= 'assets/icons/ic_network_wired.svg';
+  static const String money= 'assets/icons/ic_money.svg';
+  static const String dorm = 'assets/icons/ic_dorm.svg';
+  static const String unknow = 'assets/icons/ic_unknow.svg';
 
   // Bottom navigation bar icons
   static const String homeActive = 'assets/icons/ic_home_active.svg';

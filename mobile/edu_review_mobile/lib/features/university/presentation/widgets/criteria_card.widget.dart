@@ -1,4 +1,5 @@
 import 'package:edu_review_mobile/common_libs.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class CriteriaCard extends StatelessWidget {
   final String name;
@@ -24,18 +25,36 @@ class CriteriaCard extends StatelessWidget {
     required this.onRemove,
   }) : super(key: key);
 
-  IconData _getIcon(String? iconName) {
+  String _getIcon(String? iconName) {
     switch (iconName) {
+      case "graduation-cap":
+        return AppIcons.university;
+      case "book-open":
+        return AppIcons.book;
+      case "users":
+        return AppIcons.users;
+      case "building":
+        return AppIcons.city;
+      case "laptop":
+        return AppIcons.science;
+      case "home":
+        return AppIcons.dorm;
+      case "heart":
+        return AppIcons.heart;
+      case "globe":
+        return AppIcons.globe;
+      case "briefcase":
+        return AppIcons.briefcase;
+      case "handshake":
+        return AppIcons.handshake;
+      case "network-wired":
+        return AppIcons.networkWired;
       case "star":
-        return Icons.star_rounded;
-      case "book":
-        return Icons.menu_book_rounded;
-      case "group":
-        return Icons.group_rounded;
-      case "lightbulb":
-        return Icons.lightbulb_rounded;
+        return AppIcons.star;
+      case "dollar-sign":
+        return AppIcons.money;
       default:
-        return Icons.help_outline_rounded;
+        return AppIcons.unknow; 
     }
   }
 
@@ -61,10 +80,14 @@ class CriteriaCard extends StatelessWidget {
                   CircleAvatar(
                     radius: 22,
                     backgroundColor: color.withOpacity(0.9),
-                    child: Icon(
+                    child: SvgPicture.asset(
                       _getIcon(icon),
-                      color: Colors.white,
-                      size: 22,
+                      width: 22,
+                      height: 22,
+                      colorFilter: const ColorFilter.mode(
+                        Colors.white,
+                        BlendMode.srcIn,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -72,8 +95,8 @@ class CriteriaCard extends StatelessWidget {
                     child: Text(
                       displayName,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: color,
-                      ),
+                            color: color,
+                          ),
                     ),
                   ),
                 ],
@@ -130,7 +153,7 @@ class CriteriaCard extends StatelessWidget {
               size: 20,
             ),
             onPressed: onRemove,
-            splashRadius: 20, 
+            splashRadius: 20,
           ),
         ),
       ],
