@@ -9,6 +9,7 @@ import 'package:edu_review_mobile/features/university/data/models/review_params.
 import 'package:edu_review_mobile/features/university/data/models/review_score_params.dart';
 import 'package:edu_review_mobile/features/university/presentation/bloc/create_review_state.dart';
 import 'package:edu_review_mobile/features/university/presentation/bloc/create_review_cubit.dart';
+import 'package:edu_review_mobile/features/university/presentation/widgets/criteria_selector.widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -30,13 +31,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
   final _studyProgramController = TextEditingController();
   final _studyYearController = TextEditingController();
   final _graduationYearController = TextEditingController();
-  final _scoresController = TextEditingController();
 
-  final List<ReviewScoreParams> _criterionScores = [
-    ReviewScoreParams(criterionId: 1, score: 4),
-    ReviewScoreParams(criterionId: 2, score: 5),
-    ReviewScoreParams(criterionId: 3, score: 3),
-  ];
+  List<ReviewScoreParams> _criterionScores = [];
 
   double _overallScore = 5;
   bool _isAnonymous = false;
@@ -128,7 +124,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
               return Scaffold(
                 appBar: CustomAppBar(
-                  title: 'Tạo bài viết',
+                  title: 'Tạo đánh giá',
                   showBackButton: true,
                   onBackPressed: () => Navigator.of(context).pop(),
                 ),
@@ -180,7 +176,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                               ),
                         ),
                         Slider(
-                          padding: EdgeInsets.symmetric(horizontal: 0, vertical: 12),
+                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
                           activeColor: AppColors.primaryBlue,
                           value: _overallScore,
                           min: 1,
@@ -228,12 +224,19 @@ class _CreatePostPageState extends State<CreatePostPage> {
                         ),
                         const SizedBox(height: 16),
 
-                        CustomTextField(
-                          label: "Điểm chi tiết *",
-                          placeholder: "{study: 8, facility: 7, activity: 9}",
-                          controller: _scoresController,
+                        CriteriaSelector(
+                          onChanged: (ratings) {
+                            setState(() {
+                              _criterionScores = ratings.entries
+                                .map((entry) => ReviewScoreParams(
+                                    criterionId: entry.key,
+                                    score: entry.value.toInt(),
+                                  ))
+                                .toList();
+                            });
+                          },
                         ),
-                        const SizedBox(height: 16),
+
 
                         Row(
                           children: [
@@ -283,9 +286,9 @@ class _CreatePostPageState extends State<CreatePostPage> {
                                       Text(
                                         'Tạo đánh giá',
                                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                              color: AppColors.primaryWhite,
-                                              fontWeight: FontWeight.w900,
-                                            ),
+                                          color: AppColors.primaryWhite,
+                                          fontWeight: FontWeight.w900,
+                                        ),
                                       ),
                                       const SizedBox(width: 8),
                                       

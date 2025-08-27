@@ -1,5 +1,6 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:edu_review_mobile/core/network/dio_client.dart';
+import 'package:edu_review_mobile/core/services/get_criteria_service.dart';
 import 'package:edu_review_mobile/core/services/get_tag_service.dart';
 import 'package:edu_review_mobile/core/services/image_uploader_service.dart';
 import 'package:edu_review_mobile/features/auth/data/data_sources/local/auth_local_service.dart';
@@ -59,6 +60,7 @@ void setUpServiceLocator() {
   sl.registerSingleton<UniversityApiService>(UniversityApiServiceImpl());
   sl.registerLazySingleton<UploadImageApiService>(() => UploadImageApiServiceImpl());
   sl.registerLazySingleton<GetTagApiService>(() => GetTagApiServiceImpl());
+  sl.registerLazySingleton<GetCriteriaApiService>(() => GetCriteriaApiServiceImpl());
 
 
   // Repositories
