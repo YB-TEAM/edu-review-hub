@@ -36,8 +36,8 @@ class _EditBlogPageState extends State<EditBlogPage> {
   late FocusNode _editorFocusNode;
   List<int> _selectedTagIds = [];
 
-  String? _featuredImagePublicId; 
   String? _featuredImageURL;
+  String? _featuredImageId;
   bool _isUploadingImage = false;
 
   @override
@@ -47,7 +47,6 @@ class _EditBlogPageState extends State<EditBlogPage> {
     _excerptController = TextEditingController(text: widget.blog.excerpt ?? '');
     _editorFocusNode = FocusNode();
     _selectedTagIds = widget.blog.tags?.map((e) => e.id).toList() ?? [];
-    _featuredImagePublicId = null;
     _featuredImageURL = widget.blog.featuredImageUrl;
 
     final markdownContent = widget.blog.content;
@@ -95,9 +94,10 @@ class _EditBlogPageState extends State<EditBlogPage> {
       excerpt: _excerptController.text.trim().isEmpty
           ? null
           : _excerptController.text.trim(),
-      featuredImage: _featuredImagePublicId ?? widget.blog.featuredImage,
+      featuredImage: _featuredImageId ?? widget.blog.featuredImage,
       tagIds: _selectedTagIds,
     );
+    print(editBlogParams.toJson());
     cubit.editBlog(editBlogParams);
   }
 
@@ -138,12 +138,13 @@ class _EditBlogPageState extends State<EditBlogPage> {
   }
 
   Future<void> _uploadImage(XFile pickedFile) async {
-    setState(() => _isUploadingImage = true);
+    setState(() {
+      _isUploadingImage = true;
+    });
+
     try {
       final ext = path.extension(pickedFile.path).toLowerCase();
-      final mimeType = ext == '.png'
-          ? MediaType('image', 'png')
-          : MediaType('image', 'jpeg');
+      final mimeType = ext == '.png' ? MediaType('image', 'png') : MediaType('image', 'jpeg');
 
       final formData = FormData.fromMap({
         'image': await MultipartFile.fromFile(
@@ -159,22 +160,24 @@ class _EditBlogPageState extends State<EditBlogPage> {
         (failure) => _showSnackBar(failure.message),
         (success) {
           setState(() {
-            _featuredImagePublicId = success.publicId;
-            _featuredImageURL = success.secureUrl;
+            _featuredImageURL = success.url;
+            _featuredImageId = success.publicId;
           });
-          _showSnackBar('Image uploaded successfully!');
+          _showSnackBar('Cập nhật ảnh thành công!');
         },
       );
     } catch (e) {
       _showSnackBar('Error: $e');
     } finally {
-      setState(() => _isUploadingImage = false);
+      setState(() {
+        _isUploadingImage = false;
+      });
     }
   }
 
+
   void _deleteImage() {
     setState(() {
-      _featuredImagePublicId = null;
       _featuredImageURL = null;
     });
     _showSnackBar('Image deleted');

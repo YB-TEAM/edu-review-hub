@@ -1,16 +1,13 @@
 import 'package:edu_review_mobile/common_libs.dart';
-import 'package:flutter_svg/svg.dart';
 
 class CoverPhotoWidget extends StatefulWidget {
   final String imageUrl;
-  final VoidCallback onChangeCover;
   final double height;
   final Widget? child;
 
   const CoverPhotoWidget({
     super.key,
     required this.imageUrl,
-    required this.onChangeCover,
     this.height = 180,
     this.child,
   });
@@ -78,26 +75,6 @@ class _CoverPhotoWidgetState extends State<CoverPhotoWidget> {
                   ),
                 ),
             ],
-          ),
-        ),
-        Positioned(
-          right: 10,
-          bottom: 12,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              shape: const CircleBorder(),
-              padding: const EdgeInsets.all(4),
-              backgroundColor: Colors.white,
-              elevation: 2,
-            ),
-            onPressed: widget.onChangeCover,
-            child: SvgPicture.asset(
-              AppIcons.camera,
-              width: 20,
-              height: 20,
-              // ignore: deprecated_member_use
-              color: AppColors.primaryBlack,
-            ),
           ),
         ),
         if (widget.child != null)
