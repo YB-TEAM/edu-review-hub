@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:edu_review_mobile/common/widgets/loading/custom_loading_indicator.dart';
 import 'package:edu_review_mobile/common_libs.dart';
-import 'package:edu_review_mobile/features/blog/data/models/blog_response.dart';
 import 'package:edu_review_mobile/features/blog/presentation/bloc/get_blog_cubit.dart';
 import 'package:edu_review_mobile/features/blog/presentation/bloc/get_blog_state.dart';
 import 'package:edu_review_mobile/features/blog/presentation/pages/blog_detail.page.dart';
@@ -13,13 +12,13 @@ import 'package:flutter_svg/svg.dart';
 class BlogPage extends StatelessWidget {
   const BlogPage({super.key});
 
-  void _openBlogPost(BuildContext context, BlogResponse blog) {
+  void _openBlogPost(BuildContext context, int blogId) {
     Navigator.push(
       context,
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 500),
         pageBuilder: (context, animation, secondaryAnimation) =>
-            BlogDetailPage(blog: blog),
+            BlogDetailPage(blogId: blogId),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           final curvedAnimation =
               CurvedAnimation(parent: animation, curve: Curves.easeInOut);
@@ -94,7 +93,7 @@ class BlogPage extends StatelessWidget {
                             ...blogs.map(
                               (blog) => BlogCardVertical(
                                 blog: blog,
-                                onTap: () => _openBlogPost(context, blog),
+                                onTap: () => _openBlogPost(context, blog.id),
                               ),
                             ),
                             const SizedBox(height: 30),

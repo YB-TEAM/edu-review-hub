@@ -21,7 +21,6 @@ class UserBlogCubit extends Cubit<UserBlogState> {
       (failure) => emit(UserBlogError(failure.message)),
       (List<BlogResponse> blogs) {
         final hasReachedEnd = blogs.length < pagination.limit;
-        // Khi refresh/fetch page 1, luôn ghi đè danh sách blog
         emit(UserBlogLoaded(
           blogList: blogs,
           pagination: pagination,
