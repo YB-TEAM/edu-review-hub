@@ -1,15 +1,12 @@
 import 'package:edu_review_mobile/common_libs.dart';
-import 'package:flutter_svg/svg.dart';
 
 class EditAvatarButton extends StatefulWidget {
   final String imageUrl;
-  final VoidCallback onPressed;
   final double size;
 
   const EditAvatarButton({
     super.key,
     required this.imageUrl,
-    required this.onPressed,
     this.size = 128,
   });
 
@@ -78,25 +75,6 @@ class _EditAvatarButtonState extends State<EditAvatarButton> {
                     ),
                   ),
               ],
-            ),
-          ),
-          Positioned(
-            right: -8,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(4),
-                backgroundColor: Colors.white,
-                elevation: 2,
-              ),
-              onPressed: widget.onPressed,
-              child: SvgPicture.asset(
-                AppIcons.camera,
-                width: 20,
-                height: 20,
-                // ignore: deprecated_member_use
-                color: AppColors.primaryBlack,
-              ),
             ),
           ),
         ],

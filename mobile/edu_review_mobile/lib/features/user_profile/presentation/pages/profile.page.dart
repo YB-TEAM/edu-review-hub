@@ -91,15 +91,9 @@ class _ProfilePageState extends State<ProfilePage> {
                               children: [
                                 CoverPhotoWidget(
                                   imageUrl: state.profile.coverImageUrl ?? AppDefaultImages.defaultCover,
-                                  onChangeCover: () {
-                                    print('Nhấn đổi ảnh bìa');
-                                  },
                                   child: EditAvatarButton(
                                     imageUrl: state.profile.avatarUrl ?? AppDefaultImages.defaultAvatar,
                                     size: 128,
-                                    onPressed: () {
-                                      print('Nhấn đổi avatar');
-                                    },
                                   ),
                                 ),
                                 const SizedBox(height: 64),
