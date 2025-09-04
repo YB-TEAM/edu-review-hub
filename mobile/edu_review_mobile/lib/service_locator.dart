@@ -1,5 +1,6 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:edu_review_mobile/core/network/dio_client.dart';
+import 'package:edu_review_mobile/core/services/get_criteria_service.dart';
 import 'package:edu_review_mobile/core/services/get_tag_service.dart';
 import 'package:edu_review_mobile/core/services/image_uploader_service.dart';
 import 'package:edu_review_mobile/features/auth/data/data_sources/local/auth_local_service.dart';
@@ -24,6 +25,7 @@ import 'package:edu_review_mobile/features/settings/domain/repository/settings_r
 import 'package:edu_review_mobile/features/university/data/data_sources/remote/university_api_service.dart';
 import 'package:edu_review_mobile/features/university/data/repository/university_repository_impl.dart';
 import 'package:edu_review_mobile/features/university/domain/repository/university_repository.dart';
+import 'package:edu_review_mobile/features/university/domain/usecases/create_review.dart';
 import 'package:edu_review_mobile/features/university/domain/usecases/get_universities.dart';
 import 'package:edu_review_mobile/features/user_profile/data/repository/profile_repository_impl.dart';
 import 'package:edu_review_mobile/features/user_profile/domain/repository/profile_repository.dart';
@@ -58,6 +60,7 @@ void setUpServiceLocator() {
   sl.registerSingleton<UniversityApiService>(UniversityApiServiceImpl());
   sl.registerLazySingleton<UploadImageApiService>(() => UploadImageApiServiceImpl());
   sl.registerLazySingleton<GetTagApiService>(() => GetTagApiServiceImpl());
+  sl.registerLazySingleton<GetCriteriaApiService>(() => GetCriteriaApiServiceImpl());
 
 
   // Repositories
@@ -76,7 +79,6 @@ void setUpServiceLocator() {
   sl.registerSingleton<ForgotPasswordUseCase>(ForgotPasswordUseCase());
   sl.registerSingleton<ResetPasswordUseCase>(ResetPasswordUseCase());
 
-
   sl.registerSingleton<GetUserUseCase>(GetUserUseCase());
   sl.registerSingleton<EditProfileUseCase>(EditProfileUseCase());
   sl.registerSingleton<LogOutUseCase>(LogOutUseCase());
@@ -91,4 +93,5 @@ void setUpServiceLocator() {
   sl.registerSingleton<GetUniversityUseCase>(GetUniversityUseCase());
   sl.registerSingleton<GetBlogsUseCase>(GetBlogsUseCase());
   sl.registerSingleton<ReactionBlogUseCase>(ReactionBlogUseCase());
+  sl.registerSingleton<CreateReviewUseCase>(CreateReviewUseCase());
 }

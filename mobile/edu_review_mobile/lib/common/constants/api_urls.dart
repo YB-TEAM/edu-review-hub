@@ -25,10 +25,14 @@
 
     //University URLS
     static const getUniversities = "${baseURL}universities";
+    static const reviews = "${baseURL}university-reviews";
 
-    //Upload
+    //Upload URLS
     static const uploadImage = "${baseURL}upload/image";
 
-    //Tag
+    //Tag URLS
     static const getTags = "${baseURL}tags";
+
+    //Review Criteria URLS
+    static const criterias = "${baseURL}university-review-criteria";
   }

@@ -59,9 +59,9 @@ class CustomTextField extends StatelessWidget {
           Text(
             label!,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontFamily: 'Roboto-Bold',
-                  color: AppColors.textBlack,
-                ),
+              fontFamily: 'Roboto-Bold',
+              color: AppColors.textBlack,
+            ),
           ),
           const SizedBox(height: 6),
         ],

@@ -7,15 +7,13 @@ class QuickStats extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Số Liệu Nổi Bật',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontSize: 20,
-            ),
+            style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 16),
           Row(
@@ -30,7 +28,7 @@ class QuickStats extends StatelessWidget {
                   highlight: true,
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 12),
               Expanded(
                 child: _buildStatCard(
                   context: context,
@@ -41,7 +39,7 @@ class QuickStats extends StatelessWidget {
                   highlight: true,
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 12),
               Expanded(
                 child: _buildStatCard(
                   context: context,

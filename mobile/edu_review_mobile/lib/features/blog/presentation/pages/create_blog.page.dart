@@ -425,10 +425,10 @@ class _CreateBlogPageState extends State<CreateBlogPage> {
   Widget _buildLabel(String text, BuildContext context) {
     return Text(
       text,
-      style: Theme.of(context)
-          .textTheme
-          .bodyLarge
-          ?.copyWith(fontWeight: FontWeight.w600),
+      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+        fontFamily: 'Roboto-Bold',
+        color: AppColors.textBlack,
+      ),
     );
   }
 }

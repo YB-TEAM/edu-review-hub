@@ -5,6 +5,7 @@ import 'package:edu_review_mobile/common/widgets/appbar/custom_appbar_delegate.d
 import 'package:edu_review_mobile/features/university/presentation/bloc/get_university_cubit.dart';
 import 'package:edu_review_mobile/features/university/presentation/bloc/get_university_state.dart';
 import 'package:edu_review_mobile/features/university/presentation/widgets/university_card.widget.dart';
+import 'package:edu_review_mobile/features/university/presentation/pages/university_detail.page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UniversityPage extends StatelessWidget {
@@ -68,8 +69,24 @@ class UniversityPage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 ...universities.map(
-                                  (university) =>
-                                      UniversityCard(university: university),
+                                  (university) => UniversityCard(
+                                    university: university,
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        PageRouteBuilder(
+                                          transitionDuration: const Duration(milliseconds: 400),
+                                          pageBuilder: (context, animation, secondaryAnimation) =>
+                                              UniversityDetailPage(university: university),
+                                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                            return FadeTransition(
+                                              opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+                                              child: child,
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 ),
                                 const SizedBox(height: 30),
                               ],
