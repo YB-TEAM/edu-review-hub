@@ -61,6 +61,22 @@ class BlogRepositoryImpl extends BlogRepository {
   }
 
   @override
+  Future<Either<Failure, BlogResponse>> getBlogDetail(int blogId) async {
+    try {
+      return await _apiService.getBlogDetail(blogId);
+    } on DioException catch (e) {
+      return Left(
+        ServerFailure(
+          message: e.response?.data['message'] ?? 'Failed to get blog detail',
+          statusCode: e.response?.statusCode,
+        ),
+      );
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> reactionBlog(int blogId) async {
     try {
       return await _apiService.reactionBlog(blogId);
